@@ -1,8 +1,0 @@
-.emr-encounter-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;margin:12px auto;background:#edf8fc;border:1px solid #bcdce7;border-radius:8px;max-width:1280px}
-.emr-encounter-toolbar button{padding:9px 16px;border:1px solid #176c97;border-radius:6px;background:white;color:#124965;font:inherit;cursor:pointer}
-.emr-encounter-toolbar button:disabled{opacity:.55;cursor:default}
-body[data-encounter-view] .step-wrapper,body[data-encounter-view] .inner-tabs{display:none!important}
-body[data-record-page] #emr-site-banner,body[data-record-page] #emr-session-control,body[data-record-page] .clinical-appbar,body[data-record-page] .action-bar,body[data-record-page] .emr-save-bar,body[data-record-page] .emr-save-button,body[data-record-page] .opd-module-toolbar{display:none!important}
-body[data-record-page]{background:white!important;margin:0!important;padding:0!important}
-body[data-record-page] .container{max-width:none!important;width:100%!important;padding:8px!important;margin:0!important;box-shadow:none!important;border:0!important}
-@media print{.emr-encounter-toolbar{display:none!important}}
