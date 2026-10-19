@@ -1348,11 +1348,11 @@
           }
           const regAvatar = document.getElementById('reg_patient_photo_avatar');
           if (regAvatar && (!regAvatar.querySelector('img') || regAvatar.querySelector('img').src !== photo)) {
-            regAvatar.innerHTML = `<img src="${photo}" alt="Patient photo"><div class="registration-avatar-camera-badge" title="កែប្រែរូបថត">📷</div>`;
+            regAvatar.innerHTML = `<img src="${escapeHtml(photo)}" alt="Patient photo"><div class="registration-avatar-camera-badge" title="កែប្រែរូបថត">📷</div>`;
           }
           const triageFrame = document.getElementById('triage_patient_photo_frame');
           if (triageFrame && (!triageFrame.querySelector('img') || triageFrame.querySelector('img').src !== photo)) {
-            triageFrame.innerHTML = `<img src="${photo}" alt="Patient Photo" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
+            triageFrame.innerHTML = `<img src="${escapeHtml(photo)}" alt="Patient Photo" style="width:100%; height:100%; object-fit:cover; border-radius:6px;">`;
           }
         };
         forcePhotoRender();
@@ -1904,7 +1904,7 @@
 
   function historySectionHtml(title, rows) {
     if (!rows.length) return '';
-    return `<details class="patient-history-section"><summary>${title} <span>${rows.length}</span></summary><div class="patient-history-fields">${rows.map(row => `<div><strong>${String(row.label).replace(/[&<>]/g, '')}</strong><span>${String(row.value).replace(/[&<>]/g, '')}</span></div>`).join('')}</div></details>`;
+    return `<details class="patient-history-section"><summary>${escapeHtml(title)} <span>${rows.length}</span></summary><div class="patient-history-fields">${rows.map(row => `<div><strong>${escapeHtml(row.label)}</strong><span>${escapeHtml(row.value)}</span></div>`).join('')}</div></details>`;
   }
 
   async function openPatientHistory() {
@@ -1924,14 +1924,16 @@
       const rows = result.history || [];
       const content = overlay.querySelector('.patient-history-content');
       content.innerHTML = rows.map(record => {
-        const date = record.entryDate || new Date(record.createdAt).toLocaleDateString();
-        const mode = String(record.serviceMode || '').toUpperCase() || 'ENCOUNTER';
-        const department = record.departmentNameKh || record.departmentNameEn || '';
+        const date = escapeHtml(record.entryDate || new Date(record.createdAt).toLocaleDateString());
+        const mode = escapeHtml(String(record.serviceMode || '').toUpperCase() || 'ENCOUNTER');
+        const department = escapeHtml(record.departmentNameKh || record.departmentNameEn || '');
+        const caseNumber = escapeHtml(record.caseNumber || '—');
+        const dischargeDate = record.dischargeDate ? ` · ចេញពីមន្ទីរពេទ្យ: ${escapeHtml(record.dischargeDate)}` : '';
         const sections = encounterSections(record);
-        return `<article class="patient-history-encounter"><header><div><span class="patient-history-date">${date}</span><strong>${mode} · ${department}</strong><small>លេខករណី: ${record.caseNumber || '—'}${record.dischargeDate ? ` · ចេញពីមន្ទីរពេទ្យ: ${record.dischargeDate}` : ''}</small></div><a href="/emr?patient=${encodeURIComponent(record.patientKey)}${record.serviceMode==='ipd'?'&view=medical':''}" target="_blank">បើកកំណត់ត្រា</a></header>${historySectionHtml('ព័ត៌មានចុះឈ្មោះ', sections.registration)}${historySectionHtml('Triage', sections.triage)}${historySectionHtml('កំណត់ត្រាវេជ្ជសាស្ត្រ', sections.medical)}${historySectionHtml('ឯកសារថែទាំ', sections.nursing)}</article>`;
+        return `<article class="patient-history-encounter"><header><div><span class="patient-history-date">${date}</span><strong>${mode} · ${department}</strong><small>លេខករណី: ${caseNumber}${dischargeDate}</small></div><a href="/emr?patient=${encodeURIComponent(record.patientKey)}${record.serviceMode==='ipd'?'&view=medical':''}" target="_blank">បើកកំណត់ត្រា</a></header>${historySectionHtml('ព័ត៌មានចុះឈ្មោះ', sections.registration)}${historySectionHtml('Triage', sections.triage)}${historySectionHtml('កំណត់ត្រាវេជ្ជសាស្ត្រ', sections.medical)}${historySectionHtml('ឯកសារថែទាំ', sections.nursing)}</article>`;
       }).join('') || '<div class="patient-history-loading">មិនមានប្រវត្តិពីមុនទេ។</div>';
     } catch (error) {
-      overlay.querySelector('.patient-history-content').innerHTML = `<div class="patient-history-error">${error.message}</div>`;
+      overlay.querySelector('.patient-history-content').innerHTML = `<div class="patient-history-error">${escapeHtml(error.message)}</div>`;
     }
   }
 

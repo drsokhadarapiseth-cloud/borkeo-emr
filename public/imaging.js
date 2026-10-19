@@ -197,13 +197,13 @@
       const warnings = safetyWarnings(order);
       const groupName = getModalityGroup(order.modality);
       const feeBadge=order.request?.chargeMode==='FREE'?'<span class="badge">Free of charge</span>':order.request?.chargeMode==='PAID'?'<span class="badge">Paid at Cashier</span>':'';
-      return `<article class="work-card ${order.priority === 'URGENT' ? 'urgent' : ''} ${warnings.length ? 'safety' : ''} ${selected?.id === order.id ? 'active' : ''}" data-id="${order.id}">
+      return `<article class="work-card ${order.priority === 'URGENT' ? 'urgent' : ''} ${warnings.length ? 'safety' : ''} ${selected?.id === order.id ? 'active' : ''}" data-id="${esc(order.id)}">
         <strong data-patient-value>${esc(person.fullName || person.caseNumber || order.patientKey)}</strong>
         <small class="accession">${esc(order.accessionNumber || '')}</small>
         <small><span class="badge group-badge">${esc(groupName)}</span> <strong>${esc(modalityLabel(order.modality))}</strong> · ${esc(examName(order))}</small>
         <small>${esc(person.departmentNameEn || person.departmentCode || '')} ${person.currentBedLabel ? `• Bed ${esc(person.currentBedLabel)}` : ''}</small>
-        <small>${dateText(order.createdAt)} · ${esc(order.requesterName || '')}</small>
-        <span class="badge ${order.priority === 'URGENT' ? 'urgent' : ''}">${priorityLabel(order.priority)}</span> <span class="badge">${esc(statusLabel(order.status))}</span>
+        <small>${esc(dateText(order.createdAt))} · ${esc(order.requesterName || '')}</small>
+        <span class="badge ${order.priority === 'URGENT' ? 'urgent' : ''}">${esc(priorityLabel(order.priority))}</span> <span class="badge">${esc(statusLabel(order.status))}</span>
         ${feeBadge}
         ${warnings.length ? '<span class="badge safety">Safety Review</span>' : ''}
       </article>`;

@@ -226,7 +226,16 @@
         row.dataset.idx = idx;
 
         const desc = english() ? (item.en || item.kh || item.fr || '') : (item.kh || item.en || item.fr || '');
-        row.innerHTML = `<span class="diag-option-code">${item.code}</span><span class="diag-option-sep"> - </span><span class="diag-option-name">${desc}</span>`;
+        const codeSpan = document.createElement('span');
+        codeSpan.className = 'diag-option-code';
+        codeSpan.textContent = item.code;
+        const sepSpan = document.createElement('span');
+        sepSpan.className = 'diag-option-sep';
+        sepSpan.textContent = ' - ';
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'diag-option-name';
+        nameSpan.textContent = desc;
+        row.append(codeSpan, sepSpan, nameSpan);
 
         row.addEventListener('mousedown', (e) => {
           e.preventDefault();

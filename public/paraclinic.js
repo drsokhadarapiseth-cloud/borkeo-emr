@@ -395,7 +395,7 @@
           ? '<span class="paraclinic-badge free">Free of charge</span>'
           : order.status==='PAYMENT_PENDING' ? '<span class="paraclinic-badge new">Waiting Cashier</span>'
           : order.request?.chargeMode==='PAID' ? '<span class="paraclinic-badge">Paid</span>' : '';
-        return `<div class="paraclinic-order ${order.hasCritical && !order.criticalAckAt ? 'critical-order' : ''} ${order.status === 'REJECTED' ? 'rejected-order' : ''}" data-order-id="${order.id}">
+        return `<div class="paraclinic-order ${order.hasCritical && !order.criticalAckAt ? 'critical-order' : ''} ${order.status === 'REJECTED' ? 'rejected-order' : ''}" data-order-id="${esc(order.id)}">
           <div class="paraclinic-order-head">
             <strong>${esc(modalityLabel(order.modality))} · ${esc(name)}</strong>
             <button type="button" class="btn-print-order-inline" data-print-order="${esc(order.id)}" title="បោះពុម្ពប័ណ្ណស្នើសុំ">🖨️ បោះពុម្ព</button>

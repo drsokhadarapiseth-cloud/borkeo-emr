@@ -667,8 +667,13 @@
 
   const controlKh = new Map();
   const plainLabel = value => {
-    const holder = document.createElement('span'); holder.innerHTML = value;
-    return holder.textContent.replace(/\s+/g, ' ').trim();
+    try {
+      if (typeof DOMParser !== 'undefined') {
+        const doc = new DOMParser().parseFromString(String(value ?? ''), 'text/html');
+        return (doc.body?.textContent || '').replace(/\s+/g, ' ').trim();
+      }
+    } catch {}
+    return String(value ?? '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   };
   const khLabel = value => value.replace(/\s*\([^)]*[A-Za-z][^)]*\)/g, '').trim();
   function addControlPair(kh, en) {

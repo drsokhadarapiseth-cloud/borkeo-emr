@@ -210,7 +210,7 @@
     el('lab-worklist').innerHTML = list.map(order => {
       const person = patientCache.get(order.patientKey) || {};
       const feeBadge=order.request?.chargeMode==='FREE'?'<span class="badge">Free of charge</span>':order.request?.chargeMode==='PAID'?'<span class="badge">Paid at Cashier</span>':'';
-      return `<article class="work-card ${order.priority === 'URGENT' ? 'urgent' : ''} ${order.hasCritical ? 'critical' : ''} ${selected?.id === order.id ? 'active' : ''}" data-id="${order.id}">
+      return `<article class="work-card ${order.priority === 'URGENT' ? 'urgent' : ''} ${order.hasCritical ? 'critical' : ''} ${selected?.id === order.id ? 'active' : ''}" data-id="${esc(order.id)}">
         <strong data-patient-value>${esc(person.fullName || person.caseNumber || order.patientKey)}</strong>
         <small class="accession">${esc(order.accessionNumber || '')}</small>
         <small>${esc(person.departmentNameEn || person.departmentCode || '')} ${person.currentBedLabel ? `• Bed ${esc(person.currentBedLabel)}` : ''}</small>

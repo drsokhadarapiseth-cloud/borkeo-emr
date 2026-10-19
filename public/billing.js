@@ -375,7 +375,7 @@
   function selectedService(){return services.find(s=>s.code===$('service-select').value)||null}
   function syncSelectedService(){
     const s=selectedService();
-    if(!s){$('selected-service').innerHTML='មិនមានសេវាក្នុងប្រភេទនេះទេ។';return}
+    if(!s){$('selected-service').textContent='មិនមានសេវាក្នុងប្រភេទនេះទេ។';return}
     const rate=Number(exchangeState?.active?.khrPerUsd||0);
     const converted=payer()==='DIRECT'&&s.currency==='USD'&&rate>0;
     $('charge-price').readOnly=payer()!=='DIRECT';$('charge-currency').disabled=payer()!=='DIRECT';

@@ -1,6 +1,7 @@
 // Borkeo EMR v34.5 - Patient Photo Capture & Management
 (function () {
   'use strict';
+  const esc = window.escapeHtml || (v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
 
   let activeStream = null;
   let currentCapturedDataUrl = null;
@@ -466,7 +467,7 @@
       avatar.setAttribute('role', 'button');
       avatar.setAttribute('aria-label', 'ថត ឬ បញ្ចូលរូបថតអ្នកជំងឺ (Capture or Upload Photo)');
       if (photo) {
-        avatar.innerHTML = `<img src="${photo}" alt="Patient photo">`;
+        avatar.innerHTML = `<img src="${esc(photo)}" alt="Patient photo">`;
       } else {
         avatar.innerHTML = `
           <div style="text-align: center; color: #64748b;">
@@ -482,7 +483,7 @@
     const opdPhotoFrames = document.querySelectorAll('.opd-patient-photo-frame, #opd_patient_photo_frame');
     opdPhotoFrames.forEach((frame) => {
       if (photo) {
-        frame.innerHTML = `<img src="${photo}" alt="Patient Photo"><div class="photo-retake-camera-badge" data-action="capture-patient-photo" title="ថតរូបអ្នកជំងឺឡើងវិញ (Retake photo)">📷</div>`;
+        frame.innerHTML = `<img src="${esc(photo)}" alt="Patient Photo"><div class="photo-retake-camera-badge" data-action="capture-patient-photo" title="ថតរូបអ្នកជំងឺឡើងវិញ (Retake photo)">📷</div>`;
       } else {
         frame.innerHTML = `<div class="photo-placeholder" title="គ្មានរូបថត">👤</div><div class="photo-retake-camera-badge" data-action="capture-patient-photo" title="ថតរូបអ្នកជំងឺ (Take photo)">📷</div>`;
       }
@@ -492,7 +493,7 @@
     const ipdPhotoFrames = document.querySelectorAll('.ipd-patient-photo-frame, #ipd_patient_photo_frame');
     ipdPhotoFrames.forEach((frame) => {
       if (photo) {
-        frame.innerHTML = `<img src="${photo}" alt="Patient Photo"><div class="photo-retake-camera-badge" data-action="capture-patient-photo" title="ថតរូបអ្នកជំងឺឡើងវិញ (Retake photo)">📷</div>`;
+        frame.innerHTML = `<img src="${esc(photo)}" alt="Patient Photo"><div class="photo-retake-camera-badge" data-action="capture-patient-photo" title="ថតរូបអ្នកជំងឺឡើងវិញ (Retake photo)">📷</div>`;
       } else {
         frame.innerHTML = `<div class="photo-placeholder" title="គ្មានរូបថត">👤</div><div class="photo-retake-camera-badge" data-action="capture-patient-photo" title="ថតរូបអ្នកជំងឺ (Take photo)">📷</div>`;
       }
@@ -502,7 +503,7 @@
     const contextAvatars = document.querySelectorAll('.inpatient-context-avatar-card, #inpatient_context_avatar');
     contextAvatars.forEach((card) => {
       if (photo) {
-        card.innerHTML = `<img src="${photo}" alt="Patient Photo">`;
+        card.innerHTML = `<img src="${esc(photo)}" alt="Patient Photo">`;
       } else {
         card.innerHTML = `<div style="color:#64748b; font-size:24px;">👤</div>`;
       }
@@ -514,7 +515,7 @@
       frame.style.cursor = 'pointer';
       frame.setAttribute('data-action', 'capture-patient-photo');
       if (photo) {
-        frame.innerHTML = `<img src="${photo}" alt="Patient Photo" style="width:100%; height:100%; object-fit:cover; border-radius:6px; cursor:pointer;">`;
+        frame.innerHTML = `<img src="${esc(photo)}" alt="Patient Photo" style="width:100%; height:100%; object-fit:cover; border-radius:6px; cursor:pointer;">`;
       } else {
         frame.innerHTML = `<div class="photo-placeholder" style="font-size: 48px; color: #cbd5e1; cursor:pointer;" title="គ្មានរូបថត - ចុចដើម្បីថតរូប">👤</div>`;
       }
