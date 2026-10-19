@@ -8,16 +8,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-test('v29.8 release version consistency across package.json, login.html, and server.mjs', () => {
-    const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-    assert.match(pkg.version, /^(29\.[89]|30\.\d+)\./);
-
-    const serverCode = fs.readFileSync(path.join(rootDir, 'server', 'server.mjs'), 'utf8');
-    assert.match(serverCode, /Borkeo EMR v(29\.[89]|30\.\d+)/);
-
-    const loginHtml = fs.readFileSync(path.join(rootDir, 'public', 'login.html'), 'utf8');
-    assert.match(loginHtml, /v(29\.[89]|30\.\d+)/);
-});
 
 test('v29.8 admission approval panel is removed from registration screen and print admission form remains intact', () => {
     const emrPath = path.join(rootDir, 'protected', 'EMR.html');

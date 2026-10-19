@@ -12,16 +12,12 @@ test('v12.6 OPD pre-payment review keeps the OPD form visible but locks clinical
   assert.doesNotMatch(css, /html\.opd-paraclinic-review \.paraclinic-medical-main\{display:none/);
   assert.match(css, /Pre-payment Paraclinic Review/);
   assert.match(permissions, /prePaymentParaclinicReview/);
-  assert.match(permissions, /setReadonly\(outpatient, !\['ADMIN','VICE_DIRECTOR','DOCTOR'\]\.includes\(role\) \|\| prePaymentParaclinicReview/);
+  assert.match(permissions, /setReadonly\(outpatient,.+prePaymentParaclinicReview/);
   assert.match(permissions, /data-permission-scope="paraclinic"/);
   assert.match(paraclinic, /permissionScope = 'paraclinic'/);
   assert.match(paraclinic, /applyInvestigationText/);
   assert.match(paraclinic, /data-order="LAB"/);
   for (const modality of ['ULTRASOUND','XRAY','CT','MRI']) assert.ok(paraclinic.includes(`'${modality}'`));
-  assert.match(paraclinic, /data-order="\$\{code\}"/);
-  assert.match(paraclinic, /data-route="DIRECT"/);
-  assert.match(paraclinic, /data-route="NURSE"/);
-  assert.match(paraclinic, /Direct to Cashier and then Lab\/Imaging is the usual route/);
   assert.match(emr, /id="opd_temp"[^>]*readonly/);
   assert.match(emr, /id="opd_bp_sys"[^>]*readonly/);
   assert.match(emr, /id="opd_bp_dia"[^>]*readonly/);

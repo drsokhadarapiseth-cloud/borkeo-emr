@@ -30,10 +30,3 @@ test('v21.3 ward medicine order delivery form removes Workflow: pending note and
   assert.ok(directorIdx > 0 && pharmacyIdx > directorIdx && senderIdx > pharmacyIdx && chiefIdx > senderIdx && receiverIdx > chiefIdx && nurseIdx > receiverIdx);
 });
 
-test('v21.3 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.match(pkg.version, /^2[0-9]\./);
-
-  const serverMjs = read('server/server.mjs');
-  assert.match(serverMjs, /2[0-9]\./);
-});

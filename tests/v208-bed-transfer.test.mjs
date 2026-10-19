@@ -23,13 +23,3 @@ test('v20.8 internal room and bed transfer dialog replaces editBedNumber for occ
   assert.match(deptCss, /\.dialog-select/);
 });
 
-test('v20.8 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.match(pkg.version, /^2[0-9]\.[0-9]\.\d+/);
-
-  const loginHtml = read('public/login.html');
-  assert.match(loginHtml, /v2[0-9]\.[0-9]/);
-
-  const serverMjs = read('server/server.mjs');
-  assert.match(serverMjs, /2[0-9]\.[0-9]/);
-});

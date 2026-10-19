@@ -2,16 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-test('v28.1 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-  assert.ok(pkg.version >= '28.1.0');
-
-  const loginHtml = fs.readFileSync(new URL('../public/login.html', import.meta.url), 'utf8');
-  assert.match(loginHtml, /v28\./);
-
-  const server = fs.readFileSync(new URL('../server/server.mjs', import.meta.url), 'utf8');
-  assert.match(server, /v28\./);
-});
 
 test('v28.1 server records distinct opdDoctor and ipdDoctor signature snapshots', () => {
   const server = fs.readFileSync(new URL('../server/server.mjs', import.meta.url), 'utf8');

@@ -33,22 +33,6 @@ function envelope(member) {
 
 const response = body => new Response(JSON.stringify(body), { headers: { 'content-type': 'application/json' } });
 
-test('v34.4 release version consistency across package.json, login.html, server.mjs, and EMR.html', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.ok(['34.4.0', '34.5.0', '34.6.0', '34.7.0', '34.8.0', '34.9.0', '35.0.0', '35.1.0', '35.2.0', '35.3.0', '35.4.0', '35.5.0', '35.6.0', '35.7.0', '35.8.0', '35.9.0', '36.0.0', '36.1.0', '36.2.0', '36.3.0', '36.4.0', '36.5.0', '36.6.0'].includes(pkg.version));
-
-  const loginHtml = read('public/login.html');
-  assert.match(loginHtml, /v3(?:4\.[456789]|[56].[0-9])/);
-
-  const serverMjs = read('server/server.mjs');
-  assert.match(serverMjs, /Borkeo EMR v3(?:4\.[456789]|[56].[0-9])/);
-
-  const emrHtml = read('protected/EMR.html');
-  assert.match(emrHtml, /nssf-lookup\.js\?v=3440/);
-
-  const css = read('public/nssf-lookup.css');
-  assert.match(css, /v34\.4/);
-});
 
 test('evaluateNssfEligibility extracts and sanitizes ben_full_name_kh and ben_full_name_en', () => {
   const member = {

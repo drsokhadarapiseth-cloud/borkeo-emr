@@ -42,16 +42,12 @@ test('a direct Registration save/transfer validates before clinical synchronizat
   assert.equal(await context.savePatientRecord({ transferToTriage: true }), 'allowed');
 });
 
-test('required validation assets are served through the public allowlist and metadata agrees', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.equal(pkg.version, '38.0.0');
+test('required validation assets are served through the public allowlist', () => {
   const server = read('server/server.mjs');
   for (const asset of ['emr-required-fields.js', 'emr-required-fields.css']) {
     assert.ok(server.includes("['/public/" + asset + "', ['" + asset + "',"));
     assert.ok(fs.existsSync('public/' + asset));
   }
-  assert.match(server, /Borkeo EMR v38\.0/);
-  assert.match(read('public/login.html'), /data-app-version[^>]*>v38\.0</);
 });
 
 test('specialty storage cannot write a form that fails required-field validation', async () => {

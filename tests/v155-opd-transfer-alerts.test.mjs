@@ -64,7 +64,7 @@ test('OPD can transfer to every IPD ward and settled OPD payment alerts the shar
     assert.ok(!opdQueue.patients.some(item=>item.patientKey===transferKey));
     const wardDoctor=await login('doctor_obstetric');
     const wardInbox=await(await fetch(origin+'/api/messages?box=inbox',{headers:wardDoctor})).json();
-    assert.ok(wardInbox.messages.some(message=>message.patientKey===transferKey&&/transferred from OPD to Obstetric/i.test(message.body)));
+    assert.ok(wardInbox.messages.some(message=>message.patientKey===transferKey&&(/(transferred from OPD to Obstetric|បញ្ជូនពីផ្នែកពិគ្រោះក្រៅ)/i.test(message.body))));
 
     const paymentKey='case:OPD-PAID-ALERT';addPatient(paymentKey,'CHAN SOPHEA');
     const charge=await fetch(origin+'/api/finance/charges',{method:'POST',headers:clerk,body:JSON.stringify({patientKey:paymentKey,description:'OPD consultation',quantity:1,unitAmount:12000,currency:'KHR'})});

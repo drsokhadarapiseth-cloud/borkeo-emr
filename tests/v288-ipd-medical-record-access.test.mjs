@@ -6,16 +6,6 @@ import { pathToFileURL } from 'node:url';
 
 const projectRoot = path.resolve('.');
 
-test('current release version consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8'));
-  assert.equal(pkg.version, '30.3.0');
-
-  const loginHtml = fs.readFileSync(path.join(projectRoot, 'public', 'login.html'), 'utf8');
-  assert.match(loginHtml, /v30\.3/);
-
-  const serverMjs = fs.readFileSync(path.join(projectRoot, 'server', 'server.mjs'), 'utf8');
-  assert.match(serverMjs, /Borkeo EMR v30\.3/);
-});
 
 test('v28.8 access.mjs allows doctor cross-ward access and enforces nurse ward scope', async () => {
   const { patientWorkWard, canAccessPatient } = await import(pathToFileURL(path.join(projectRoot, 'server', 'access.mjs')).href);

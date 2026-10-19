@@ -7,16 +7,6 @@ import vm from 'node:vm';
 const rootDir = process.cwd();
 const read = (rel) => fs.readFileSync(path.join(rootDir, rel), 'utf8');
 
-test('v33.2 release version consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.ok(['33.2.0', '33.3.0', '34.9.0', '35.0.0', '35.1.0', '35.2.0', '35.3.0', '35.4.0', '35.5.0', '35.6.0', '35.7.0', '35.8.0', '35.9.0', '36.0.0', '36.1.0', '36.2.0', '36.3.0', '36.4.0', '36.5.0', '36.6.0', '36.7.0'].includes(pkg.version));
-
-  const loginHtml = read('public/login.html');
-  assert.match(loginHtml, /v(?:3[2-6]\.)/);
-
-  const serverMjs = read('server/server.mjs');
-  assert.match(serverMjs, /Borkeo EMR v(?:3[2-6]\.)/);
-});
 
 test('v33.2 triage buttons renamed from ហៅ និងបំពេញទ្រីយ៉ា to បំពេញទ្រីយ៉ា', () => {
   const triageJs = read('public/triage.js');

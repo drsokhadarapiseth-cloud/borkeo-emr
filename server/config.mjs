@@ -45,8 +45,8 @@ export function loadConfig(overrides = {}) {
     : (isProduction ? false : (emrMode === 'demo' || overrides.databasePath === ':memory:'));
 
   const port = overrides.port ?? positiveInteger(process.env.PORT, 3001, 'PORT');
-  const host = overrides.host ?? (process.env.HOST || '127.0.0.1');
-  const appOrigin = overrides.appOrigin ?? (process.env.APP_ORIGIN ?? `http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`);
+  const host = overrides.host ?? (demoMode ? '127.0.0.1' : process.env.HOST || '127.0.0.1');
+  const appOrigin = overrides.appOrigin ?? (demoMode ? `http://localhost:${port}` : process.env.APP_ORIGIN ?? `http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`);
   const originUrl = new URL(appOrigin);
   if (!['http:', 'https:'].includes(originUrl.protocol) || originUrl.pathname !== '/') {
     throw new Error('APP_ORIGIN must contain only an http(s) origin, without a path.');

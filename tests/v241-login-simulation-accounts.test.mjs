@@ -5,16 +5,6 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { createEmrServer } from '../server/server.mjs';
 
-test('v24.1 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^24\./);
-
-  const loginHtml = fs.readFileSync(path.join(process.cwd(), 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v24\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /v24\./);
-});
 
 test('v24.1 /api/auth/config returns dynamic simulation accounts in demo mode and updates on user creation', async () => {
   const app = createEmrServer({ demoMode: true, databasePath: ':memory:', autoDatabase: false, nodeEnv: 'test' });

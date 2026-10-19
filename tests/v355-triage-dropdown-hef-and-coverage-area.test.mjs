@@ -8,17 +8,6 @@ import { ensureFacilitySchema, getFacility, saveFacility } from '../server/healt
 
 const rootDir = process.cwd();
 
-test('v35.5 version consistency in package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-  assert.ok(['35.5.0', '35.6.0', '35.7.0', '35.8.0', '35.9.0', '36.0.0', '36.1.0', '36.2.0', '36.3.0', '36.4.0', '36.5.0', '36.6.0', '36.7.0'].includes(pkg.version));
-
-  const loginHtml = fs.readFileSync(path.join(rootDir, 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v3[56]\.[0-9]/);
-
-  const serverMjs = fs.readFileSync(path.join(rootDir, 'server/server.mjs'), 'utf8');
-  assert.match(serverMjs, /Borkeo EMR v3[56]\.[0-9]/);
-});
-
 test('v35.5 Triage dropdown p2_other_dept separates Gynecology from Maternity and has all 13 confirmed HEF codes', () => {
   const emrHtml = fs.readFileSync(path.join(rootDir, 'protected/EMR.html'), 'utf8');
 

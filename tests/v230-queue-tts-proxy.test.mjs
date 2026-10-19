@@ -16,10 +16,3 @@ test('v23.0 server includes /api/queue/tts endpoint and client prompts for audio
   assert.ok(html.includes('audio-prompt-banner'), 'html contains audio prompt banner');
 });
 
-test('v23.0 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^2[3-9]\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /2[3-9]\./);
-});

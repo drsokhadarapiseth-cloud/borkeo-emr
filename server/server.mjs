@@ -3,7 +3,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v38.1 - Electronic Medical Record System
+// Borkeo EMR v38.2 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -422,7 +422,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=3800" defer></script></head>');
   html = html.replace('</head>', `<meta name="borkeo-version" content="${APP_VERSION}"></head>`);
   if (!html.includes('/public/emr-language.js')) {
-    const langVersion = String(APP_VERSION).replace('.', '') + '0';
+    const langVersion = APP_VERSION.split('.').slice(0, 2).join('') + '0';
     const languageAssets = `<link rel="stylesheet" href="/public/emr-language.css?v=${langVersion}"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=${langVersion}" defer></script>`;
     html = html.replace('</head>', `${languageAssets}</head>`);
   }
@@ -3074,7 +3074,7 @@ export function createEmrServer(configOverrides = {}) {
         const body = await readJson(request, config.maxBodyBytes);
         if(role==='CLERK'&&body?.kind!=='charge')return sendJson(response,403,{error:'Cashiers can delete unpaid service fees only.'},{secure:config.cookieSecure});
         try {
-          if(body?.kind==='payment'){const payment=getFinancePayment(database,String(body?.id||''));if(payment)assertCashierInvoiceWritable(database,payment.patientKey,payment.invoiceId,role);}
+          if(body?.kind==='payment'){const payment=getFinancePayment(database,String(body?.id||''));if(payment)assertCashierInvoiceWritable(database,payment.patient_key||payment.patientKey,payment.invoice_id||payment.invoiceId,role);}
           const ok = voidFinanceItem(database, String(body?.kind || ''), String(body?.id || ''), body?.reason, session.user_id, Date.now(), {unpaidOnly:true});
           if (!ok) return sendJson(response, 404, { error: 'Finance item was not found or is already void.' }, { secure: config.cookieSecure });
           audit(database, request, 'FINANCE_ITEM_VOIDED', { userId: session.user_id, subjectUsername: session.username, details: { kind: String(body?.kind||''), id: body?.id } });
@@ -3915,7 +3915,6 @@ export function createEmrServer(configOverrides = {}) {
         const existingData = existingPatient ? parseStoredJson(existingPatient.record_json) : Object.create(null);
         if((body.triageSave===true||body.triageEdit===true)&&!['TRIAGE',...RECORD_MANAGEMENT].includes(sessionRole(session)))return sendJson(response,403,{error:'គណនីនេះមិនអាចរក្សាទុកទ្រីយ៉ាបានទេ។'},{secure:config.cookieSecure});
         if(body.transferToTriage===true&&!['REGISTRATION',...RECORD_MANAGEMENT].includes(sessionRole(session)))return sendJson(response,403,{error:'គណនីនេះមិនអាចបញ្ជូនពីការចុះឈ្មោះបានទេ។'},{secure:config.cookieSecure});
-        if(['NURSE','MIDWIFE'].includes(sessionRole(session)))delete submittedData['system:dailyMonitoringRecords'];
         let editAccess=null;
         if(existingPatient){try{editAccess=assertEncounterWrite(database,session,existingPatient,body.editorScope||undefined);}catch(error){return sendJson(response,error.status||403,{error:error.message},{secure:config.cookieSecure});}}
         if(body.editOnly===true && existingPatient && body.editorScope==='triage' &&
@@ -5107,7 +5106,9 @@ export function createEmrServer(configOverrides = {}) {
         const order = getOrder(database, reviewMatch[1]);
         if (!order) return sendJson(response, 404, { error: 'Request not found.' }, { secure: config.cookieSecure });
         const patient = database.findPatient(order.patientKey);
-        if (!['ADMIN','VICE_DIRECTOR'].includes(role) && (!patient || !canAccessPatient(database, session, patient))) return sendJson(response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
+        const orderWard = order.ward || patientWorkWard(patient);
+        const userWard = sessionWard(session);
+        if (!['ADMIN','VICE_DIRECTOR'].includes(role) && (!patient || !canAccessPatient(database, session, patient) || (userWard && orderWard && userWard !== orderWard))) return sendJson(response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
         let updated;
         try {
           updated = reviewMatch[2] === 'view' ? markResultViewed(database, order.id, session.user_id)
@@ -5299,7 +5300,7 @@ export async function startServer() {
     application.server.listen(application.config.port, application.config.host, resolve);
   });
   const modeLabel = application.config.demoMode ? 'DEMO (username-only)' : 'PRODUCTION (password required)';
-  console.log(`Borkeo EMR v38.1 [${modeLabel}] listening on http://${application.config.host}:${application.config.port}`);
+  console.log(`Borkeo EMR v38.2 [${modeLabel}] listening on http://${application.config.host}:${application.config.port}`);
   if (application.config.host === '0.0.0.0') {
     try {
       const nets = os.networkInterfaces();

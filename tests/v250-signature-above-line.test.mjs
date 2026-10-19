@@ -3,16 +3,6 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
-test('v25.0 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^25\./);
-
-  const loginHtml = fs.readFileSync(path.join(process.cwd(), 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v25\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /v25\./);
-});
 
 test('v25.0 signature and signer name are positioned above the horizontal signature line', () => {
   const sessionCss = fs.readFileSync(path.join(process.cwd(), 'public/emr-session.css'), 'utf8');

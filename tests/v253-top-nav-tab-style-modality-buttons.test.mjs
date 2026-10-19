@@ -4,16 +4,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createEmrServer } from '../server/server.mjs';
 
-test('v25.3 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^25\./);
-
-  const loginHtml = fs.readFileSync(path.join(process.cwd(), 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v25\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /v25\./);
-});
 
 test('v25.3 shared-controls.css excludes group buttons from dark action button background and treats them as tabs', () => {
   const css = fs.readFileSync(path.join(process.cwd(), 'public/shared-controls.css'), 'utf8');

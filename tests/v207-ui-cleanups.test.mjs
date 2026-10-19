@@ -45,13 +45,3 @@ test('v20.7 room and bed management uses រក្សាទុក, displays full
   assert.match(deptCss, /\.bed-summary \.bed-patient\{display:block!important;margin:4px 0 0;min-width:0;white-space:nowrap;overflow:visible;/);
 });
 
-test('v20.7 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.match(pkg.version, /^2[0-9]\.[0-9]\.\d+/);
-
-  const loginHtml = read('public/login.html');
-  assert.match(loginHtml, /v2[0-9]\.[0-9]/);
-
-  const serverMjs = read('server/server.mjs');
-  assert.match(serverMjs, /2[0-9]\.[0-9]/);
-});

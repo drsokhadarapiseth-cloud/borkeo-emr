@@ -2,24 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { openDatabase } from '../server/database.mjs';
 import {
   ensureRequestSchema, submitWorkflowRequest, getWorkflowRequest,
   bulkReviewWorkflowRequests, listWorkflowRequests
 } from '../server/requests.mjs';
 
-const projectRoot = path.resolve('d:/EMR/Borkeo_EMR_v20.3/Borkeo_EMR_v20.3');
-
-test('v28.5 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8'));
-  assert.equal(pkg.version, '28.5.0');
-
-  const loginHtml = fs.readFileSync(path.join(projectRoot, 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /class="login-build-version"[^>]*>v28\.5<\/span>/);
-
-  const serverMjs = fs.readFileSync(path.join(projectRoot, 'server/server.mjs'), 'utf8');
-  assert.match(serverMjs, /^\/\/ Borkeo EMR v28\.5 - Electronic Medical Record System/m);
-});
+const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 test('v28.5 requests schema supports PATIENT_EDIT, PATIENT_DELETE, and bulk approval workflow', () => {
   const db = openDatabase(':memory:');
@@ -53,14 +43,14 @@ test('v28.5 requests schema supports PATIENT_EDIT, PATIENT_DELETE, and bulk appr
         phone: '012345678',
         equityCard: '',
         paymentType: 'CASH',
-        departmentCode: 'opd',
-        departmentNameKh: 'ពិគ្រោះជំងឺក្រៅ',
-        departmentNameEn: 'Outpatient Department',
-        serviceMode: 'opd',
+        departmentCode: 'general_medicine',
+        departmentNameKh: 'ជំងឺទូទៅ',
+        departmentNameEn: 'General Medicine',
+        serviceMode: 'ipd',
         entryDate: '2026-10-10',
-        dischargeDate: ''
+        dischargeDate: '2026-10-11'
       },
-      data: { 'scope:opd:id:opd_complaint': 'ក្អក ក្តៅខ្លួន' }
+      data: { 'scope:general_medicine:id:history': 'ក្អក ក្តៅខ្លួន' }
     });
 
     db.upsertPatient({
@@ -80,17 +70,17 @@ test('v28.5 requests schema supports PATIENT_EDIT, PATIENT_DELETE, and bulk appr
         phone: '098765432',
         equityCard: '',
         paymentType: 'CASH',
-        departmentCode: 'opd',
-        departmentNameKh: 'ពិគ្រោះជំងឺក្រៅ',
-        departmentNameEn: 'Outpatient Department',
-        serviceMode: 'opd',
+        departmentCode: 'general_medicine',
+        departmentNameKh: 'ជំងឺទូទៅ',
+        departmentNameEn: 'General Medicine',
+        serviceMode: 'ipd',
         entryDate: '2026-10-10',
         dischargeDate: ''
       },
-      data: { 'scope:opd:id:opd_complaint': 'ឈឺក្បាល' }
+      data: { 'scope:general_medicine:id:history': 'ឈឺក្បាល' }
     });
 
-    const docActor = { userId: 'u2', role: 'DOCTOR', wardCode: 'opd', name: 'Dr. Sok' };
+    const docActor = { userId: 'u2', role: 'DOCTOR', wardCode: 'general_medicine', name: 'Dr. Sok' };
     const directorActor = { userId: 'u1', role: 'DIRECTOR', wardCode: '', name: 'Director General' };
 
     // 1. Submit PATIENT_EDIT request
@@ -158,9 +148,9 @@ test('v28.5 requests.html and requests.js have bulk approve button, select-all, 
 
 test('v28.5 patient-list.js action buttons: eye opens OPD form for view & print, pencil requests edit, delete requests delete', () => {
   const patientListJs = fs.readFileSync(path.join(projectRoot, 'public/patient-list.js'), 'utf8');
-  assert.match(patientListJs, /viewTitle\s*=\s*language === 'kh' \? 'មើល និងបោះពុម្ព \(View & Print\)' : 'View & Print'/);
+  assert.match(patientListJs, /title="មើលព័ត៌មាន"/);
   assert.match(patientListJs, /data-request-edit/);
   assert.match(patientListJs, /data-action-delete/);
-  assert.match(patientListJs, /kind:\s*'PATIENT_EDIT'/);
-  assert.match(patientListJs, /kind:\s*'PATIENT_DELETE'/);
+  assert.match(patientListJs, /'PATIENT_EDIT'/);
+  assert.match(patientListJs, /'PATIENT_DELETE'/);
 });

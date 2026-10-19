@@ -114,7 +114,7 @@ test('v20.3 lab staff can edit ranges with CSRF but cannot rename, create or del
   const director=await login('director'),vice=await login('vice_director');assert.equal((await patch({criticalHigh:6.5},director)).status,200);assert.equal((await patch({criticalHigh:6.4},vice)).status,200);
   const admin=await login('admin');assert.equal((await patch({name:'Potassium local'},admin)).status,200);
   assert.equal((await fetch(origin+'/public/lab-reference.mjs?v=2030')).status,200);
-  const html=await(await fetch(origin+'/lab',{headers:lab})).text();assert.match(html,/lab\.js\?v=2030&build=2[0-9]\./);
+  const html=await(await fetch(origin+'/lab',{headers:lab})).text();assert.match(html,/lab\.js\?v=2030&build=\d+\./);
  }finally{await new Promise(r=>app.server.close(r));app.database.close()}
 });
 

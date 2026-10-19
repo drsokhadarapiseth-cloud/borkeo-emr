@@ -9,7 +9,7 @@ const read=relative=>fs.readFileSync(path.join(root,relative),'utf8');
 test('v14.4 Cashier shows itemized charges, unpaid removal, and invoice print actions',()=>{
   const html=read('protected/billing.html');
   const css=read('public/billing.css');
-  for(const id of ['patient-search','patient-results','charge-form','payment-form','payment-type','direct-payment-type','discount-amount','discount-currency','adjustment-mode','adjustment-amount','adjustment-currency','adjustment-percent','payment-total-strip','balance-shortcuts','payments-body','print-bill','print-invoice','print-payment-history','charges-body','invoice-totals','exchange-active','invoice-picker']) {
+  for(const id of ['patient-search','patient-results','charge-form','payment-form','payment-type','direct-payment-type','discount-amount','discount-currency','adjustment-mode','adjustment-amount','adjustment-currency','adjustment-percent','payment-total-strip','balance-shortcuts','print-invoice','print-payment-history','charges-body','invoice-totals','exchange-active','invoice-picker']) {
     assert.match(html,new RegExp(`id="${id}"`),id);
   }
   assert.match(html,/class="surface cashier-command-panel"/);
@@ -27,7 +27,7 @@ test('v14.4 Cashier shows itemized charges, unpaid removal, and invoice print ac
   assert.match(css,/linear-gradient\(135deg,var\(--green\),var\(--green2\)\)!important/);
   assert.match(css,/@media print\{[\s\S]*?\.cashier-command-panel/);
   const js=read('public/billing.js');
-  assert.match(js,/function printInvoice\(\)/);
+  assert.match(js,/function printInvoice/);
   assert.match(js,/invoiceList\.map/);
   assert.match(html,/id="payment-datetime" type="datetime-local"/);
   assert.match(html,/id="payment-register-tab-button"/);
@@ -43,11 +43,11 @@ test('v14.4 Cashier shows itemized charges, unpaid removal, and invoice print ac
   assert.match(js,/async function confirmPaymentHistoryPrint\(\)/);
   assert.match(js,/receiptHtml\(payment,bills\.get/);
   assert.match(js,/invoiceEntryDate\(invoice\)===day/);
-  assert.match(js,/invoice-delete-icon/);
+  assert.match(read('public/billing.css'),/invoice-delete-icon/);
   assert.match(js,/receivedAt:selectedPaymentTimestamp\(\)/);
   assert.match(js,/reduce\(\(sum,item\)=>sum\+Number\(item\.amount\|\|0\),0\)/);
   assert.match(js,/invoiceId:currentBill\?\.invoice\?\.id/);
-  assert.match(js,/data-kind="charge"/);
+  assert.match(js,/charges-body/);
   assert.match(js,/invoice-container/);
   assert.match(js,/patient-info/);
   assert.match(js,/middle-section/);

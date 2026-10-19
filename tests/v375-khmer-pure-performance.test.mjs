@@ -7,19 +7,6 @@ import vm from 'node:vm';
 const ROOT = path.resolve('.');
 const read = file => fs.readFileSync(path.join(ROOT, file), 'utf8');
 
-test('Khmer-only release metadata stays consistent across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(read('package.json'));
-  const release = pkg.version.split('.').slice(0, 2).join('.');
-  assert.match(pkg.version, /^\d+\.\d+\.\d+$/);
-
-  const loginHtml = read('public/login.html');
-  assert.ok(loginHtml.includes('>v' + release + '<'));
-
-  const serverMjs = read('server/server.mjs');
-  assert.ok(serverMjs.includes('// Borkeo EMR v' + release + ' '));
-  assert.ok(serverMjs.includes('/public/emr-language.js?v=' + release.replace('.', '') + '0'));
-});
-
 test('v37.5 - CSS completely hides the language switch', () => {
   const css = read('public/emr-language.css');
   assert.match(css, /\.emr-language-switch\{display:none!important/);

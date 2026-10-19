@@ -3,16 +3,6 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
-test('v25.2 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^25\./);
-
-  const loginHtml = fs.readFileSync(path.join(process.cwd(), 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v25\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /v25\./);
-});
 
 test('v25.2 imaging.html has data-language-exclude on toolbar, groups bar, and films tab with uniform button class', () => {
   const html = fs.readFileSync(path.join(process.cwd(), 'protected/imaging.html'), 'utf8');

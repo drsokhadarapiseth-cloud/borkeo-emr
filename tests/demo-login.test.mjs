@@ -6,19 +6,21 @@ import { loadConfig, projectRoot } from '../server/config.mjs';
 import { setESignature } from '../server/esign.mjs';
 
 test('the local demo uses username-only accounts and cannot access the patient database', async () => {
-  const defaultConfig = loadConfig();
-  assert.equal(defaultConfig.demoMode, true);
-  assert.equal(defaultConfig.databasePath, path.join(projectRoot, 'data', 'demo.sqlite'));
-  assert.equal(defaultConfig.host, '127.0.0.1');
-  const oldSettings = ['DATABASE_PATH', 'HOST', 'APP_ORIGIN'].map(key => [key, process.env[key]]);
+  const demoConfig = loadConfig({ demoMode: true });
+  assert.equal(demoConfig.demoMode, true);
+  assert.equal(demoConfig.databasePath, path.join(projectRoot, 'data', 'demo.sqlite'));
+  assert.equal(demoConfig.host, '127.0.0.1');
+  const oldSettings = ['DATABASE_PATH', 'HOST', 'APP_ORIGIN', 'EMR_MODE'].map(key => [key, process.env[key]]);
   try {
+    process.env.EMR_MODE = 'demo';
     process.env.DATABASE_PATH = 'auto';
     process.env.HOST = '0.0.0.0';
     process.env.APP_ORIGIN = 'http://192.168.1.6:3000';
     const stillDemo = loadConfig();
-    assert.equal(stillDemo.databasePath, defaultConfig.databasePath);
+    assert.equal(stillDemo.demoMode, true);
+    assert.equal(stillDemo.databasePath, demoConfig.databasePath);
     assert.equal(stillDemo.host, '127.0.0.1');
-    assert.equal(stillDemo.appOrigin, `http://localhost:${defaultConfig.port}`);
+    assert.equal(stillDemo.appOrigin, `http://localhost:${demoConfig.port}`);
   } finally {
     for (const [key, value] of oldSettings) {
       if (value === undefined) delete process.env[key];
@@ -49,7 +51,7 @@ test('the local demo uses username-only accounts and cannot access the patient d
     const config = await (await request('/api/auth/config')).json();
     assert.equal(config.demoMode, true);
     const loginPage = await (await request('/login')).text();
-    assert.match(loginPage, /v2[0-9]\./);
+    assert.match(loginPage, /v\d+\.\d+/);
     assert.match(loginPage, /id="login-password-group" hidden/);
     const unknown = await request('/api/auth/login', {
       method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json' },

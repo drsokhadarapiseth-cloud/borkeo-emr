@@ -3,16 +3,6 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
-test('v26.2 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^26\./);
-
-  const loginHtml = fs.readFileSync(path.join(process.cwd(), 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v26\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /v26\./);
-});
 
 test('v26.2 protected/home.html does not duplicate OPD report', () => {
   const homeHtml = fs.readFileSync(path.join(process.cwd(), 'protected/home.html'), 'utf8');

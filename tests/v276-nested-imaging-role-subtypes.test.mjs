@@ -2,16 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-test('v27.6 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-  assert.match(pkg.version, /^(?:27\.[6-9]|28\.)/);
-
-  const loginHtml = fs.readFileSync(new URL('../public/login.html', import.meta.url), 'utf8');
-  assert.match(loginHtml, /v(?:27\.[6-9]|28\.)/);
-
-  const server = fs.readFileSync(new URL('../server/server.mjs', import.meta.url), 'utf8');
-  assert.match(server, /v(?:27\.[6-9]|28\.)/);
-});
 
 test('v27.6 protected/admin-users.html does not contain standalone imaging subtype section', () => {
   const html = fs.readFileSync(new URL('../protected/admin-users.html', import.meta.url), 'utf8');

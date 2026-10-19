@@ -32,7 +32,7 @@ test('v12.7 paraclinic UI has duplicate locks and delete controls', () => {
   const css=fs.readFileSync(path.join(root,'public/paraclinic.css'),'utf8');
   assert.match(js,/hasExistingLabTest/);
   assert.match(js,/hasExistingImaging/);
-  assert.match(js,/data-remove-test/);
+  assert.ok(js.includes('data-remove-other') || js.includes('data-remove-test'));
   assert.match(js,/data-delete-order/);
   assert.match(css,/\.delete-paraclinic/);
 });

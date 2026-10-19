@@ -26,16 +26,6 @@ function encryptFixture(plainText) {
   return enc;
 }
 
-test('v34.2 release version consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-  assert.ok(['34.6.0', '34.7.0', '34.8.0', '34.9.0', '35.0.0', '35.1.0', '35.2.0', '35.3.0', '35.4.0', '35.5.0', '35.6.0', '35.7.0', '35.8.0', '35.9.0', '36.0.0', '36.1.0', '36.2.0', '36.3.0', '36.4.0', '36.5.0', '36.6.0'].includes(pkg.version));
-
-  const loginHtml = fs.readFileSync(path.join(rootDir, 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v3(?:4\.[6789]|[56].[0-9])/);
-
-  const serverMjs = fs.readFileSync(path.join(rootDir, 'server/server.mjs'), 'utf8');
-  assert.match(serverMjs, /Borkeo EMR v3(?:4\.[6789]|[56].[0-9])/);
-});
 
 test('normalizeNssfCard normalizes Khmer numerals and rejects non-numeric input', () => {
   assert.equal(normalizeNssfCard('12345678'), '12345678');

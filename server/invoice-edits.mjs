@@ -30,6 +30,7 @@ export function invoiceSettled(bill){
  return Boolean(bill?.invoice?.closedAt || (gross>0 && due<=0));
 }
 export function isPatientDischarged(database, patientKey) {
+  if (!patientKey) return false;
   const patient = database.findPatient(patientKey);
   if (!patient) return false;
   let data = {};

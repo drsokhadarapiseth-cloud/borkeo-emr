@@ -13,10 +13,3 @@ test('v22.9 queue TV display includes HD online Khmer voice stream with speech s
   assert.ok(js.includes('speechSynthesis'), 'includes SpeechSynthesis fallback');
 });
 
-test('v22.9 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^(22\.9|2[3-9]\.)/);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /(22\.|2[3-9]\.)/);
-});

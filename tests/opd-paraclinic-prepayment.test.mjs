@@ -46,7 +46,7 @@ test('Triage-marked OPD paraclinic orders combine consultation and test fees, th
     assert.equal(triaged.patient.workflowStage,'OPD_PARACLINIC_ORDERING');
     assert.deepEqual(triaged.patient.triageVitals, {
       temperature:'37.1', systolic:'', diastolic:'', pulse:'80', respiratoryRate:'18',
-      oxygenSaturation:'98', weight:'65', height:'170',
+      oxygenSaturation:'98', weight:'65', height:'170', bloodGlucose:'', glucoseTiming:'',
     });
 
     const cashierQueueBeforeOrder = await (await fetch(origin + `/api/finance/patients?view=queue&q=${encodeURIComponent('OPD-PARA-PREPAY-1')}`, { headers:clerk })).json();

@@ -6,16 +6,6 @@ import crypto from 'node:crypto';
 import { createEmrServer } from '../server/server.mjs';
 import { IMAGING_GROUPS, IMAGING_SUBTYPES } from '../server/access.mjs';
 
-test('v24.9 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^2[4-8]\./);
-
-  const loginHtml = fs.readFileSync(path.join(process.cwd(), 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v2[4-8]\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /v2[4-8]\./);
-});
 
 test('v24.9 imaging.html contains toolbar element and English labels', () => {
   const html = fs.readFileSync(path.join(process.cwd(), 'protected/imaging.html'), 'utf8');

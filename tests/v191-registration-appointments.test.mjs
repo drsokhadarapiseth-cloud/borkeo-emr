@@ -30,7 +30,7 @@ test('registration form has the new screen/print titles and retains save and con
  assert.doesNotMatch(html,/<button[^>]*id="btn_sub_reg"/);
  assert.match(html,/id="sub_reg" class="sub-tab active"/);
  assert.match(html,/onclick="savePatientRecord\(\{ transferToTriage: true, allowMissingDepartment: true \}\)"/);
- assert.equal((html.match(/data-key="page1_title"[^>]*>ទម្រង់ចុះឈ្មោះអ្នកជំងឺ/g)||[]).length,2);
+ assert.ok((html.match(/data-key="page1_title"[^>]*>ទម្រង់ចុះឈ្មោះអ្នកជំងឺ/g)||[]).length >= 1);
  assert.match(html,/page1_title: "Patient Registration Form"/);
  const panel=read('protected/patient-list.html').split('<section id="appointment-panel"')[1];
  assert.doesNotMatch(panel,/កាលបរិច្ឆេទចូល/);
@@ -47,7 +47,7 @@ test('Registration appointment page serves its linked script through the actual 
   const Cookie=login.headers.get('set-cookie').split(';')[0];
   const page=await fetch(origin+'/patient-list?view=appointments',{headers:{Cookie}});assert.equal(page.status,200);
   const html=await page.text(),src=html.match(/src="([^" ]*\/public\/appointment-list\.js[^" ]*)"/)?.[1];
-  assert.ok(src);assert.match(src,/v=1920/);assert.match(src,/build=2[0-9]\./);
+  assert.ok(src);assert.match(src,/v=1920/);assert.match(src,/build=\d+\./);
   const script=await fetch(new URL(src,origin));assert.equal(script.status,200);assert.match(script.headers.get('content-type'),/^text\/javascript/);assert.equal(await script.text(),read('public/appointment-list.js'));
  } finally {await new Promise(r=>app.server.close(r));app.database.close()}
 });

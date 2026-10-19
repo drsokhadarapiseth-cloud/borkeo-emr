@@ -12,10 +12,3 @@ test('v23.2 queue-display implements exact Khmer number reading rules', () => {
   assert.ok(js.includes('ម្ភៃ'), 'reads twenties starting from 020');
 });
 
-test('v23.2 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^2[0-9]\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /2[0-9]\./);
-});

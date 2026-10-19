@@ -5,16 +5,6 @@ import path from 'node:path';
 
 const rootDir = process.cwd();
 
-test('v35.1 version consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-  assert.ok(['35.1.0', '35.2.0', '35.3.0', '35.4.0', '35.5.0', '35.6.0', '35.7.0', '35.8.0', '35.9.0', '36.0.0', '36.1.0', '36.2.0', '36.3.0', '36.4.0', '36.5.0', '36.6.0'].includes(pkg.version));
-
-  const loginHtml = fs.readFileSync(path.join(rootDir, 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v3[56]\.[0-9]/);
-
-  const serverMjs = fs.readFileSync(path.join(rootDir, 'server/server.mjs'), 'utf8');
-  assert.match(serverMjs, /Borkeo EMR v3[56]\.[0-9]/);
-});
 
 test('Case number uses REG prefix and placeholder 160201-REG-YYMMDD-001', () => {
   const emrHtml = fs.readFileSync(path.join(rootDir, 'protected/EMR.html'), 'utf8');

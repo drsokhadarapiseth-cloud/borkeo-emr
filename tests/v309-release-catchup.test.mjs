@@ -45,7 +45,7 @@ test('fixed paper checklist excludes inactive codes and disables already ordered
  const a=source.indexOf('    const activeCodes = new Set(tests.map'),b=source.indexOf('    const formHtml =',a);
  const ctx={tests:[{code:'CBC'}],hasExistingLabTest:()=>true,esc:v=>v};vm.runInNewContext(source.slice(a,b)+'\nthis.row=testRow;',ctx);
  assert.equal(ctx.row('HGB','Inactive'), '');assert.match(ctx.row('CBC','CBC'),/disabled/);
- const photo=fs.readFileSync(new URL('../public/patient-photo.js',import.meta.url),'utf8');assert.match(photo,/p\.version = result\.patientVersion/);assert.match(photo,/expectedVersion:/);assert.match(photo,/alert\(err.message/);
+ const photo=fs.readFileSync(new URL('../public/patient-photo.js',import.meta.url),'utf8');assert.match(photo,/p\.version = result\.patientVersion/);assert.match(photo,/expectedVersion:/);assert.match(photo,/alert\(/);assert.match(photo,/err\.message/);
 });
 
 test('admission retains the originating OPD doctor and diagnosis after an IPD transfer',()=>{

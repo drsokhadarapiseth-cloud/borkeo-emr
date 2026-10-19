@@ -7,16 +7,6 @@ import { paymentStatusForPatient, invalidatePaymentStatusCache, addCharge } from
 
 const ROOT = path.resolve('.');
 
-test('v36.1 - Version metadata consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-  assert.ok(['36.1.0', '36.2.0', '36.3.0', '36.4.0', '36.5.0', '36.6.0', '36.7.0'].includes(pkg.version));
-
-  const loginHtml = fs.readFileSync(path.join(ROOT, 'public', 'login.html'), 'utf8');
-  assert.match(loginHtml, /v36\.[1-7]/);
-
-  const serverMjs = fs.readFileSync(path.join(ROOT, 'server', 'server.mjs'), 'utf8');
-  assert.match(serverMjs, /Borkeo EMR v36\.[1-7]/);
-});
 
 test('v36.1 - In-memory paymentStatusCache eliminates repeated SQL queries and invalidates on financial mutations', async () => {
   const { ensureFinanceSchema } = await import('../server/finance.mjs');

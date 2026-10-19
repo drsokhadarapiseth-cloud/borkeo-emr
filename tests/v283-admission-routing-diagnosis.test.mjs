@@ -2,19 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const projectRoot = path.resolve('d:/EMR/Borkeo_EMR_v20.3/Borkeo_EMR_v20.3');
-
-test('v28.3 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8'));
-  assert.ok(/^28\.[3-9]\./.test(pkg.version));
-
-  const loginHtml = fs.readFileSync(path.join(projectRoot, 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /class="login-build-version"[^>]*>v28\.[3-9]<\/span>/);
-
-  const serverMjs = fs.readFileSync(path.join(projectRoot, 'server/server.mjs'), 'utf8');
-  assert.match(serverMjs, /^\/\/ Borkeo EMR v28\.[3-9] - Electronic Medical Record System/m);
-});
+const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 test('v28.3 admission form contains date display slots in both director and doctor columns', () => {
   const emrHtml = fs.readFileSync(path.join(projectRoot, 'protected/EMR.html'), 'utf8');

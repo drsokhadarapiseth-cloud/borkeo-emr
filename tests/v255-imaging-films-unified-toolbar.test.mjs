@@ -4,16 +4,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createEmrServer } from '../server/server.mjs';
 
-test('v25.5 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^25\./);
-
-  const loginHtml = fs.readFileSync(path.join(process.cwd(), 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v25\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /v25\./);
-});
 
 test('v25.5 stock.html shares identical unified specialty tabs with /imaging', () => {
   const html = fs.readFileSync(path.join(process.cwd(), 'protected/stock.html'), 'utf8');

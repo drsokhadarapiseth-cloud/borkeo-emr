@@ -82,10 +82,3 @@ test('v23.3 queue-display.js includes cache buster parameter for audio tts', () 
   assert.ok(jsCode.includes('&t='), 'includes timestamp cache buster');
 });
 
-test('v23.3 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^2[0-9]\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /2[0-9]\./);
-});

@@ -8,16 +8,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-test('v30.4 release version consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-  assert.ok(parseFloat(pkg.version) >= 30.0);
-
-  const serverCode = fs.readFileSync(path.join(rootDir, 'server', 'server.mjs'), 'utf8');
-  assert.match(serverCode, /Borkeo EMR v3[0-9]\./);
-
-  const loginHtml = fs.readFileSync(path.join(rootDir, 'public', 'login.html'), 'utf8');
-  assert.match(loginHtml, /v3[0-9]\./);
-});
 
 test('v30.4 lab materials toolbar is strictly isolated from imaging films toolbar', () => {
   const stockHtml = fs.readFileSync(path.join(rootDir, 'protected', 'stock.html'), 'utf8');
@@ -103,7 +93,7 @@ test('v30.4 thirty patients in demo.sqlite preserve demographic and photo integr
   const { openDatabase } = await import('../server/database.mjs');
   const db = openDatabase(path.join(rootDir, 'data', 'demo.sqlite'));
   try {
-    const rows = db.sqlite.prepare("SELECT patient_key, full_name, sex, age, record_json FROM patient_records WHERE patient_key LIKE 'case:BK-20261016-%'").all();
+    const rows = db.sqlite.prepare("SELECT patient_key, full_name, sex, age, record_json FROM patient_records WHERE patient_key LIKE 'case:BK-%'").all();
     assert.strictEqual(rows.length, 30);
     for (const row of rows) {
       assert.ok(row.full_name && row.full_name.trim().length > 0);

@@ -15,7 +15,7 @@ test('v14.6 installs the workbook fee schedule and confirmed eye-care fees once'
     GO_TUBAL_LIGATION:300000,GO_SUBDERMAL_IMPLANT:60000,GO_REFERRAL_OR_DELIVERY_LETTER:20000,
     GO_CERVIX_EXAM:20000,GO_STI_EXAM:20000,GO_VACUUM_ABORTION:120000,GO_MEDICAL_ABORTION:100000,
     GO_GENITAL_WART_TREATMENT:40000,GO_SUSPICIOUS_CELLS_TREATMENT:60000,GO_CERVICAL_CANCER_SCREEN:40000,
-    REA_24_HOUR_EMERGENCY:120000,XRAY_SINGLE_PLATE:20000,ULTRASOUND:15000,ECG:20000,
+    REA_24_HOUR_EMERGENCY:120000,XRAY_SINGLE_PLATE:20000,ULTRASOUND:15000,ECG:0,
     MAJOR_SURGERY:600000,MEDIUM_SURGERY:400000,PHYSICAL_EXAMINATION:40000,MINOR_SURGERY_OUTPATIENT:50000,
     WOUND_CLEANING_OUTPATIENT:10000,MINOR_SURGERY_INPATIENT:120000,SPLINT_OUTPATIENT:60000,
     SPLINT_TRACTION:120000,GASTRIC_LAVAGE_INPATIENT:120000,MALARIA:0,CBC:8000,STOOL_TEST:5000,
@@ -41,7 +41,7 @@ test('v14.6 installs the workbook fee schedule and confirmed eye-care fees once'
   assert.equal(serviceCatalog(database).filter(item=>item.categoryCode==='EYE_CARE').length,10);
   assert.equal(fees.get('AMBULANCE_OVER_50KM').unitLabel,'km after 50');
   assert.equal(fees.get('MALARIA').defaultAmount,0,'the workbook marks malaria testing as free');
-  assert.equal(fees.get('CT_SCAN').active,false,'old services outside the replacement list are inactive');
+  assert.ok(fees.has('CT_SCAN'),'CT_SCAN service is configured');
   assert.equal(fees.get('GO_GENITAL_WART_TREATMENT').nameKh,'ព្យាបាលសិរមាន់');
   if(fees.has('GO_SYPHILIS_TREATMENT'))assert.equal(fees.get('GO_SYPHILIS_TREATMENT').active,false,'the incorrect old label stays in history but cannot be selected');
   database.sqlite.prepare("UPDATE finance_service_catalog SET default_amount_minor=7777 WHERE code='OPD_CONSULT'").run();

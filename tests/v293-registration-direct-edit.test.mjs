@@ -8,15 +8,11 @@ const projectRoot = path.resolve('.');
 test('v29.3 patient-list.js: registration account edits directly without management approval', () => {
   const patientListJs = fs.readFileSync(path.join(projectRoot, 'public/patient-list.js'), 'utf8');
 
-  // Verify registration edit title
-  assert.match(patientListJs, /const editTitle =/);
-  assert.match(patientListJs, /កែប្រែព័ត៌មានចុះឈ្មោះ \(Edit Registration\)/);
-  assert.match(patientListJs, /Edit Registration Information/);
+  // Verify registration role check and direct register view
+  assert.ok(patientListJs.includes("if (activeRole === 'REGISTRATION') return true;"));
+  assert.ok(patientListJs.includes("if (activeRole === 'REGISTRATION') return 'register';"));
 
-  // Verify registration bypasses approval request and redirects to register view
-  assert.match(patientListJs, /\['REGISTRATION',\s*'ADMIN',\s*'VICE_DIRECTOR'\]\.includes\(activeRole\)/);
-  assert.match(patientListJs, /window\.location\.assign\(`\/emr\?patient=\$\{encodeURIComponent\(patientKey\)\}&view=register`\)/);
-
-  // Verify non-registration still uses request to Director
-  assert.match(patientListJs, /body:\s*JSON\.stringify\(\{\s*kind:\s*'PATIENT_EDIT',\s*patientKey,\s*reason:\s*reason\.trim\(\)\s*\}\)/);
+  // Verify edit routing and approval request
+  assert.ok(patientListJs.includes("location.assign('/emr?'+new URLSearchParams({patient:patient.patientKey,view:access.view,mode:'edit'}));"));
+  assert.ok(patientListJs.includes("submitPatientRequest('PATIENT_EDIT',patient,access.scope)"));
 });

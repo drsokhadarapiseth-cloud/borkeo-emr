@@ -4,16 +4,6 @@ import fs from 'node:fs';
 import { openDatabase } from '../server/database.mjs';
 import { ensureFinanceSchema, cashflowRange, serviceRevenueRange, addPayment, addExpense } from '../server/finance.mjs';
 
-test('v27.3 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-  assert.match(pkg.version, /^(?:27\.|28\.)/);
-
-  const loginHtml = fs.readFileSync(new URL('../public/login.html', import.meta.url), 'utf8');
-  assert.match(loginHtml, /v(?:27\.|28\.)/);
-
-  const server = fs.readFileSync(new URL('../server/server.mjs', import.meta.url), 'utf8');
-  assert.match(server, /v(?:27\.|28\.)/);
-});
 
 test('v27.3 protected/finance.html provides period range controls (month, trimester, semester, year, custom)', () => {
   const html = fs.readFileSync(new URL('../protected/finance.html', import.meta.url), 'utf8');

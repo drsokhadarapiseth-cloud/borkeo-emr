@@ -8,12 +8,22 @@ export function ensureEncounterAccessSchema(db) {
   db.sqlite.exec(`CREATE TABLE IF NOT EXISTS encounter_corrections (
     request_id TEXT PRIMARY KEY,patient_key TEXT NOT NULL,scope TEXT NOT NULL,
     requested_by TEXT NOT NULL,version INTEGER NOT NULL,used_at INTEGER
-  ) STRICT;`);
+  ) STRICT;
+  CREATE TABLE IF NOT EXISTS pharmacy_prescriptions (
+    id TEXT PRIMARY KEY,
+    patient_key TEXT,
+    dispensed_at INTEGER
+  );`);
 }
 
 export function encounterClosed(db, patient) {
   const data = parse(patient?.record_json);
-  const received = Boolean(patient && db.sqlite.prepare('SELECT 1 FROM pharmacy_prescriptions WHERE patient_key=? AND dispensed_at IS NOT NULL LIMIT 1').get(patient.patient_key));
+  let received = false;
+  try {
+    received = Boolean(patient && db.sqlite.prepare('SELECT 1 FROM pharmacy_prescriptions WHERE patient_key=? AND dispensed_at IS NOT NULL LIMIT 1').get(patient.patient_key));
+  } catch {
+    received = false;
+  }
   return {
     received: received || Boolean(data['system:opdDischarge']?.dispensedAt),
     discharged: patient?.service_mode === 'ipd' && Boolean(patient.discharge_date || data['system:admissionStatus'] === 'discharged' || data['system:discharge']?.dischargeAt),

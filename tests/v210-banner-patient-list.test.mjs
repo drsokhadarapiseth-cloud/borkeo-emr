@@ -27,13 +27,3 @@ test('v21.0 patient list displays clean Patient ID and renames equityCard column
   assert.match(patientListCss, /\.patient-id-link\s*\{display:inline-block!important;padding:0!important;border:0!important;background:transparent!important;color:#087dff!important/);
 });
 
-test('v21.0 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.match(pkg.version, /^2[0-9]\./);
-
-  const loginHtml = read('public/login.html');
-  assert.match(loginHtml, /v2[0-9]\./);
-
-  const serverMjs = read('server/server.mjs');
-  assert.match(serverMjs, /2[0-9]\./);
-});

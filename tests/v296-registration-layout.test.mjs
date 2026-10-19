@@ -8,16 +8,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-test('v29.6 release version consistency across package.json, login.html, and server.mjs', () => {
-    const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-    assert.strictEqual(pkg.version, '29.6.0');
-
-    const serverCode = fs.readFileSync(path.join(rootDir, 'server', 'server.mjs'), 'utf8');
-    assert.match(serverCode, /Borkeo EMR v29\.6/);
-
-    const loginHtml = fs.readFileSync(path.join(rootDir, 'public', 'login.html'), 'utf8');
-    assert.match(loginHtml, /v29\.6/);
-});
 
 test('v29.6 Patient Information section is unified and renamed in protected/EMR.html', () => {
     const emrPath = path.join(rootDir, 'protected', 'EMR.html');

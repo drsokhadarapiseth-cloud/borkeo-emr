@@ -8,13 +8,6 @@ import { IMAGING_GROUPS, IMAGING_SUBTYPES, getUserImagingSubtypes, setUserImagin
 import { DEFAULT_SERVICE_CATALOG } from '../server/finance.mjs';
 import { generateSimulatedSignaturePng, defaultSimulatedSignatureDataUrl, signatureSnapshot } from '../server/esign.mjs';
 
-test('v24.8 version step consistency across package.json and login.html', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^2[4-8]\./);
-
-  const loginHtml = fs.readFileSync(path.join(process.cwd(), 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v2[4-8]\./);
-});
 
 test('v24.8 all 9 new modalities and 4 classic modalities are grouped properly', () => {
   const expectedModalities = [

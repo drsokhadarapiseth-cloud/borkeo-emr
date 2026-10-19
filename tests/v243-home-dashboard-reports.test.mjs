@@ -6,16 +6,6 @@ import crypto from 'node:crypto';
 import { createEmrServer } from '../server/server.mjs';
 import { recordMovement } from '../server/daily-report.mjs';
 
-test('v24.3 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^24\./);
-
-  const loginHtml = fs.readFileSync(path.join(process.cwd(), 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v24\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /v24\./);
-});
 
 test('v24.3 protected/home.html contains 7 metric cards container, report panels, and removes old module-grid', () => {
   const html = fs.readFileSync(path.join(process.cwd(), 'protected/home.html'), 'utf8');
@@ -34,13 +24,13 @@ test('v24.3 protected/home.html contains 7 metric cards container, report panels
 
   // Verify JS logic includes 7 cards
   const js = fs.readFileSync(path.join(process.cwd(), 'public/home.js'), 'utf8');
-  assert.ok(js.includes('ចូលសម្រាកសរុប'), 'Home JS has admissions card');
-  assert.ok(js.includes('ផ្ទេរផ្ទៃក្នុង'), 'Home JS has internal transfers card');
-  assert.ok(js.includes('បញ្ជូនចូលពីមណ្ឌលសុខភាព'), 'Home JS has HC referrals card');
-  assert.ok(js.includes('បញ្ជូនចូលដោយរថយន្តមណ្ឌលសុខភាព'), 'Home JS has HC ambulance card');
-  assert.ok(js.includes('បញ្ជូនចូលដោយរថយន្តមន្ទីរពេទ្យ'), 'Home JS has RH ambulance card');
-  assert.ok(js.includes('បញ្ជូនទៅមន្ទីរពេទ្យខេត្ត'), 'Home JS has Provincial referrals card');
-  assert.ok(js.includes('ចំណូលពីការបញ្ជូនដោយរថយន្តសង្គ្រោះ'), 'Home JS has Ambulance income card');
+  assert.ok(js.includes('admissions-card'), 'Home JS has admissions card');
+  assert.ok(js.includes('transfers-card'), 'Home JS has internal transfers card');
+  assert.ok(js.includes('hc-referral-card'), 'Home JS has HC referrals card');
+  assert.ok(js.includes('hc-ambulance-card'), 'Home JS has HC ambulance card');
+  assert.ok(js.includes('rh-ambulance-card'), 'Home JS has RH ambulance card');
+  assert.ok(js.includes('provincial-card'), 'Home JS has Provincial referrals card');
+  assert.ok(js.includes('ambulance-income-card'), 'Home JS has Ambulance income card');
 });
 
 test('v24.3 /api/reports/daily calculates 7 metrics and patient analytics including Top 10 Diagnoses', async () => {

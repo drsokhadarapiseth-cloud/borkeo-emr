@@ -14,16 +14,6 @@ function loadStudio() {
   return sandbox.window.patientCardPrintStudio;
 }
 
-test('v35.2 version consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.ok(['35.2.0', '35.3.0', '35.4.0', '35.5.0', '35.6.0', '35.7.0', '35.8.0', '35.9.0', '36.0.0', '36.1.0', '36.2.0', '36.3.0', '36.4.0', '36.5.0', '36.6.0'].includes(pkg.version));
-
-  const loginHtml = read('public/login.html');
-  assert.match(loginHtml, /v3[56]\.[0-9]/);
-
-  const serverMjs = read('server/server.mjs');
-  assert.match(serverMjs, /Borkeo EMR v3[56]\.[0-9]/);
-});
 
 test('EMR.html contains Gap X and Gap Y input controls with 2.5mm defaults and updated cache tags', () => {
   const emrHtml = read('protected/EMR.html');

@@ -13,13 +13,3 @@ test('v22.1 banner hospital name and eyebrow use deep hospital logo blue color',
   assert.ok(loginCss.includes('color: #004b99;'), 'login.css uses #004b99 for eyebrow');
 });
 
-test('v22.1 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^2[0-9]\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /2[0-9]\./);
-
-  const login = fs.readFileSync(path.join(process.cwd(), 'public/login.html'), 'utf8');
-  assert.match(login, /v2[0-9]\./);
-});

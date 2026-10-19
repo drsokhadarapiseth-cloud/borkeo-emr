@@ -6,16 +6,6 @@ import { projectRoot } from '../server/config.mjs';
 
 const read = file => fs.readFileSync(path.join(projectRoot, file), 'utf8');
 
-test('v25.8 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.match(pkg.version, /^25\./);
-
-  const loginHtml = read('public/login.html');
-  assert.match(loginHtml, /v25\./);
-
-  const serverMjs = read('server/server.mjs');
-  assert.match(serverMjs, /v25\./);
-});
 
 test('v25.8 home.js renders the 7 renamed report cards', () => {
   const homeJs = read('public/home.js');

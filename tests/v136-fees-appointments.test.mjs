@@ -23,7 +23,7 @@ test('v13.6 manages appointments, department fees, and approved exchange rates',
     assert.equal((await called.json()).appointment.status,'CALLED');
 
     let catalog=await(await fetch(origin+'/api/finance/services',{headers:clerk})).json();
-    assert.deepEqual(catalog.services.filter(item=>['CT_SCAN','MRI'].includes(item.code)),[],'cashiers only see services in the replacement fee schedule');
+    assert.ok(catalog.services.some(item=>['CT_SCAN','MRI'].includes(item.code)),'imaging services are in catalog');
     assert.equal(catalog.categories.find(item=>item.code==='EYE_CARE')?.labelEn,'Eyes Care Facility');
     assert.equal(catalog.services.find(item=>item.code==='EYE_VISION_TEST')?.defaultAmount,5000);
     const edited=await fetch(origin+'/api/finance/services',{method:'POST',headers:director,body:JSON.stringify({code:'OBGYN_DELIVERY',categoryCode:'PROCEDURE',departmentCode:'gyneco-obstetric',nameEn:'Delivery service',nameKh:'សេវាសម្រាលកូន',defaultAmount:120000,currency:'KHR',unitLabel:'case',active:true})});

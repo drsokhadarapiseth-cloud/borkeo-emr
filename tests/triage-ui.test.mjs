@@ -14,6 +14,6 @@ test('v12.0 keeps case selection in Registration and splits Triage waiting/compl
   assert.equal(emr.includes('id="pmrs-case-section"'), false);
   assert.match(triage, /id="triage-body-waiting"/);
   assert.match(triage, /id="triage-body-completed"/);
-  assert.match(perms, /role === 'TRIAGE' && \[1,2\]\.includes/);
+  assert.match(perms, /role === 'TRIAGE' && Number\(pageNumber\)/);
   assert.match(perms, /completedTriage = role === 'TRIAGE'/);
 });

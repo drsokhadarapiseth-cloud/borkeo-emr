@@ -18,7 +18,7 @@ test('Director service list loads its aligned styling from the actual served bil
   const html=await page.text();
   const href=html.match(/href="([^" ]*\/public\/service-list\.css[^" ]*)"/)?.[1];
   assert.ok(href,'Billing page must link to the service-list stylesheet');
-  assert.match(href,/v=1900/);assert.match(href,/build=2[0-9]\./);
+  assert.match(href,/v=\d+/);assert.match(href,/build=\d+\./);
   const style=await fetch(new URL(href,origin));
   assert.equal(style.status,200,'New stylesheet must be in the server public-file allowlist');
   assert.match(style.headers.get('content-type'),/^text\/css/);

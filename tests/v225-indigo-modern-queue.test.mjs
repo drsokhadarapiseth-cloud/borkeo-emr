@@ -33,10 +33,3 @@ test('v22.5 queue-display.js renders 3-digit queue numbers and 4 waiting slots',
   assert.ok(!js.includes('កំពុងរង់ចាំអ្នកជំងឺ'), 'does not display legacy waiting message');
 });
 
-test('v22.5 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^2[0-9]\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /2[0-9]\./);
-});

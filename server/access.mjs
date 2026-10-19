@@ -438,6 +438,7 @@ export function patientWorkWard(row) {
 export function canAccessPatient(database, session, row) {
   const role = sessionRole(session);
   if (['ADMIN','VICE_DIRECTOR'].includes(role) || role === 'DIRECTOR' || role === 'LAB' || role === 'IMAGING' || role === 'PHARMACY') return true;
+  if (role === 'DOCTOR' && (row?.department_code === 'emergency' || patientWorkWard(row) === 'emergency')) return true;
   if (['ACCOUNTANT','CLERK'].includes(role)) return false;
   if (!role) return false;
   if (!roleRequiresWard(role)) return true;

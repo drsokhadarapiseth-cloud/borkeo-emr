@@ -7,9 +7,6 @@ import { projectRoot } from '../server/config.mjs';
 const read = file => fs.readFileSync(path.join(projectRoot, file), 'utf8');
 
 test('v20.6 requests page uses pure Khmer defaults, supports dynamic bilingual translation, and standardizes toolbar buttons', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.match(pkg.version, /^2[0-9]\.[0-9]\.\d+/);
-
   const requestsHtml = read('protected/requests.html');
   assert.doesNotMatch(requestsHtml, /data-language-exclude/);
   assert.doesNotMatch(requestsHtml, /\/\s*Requests\s*&/i);
@@ -31,7 +28,10 @@ test('v20.6 requests page uses pure Khmer defaults, supports dynamic bilingual t
   assert.doesNotMatch(requestsJs, /មើល \/ View/);
   assert.doesNotMatch(requestsJs, /មិនមានសំណើ \/ No requests/);
   assert.doesNotMatch(requestsJs, /អនុម័ត និងចុះហត្ថលេខា \/ Approve & Sign/);
-  assert.match(requestsJs, /titles=\{ADMISSION:'លិខិតអនុញ្ញាតសម្រាកពេទ្យ',DISCHARGE:'លិខិតចេញពីមន្ទីរពេទ្យ',MEDICINE:'បណ្ណស្នើសុំឱសថ',FEE:'ស្នើសុំលើកលែងសេវា'\}/);
+  assert.match(requestsJs, /ADMISSION:\s*'លិខិតអនុញ្ញាតសម្រាកពេទ្យ'/);
+  assert.match(requestsJs, /DISCHARGE:\s*'លិខិតចេញពីមន្ទីរពេទ្យ'/);
+  assert.match(requestsJs, /MEDICINE:\s*'បណ្ណស្នើសុំឱសថ'/);
+  assert.match(requestsJs, /FEE:\s*'ស្នើសុំលើកលែងសេវា'/);
   assert.match(requestsJs, /statuses=\{PENDING:'រង់ចាំ',APPROVED:'អនុម័ត',REJECTED:'បដិសេធ',APPLIED:'បានអនុវត្ត',PREPARING:'កំពុងរៀបចំ'\}/);
 
   const requestsCss = read('public/requests.css');

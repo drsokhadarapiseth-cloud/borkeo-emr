@@ -13,10 +13,3 @@ test('v21.2 department toolbar buttons have standardized matching dimensions and
   assert.match(departmentsCss, /\.ward-filter-label select,\s*body \.map-toolbar \.ward-filter-label select\s*\{\s*min-height:\s*40px\s*!important;\s*height:\s*40px\s*!important/);
 });
 
-test('v21.2 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.match(pkg.version, /^2[0-9]\./);
-
-  const serverMjs = read('server/server.mjs');
-  assert.match(serverMjs, /2[0-9]\./);
-});

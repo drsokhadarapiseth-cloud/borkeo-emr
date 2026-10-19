@@ -2,16 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-test('v26.5 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-  assert.equal(pkg.version, '26.5.0');
-
-  const loginHtml = fs.readFileSync(new URL('../public/login.html', import.meta.url), 'utf8');
-  assert.match(loginHtml, /v26\.5/);
-
-  const server = fs.readFileSync(new URL('../server/server.mjs', import.meta.url), 'utf8');
-  assert.match(server, /v26\.5/);
-});
 
 test('v26.5 protected/home.html removes the 3 switcher buttons and combines OPD, IPD and payment in 1 page', () => {
   const html = fs.readFileSync(new URL('../protected/home.html', import.meta.url), 'utf8');

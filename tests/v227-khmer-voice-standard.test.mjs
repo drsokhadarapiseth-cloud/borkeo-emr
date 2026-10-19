@@ -14,10 +14,3 @@ test('v22.7 queue TV display uses 100% standard Khmer voice calling and natural 
   assert.ok(js.includes('khmerDigitWords'), 'converts numbers to Khmer words for clarity');
 });
 
-test('v22.7 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-  assert.match(pkg.version, /^2[0-9]\./);
-
-  const server = fs.readFileSync(path.join(process.cwd(), 'server/server.mjs'), 'utf8');
-  assert.match(server, /2[0-9]\./);
-});

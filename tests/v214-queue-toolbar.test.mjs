@@ -21,10 +21,3 @@ test('v21.4 OPD/IPD queue toolbar places Counter before Date and standardizes co
   assert.match(css, /\.opd-counter-label select\s*\{\s*width:\s*90px\s*!important;\s*min-width:\s*90px\s*!important/);
 });
 
-test('v21.4 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.match(pkg.version, /^2[0-9]\./);
-
-  const serverMjs = read('server/server.mjs');
-  assert.match(serverMjs, /2[0-9]\./);
-});

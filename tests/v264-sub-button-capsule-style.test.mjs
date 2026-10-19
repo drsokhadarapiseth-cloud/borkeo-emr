@@ -2,16 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-test('v26.4 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-  assert.equal(pkg.version, '26.4.0');
-
-  const loginHtml = fs.readFileSync(new URL('../public/login.html', import.meta.url), 'utf8');
-  assert.match(loginHtml, /v26\.4/);
-
-  const server = fs.readFileSync(new URL('../server/server.mjs', import.meta.url), 'utf8');
-  assert.match(server, /v26\.4/);
-});
 
 test('v26.4 shared-controls.css implements Image 2 capsule pill style for sub buttons and request tabs', () => {
   const css = fs.readFileSync(new URL('../public/shared-controls.css', import.meta.url), 'utf8');

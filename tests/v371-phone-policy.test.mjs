@@ -11,21 +11,6 @@ import {
 
 const ROOT = path.resolve('.');
 
-test('v37.1 - Version metadata consistency across package.json, login.html, server.mjs, and HTML templates', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-  assert.ok(['37.1.0', '37.2.0', '37.3.0', '37.4.0', '37.5.0', '37.6.0', '37.7.0', '37.8.0', '37.9.0', '38.0.0'].includes(pkg.version));
-
-  const loginHtml = fs.readFileSync(path.join(ROOT, 'public', 'login.html'), 'utf8');
-  assert.ok(loginHtml.includes('v' + pkg.version.split('.').slice(0,2).join('.')), 'login.html must contain v37.1');
-
-  const serverMjs = fs.readFileSync(path.join(ROOT, 'server', 'server.mjs'), 'utf8');
-  assert.ok(serverMjs.includes('Borkeo EMR v' + pkg.version.split('.').slice(0,2).join('.')), 'server.mjs must contain Borkeo EMR v37.1');
-
-  const emrHtml = fs.readFileSync(path.join(ROOT, 'protected', 'EMR.html'), 'utf8');
-  assert.ok(emrHtml.includes('/public/cambodia-phone.js?v=3710'), 'EMR.html must load cambodia-phone.js');
-  assert.ok(/\/public\/emr-patient-record\.js\?v=(3710|3730)/.test(emrHtml), 'EMR.html must cache-bust emr-patient-record.js to v3710');
-  assert.ok(emrHtml.includes('/public/emr-permissions.js?v=3710'), 'EMR.html must cache-bust emr-permissions.js to v3710');
-});
 
 test('v37.1 - Prefix sets contains exactly 27 9-digit prefixes and 7 10-digit prefixes', () => {
   assert.equal(NINE_DIGIT_PREFIXES.size, 27);

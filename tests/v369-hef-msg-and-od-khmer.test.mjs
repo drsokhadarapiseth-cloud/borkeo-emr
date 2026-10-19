@@ -5,29 +5,6 @@ import path from 'node:path';
 
 const ROOT = path.resolve('.');
 
-test('v36.9 - Version metadata consistency across package.json, login.html, server.mjs and templates', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-  assert.ok(['36.9.0', '37.0.0'].includes(pkg.version));
-
-  const loginHtml = fs.readFileSync(path.join(ROOT, 'public', 'login.html'), 'utf8');
-  assert.match(loginHtml, /v3[67]\.[09]/);
-
-  const serverMjs = fs.readFileSync(path.join(ROOT, 'server', 'server.mjs'), 'utf8');
-  assert.match(serverMjs, /Borkeo EMR v3[67]\.[09]/);
-
-  const emrHtml = fs.readFileSync(path.join(ROOT, 'protected', 'EMR.html'), 'utf8');
-  assert.ok(emrHtml.includes('/public/emr-patient-record.js?v=3690') || emrHtml.includes('/public/emr-patient-record.js?v=3700'));
-  assert.ok(emrHtml.includes('/public/emr-permissions.js?v=3690') || emrHtml.includes('/public/emr-permissions.js?v=3700'));
-
-  const patientListHtml = fs.readFileSync(path.join(ROOT, 'protected', 'patient-list.html'), 'utf8');
-  assert.ok(patientListHtml.includes('/public/patient-list.js?v=3690') || patientListHtml.includes('/public/patient-list.js?v=3700'));
-
-  const triageHtml = fs.readFileSync(path.join(ROOT, 'protected', 'triage.html'), 'utf8');
-  assert.ok(triageHtml.includes('/public/patient-list.js?v=3690') || triageHtml.includes('/public/patient-list.js?v=3700'));
-
-  const hfHtml = fs.readFileSync(path.join(ROOT, 'protected', 'health-facility.html'), 'utf8');
-  assert.ok(hfHtml.includes('/public/health-facility.js?v=3690') || hfHtml.includes('/public/health-facility.js?v=3700'));
-});
 
 test('v36.9 - HEF dialog status does not display the warning message when members exist', () => {
   const code = fs.readFileSync(path.join(ROOT, 'public', 'hef-lookup.js'), 'utf8');

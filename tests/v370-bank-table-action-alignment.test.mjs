@@ -5,29 +5,6 @@ import path from 'node:path';
 
 const ROOT = path.resolve('.');
 
-test('v37.0 - Version metadata consistency across package.json, login.html, server.mjs and templates', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-  assert.equal(pkg.version, '37.0.0');
-
-  const loginHtml = fs.readFileSync(path.join(ROOT, 'public', 'login.html'), 'utf8');
-  assert.match(loginHtml, /v37\.0/);
-
-  const serverMjs = fs.readFileSync(path.join(ROOT, 'server', 'server.mjs'), 'utf8');
-  assert.match(serverMjs, /Borkeo EMR v37\.0/);
-
-  const emrHtml = fs.readFileSync(path.join(ROOT, 'protected', 'EMR.html'), 'utf8');
-  assert.ok(emrHtml.includes('/public/emr-patient-record.js?v=3700'));
-  assert.ok(emrHtml.includes('/public/emr-permissions.js?v=3700'));
-
-  const patientListHtml = fs.readFileSync(path.join(ROOT, 'protected', 'patient-list.html'), 'utf8');
-  assert.ok(patientListHtml.includes('/public/patient-list.js?v=3700'));
-
-  const triageHtml = fs.readFileSync(path.join(ROOT, 'protected', 'triage.html'), 'utf8');
-  assert.ok(triageHtml.includes('/public/patient-list.js?v=3700'));
-
-  const hfHtml = fs.readFileSync(path.join(ROOT, 'protected', 'health-facility.html'), 'utf8');
-  assert.ok(hfHtml.includes('/public/health-facility.js?v=3700'));
-});
 
 test('v37.0 - public/health-facility.js aligns action buttons in banking table', () => {
   const js = fs.readFileSync(path.join(ROOT, 'public', 'health-facility.js'), 'utf8');

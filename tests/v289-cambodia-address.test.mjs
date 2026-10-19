@@ -55,10 +55,9 @@ test('Cambodia administrative address hierarchy dataset and EMR integration', as
   const env = {
     ...process.env,
     PORT: '3196',
-    DEMO_MODE: 'false',
+    EMR_MODE: 'demo',
     DATABASE_PATH: testDbPath,
     SESSION_SECRET: 'test-secret-address',
-    ADMIN_DEFAULT_PASSWORD: 'admin'
   };
 
   const serverProc = spawn('node', ['server/server.mjs'], {

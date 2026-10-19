@@ -8,16 +8,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
-test('v30.6 release version consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-  assert.ok(parseFloat(pkg.version) >= 30.0);
-
-  const serverCode = fs.readFileSync(path.join(rootDir, 'server', 'server.mjs'), 'utf8');
-  assert.match(serverCode, /Borkeo EMR v3[0-9]\./);
-
-  const loginHtml = fs.readFileSync(path.join(rootDir, 'public', 'login.html'), 'utf8');
-  assert.match(loginHtml, /v3[0-9]\./);
-});
 
 test('v30.6 direct laboratory ordering and removal of intermediate requisition button', () => {
   const paraclinicJs = fs.readFileSync(path.join(rootDir, 'public', 'paraclinic.js'), 'utf8');

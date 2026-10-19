@@ -2,16 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-test('v26.9 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-  assert.ok(pkg.version >= '26.9.0');
-
-  const loginHtml = fs.readFileSync(new URL('../public/login.html', import.meta.url), 'utf8');
-  assert.match(loginHtml, /v2[6-8]\./);
-
-  const server = fs.readFileSync(new URL('../server/server.mjs', import.meta.url), 'utf8');
-  assert.match(server, /v2[6-8]\./);
-});
 
 test('v26.9 pharmacy toolbar includes បើកផ្ទាំងលេខរៀង button and styles it', () => {
   const pharmacyOpdHtml = fs.readFileSync(new URL('../protected/pharmacy-opd.html', import.meta.url), 'utf8');

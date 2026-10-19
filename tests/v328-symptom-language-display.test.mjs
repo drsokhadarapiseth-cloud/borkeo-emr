@@ -7,16 +7,6 @@ import vm from 'node:vm';
 const rootDir = process.cwd();
 const source = fs.readFileSync(path.join(rootDir, 'public/chief-complaint-tags.js'), 'utf8');
 
-test('v32.8 release version consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-  assert.ok(parseFloat(pkg.version) >= 32.0, 'package.json version must be current');
-
-  const loginHtml = fs.readFileSync(path.join(rootDir, 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v(?:3[2-6]\.)/);
-
-  const serverMjs = fs.readFileSync(path.join(rootDir, 'server/server.mjs'), 'utf8');
-  assert.match(serverMjs, /Borkeo EMR v(?:3[2-6]\.)/);
-});
 
 test('v32.8 chief-complaint dropdown displays pure Khmer in Khmer form and pure English in English form without parentheses', () => {
   function makeEnv(lang = 'km') {

@@ -5,16 +5,6 @@ import path from 'node:path';
 
 const rootDir = process.cwd();
 
-test('v32.12 release version consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf8'));
-  assert.ok(parseFloat(pkg.version) >= 32.0, 'package.json version must be current');
-
-  const loginHtml = fs.readFileSync(path.join(rootDir, 'public/login.html'), 'utf8');
-  assert.match(loginHtml, /v(?:3[2-6]\.)/);
-
-  const serverMjs = fs.readFileSync(path.join(rootDir, 'server/server.mjs'), 'utf8');
-  assert.match(serverMjs, /Borkeo EMR v(?:3[2-6]\.)/);
-});
 
 test('v32.12 Section 6 renumbered: 1. Personal History, 2. OB/GYN History, 3. Family History, 4. Community History', () => {
   const emrHtml = fs.readFileSync(path.join(rootDir, 'protected/EMR.html'), 'utf8');

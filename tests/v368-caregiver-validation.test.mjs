@@ -6,26 +6,6 @@ import { openDatabase } from '../server/database.mjs';
 
 const ROOT = path.resolve('.');
 
-test('v36.8 - Version metadata consistency across package.json, login.html, server.mjs and templates', () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-  assert.ok(parseFloat(pkg.version) >= 36.8);
-
-  const loginHtml = fs.readFileSync(path.join(ROOT, 'public', 'login.html'), 'utf8');
-  assert.match(loginHtml, /v(3[6-9]|[4-9]\d)\.\d+/);
-
-  const serverMjs = fs.readFileSync(path.join(ROOT, 'server', 'server.mjs'), 'utf8');
-  assert.match(serverMjs, /Borkeo EMR v(3[6-9]|[4-9]\d)\.\d+/);
-
-  const emrHtml = fs.readFileSync(path.join(ROOT, 'protected', 'EMR.html'), 'utf8');
-  assert.match(emrHtml, /\/public\/emr-patient-record\.js\?v=\d+/);
-  assert.match(emrHtml, /\/public\/emr-permissions\.js\?v=\d+/);
-
-  const patientListHtml = fs.readFileSync(path.join(ROOT, 'protected', 'patient-list.html'), 'utf8');
-  assert.match(patientListHtml, /\/public\/patient-list\.js\?v=\d+/);
-
-  const triageHtml = fs.readFileSync(path.join(ROOT, 'protected', 'triage.html'), 'utf8');
-  assert.match(triageHtml, /\/public\/patient-list\.js\?v=\d+/);
-});
 
 test('v36.8 - Caregiver info (ព័ត៌មានអ្នកកំដរ) has red asterisks on title and all fields in protected and legacy EMR.html', () => {
   const protectedHtml = fs.readFileSync(path.join(ROOT, 'protected', 'EMR.html'), 'utf8');

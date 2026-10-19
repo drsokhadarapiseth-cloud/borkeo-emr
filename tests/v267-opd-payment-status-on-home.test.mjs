@@ -2,16 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-test('v26.7 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-  assert.equal(pkg.version, '26.7.0');
-
-  const loginHtml = fs.readFileSync(new URL('../public/login.html', import.meta.url), 'utf8');
-  assert.match(loginHtml, /v26\.7/);
-
-  const server = fs.readFileSync(new URL('../server/server.mjs', import.meta.url), 'utf8');
-  assert.match(server, /v26\.7/);
-});
 
 test('v26.7 protected/home.html provides OPD payment status card side-by-side with OPD indicator table', () => {
   const html = fs.readFileSync(new URL('../protected/home.html', import.meta.url), 'utf8');

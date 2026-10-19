@@ -6,16 +6,6 @@ import { projectRoot } from '../server/config.mjs';
 
 const read = file => fs.readFileSync(path.join(projectRoot, file), 'utf8');
 
-test('v28.2 version step consistency across package.json, login.html, and server.mjs', () => {
-  const pkg = JSON.parse(read('package.json'));
-  assert.ok(/^28\.[2-9]\./.test(pkg.version));
-
-  const loginHtml = read('public/login.html');
-  assert.match(loginHtml, /v28\.[2-9]/);
-
-  const serverMjs = read('server/server.mjs');
-  assert.match(serverMjs, /v28\.[2-9]/);
-});
 
 test('v28.2 finance.mjs provides bilingual charge names and defaults to Khmer', () => {
   const finance = read('server/finance.mjs');
