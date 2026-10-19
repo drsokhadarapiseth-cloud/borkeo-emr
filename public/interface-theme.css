@@ -1,6 +1,6 @@
 @font-face{font-family:BorkeoBannerTitle;src:url('/public/fonts/Moul-Khmer.woff2') format('woff2');font-display:swap}
 @font-face{font-family:BorkeoInterface;src:url('/public/fonts/Battambang-Regular.ttf') format('truetype');font-display:swap}
-:root{--emr-primary:#087fa8;--emr-background:#eaf6fb;--emr-surface:#fff;--emr-text:#17394a;--emr-radius:18px;--emr-panel-shadow:0 10px 28px #07516f16}
+:root{--emr-primary:var(--color-primary-500,#087fa8);--emr-background:var(--surface-app,#eaf6fb);--emr-surface:var(--surface-card,#fff);--emr-text:var(--text-primary,#17394a);--emr-radius:var(--radius-xl,18px);--emr-panel-shadow:var(--shadow-lg,0 10px 28px #07516f16)}
 @media screen{
  body{background:var(--emr-background)!important;color:var(--emr-text)!important}
  body :is(.panel,.card,.patient-panel,.queue-panel,.modern-section,.service-manager-card,.login-panel,.opd-toolbar,.opd-table-wrap,.admin-dashboard){background:var(--emr-surface)!important;color:var(--emr-text)!important;border-radius:var(--emr-radius)!important;box-shadow:var(--emr-panel-shadow)!important}
