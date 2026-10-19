@@ -32,6 +32,7 @@ import { mountAuthRoutes } from './routes/auth.mjs';
 import { mountAdminRoutes } from './routes/admin.mjs';
 import { mountQueueRoutes } from './routes/queue.mjs';
 import { mountMessagesRoutes } from './routes/messages.mjs';
+import { mountPharmacyRoutes } from './routes/pharmacy.mjs';
 import {
   hashPassword, normalizeUsername, randomToken, safeTokenEqual, tokenHash, validatePassword, validateUsername, verifyPassword,
 } from './password.mjs';
@@ -1814,6 +1815,7 @@ export function createEmrServer(configOverrides = {}) {
   mountAdminRoutes(router);
   mountQueueRoutes(router);
   mountMessagesRoutes(router);
+  mountPharmacyRoutes(router);
   // Queue board endpoints: /api/queue/tts (translate_tts), /api/queue/display (activeCalls)
   // pathname === '/api/queue/skip'
   // if (!['ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(role) && !(role==='DOCTOR' && sessionWard(session)==='opd'))
@@ -2058,11 +2060,6 @@ export function createEmrServer(configOverrides = {}) {
  audit(database,request,'DISCHARGE_LETTER_CORRECTED',{userId:actor.userId,details:{patientKey:p.patient_key,requestId:id}});
  }else if(action==='resubmit'){const old=getWorkflowRequest(database,id,actor);if(old.status!=='REJECTED')throw Error('Only rejected requests may be resubmitted.');result=submitWorkflowRequest(database,{kind:old.kind,patientKey:old.patientKey,payload:body.payload||old.payload,reason:body.reason||old.reason},actor)}else throw Error('Choose a request action.')}else{const patient=database.findPatient(String(body.patientKey||''));if(!patient||(!['CLERK','ACCOUNTANT'].includes(actor.role)&&!canAccessPatient(database,session,patient)))throw Object.assign(Error('This patient is outside your ward.'),{status:403});result=submitWorkflowRequest(database,body,actor)}audit(database,request,'WORKFLOW_REQUEST_UPDATED',{userId:actor.userId,details:{id:result.id,kind:result.kind,status:result.status}});database.sqlite.exec('COMMIT');return sendJson(response,200,{request:result},{secure:config.cookieSecure})}catch(e){database.sqlite.exec('ROLLBACK');return sendJson(response,e.status||400,{error:e.message},{secure:config.cookieSecure})}
         }
-      }
-      if(request.method==='POST'&&pathname==='/api/reports/ward-medicines/reject'){
-        if(!session||!MANAGEMENT.includes(sessionRole(session)))return sendJson(response,403,{error:'Management access required.'},{secure:config.cookieSecure});
-        if(!sameOrigin(request,config)||!safeTokenEqual(request.headers['x-csrf-token'],session.csrf_token))return sendJson(response,403,{error:'Security token is invalid.'},{secure:config.cookieSecure});
-        const body=await readJson(request,10000);database.sqlite.exec('BEGIN IMMEDIATE');try{const report=rejectWardMedicineReport(database,body.date,body.ward,session.user_id,body.note,body.revision,body.fingerprint);createStaffMessage(database,{senderUserId:session.user_id,senderRole:sessionRole(session),destinationType:'WARD',destinationCode:body.ward,subject:'បណ្ណស្នើរសុំឱសថត្រូវកែតម្រូវ',body:body.note});audit(database,request,'MEDICINE_REQUEST_REJECTED',{userId:session.user_id,details:{ward:body.ward,date:body.date}});database.sqlite.exec('COMMIT');return sendJson(response,200,{report},{secure:config.cookieSecure})}catch(e){database.sqlite.exec('ROLLBACK');return sendJson(response,400,{error:e.message},{secure:config.cookieSecure})}
       }
       if(['/api/finance/payment-settings','/api/finance/payer-tariffs','/api/finance/concessions'].includes(pathname)||/^\/api\/finance\/concessions\/[0-9a-f-]+\/review$/.test(pathname)){
         if(!session)return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
@@ -2567,140 +2564,6 @@ export function createEmrServer(configOverrides = {}) {
         try { return sendJson(response, 200, cashflowDayDetails(database, url.searchParams.get('date')), { secure: config.cookieSecure }); }
         catch (error) { return sendJson(response, 400, { error: error.message }, { secure: config.cookieSecure }); }
       }
-      const stockMatch = /^\/api\/stock\/(medicine|material|film)(?:\/(receipt|use|history))?$/.exec(pathname);
-      if (stockMatch) {
-        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-        const role = requireContext(session);
-        const kind = stockMatch[1];
-        const sub = stockMatch[2] || '';
-        if (request.method === 'GET' && !sub) {
-          const allowed = kind === 'medicine'
-            ? ['ADMIN','VICE_DIRECTOR','DIRECTOR','PHARMACY','DOCTOR'].includes(role)
-            : kind === 'material'
-              ? ['ADMIN','VICE_DIRECTOR','DIRECTOR','LAB'].includes(role)
-              : ['ADMIN','VICE_DIRECTOR','DIRECTOR','IMAGING','DOCTOR'].includes(role);
-          if (!allowed) return sendJson(response, 403, { error: 'Your role cannot view this stock list.' }, { secure: config.cookieSecure });
-          return sendJson(response, 200, { items: listStock(database, kind) }, { secure: config.cookieSecure });
-        }
-        if (request.method === 'GET' && sub === 'history') {
-          const allowed = kind === 'medicine'
-            ? ['ADMIN','VICE_DIRECTOR','DIRECTOR','PHARMACY','DOCTOR'].includes(role)
-            : kind === 'material'
-              ? ['ADMIN','VICE_DIRECTOR','DIRECTOR','LAB'].includes(role)
-              : ['ADMIN','VICE_DIRECTOR','DIRECTOR','IMAGING','DOCTOR'].includes(role);
-          if (!allowed) return sendJson(response, 403, { error: 'Your role cannot view stock history.' }, { secure: config.cookieSecure });
-          return sendJson(response, 200, { history: stockHistory(database, kind) }, { secure: config.cookieSecure });
-        }
-        if (request.method === 'POST') {
-          if (!sameOrigin(request, config) || !safeTokenEqual(request.headers['x-csrf-token'], session.csrf_token)) {
-            return sendJson(response, 403, { error: 'Security token is invalid.' }, { secure: config.cookieSecure });
-          }
-          const body = await readJson(request, config.maxBodyBytes);
-          if (!sub) {
-            const allowed = kind === 'medicine'
-              ? ['ADMIN','VICE_DIRECTOR','PHARMACY'].includes(role)
-              : kind === 'material'
-                ? ['ADMIN','VICE_DIRECTOR','LAB'].includes(role)
-                : ['ADMIN','VICE_DIRECTOR','IMAGING'].includes(role);
-            if (!allowed) return sendJson(response, 403, { error: 'Your role cannot add new items.' }, { secure: config.cookieSecure });
-            try {
-              const id = addStockItem(database, kind, body || {}, session.user_id);
-              audit(database, request, `STOCK_${kind.toUpperCase()}_ADDED`, { userId: session.user_id, subjectUsername: session.username, details: { id, name: body?.name, unit: body?.unit } });
-              return sendJson(response, 200, { id, items: listStock(database, kind) }, { secure: config.cookieSecure });
-            } catch (error) { return sendJson(response, error.status || 400, { error: error.message }, { secure: config.cookieSecure }); }
-          }
-          if (sub === 'receipt') {
-            const allowed = kind === 'medicine'
-              ? ['ADMIN','VICE_DIRECTOR','PHARMACY'].includes(role)
-              : kind === 'material'
-                ? ['ADMIN','VICE_DIRECTOR','LAB'].includes(role)
-                : ['ADMIN','VICE_DIRECTOR','IMAGING'].includes(role);
-            if (!allowed) return sendJson(response, 403, { error: 'Your role cannot receive stock.' }, { secure: config.cookieSecure });
-            try {
-              receiveStock(database, body?.id, body?.quantity, session.user_id);
-              audit(database, request, `STOCK_${kind.toUpperCase()}_RECEIVED`, { userId: session.user_id, subjectUsername: session.username, details: { id: body?.id, quantity: body?.quantity } });
-              return sendJson(response, 200, { items: listStock(database, kind) }, { secure: config.cookieSecure });
-            } catch (error) { return sendJson(response, error.status || 400, { error: error.message }, { secure: config.cookieSecure }); }
-          }
-          if (sub === 'use') {
-            if (kind === 'material') {
-              if (!['ADMIN','VICE_DIRECTOR','LAB'].includes(role)) return sendJson(response, 403, { error: 'Your role cannot record material usage.' }, { secure: config.cookieSecure });
-              try {
-                manualMaterialUsage(database, body?.id, body?.quantity, body?.reference, session.user_id);
-                audit(database, request, 'STOCK_MATERIAL_USED', { userId: session.user_id, subjectUsername: session.username, details: { id: body?.id, quantity: body?.quantity, reference: body?.reference } });
-                return sendJson(response, 200, { items: listStock(database, kind) }, { secure: config.cookieSecure });
-              } catch (error) { return sendJson(response, error.status || 400, { error: error.message }, { secure: config.cookieSecure }); }
-            }
-            if (kind === 'film') {
-              if (!['ADMIN','VICE_DIRECTOR','IMAGING'].includes(role)) return sendJson(response, 403, { error: 'Your role cannot record film usage.' }, { secure: config.cookieSecure });
-              try {
-                manualFilmUsage(database, body?.id, body?.quantity, body?.reference, session.user_id);
-                audit(database, request, 'STOCK_FILM_USED', { userId: session.user_id, subjectUsername: session.username, details: { id: body?.id, quantity: body?.quantity, reference: body?.reference } });
-                return sendJson(response, 200, { items: listStock(database, kind) }, { secure: config.cookieSecure });
-              } catch (error) { return sendJson(response, error.status || 400, { error: error.message }, { secure: config.cookieSecure }); }
-            }
-          }
-        }
-      }
-      if (request.method === 'GET' && pathname === '/api/reports/ward-medicines') {
-        if (!session) return sendJson(response, 401, { error:'Authentication required.' }, { secure:config.cookieSecure });
-        const role=requireContext(session);
-        const wards=medicineReportWards(role,sessionWard(session));
-        if (!wards.length) return sendJson(response, 403, { error:'Your active role cannot view ward medicine orders.' }, { secure:config.cookieSecure });
-        const wardCode=String(url.searchParams.get('ward') || '').trim().toLowerCase();
-        if (!wards.some(item=>item.code===wardCode)) {
-          return sendJson(response, 403, { error:'This medicine report is outside your assigned ward.' }, { secure:config.cookieSecure });
-        }
-        try {
-          const report=reviewedWardMedicineReport(database,url.searchParams.get('date'),wardCode);
-          if(role==='PHARMACY'&&!report.approval?.director) return sendJson(response,403,{error:'Management approval is required before Pharmacy can view this request.'},{secure:config.cookieSecure});
-          return sendJson(response,200,{...report,wards},{secure:config.cookieSecure});
-        } catch (error) {
-          return sendJson(response, 400, { error:error.message }, { secure:config.cookieSecure });
-        }
-      }
-      if (request.method === 'GET' && pathname === '/api/reports/ward-medicines/pending') {
-        if (!session) return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        if (!MANAGEMENT.includes(requireContext(session))) return sendJson(response,403,{error:'Director access is required.'},{secure:config.cookieSecure});
-        return sendJson(response,200,{items:directorWardMedicineInbox(database)},{secure:config.cookieSecure});
-      }
-      if (request.method === 'POST' && pathname === '/api/reports/ward-medicines/sign') {
-        if (!session) return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        const role=requireContext(session);
-        if (!['NURSE','MIDWIFE','WARD_HEAD','CHIEF_WARD','DOCTOR','ADMIN','VICE_DIRECTOR','DIRECTOR','PHARMACY'].includes(role)) return sendJson(response,403,{error:'Your role cannot sign the ward medicine list.'},{secure:config.cookieSecure});
-        if (!sameOrigin(request,config) || !safeTokenEqual(request.headers['x-csrf-token'],session.csrf_token)) return sendJson(response,403,{error:'Security token is invalid.'},{secure:config.cookieSecure});
-        const body=await readJson(request,config.maxBodyBytes);
-        const ward=String(body?.ward || '').toLowerCase();
-        const allowed=medicineReportWards(role,sessionWard(session));
-        if (!allowed.some(item=>item.code===ward)) return sendJson(response,403,{error:'This medicine report is outside your assigned ward.'},{secure:config.cookieSecure});
-        if (role==='CHIEF_WARD' && sessionWard(session)!==ward) return sendJson(response,403,{error:'Chief of Ward can sign only the active ward.'},{secure:config.cookieSecure});
-        if (['NURSE','MIDWIFE'].includes(role) && sessionWard(session)!==ward) return sendJson(response,403,{error:'Nursing staff can sign only the active ward.'},{secure:config.cookieSecure});
-        let report;
-        database.sqlite.exec('BEGIN IMMEDIATE');
-        try {
-          report=signWardMedicineReport(database,body?.date,ward,role,session.user_id,signatureSnapshot(database,session,Date.now()),body.step,body.revision,body.fingerprint);
-          audit(database,request,'WARD_MEDICINE_SIGNED',{userId:session.user_id,subjectUsername:session.username,details:{ward,date:report.date,role,status:report.approval?.status}});
-          if (MANAGEMENT.includes(role) && report.approval?.status==='director_signed' && !report.approval?.pharmacyAlertedAt) {
-            const wardName=report.wardNameKh || ward;
-            createSystemMessage(database,{senderUserId:session.user_id,senderRole:role,destinationType:'PHARMACY',destinationCode:'pharmacy',subject:`បញ្ជីឱសថផ្នែករួចរាល់ · ${ward} · ${report.date}`,body:`បញ្ជីឱសថប្រចាំថ្ងៃពី ${wardName} សម្រាប់ថ្ងៃទី ${report.date} បានចុះហត្ថលេខាដោយនាយក។ សូមឱសថស្ថានពិនិត្យ និងចុះហត្ថលេខាប្រគល់ថ្នាំទៅផ្នែក។`});
-            markPharmacyAlerted(database,report.date,ward);
-            report=reviewedWardMedicineReport(database,report.date,ward);
-          }
-          database.sqlite.exec('COMMIT');
-        } catch(error) { database.sqlite.exec('ROLLBACK'); return sendJson(response,error.status||400,{error:error.message},{secure:config.cookieSecure}); }
-        return sendJson(response,200,{report},{secure:config.cookieSecure});
-      }
-      if (request.method === 'POST' && pathname === '/api/reports/ward-medicines/approve') {
-        // Legacy endpoint retained for existing clients; it still follows the full sequence.
-        if (!session) return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        if (!MANAGEMENT.includes(requireContext(session))) return sendJson(response,403,{error:'Only the hospital director can complete the director signature stage.'},{secure:config.cookieSecure});
-        if (!sameOrigin(request,config) || !safeTokenEqual(request.headers['x-csrf-token'],session.csrf_token)) return sendJson(response,403,{error:'Security token is invalid.'},{secure:config.cookieSecure});
-        const body=await readJson(request,config.maxBodyBytes);
-        const ward=String(body?.ward || '').toLowerCase();
-        try {database.sqlite.exec('BEGIN IMMEDIATE');let report=signWardMedicineReport(database,body?.date,ward,sessionRole(session),session.user_id,signatureSnapshot(database,session,Date.now()),3);if(!report.approval?.pharmacyAlertedAt){createSystemMessage(database,{senderUserId:session.user_id,senderRole:sessionRole(session),destinationType:'PHARMACY',destinationCode:'pharmacy',subject:`បញ្ជីឱសថផ្នែករួចរាល់ · ${ward} · ${report.date}`,body:'បញ្ជីឱសថបានអនុម័តរួចរាល់។'});markPharmacyAlerted(database,report.date,ward);report=reviewedWardMedicineReport(database,report.date,ward);}audit(database,request,'WARD_MEDICINE_SIGNED',{userId:session.user_id,details:{ward,date:report.date,role:sessionRole(session),step:3}});database.sqlite.exec('COMMIT');return sendJson(response,200,{report},{secure:config.cookieSecure}); }
-        catch(error) {try{database.sqlite.exec('ROLLBACK')}catch{}return sendJson(response,400,{error:error.message},{secure:config.cookieSecure}); }
-      }
-
       if (request.method === 'GET' && pathname === '/api/reports/daily') {
         if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
         try {
@@ -2847,72 +2710,6 @@ export function createEmrServer(configOverrides = {}) {
           } catch(error) { database.sqlite.exec('ROLLBACK'); throw error; }
         } catch(error) { return sendJson(response,400,{error:error.message},{secure:config.cookieSecure}); }
       }
-      if (request.method === 'GET' && pathname === '/api/pharmacy/opd-prescriptions') {
-        if (!session) return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        if (!['ADMIN','VICE_DIRECTOR','DIRECTOR','PHARMACY'].includes(requireContext(session)))
-          return sendJson(response,403,{error:'Pharmacy access is required.'},{secure:config.cookieSecure});
-        const patients=listOpdPrescriptions(database).map(item=>{ const paymentStatus=paymentStatusForPatient(database,item.patientKey);const row=database.findPatient(item.patientKey);const data=parseStoredJson(row?.record_json);return {...item,queueNumber:Number(data['system:registrationQueueNumber']||data['scope:registration:id:registration_queue_number']||0)||null,paymentStatus,canDispense:['PAID','INSURANCE','NGO','NSSF','HEF_EQUITY','HEF_VULNERABLE','EXEMPT','NSSF_OUTSIDE','NSSF_WORKER','NSSF_CIVIL','HEF_POOR','HEF_VULNERABLE_FAMILY','FULL_WAIVER'].includes(paymentStatus?.code)}; });
-        return sendJson(response,200,{patients},{secure:config.cookieSecure});
-      }
-      if (request.method==='GET' && pathname==='/api/pharmacy/discharge-medications') {
-        if (!session) return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        if (!['ADMIN','VICE_DIRECTOR','DIRECTOR','PHARMACY'].includes(requireContext(session))) return sendJson(response,403,{error:'Pharmacy access is required.'},{secure:config.cookieSecure});
-        const patients=listDischargeMedicationOrders(database).map(item=>{const paymentStatus=paymentStatusForPatient(database,item.patientKey);return {...item,paymentStatus,canDispense:pharmacySettledCodes.has(paymentStatus?.code)}});
-        return sendJson(response,200,{patients},{secure:config.cookieSecure});
-      }
-      if (request.method==='GET' && pathname==='/api/pharmacy/dispensing-board') {
-        if (!session) return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        if (!['ADMIN','VICE_DIRECTOR','DIRECTOR','PHARMACY'].includes(requireContext(session))) return sendJson(response,403,{error:'Pharmacy access is required.'},{secure:config.cookieSecure});
-        const opd=listOpdPrescriptions(database).map(item=>{const paymentStatus=paymentStatusForPatient(database,item.patientKey);const row=database.findPatient(item.patientKey);const data=parseStoredJson(row?.record_json);return {...item,queueNumber:Number(data['system:registrationQueueNumber']||data['scope:registration:id:registration_queue_number']||0)||null,canDispense:pharmacySettledCodes.has(paymentStatus?.code)}}).filter(item=>!item.dispensedAt&&item.canDispense);
-        const ipd=listDischargeMedicationOrders(database).map(item=>{const paymentStatus=paymentStatusForPatient(database,item.patientKey);return {...item,paymentStatus,canDispense:pharmacySettledCodes.has(paymentStatus?.code)}}).filter(item=>!item.dispensedAt&&item.canDispense);
-        return sendJson(response,200,{opd,ipd,updatedAt:Date.now()},{secure:config.cookieSecure});
-      }
-      if (request.method==='POST' && pathname==='/api/pharmacy/discharge-medications/received') {
-        if (!session) return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        if (!['ADMIN','VICE_DIRECTOR','PHARMACY'].includes(requireContext(session))) return sendJson(response,403,{error:'Pharmacy access is required.'},{secure:config.cookieSecure});
-        if (!sameOrigin(request,config)||!safeTokenEqual(request.headers['x-csrf-token'],session.csrf_token)) return sendJson(response,403,{error:'Security token is invalid.'},{secure:config.cookieSecure});
-        const body=await readJson(request,config.maxClinicalBodyBytes);
-        try {
-          const patientKey=clinicalPatientKey(body?.patientKey);
-          if(!pharmacySettledCodes.has(paymentStatusForPatient(database,patientKey)?.code))throw new Error('សូមបញ្ចប់ការបង់ប្រាក់ ឬការធានារ៉ាប់រង មុនពេលផ្ដល់ថ្នាំ។');
-          const patient=markDischargeMedicationReceived(database,{patientKey,dischargeAt:body?.dischargeAt,userId:session.user_id});
-          audit(database,request,'IPD_DISCHARGE_MEDICATIONS_RECEIVED',{userId:session.user_id,subjectUsername:session.username,details:{patientKey,dischargeAt:patient.dischargeAt,medicineCount:patient.medicineCount}});
-          return sendJson(response,200,{patient},{secure:config.cookieSecure});
-        } catch(error) { return sendJson(response,409,{error:error.message},{secure:config.cookieSecure}); }
-      }
-      const pharmacyOpdMatch=/^\/api\/pharmacy\/opd-prescriptions\/([0-9a-f-]+)$/.exec(pathname);
-      if (request.method==='GET' && pharmacyOpdMatch) {
-        if (!session) return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        if (!['ADMIN','VICE_DIRECTOR','DIRECTOR','PHARMACY'].includes(requireContext(session)))
-          return sendJson(response,403,{error:'Pharmacy access is required.'},{secure:config.cookieSecure});
-        const prescription=opdPrescriptionForPharmacy(database,pharmacyOpdMatch[1]);
-        if (!prescription) return sendJson(response,404,{error:'Prescription not found.'},{secure:config.cookieSecure});
-        const paymentStatus=paymentStatusForPatient(database,prescription.patientKey);
-        prescription.paymentStatus=paymentStatus;
-        prescription.canDispense=['PAID','INSURANCE','NGO','NSSF','HEF_EQUITY','HEF_VULNERABLE','EXEMPT','NSSF_OUTSIDE','NSSF_WORKER','NSSF_CIVIL','HEF_POOR','HEF_VULNERABLE_FAMILY','FULL_WAIVER'].includes(paymentStatus?.code);
-        return sendJson(response,200,{prescription},{secure:config.cookieSecure});
-      }
-      const receiptMatch=/^\/api\/pharmacy\/opd-prescriptions\/([0-9a-f-]+)\/received$/.exec(pathname);
-      if (request.method==='POST' && receiptMatch) {
-        if (!session) return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        if (!['ADMIN','VICE_DIRECTOR','PHARMACY'].includes(requireContext(session))) return sendJson(response,403,{error:'Pharmacy access is required.'},{secure:config.cookieSecure});
-        if (!sameOrigin(request,config) || !safeTokenEqual(request.headers['x-csrf-token'],session.csrf_token)) return sendJson(response,403,{error:'Security token is invalid.'},{secure:config.cookieSecure});
-        database.sqlite.exec('BEGIN IMMEDIATE');
-        try {
-          const row = database.sqlite.prepare('SELECT patient_key FROM pharmacy_prescriptions WHERE id=?').get(receiptMatch[1]);
-          if (!row) throw new Error('Prescription was not found.');
-          const paymentStatus = paymentStatusForPatient(database, row.patient_key);
-          const allowedPaidCodes = new Set(['PAID','INSURANCE','NGO','NSSF','HEF_EQUITY','HEF_VULNERABLE','EXEMPT','NSSF_OUTSIDE','NSSF_WORKER','NSSF_CIVIL','HEF_POOR','HEF_VULNERABLE_FAMILY','FULL_WAIVER']);
-          if (!allowedPaidCodes.has(paymentStatus?.code)) throw new Error('Pharmacy cannot confirm medicine delivery until the patient payment is completed.');
-          const prescription=markOpdPrescriptionReceived(database,receiptMatch[1],session.user_id);
-          updateOpdQueueStatus(database,prescription.patientKey,'RECEIVED',prescription.dispensedAt);
-          audit(database,request,'OPD_PRESCRIPTION_RECEIVED',{userId:session.user_id,subjectUsername:session.username,details:{patientKey:prescription.patientKey,prescriptionId:prescription.id}});
-          database.sqlite.exec('COMMIT');
-          return sendJson(response,200,{prescription},{secure:config.cookieSecure});
-        } catch(error) { database.sqlite.exec('ROLLBACK');return sendJson(response,409,{error:error.message},{secure:config.cookieSecure}); }
-      }
-
-
       if (request.method === 'GET' && pathname === '/api/patient-editor-history') {
         if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
         if (!clinicalFormReadRoles.has(sessionRole(session))) return sendJson(response, 403, { error: 'Clinical access is required.' }, { secure: config.cookieSecure });
