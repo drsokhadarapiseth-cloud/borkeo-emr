@@ -1,0 +1,314 @@
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "borkeo-emr",
+-  "version": "37.3.0",
++  "version": "37.4.0",
+   "private": true,
+   "type": "module",
+   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",
+diff --git a/server/server.mjs b/server/server.mjs
+--- a/server/server.mjs
++++ b/server/server.mjs
+@@ -3,7 +3,7 @@
+ import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
+ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
+ import { createDiagnosisSearch } from './icd10.mjs';
+-// Borkeo EMR v37.3 - Electronic Medical Record System
++// Borkeo EMR v37.4 - Electronic Medical Record System
+ import {validateAddressHierarchy} from './gazetteer.mjs';
+ import {validateCambodianPhone} from './cambodia-phone.mjs';
+ import {PATIENT_PHOTO_FIELDS, validPatientPhoto} from './patient-photo.mjs';
+@@ -410,7 +410,7 @@
+   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
+   html = html.replace('</head>', `<meta name="borkeo-version" content="${APP_VERSION}"></head>`);
+   if (!html.includes('/public/emr-language.js')) {
+-    const languageAssets = '<link rel="stylesheet" href="/public/emr-language.css?v=1750"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=3730" defer></script>';
++    const languageAssets = '<link rel="stylesheet" href="/public/emr-language.css?v=1750"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=3740" defer></script>';
+     html = html.replace('</head>', `${languageAssets}</head>`);
+   }
+   html = html.replace(/(\/public\/[^"'\s<>]+\?v=[^"'\s<>]+)/g, asset => `${asset}&build=${APP_VERSION}`);
+diff --git a/public/login.html b/public/login.html
+--- a/public/login.html
++++ b/public/login.html
+@@ -31,7 +31,7 @@
+         </div>
+         <div class="header-meta">
+           <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
+-          <span class="login-build-version" data-app-version data-language-exclude>v37.3</span>
++          <span class="login-build-version" data-app-version data-language-exclude>v37.4</span>
+         </div>
+       </header>
+ 
+diff --git a/public/emr-language.js b/public/emr-language.js
+--- a/public/emr-language.js
++++ b/public/emr-language.js
+@@ -801,16 +801,80 @@
+     }
+   }
+ 
++  // Run incremental translation outside the MutationObserver microtask. Keep one
++  // pending entry per changed node and yield between small batches so input and
++  // paint cannot be starved by a large clinical form update.
++  function observeTranslations(root, translateNode, options) {
++    const pending = new Set();
++    let timer = null;
++    const enqueue = records => {
++      for (const record of records) {
++        if (record.type === 'childList') {
++          for (const node of record.addedNodes) pending.add(node);
++        } else pending.add(record.target);
++      }
++      if (pending.size && timer === null) timer = setTimeout(flush, 0);
++    };
++    const observer = new MutationObserver(enqueue);
++    function flush() {
++      timer = null;
++      // Capture mutations queued since the last callback before disconnecting.
++      enqueue(observer.takeRecords());
++      if (timer !== null) { clearTimeout(timer); timer = null; }
++      observer.disconnect();
++      const started = performance.now();
++      const covered = new Set();
++      try {
++        for (const node of pending) {
++          pending.delete(node);
++          if (node.isConnected && (node === root || root.contains(node))) {
++            // If an ancestor is also pending, it will cover this subtree once.
++            let parent = node.parentNode;
++            while (parent && !pending.has(parent) && !covered.has(parent)) parent = parent.parentNode;
++            if (!parent) { translateNode(node); covered.add(node); }
++          }
++          if (performance.now() - started >= 8) break;
++        }
++      } finally {
++        observer.observe(root, options);
++        if (pending.size && timer === null) timer = setTimeout(flush, 0);
++      }
++    }
++    observer.observe(root, options);
++    return observer;
++  }
++
++  function translateChangedNode(node, frameOnly = false) {
++    if (!node || (node.nodeType !== Node.TEXT_NODE && node.nodeType !== Node.ELEMENT_NODE)) return;
++    const element = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
++    if (!element || excluded(element, true)) return;
++    if (node.nodeType === Node.TEXT_NODE) {
++      if (frameOnly) translateControlNode(node);
++      else if (!emrPage) translateTextNode(node);
++      else if (element.closest('.paraclinic-panel,.paraclinic-modal')) translateTextNode(node, 'en', true);
++      if (!frameOnly && !englishOnly) translateControlNode(node);
++      return;
++    }
++    if (!frameOnly) {
++      if (!emrPage) translateTree(node);
++      else if (element.closest('.paraclinic-panel,.paraclinic-modal')) translateTree(node, 'en', true);
++      else node.querySelectorAll('.paraclinic-panel,.paraclinic-modal').forEach(panel => translateTree(panel, 'en', true));
++    }
++    translateControls(node);
++  }
++
+   const frameObservers=new WeakMap();
+   function translateFrame(frame) {
+     if (!frame.matches('.opd-specialty-frame,#partograph_frame')) return;
+     try {
+       const doc=frame.contentDocument; if(!doc?.body) return;
+-      translateControls(doc.body);
+-      if (!frameObservers.has(doc)) {
+-        const observer=new MutationObserver(()=>translateControls(doc.body));
+-        observer.observe(doc.body,{subtree:true,childList:true,characterData:true});
+-        frameObservers.set(doc,observer);
++      const previous = frameObservers.get(doc);
++      previous?.disconnect();
++      try { translateControls(doc.body); }
++      finally {
++        if (previous) previous.observe(doc.body, {subtree:true,childList:true,characterData:true});
++        else frameObservers.set(doc, observeTranslations(doc.body,
++          node => translateChangedNode(node, true), {subtree:true,childList:true,characterData:true}));
+       }
+     } catch {}
+   }
+@@ -906,34 +970,7 @@
+   document.addEventListener('DOMContentLoaded', mountSwitcher, { once: true });
+ 
+   if (document.body) {
+-    const observer = new MutationObserver(records => {
+-      for (const record of records) {
+-        if (emrPage) {
+-          const targetElement = record.target.nodeType === Node.TEXT_NODE ? record.target.parentElement : record.target;
+-          const withinParaclinic = targetElement?.closest?.('.paraclinic-panel,.paraclinic-modal');
+-          if (record.type === 'characterData' && withinParaclinic && !targetElement.closest(controlSelector)) translateTextNode(record.target, 'en', true);
+-          if (record.type === 'attributes' && withinParaclinic) translateAttribute(record.target, record.attributeName, targetElement.closest(controlSelector) ? language : 'en', true);
+-        } else {
+-          if (record.type === 'characterData') translateTextNode(record.target);
+-          if (record.type === 'attributes') translateAttribute(record.target, record.attributeName);
+-        }
+-        if (!englishOnly && record.type === 'characterData') translateControlNode(record.target);
+-        if (!englishOnly && record.type === 'attributes' && record.target.matches?.(controlSelector)) translateAttribute(record.target,record.attributeName,language,true);
+-        record.addedNodes?.forEach(node => {
+-          if (emrPage) {
+-            const targetElement = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+-            const panel = targetElement?.matches?.('.paraclinic-panel,.paraclinic-modal')
+-              ? targetElement : targetElement?.closest?.('.paraclinic-panel,.paraclinic-modal');
+-            if (panel) translateTree(node.nodeType === Node.TEXT_NODE ? panel : node, 'en', true);
+-          } else if (node.nodeType === Node.TEXT_NODE) translateTextNode(node);
+-          else if (node.nodeType === Node.ELEMENT_NODE) translateTree(node);
+-          if (node.nodeType === Node.TEXT_NODE) translateControlNode(node);
+-          else if (node.nodeType === Node.ELEMENT_NODE) translateControls(node);
+-        });
+-      }
+-    });
+-    languageObserver = observer;
+-    observer.observe(document.body, languageObservation);
++    languageObserver = observeTranslations(document.body, translateChangedNode, languageObservation);
+     translateParaclinicPanels();
+     translateInterfaceControls();
+   }
+diff --git a/public/nationalities.js b/public/nationalities.js
+--- a/public/nationalities.js
++++ b/public/nationalities.js
+@@ -624,22 +624,27 @@
+     }
+ 
+     syncLanguage(lang) {
+-      const currentVal = this.selectElem.value;
+       const english = isEnglish(lang);
+-
++      if (this.renderedEnglish === english) return;
++      this.renderedEnglish = english;
+       if (this.searchInput) {
+         this.searchInput.placeholder = english ? 'Search nationality/ethnicity...' : 'ស្វែងរកជនជាតិ/សញ្ជាតិ...';
+       }
+-
+-      this.populateSelectOptions();
+-      if (currentVal) {
+-        this.setValue(currentVal, false);
+-      }
++      const items = new Map(GROUPS.flatMap(group => group.items.map(item => [item.value, item])));
++      for (const option of this.selectElem.options) {
++        const item = items.get(option.value);
++        if (item) {
++          const label = english ? item.en : item.kh;
++          if (option.textContent !== label) option.textContent = label;
++        }
++      }
++      const groups = this.selectElem.querySelectorAll('optgroup');
++      GROUPS.forEach((group, index) => {
++        const label = english ? group.labelEn : group.labelKh;
++        if (groups[index] && groups[index].label !== label) groups[index].label = label;
++      });
+       this.syncButtonFromSelect();
+-
+-      if (this.isOpen) {
+-        this.renderFilteredList(this.searchInput ? this.searchInput.value : '');
+-      }
++      if (this.isOpen) this.renderFilteredList(this.searchInput ? this.searchInput.value : '');
+     }
+ 
+     open() {
+diff --git a/protected/EMR.html b/protected/EMR.html
+--- a/protected/EMR.html
++++ b/protected/EMR.html
+@@ -22519,7 +22519,7 @@
+     <script src="/public/cambodia-address.js?v=3310"></script>
+ <script src="/public/hef-lookup.js?v=3310"></script>
+ <script src="/public/nssf-lookup.js?v=3440"></script>
+-<script src="/public/nationalities.js?v=3500"></script>
++<script src="/public/nationalities.js?v=3740"></script>
+     <script src="/public/chief-complaint-tags.js?v=32100"></script>
+   <script id="borkeo_cc_tags_script">
+ // Chief complaint logic is loaded once from chief-complaint-tags.js.
+diff --git a/tests/v371-phone-policy.test.mjs b/tests/v371-phone-policy.test.mjs
+--- a/tests/v371-phone-policy.test.mjs
++++ b/tests/v371-phone-policy.test.mjs
+@@ -13,7 +13,7 @@
+ 
+ test('v37.1 - Version metadata consistency across package.json, login.html, server.mjs, and HTML templates', () => {
+   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+-  assert.ok(['37.1.0', '37.2.0', '37.3.0'].includes(pkg.version));
++  assert.ok(['37.1.0', '37.2.0', '37.3.0', '37.4.0'].includes(pkg.version));
+ 
+   const loginHtml = fs.readFileSync(path.join(ROOT, 'public', 'login.html'), 'utf8');
+   assert.ok(loginHtml.includes('v' + pkg.version.split('.').slice(0,2).join('.')), 'login.html must contain v37.1');
+diff --git a/tests/v350-nationality-single-language.test.mjs b/tests/v350-nationality-single-language.test.mjs
+--- a/tests/v350-nationality-single-language.test.mjs
++++ b/tests/v350-nationality-single-language.test.mjs
+@@ -51,8 +51,8 @@
+   assert.doesNotMatch(selectSnippet, />ចាម\s*\/\s*Cham<\/option>/);
+   assert.doesNotMatch(selectSnippet, />ផ្សេងៗ\s*\/\s*Other<\/option>/);
+ 
+-  // Cache version strings must be bumped to 3500
+-  assert.match(emrHtml, /nationalities\.js\?v=3500/);
++  // Accept the nationality label-only update cache version.
++  assert.match(emrHtml, /nationalities\.js\?v=(3500|3740)/);
+   assert.match(emrHtml, /nationalities\.css\?v=3500/);
+ });
+ 
+diff --git a/tests/v374-language-observer.test.mjs b/tests/v374-language-observer.test.mjs
+new file mode 100644
+--- /dev/null
++++ b/tests/v374-language-observer.test.mjs
+@@ -0,0 +1,60 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import vm from 'node:vm';
++const read = p => fs.readFileSync(new URL('../'+p, import.meta.url), 'utf8');
++const source = read('public/emr-language.js');
++function fixture(translate, clock = () => 0) {
++  const timers = new Map(); let next=0, observer;
++  class Observer {
++    constructor(cb) { this.cb=cb; this.records=[]; observer=this; }
++    observe() { this.active=true; }
++    disconnect() { this.active=false; this.records=[]; }
++    takeRecords() { return this.records.splice(0); }
++  }
++  const context=vm.createContext({Set,MutationObserver:Observer,performance:{now:clock},setTimeout:fn=>{timers.set(++next,fn);return next},clearTimeout:id=>timers.delete(id)});
++  const a=source.indexOf('  function observeTranslations('), b=source.indexOf('  function translateChangedNode(',a);
++  vm.runInContext(source.slice(a,b),context);
++  const root={contains:n=>n.isConnected}; context.observeTranslations(root,translate,{});
++  return {observer, root, node(parent=root){return {isConnected:true,parentNode:parent}}, pending:()=>timers.size, tick(){const [id,fn]=timers.entries().next().value;timers.delete(id);fn();}, drain(){let count=0;while(timers.size){assert.ok(++count<100,'queue should settle');this.tick();}}};
++}
++
++test('v37.4 coalesces repeated mutation records and suppresses its own observer writes',()=>{
++ const seen=[];const f=fixture(n=>{assert.equal(f.observer.active,false);seen.push(n)});const node=f.node();
++ f.observer.cb(Array.from({length:1000},()=>({type:'characterData',target:node})));
++ assert.equal(seen.length,0);assert.equal(f.pending(),1);f.drain();assert.deepEqual(seen,[node]);assert.equal(f.observer.active,true);
++});
++
++test('v37.4 translates an added subtree once regardless of parent/child record order',()=>{
++ for(const parentFirst of [true,false]){const seen=[];const f=fixture(n=>seen.push(n));const parent=f.node(),child=f.node(parent);
++ f.observer.cb([{type:'childList',addedNodes:parentFirst?[parent,child]:[child,parent]}]);f.drain();assert.deepEqual(seen,[parent]);}
++});
++
++test('v37.4 yields between batches, reads latest state and skips removed nodes',()=>{
++ let time=0;const seen=[];const f=fixture(n=>seen.push(n.value),()=>time+=5);
++ const nodes=Array.from({length:6},(_,i)=>Object.assign(f.node(),{value:i}));
++ f.observer.cb([{type:'childList',addedNodes:nodes}]);nodes[0].value='edited';nodes[1].isConnected=false;
++ f.tick();assert.ok(seen.length<5);assert.equal(seen[0],'edited');assert.equal(f.pending(),1);f.drain();assert.deepEqual(seen,['edited',2,3,4,5]);
++});
++
++test('v37.4 retains queued records and resumes observing after a translation exception',()=>{
++ let fail=true;const seen=[];const f=fixture(n=>{if(fail){fail=false;throw Error('test failure')}seen.push(n)});const one=f.node(),two=f.node();
++ f.observer.cb([{type:'characterData',target:one}]);f.observer.records.push({type:'characterData',target:two});
++ assert.throws(()=>f.tick(),/test failure/);assert.equal(f.observer.active,true);f.drain();assert.deepEqual(seen,[two]);
++});
++
++test('v37.4 added paraclinic text translates the text node, not the entire panel',()=>{
++ let textCalls=0,trees=0;const parent={closest:()=>true};const node={nodeType:3,parentElement:parent};
++ const a=source.indexOf('  function translateChangedNode('),b=source.indexOf('  const frameObservers',a);
++ const c=vm.createContext({Node:{TEXT_NODE:3,ELEMENT_NODE:1},emrPage:true,englishOnly:false,excluded:()=>false,translateTextNode:n=>{assert.equal(n,node);textCalls++},translateControlNode(){},translateTree:()=>trees++,translateControls(){}});
++ vm.runInContext(source.slice(a,b),c);c.translateChangedNode(node);assert.equal(textCalls,1);assert.equal(trees,0);
++});
++
++test('v37.4 nationality switching preserves option identity/value and coalesces duplicate calls',()=>{
++ const code=read('public/nationalities.js');const a=code.indexOf('    syncLanguage(lang) {'),b=code.indexOf('\n    open() {',a);
++ const options=[{value:'kh',textContent:'ខ្មែរ'},{value:'custom',textContent:'Custom'}],groups=[{label:'កម្ពុជា'}];let renders=0;
++ const c=vm.createContext({GROUPS:[{labelEn:'Cambodia',labelKh:'កម្ពុជា',items:[{value:'kh',kh:'ខ្មែរ',en:'Khmer'}]}],isEnglish:l=>l==='en'});
++ const obj=vm.runInContext('({'+code.slice(a,b)+'})',c);Object.assign(obj,{selectElem:{options,value:'custom',querySelectorAll:()=>groups},searchInput:{value:'search'},isOpen:true,syncButtonFromSelect(){},renderFilteredList(){renders++}});
++ obj.syncLanguage('en');obj.syncLanguage('en');assert.equal(renders,1);assert.equal(options[0].textContent,'Khmer');assert.equal(obj.selectElem.value,'custom');assert.equal(obj.selectElem.options,options);
++ obj.syncLanguage('kh');assert.equal(options[0].textContent,'ខ្មែរ');assert.equal(options[1].textContent,'Custom');assert.equal(obj.searchInput.value,'search');
++});

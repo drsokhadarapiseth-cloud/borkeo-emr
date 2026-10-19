@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200, user-scalable=yes">
+  <title>OPD Paraclinic Handoffs · Borkeo EMR v18.3</title>
+  <link rel="stylesheet" href="/public/ocean-theme.css">
+  <link rel="stylesheet" href="/public/emr-session.css?v=1650">
+  <link rel="stylesheet" href="/public/opd-paraclinic-nurse.css?v=1650">
+  <script src="/public/emr-session.js?v=1970" defer></script>
+  <script src="/public/opd-paraclinic-nurse.js?v=1650" defer></script>
+  <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+</head>
+<body>
+  <main class="opd-handoff-shell">
+    <header class="opd-handoff-header" data-session-host>
+      <div><p class="eyebrow">OUTPATIENT DEPARTMENT</p><h1>Paraclinic handoffs</h1><p>Receive OPD requests, collect laboratory samples, then send them to Cashier and the department.</p></div>
+      <a class="back-link" href="/departments">Departments</a>
+    </header>
+    <section class="handoff-toolbar"><div><strong id="queue-count">Loading requests…</strong><small>Requests routed by an OPD doctor to the nurse</small></div><button id="refresh-queue" type="button">Refresh</button></section>
+    <div id="queue-status" role="status" aria-live="polite"></div>
+    <section id="handoff-list" class="handoff-list" aria-live="polite"></section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "source": "ICD10-Diagnosis.xlsx",
+  "source_rows": 96693,
+  "catalogue_rows": 96693,
+  "exact_duplicates_removed": 0,
+  "codes_with_multiple_descriptions": 0,
+  "invalid_format_count": 413,
+  "invalid_format_examples": [
+    "I22.",
+    "O157",
+    "Others",
+    "Others1",
+    "Others2",
+    "Others3",
+    "F20.9.0",
+    "F20.9.1",
+    "F20.9.2",
+    "F20.9.3",
+    "F20.9.4",
+    "F20.9.5",
+    "F20.9.8",
+    "F20.9.9",
+    "F23.9.0"
+  ],
+  "missing_english": 4,
+  "missing_khmer": 1340,
+  "classification_edition": "Not specified in source. Imported as supplied; not certified as an official ICD edition."
+}

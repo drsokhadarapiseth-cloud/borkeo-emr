@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200, user-scalable=yes">
+  <title>ចំណាយមន្ទីរពេទ្យ</title>
+  <link rel="stylesheet" href="/public/ocean-theme.css">
+  <link rel="stylesheet" href="/public/emr-session.css?v=1200">
+  <link rel="stylesheet" href="/public/expenses.css?v=18">
+  <script src="/public/emr-session.js?v=1970" defer></script>
+  <script src="/public/expenses.js?v=19" defer></script>
+  <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+</head>
+<body>
+<main class="expense-shell">
+  <section class="expense-banner" data-session-host>
+    <div><h1>ចំណាយមន្ទីរពេទ្យ</h1></div>
+    <img src="/public/logo-hospital.jpg" alt="និមិត្តសញ្ញាមន្ទីរពេទ្យ">
+  </section>
+
+  <section class="expense-grid">
+    <form id="expense-form" class="panel expense-form">
+      <header><h2>កត់ត្រាចំណាយថ្មី</h2><p>បញ្ចូលតែចំណាយរបស់មន្ទីរពេទ្យ មិនមែនការទូទាត់របស់អ្នកជំងឺទេ។</p></header>
+      <label>ប្រភេទចំណាយ<select id="expense-category">
+        <option value="Medical supplies">សម្ភារៈវេជ្ជសាស្ត្រ</option>
+        <option value="Medicines">ឱសថ</option>
+        <option value="Utilities">ទឹក ភ្លើង និងអ៊ីនធឺណិត</option>
+        <option value="Maintenance">ជួសជុល និងថែទាំ</option>
+        <option value="Fuel">ប្រេងឥន្ធនៈ</option>
+        <option value="Transport">ដឹកជញ្ជូន</option>
+        <option value="Food">អាហារ</option>
+        <option value="Office supplies">សម្ភារៈការិយាល័យ</option>
+        <option value="Staff allowance">ប្រាក់ឧបត្ថម្ភបុគ្គលិក</option>
+        <option value="Other">ផ្សេងៗ</option>
+      </select></label>
+      <label>បរិយាយ<input id="expense-description" required></label>
+      <div class="row"><label>ចំនួន<input id="expense-amount" type="number" min="0.01" step="0.01" required></label><label>រូបិយប័ណ្ណ<select id="expense-currency"><option>KHR</option><option>USD</option></select></label></div>
+      <label>លេខបង្កាន់ដៃ<input id="expense-reference" placeholder="លេខវិក្កយបត្រ ឬបង្កាន់ដៃ"></label>
+      <label>កំណត់សម្គាល់<input id="expense-note"></label>
+      <button class="primary" type="submit">រក្សាទុកចំណាយ</button>
+      <span id="expense-status" class="status"></span>
+    </form>
+
+    <section class="panel expense-history">
+      <header><div><h2>ប្រវត្តិចំណាយ</h2><p>ចំណាយថ្មីបំផុតត្រូវបង្ហាញនៅលើគេ។</p></div><button id="expense-refresh" class="secondary" type="button">ធ្វើបច្ចុប្បន្នភាព</button></header>
+      <div class="table-wrap"><table><thead><tr><th>កាលបរិច្ឆេទ</th><th>ប្រភេទ</th><th>បរិយាយ</th><th>ចំនួន</th><th>លេខយោង</th><th>កត់ត្រាដោយ</th><th></th></tr></thead><tbody id="expenses-body"></tbody></table></div>
+    </section>
+  </section>
+</main>
+</body>
+</html>

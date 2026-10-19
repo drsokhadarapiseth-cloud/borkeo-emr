@@ -1,0 +1,20 @@
+'use strict';
+(async()=>{
+ const session=window.emrSession||(await(await fetch('/api/auth/me',{credentials:'same-origin'})).json()),role=session.user?.activeRole;
+ if(!['ADMIN','DIRECTOR','VICE_DIRECTOR','CLERK','ACCOUNTANT'].includes(role)||!window.emrNotifications)return;
+ const manager=['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role),notifications=window.emrNotifications,esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),en=()=>window.getBorkeoLanguage?.()==='en',txt=(k,e)=>en()?e:k;
+ let requests=[],busy=false;
+ async function api(path,body){const r=await fetch(path,{credentials:'same-origin',cache:'no-store',...(body?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':session.csrfToken},body:JSON.stringify(body)}:{})}),d=await r.json();if(!r.ok)throw Error(d.error||'Request failed');return d;}
+ const content=document.createElement('section');content.className='payment-concession-notices';content.dataset.languageExclude='';notifications.register('concessions',content,refresh);
+ function render(){
+  const drafts=new Map([...content.querySelectorAll('[data-concession]')].map(card=>[card.dataset.concession,card.querySelector('input')?.value||'']));
+  notifications.setCount('concessions',requests.filter(r=>manager?r.status==='PENDING':r.status==='APPROVED').length);
+  content.innerHTML=requests.map(r=>`<article class="cashier-alert-card" data-concession="${esc(r.id)}"><h3>${txt('សំណើលើកលែងទាំងស្រុង','Full exemption request')}</h3><p><strong>${esc(r.patientName)}</strong> · ${esc(r.invoiceNo)} · ${esc(r.status)}</p><p>${esc(r.reason)}</p><ul>${(r.charges||[]).map(c=>`<li>${esc(c.description)} · ${esc(c.quantity)} · ${esc(c.amount.toLocaleString())} ${esc(c.currency)}</li>`).join('')}</ul><p>${esc(r.requestedByName)} · ${esc(new Date(r.requestedAt).toLocaleString())}</p>${r.reviewedByName?`<p>${esc(r.reviewedByName)} · ${esc(new Date(r.reviewedAt).toLocaleString())} · ${esc(r.reviewNote)}</p>`:''}${manager?`<input data-note maxlength="1000" aria-label="${txt('កំណត់សម្គាល់','Review note')}" value="${esc(drafts.get(r.id)||'')}"><button type="button" data-review="true">${txt('អនុម័ត','Approve')}</button><button type="button" data-review="false">${txt('បដិសេធ','Reject')}</button>`:`<button type="button" data-open="${esc(r.id)}">${txt('មើលវិក្កយបត្រ','Open invoice')}</button>`}</article>`).join('')+'<p data-error role="status"></p>';
+ }
+ async function refresh(){if(busy)return;busy=true;try{requests=(await api('/api/finance/concessions')).requests||[];render();}catch(e){if(notifications.panel.open)content.querySelector('[data-error]')?.replaceChildren(document.createTextNode(e.message));}finally{busy=false;}}
+ content.addEventListener('click',async e=>{
+  const open=e.target.closest('[data-open]');if(open){const r=requests.find(r=>r.id===open.dataset.open);if(r){notifications.close();if(window.openCashierPaymentInvoice)await window.openCashierPaymentInvoice(r.patientKey,r.invoiceId);else location.assign('/billing?'+new URLSearchParams({patientKey:r.patientKey,invoiceId:r.invoiceId}));}return;}
+  const button=e.target.closest('[data-review]');if(!button||button.disabled)return;const card=button.closest('[data-concession]');card.querySelectorAll('button').forEach(b=>b.disabled=true);try{await api('/api/finance/concessions/'+card.dataset.concession+'/review',{approved:button.dataset.review==='true',note:card.querySelector('input').value});await refresh();window.dispatchEvent(new Event('cashier-alerts-refresh'));}catch(err){content.querySelector('[data-error]').textContent=err.message;card.querySelectorAll('button').forEach(b=>b.disabled=false);}
+ });
+ window.addEventListener('cashier-alerts-refresh',()=>void refresh());window.addEventListener('focus',()=>void refresh());window.addEventListener('borkeo-language-change',render);await refresh();setInterval(()=>{if(!document.hidden)void refresh();},15000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)void refresh();});
+})().catch(console.error);

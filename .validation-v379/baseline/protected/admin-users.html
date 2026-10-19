@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200, user-scalable=yes">
+  <title>គ្រប់គ្រងគណនី</title>
+  <link rel="stylesheet" href="/public/ocean-theme.css">
+  <link rel="stylesheet" href="/public/emr-session.css?v=1200">
+  <link rel="stylesheet" href="/public/admin-users.css?v=18">
+  <script src="/public/emr-session.js?v=1970" defer></script>
+  <script src="/public/admin-users.js?v=1970" defer></script>
+  <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+</head>
+<body>
+  <main class="admin-shell">
+    <section class="admin-banner" data-session-host>
+      <div><h1>គ្រប់គ្រងគណនី</h1></div>
+      <img src="/public/logo-hospital.jpg" alt="និមិត្តសញ្ញាមន្ទីរពេទ្យ">
+    </section>
+    <section class="admin-layout">
+      <form id="user-form" class="panel">
+        <h2 id="form-title">បង្កើតគណនីថ្មី</h2>
+        <input type="hidden" id="edit-user-id">
+        <label>ឈ្មោះបុគ្គលិក<input id="display-name" maxlength="100" required></label>
+        <label>ឈ្មោះអ្នកប្រើ<input id="username" minlength="3" maxlength="64" required></label>
+        <label id="password-label" hidden>ពាក្យសម្ងាត់បណ្តោះអាសន្ន<input id="password" type="password" minlength="12" maxlength="128"></label>
+        <fieldset>
+          <legend class="legend-header">
+            <span>តួនាទី</span>
+            <button type="button" id="btn-add-role" class="btn-subtle" title="បន្ថែមតួនាទីថ្មី">+ បន្ថែមតួនាទី</button>
+          </legend>
+          <div id="role-options" class="check-grid"></div>
+        </fieldset>
+        <fieldset>
+          <legend class="legend-header">
+            <span>សិទ្ធិចូលប្រើផ្នែក</span>
+            <button type="button" id="btn-add-ward" class="btn-subtle" title="បន្ថែមផ្នែក ឬសេវាថ្មី">+ បន្ថែមផ្នែក/សេវា</button>
+          </legend>
+          <div id="ward-options" class="check-grid wards"></div>
+        </fieldset>
+        <label class="active-row"><input id="is-active" type="checkbox" checked> គណនីសកម្ម</label>
+        <div id="form-status" class="status" role="status"></div>
+        <div class="form-actions"><button type="submit" class="primary">រក្សាទុក</button><button type="button" id="cancel-edit" class="secondary">សម្អាត</button></div>
+      </form>
+      <section class="panel users-panel">
+        <header><div><h2>គណនីបុគ្គលិក</h2><p>គណនីមួយអាចមានតួនាទី និងសិទ្ធិចូលប្រើច្រើនផ្នែក។</p></div><input id="user-search" placeholder="ស្វែងរកឈ្មោះបុគ្គលិក ឬឈ្មោះអ្នកប្រើ"></header>
+        <div id="users-list" class="users-list"></div>
+      </section>
+      <section class="panel esign-panel">
+        <header><div><h2>ហត្ថលេខាអេឡិចត្រូនិក</h2><p>បង្កើត ឬកែហត្ថលេខាសម្រាប់បុគ្គលិក។ នៅពេលបុគ្គលិករក្សាទុកឯកសារព្យាបាល ប្រព័ន្ធនឹងភ្ជាប់ឈ្មោះគណនី និងហត្ថលេខារបស់អ្នកនោះដោយស្វ័យប្រវត្តិ។</p></div><button type="button" id="esign-refresh" class="secondary">ធ្វើបច្ចុប្បន្នភាព</button></header>
+        <div class="esign-table-wrap"><table class="esign-table"><thead><tr><th>បុគ្គលិក</th><th>គណនី</th><th>តួនាទី</th><th>ហត្ថលេខា</th><th>ស្ថានភាព</th><th></th></tr></thead><tbody id="esign-list"></tbody></table></div>
+      </section>
+
+      <section class="panel audit-panel">
+        <header><div><h2>កំណត់ហេតុសកម្មភាព</h2><p>បង្ហាញសកម្មភាពថ្មីៗតាមអ្នកប្រើ តួនាទី និងផ្នែក។</p></div><button type="button" id="audit-refresh" class="secondary">ធ្វើបច្ចុប្បន្នភាព</button></header>
+        <div id="audit-list" class="audit-list"></div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

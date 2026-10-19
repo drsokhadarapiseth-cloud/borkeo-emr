@@ -1,0 +1,54 @@
+/* Borkeo EMR v34.9. Shared physical card styles: studio and isolated print document. */
+@font-face{font-family:'EMR Sticker Khmer';src:url('/public/fonts/Battambang-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:block}
+#patient_card_dialog{width:min(920px,96vw);max-width:96vw;max-height:92vh;padding:0;border:1px solid #cbdfe8;border-radius:16px;background:#f8fbfd;color:#173c50;font-family:inherit;overflow:auto;box-shadow:0 24px 70px #173c5038}
+#patient_card_dialog::backdrop{background:#102d4566;backdrop-filter:blur(3px)}
+#patient_card_dialog .card-studio-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;background:#fff;border-bottom:1px solid #dce7ee}
+#patient_card_dialog h3{margin:0;font-size:18px;line-height:1.7}
+#patient_card_dialog .card-studio-header p{margin:2px 0 0;font-size:12px;color:#607e8c;line-height:1.7}
+#patient_card_dialog .card-modal-toolbar{display:flex;flex-wrap:wrap;gap:10px;padding:16px 22px;background:#eef5f9;border-bottom:1px solid #dce7ee}
+#patient_card_dialog .card-tool-group{display:flex;align-items:center;gap:7px;min-width:0;padding:7px 10px;background:#fff;border:1px solid #d0e0e9;border-radius:9px}
+#patient_card_dialog .card-tool-label{font-size:12px;font-weight:600;line-height:1.8;color:#466777}
+#patient_card_dialog .card-tool-input,#patient_card_dialog .card-tool-select{min-height:34px;border:1px solid #b8ceda;border-radius:6px;padding:4px 7px;background:#fff;color:#173c50;font:inherit;font-size:12px}
+#patient_card_dialog .card-tool-input{width:68px}
+#patient_card_dialog .card-tool-input:focus,#patient_card_dialog .card-tool-select:focus{outline:2px solid #7ac9e8;outline-offset:1px}
+#patient_card_dialog .card-unit{font-size:11px;color:#6d8997}
+#patient_card_dialog .ruler-viewport{overflow:auto;max-height:50vh;min-height:245px;padding:22px;background:radial-gradient(ellipse at 50% 40%,#fff 0,#f0f6fa 75%);border-bottom:1px solid #dce7ee}
+#patient_card_dialog .card-stage-box{position:relative;box-sizing:content-box;margin:0 auto;min-width:0;min-height:0}
+#patient_card_dialog .card-preview-zoom{position:absolute;left:0;top:0;transform-origin:0 0;padding:30px 0 0 30px;box-sizing:content-box}
+#patient_card_dialog .card-ruler-corner{position:absolute;top:0;left:0;width:30px;height:30px;font:10px/30px sans-serif;text-align:center;color:#466777;background:#e8f0f5}
+#patient_card_dialog .ruler-top{position:absolute;top:0;left:30px;width:100%;height:25px;color:#466777;font:9px sans-serif;background:repeating-linear-gradient(90deg,#bdcdd8 0,#bdcdd8 1px,transparent 1px,transparent 3.77952756px) bottom/100% 5px no-repeat,repeating-linear-gradient(90deg,#6b8899 0,#6b8899 1px,transparent 1px,transparent 37.7952756px) bottom/100% 10px no-repeat,#e8f0f5}
+#patient_card_dialog .ruler-left{position:absolute;top:30px;left:0;width:25px;height:100%;color:#466777;font:9px sans-serif;background:repeating-linear-gradient(180deg,#bdcdd8 0,#bdcdd8 1px,transparent 1px,transparent 3.77952756px) right/5px 100% no-repeat,repeating-linear-gradient(180deg,#6b8899 0,#6b8899 1px,transparent 1px,transparent 37.7952756px) right/10px 100% no-repeat,#e8f0f5}
+#patient_card_dialog .ruler-top span{position:absolute;top:3px;transform:translateX(-50%)}
+#patient_card_dialog .ruler-left span{position:absolute;left:3px;transform:translateY(-50%)}
+#patient_card_dialog .card-print-status{margin:0;padding:12px 22px;min-height:24px;font-size:12px;line-height:1.8;color:#367180;background:#f8fbfd}
+#patient_card_dialog .card-print-status[data-error=true]{color:#a63737;background:#fff4f3}
+#patient_card_dialog .card-dialog-actions{display:flex;justify-content:flex-end;gap:10px;padding:14px 22px;border-top:1px solid #dce7ee;background:#fff}
+#patient_card_dialog .card-dialog-actions button{font:inherit;font-size:13px;min-height:40px;padding:7px 18px;cursor:pointer}
+#patient_card_dialog button:disabled{opacity:.55;cursor:not-allowed}
+#patient_card_dialog [hidden],#card_print_container{display:none!important}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card{--card-font-scale:1;width:80mm;height:35mm;box-sizing:border-box;min-width:0;min-height:0;padding:.7mm;display:flex;flex-direction:column;gap:.15mm;background:#fff;color:#162b39;border:.12mm solid #a8bdca;border-radius:.7mm;font-family:'EMR Sticker Khmer',sans-serif;font-weight:400;line-height:1.85;overflow:visible;box-shadow:0 8px 22px #153d5426}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card *{box-sizing:border-box}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-header-bar{display:flex;flex:none;align-items:center;gap:1mm;border-bottom:.12mm solid #9bb9c9;padding-bottom:.15mm;margin:0;min-height:4.3mm}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-logo{width:4mm;height:4mm;object-fit:contain;flex:none}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-header-titles{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:1mm}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-main-title{font:inherit;font-size:calc(6.2pt * var(--card-font-scale));font-weight:600;line-height:1.85;color:#174760;margin:0;white-space:nowrap}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-badge-title{font-size:calc(4.5pt * var(--card-font-scale));color:#607987;line-height:1.85;white-space:nowrap}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-body-grid{display:flex;align-items:flex-start;gap:1mm;flex:1;min-width:0;min-height:0;overflow:visible}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-info-table{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;flex:1;min-width:0;font:inherit;font-size:calc(5.4pt * var(--card-font-scale));line-height:1.85;margin:0;border:0}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-info-table td{padding:.08mm .35mm;vertical-align:middle;border:0;border-bottom:.10mm solid #e0e8ed;line-height:1.85;height:auto;overflow:visible}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-info-table tr:last-child td{border-bottom:0}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-info-label{width:calc(17.5mm * min(1, var(--card-font-scale, 1)));min-width:14mm;color:#4b6575;font-size:calc(5.0pt * var(--card-font-scale));font-weight:400;white-space:nowrap}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-info-value{color:#162b39;font-weight:600;min-width:0}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-text{display:block;min-width:0;width:100%;white-space:nowrap;line-height:1.85;overflow:visible}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-id-text{font-family:Arial,sans-serif;font-size:calc(5.4pt * var(--card-font-scale));font-weight:700;color:#164a67}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-address-row .card-text{white-space:normal;overflow-wrap:anywhere;word-break:normal;font-size:calc(5.0pt * var(--card-font-scale));font-weight:400;line-height:1.85;min-height:0}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-qr-box{width:13.5mm;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;align-self:center;gap:.4mm;padding-left:.5mm;border-left:.10mm solid #d6e2e9}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-qr-render{width:12.5mm;height:12.5mm;padding:1.6mm;background:#fff;flex:none;display:flex;align-items:center;justify-content:center}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-qr-render img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;margin:0}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-qr-caption{font-size:4.5pt;line-height:1.85;color:#647e8c;white-space:nowrap}
+:is(#patient_card_dialog,.card-print-document) .patient-id-card .card-footer-bar{flex:none;border-top:.10mm solid #dae6ed;text-align:center;font-size:4.2pt;line-height:1.85;color:#6a808d;padding-top:.08mm;white-space:nowrap}
+.card-print-document{font-family:'EMR Sticker Khmer',sans-serif;font-size:0;line-height:0}
+.card-print-document .patient-id-card{box-shadow:none;line-height:1.85;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+@media(max-width:600px){#patient_card_dialog .card-studio-header,#patient_card_dialog .card-modal-toolbar,#patient_card_dialog .card-dialog-actions{padding:12px}#patient_card_dialog .card-tool-group{flex:1 1 120px}#patient_card_dialog .card-tool-select{max-width:100%}#patient_card_dialog .ruler-viewport{padding:14px}}
+/* No global @page or body visibility rules: other clinical forms keep their print layout. */
+@media print{#patient_card_dialog,#card_print_container{display:none!important}.card-print-document .patient-id-card{box-shadow:none;break-inside:avoid;page-break-inside:avoid}}

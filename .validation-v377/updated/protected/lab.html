@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200, user-scalable=yes">
+  <title>Laboratory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Moul&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/public/ocean-theme.css">
+  <link rel="stylesheet" href="/public/emr-session.css?v=1200">
+  <link rel="stylesheet" href="/public/lab.css?v=1860">
+  <link rel="stylesheet" href="/public/paraclinic-workspace.css?v=1620">
+  <script src="/public/emr-session.js?v=1970" defer></script>
+  <script src="/public/report-print.js?v=1771" defer></script>
+  <script src="/public/lab.js?v=2030" defer></script>
+  <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+  <link rel="stylesheet" href="/public/paraclinic-print.css?v=1750">
+</head>
+<body data-paraclinic-print="lab">
+<main class="lab-shell paraclinic-shell">
+  <section class="lab-banner paraclinic-banner" data-session-host>
+    <div class="banner-copy">
+      <h1>Laboratory</h1>
+      
+    </div>
+    <img src="/public/logo-hospital.jpg" alt="Hospital logo">
+  </section>
+
+  <section class="lab-toolbar workspace-toolbar" aria-label="Laboratory filters and actions">
+    <div class="toolbar-filters">
+      <div class="status-tabs toolbar-group">
+        <button class="active" data-filter="">Specimen List</button>
+        <button data-filter="URGENT">Urgent</button>
+        <button data-filter="RECEIVED">Received</button>
+        <button data-filter="RESULT_AVAILABLE">Complete Test List</button>
+        <button data-filter="REJECTED">Rejected</button>
+        <a href="/lab/materials" class="tab-materials" id="lab-materials-tab" role="button">Material List</a>
+      </div>
+    </div>
+    <div class="toolbar-actions">
+      <input id="lab-search" type="search" placeholder="Search patients, case numbers, or tests">
+      <button id="lab-refresh">Refresh</button>
+      <button id="lab-catalog-manage" hidden>Manage Test Catalog</button>
+    </div>
+  </section>
+
+  <div id="lab-status" class="workspace-status" role="status"></div>
+  <section class="lab-layout workspace-layout">
+    <aside class="workspace-card">
+      <header class="workspace-card-header"><div><h2>Laboratory Orders</h2><small>Select an order to enter results</small></div></header>
+      <div id="lab-worklist" class="lab-worklist workspace-list"></div>
+    </aside>
+    <section class="workspace-card" data-paraclinic-report>
+      <header class="workspace-card-header"><div><h2>Results and Details</h2><small>Enter results, workflow, and attachments</small></div></header>
+      <div id="lab-detail" class="lab-detail workspace-detail"><div class="empty-state">Select a Laboratory Order</div></div>
+    </section>
+  </section>
+</main>
+</body>
+</html>

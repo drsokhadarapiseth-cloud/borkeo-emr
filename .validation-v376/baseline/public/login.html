@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200, user-scalable=yes">
+  <title>ចូលប្រើប្រព័ន្ធ EMR — មន្ទីរពេទ្យបង្អែកបរកែវ</title>
+  <link rel="preload" href="/public/fonts/Battambang-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="/public/login.css?v=2050">
+  <script src="/public/organization-branding.js?v=1560" defer></script><script src="/public/login.js" defer></script>
+  <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+</head>
+<body>
+  <div class="login-page-bg" aria-hidden="true">
+    <span class="bg-orb orb-a"></span>
+    <span class="bg-orb orb-b"></span>
+    <span class="bg-grid"></span>
+  </div>
+
+  <main class="login-shell">
+    <section class="login-panel" aria-labelledby="login-title">
+      <header class="panel-header">
+        <div class="brand-block">
+          <div class="brand-mark">
+            <img src="/public/logo-hospital.jpg" alt="និមិត្តសញ្ញាមន្ទីរពេទ្យបង្អែកបរកែវ">
+          </div>
+          <div class="brand-copy">
+            <p class="eyebrow">ប្រព័ន្ធកំណត់ត្រាវេជ្ជសាស្ត្រអេឡិចត្រូនិក</p>
+            <h1 class="hospital-name-kh">មន្ទីរពេទ្យបង្អែក បរកែវ</h1>
+            
+          </div>
+        </div>
+        <div class="header-meta">
+          <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
+          <span class="login-build-version" data-app-version data-language-exclude>v37.6</span>
+        </div>
+      </header>
+
+      <div class="content-grid">
+        <section class="form-section">
+          <div class="section-intro">
+            <h2 id="login-title">ចូលគណនី</h2>
+            <p class="help">កំណែសាកល្បងនៅលើកុំព្យូទ័រនេះ៖ វាយតែឈ្មោះអ្នកប្រើ ហើយចុចចូល។ កុំបញ្ចូលទិន្នន័យអ្នកជំងឺពិត។</p>
+          </div>
+
+          <form id="login-form" novalidate>
+            <label for="username">ឈ្មោះអ្នកប្រើប្រាស់</label>
+            <div class="field">
+              <span aria-hidden="true" class="field-icon">👤</span>
+              <input id="username" name="username" type="text" autocomplete="username"
+                minlength="3" maxlength="64" required autofocus>
+            </div>
+
+            <div id="login-password-group" hidden>
+              <label for="password">ពាក្យសម្ងាត់</label>
+              <div class="field">
+                <span aria-hidden="true" class="field-icon">🔒</span>
+                <input id="password" name="password" type="password" autocomplete="current-password"
+                  minlength="12" maxlength="128">
+                <button id="toggle-password" class="reveal" type="button" aria-label="បង្ហាញពាក្យសម្ងាត់">បង្ហាញ</button>
+              </div>
+            </div>
+
+            <div id="login-status" class="status" role="alert" aria-live="polite" hidden></div>
+            <button id="login-button" class="submit" type="submit" disabled>ចូលប្រើប្រាស់ប្រព័ន្ធ</button>
+          </form>
+        </section>
+
+        <aside class="info-panel" aria-label="ព័ត៌មានប្រព័ន្ធ">
+          <div class="info-card accent">
+            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v37.6</span></h3>
+            <p>គណនីសាកល្បងចូលបានដោយគ្មានពាក្យសម្ងាត់។ ប្រើតែទិន្នន័យសាកល្បងប៉ុណ្ណោះ។</p>
+          </div>
+          <div class="info-card">
+            <h3>មុខងារសំខាន់</h3>
+            <ul>
+              <li>ចុះឈ្មោះ • វាយតម្លៃជំងឺ • កំណត់ត្រាអ្នកជំងឺ</li>
+              <li>ដំណើរការថែទាំ • តារាងតាមដានសម្រាល</li>
+              <li>មន្ទីរពិសោធន៍ • រូបភាពវេជ្ជសាស្ត្រ • បេឡា</li>
+              <li>កំណត់សិទ្ធិតាមតួនាទី និងផ្នែក</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

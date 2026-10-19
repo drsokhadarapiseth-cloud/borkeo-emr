@@ -1,0 +1,213 @@
+BORKEO EMR v37.9 - BOTTOM FORM CONTROLS
+BASE: package 37.8.0 in the current user project, Borkeo_EMR_v37.1.
+TARGET: package 37.9.0 and visible v37.9.
+
+APPROVED CHANGE
+Move the shared Edit/Save, Cancel and status toolbar below the form on Registration, Triage and every other encounter form using this toolbar (OPD, IPD, Nursing Care, daily follow-up and discharge). Remove the toolbar Print button on Registration only. Retain printing on the other forms. Preserve the existing Khmer labels, required-field checks, role permissions, approval workflows and clinical/financial behavior. No patient data or photos are part of this patch.
+
+IMPLEMENTATION
+The encounter editor inserts its toolbar immediately after the page containing the active form, rather than before that page. Registration removes the toolbar Print element when creating the toolbar; other views retain the existing print handler. The toolbar remains outside the form's read-only controls and required-field validation scope. The existing Edit/Save and Cancel handlers are unchanged. Package, visible version and affected asset cache queries advance to 37.9.
+
+VALIDATION
+35 focused automated checks passed in a disposable copy with synthetic facility defaults and in-memory databases. Coverage includes version consistency, required fields, absence of EN controls, clinical scope and receipt/discharge permissions, completed-Triage edits, approved corrections/deletion, invoice permissions, read-only management history and printing.
+13 existing browser scenarios passed in a fresh temporary Edge profile. Additional assertions in those scenarios verify bottom toolbar placement for Registration, Triage, OPD/IPD doctors, Nurse, Midwife and Chief of Ward; absence of the Registration toolbar Print element; and retention of Print on the other forms. The actual Registration layout was also measured to confirm its toolbar is below the form. Existing View/Edit/Save and required-field checks still passed. Tests used synthetic records only.
+The update patch was checked and applied to a disposable 37.8 baseline. All seven reconstructed target hashes match the edited source exactly, and changed JavaScript passes node --check. The entire historical suite was not run.
+
+ANTIGRAVITY - ONE COMBINED UPDATE
+1. Stop the running npm process. Use the current user project as the base and preserve unrelated customizations. This Codex workspace already contains 37.9; do not reapply if the target hashes already match. For another copy, confirm package 37.8.0 and back up the seven affected files. Never replace production with a validation directory.
+2. Compare base SHA-256 hashes below. Read this file with Node fs.readFileSync(...,'utf8'), extract only the text between BEGIN V37.9 PATCH and END V37.9 PATCH (excluding marker lines), and write update379.diff in UTF-8. Target source files use Windows CRLF. Avoid old PowerShell default encoding.
+3. Run git -c core.autocrlf=true apply --check update379.diff and then git -c core.autocrlf=true apply update379.diff. Do not force failed hunks. Verify target hashes. No database migration or patient-data replacement is needed for this update.
+4. Validate in a disposable copy without a live .env or database; provide synthetic data/health-facility/hospital-defaults.json containing {}. Run:
+   node --test tests/v378-encounter-access.test.mjs tests/v377-required-fields.test.mjs tests/v371-phone-policy.test.mjs tests/v368-caregiver-validation.test.mjs tests/report-print.test.mjs tests/v376-no-language-buttons.test.mjs
+   On Windows with Edge/Chrome, run node --test tests/v378-encounter-browser.mjs. EMR_TEST_BROWSER can specify the Chromium executable.
+5. Start npm start from the same project folder, preserve any unsaved browser work and hard-refresh. Confirm v37.9. Open an existing Registration record: the controls must appear below the form, with no toolbar Print button. Check Triage and other clinical forms for the bottom toolbar and retained Print button. Verify explicit Edit, required-field validation, Save and Cancel using synthetic records.
+
+SHA-256 MANIFEST
+[
+  {
+    "path": "package.json",
+    "base_sha256": "647364e4b86f89daa19b6fecbf0a7ef3797d8fd24536a0bdc6baf804a84423e3",
+    "target_sha256": "da2ca2bf664d10a1d2a7b1eb2ed251691df7959c52a7afcb1af6bfa81b313279"
+  },
+  {
+    "path": "server/server.mjs",
+    "base_sha256": "fb4bbc5832f625a92f7f6035cf8b6dbcfd40d152ab9551c855f1637e0941e427",
+    "target_sha256": "376863592216de32f11005e71ec0df9bfc6f8fba1ffcf34ff1d3d7c8e56fccbc"
+  },
+  {
+    "path": "public/emr-encounter-editor.js",
+    "base_sha256": "c4d74dc51157ba07b33c97a1ee6b219145ec0f7bdd031a58f3e6308ae2371567",
+    "target_sha256": "498409313967327cb502a9f79e05eff9c747f1b0c633696f962d3b079eb2a7a0"
+  },
+  {
+    "path": "public/login.html",
+    "base_sha256": "7f0bb9fb31ed6c9b300cdf9b33081974888006d1cb0d1221f3b4c8ac8a3cfc90",
+    "target_sha256": "7a29f6387446ee4831cec3231efb796daaa6020ff2461082ce470ede6b4c2c7d"
+  },
+  {
+    "path": "tests/v371-phone-policy.test.mjs",
+    "base_sha256": "9cb4f7b3694668259625f9efd183d13da162381a177f62c7fb96b1955c1dbd1d",
+    "target_sha256": "caa9236363e90d7b9e7605cfc1530a9ded2ca6a90b13250604892a3ada9094de"
+  },
+  {
+    "path": "tests/v377-required-fields.test.mjs",
+    "base_sha256": "536f921e9bf67f48cfedd5432e6e0607d46a630efac2eee3f5b9503804346499",
+    "target_sha256": "f9cac64c24c4919170f98326669e9a80527685b9f9b58d47bc0d7a92c91ec09c"
+  },
+  {
+    "path": "tests/v378-encounter-browser.mjs",
+    "base_sha256": "3490caad3d1280206d908fe132add7dc7a4acbadb42eab0f87ddd2bacbfbd704",
+    "target_sha256": "18091cd3c9a0b335ccac06151cb8e5d140447395bcae08781b62347b115efaa3"
+  }
+]
+
+BEGIN V37.9 PATCH
+diff --git a/package.json b/package.json
+index 53a0dfd..5e6bac1 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "borkeo-emr",
+-  "version": "37.8.0",
++  "version": "37.9.0",
+   "private": true,
+   "type": "module",
+   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",
+diff --git a/server/server.mjs b/server/server.mjs
+index a993cfa..4815b37 100644
+--- a/server/server.mjs
++++ b/server/server.mjs
+@@ -3,7 +3,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
+ import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
+ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
+ import { createDiagnosisSearch } from './icd10.mjs';
+-// Borkeo EMR v37.8 - Electronic Medical Record System
++// Borkeo EMR v37.9 - Electronic Medical Record System
+ import {validateAddressHierarchy} from './gazetteer.mjs';
+ import {validateCambodianPhone} from './cambodia-phone.mjs';
+ import {PATIENT_PHOTO_FIELDS, validPatientPhoto} from './patient-photo.mjs';
+@@ -418,10 +418,10 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
+   html = html.replace(/<head\b[^>]*>/i, head => head + '<style>.emr-language-switch, [data-emr-language], #langBtn, .lang-btn, body #emr-site-banner .portal-account-actions .emr-language-switch, #emr-session-control .portal-account-actions .emr-language-switch, .portal-account-actions .emr-language-switch { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; max-width: 0 !important; max-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; position: absolute !important; left: -9999px !important; clip: rect(0,0,0,0) !important; }</style><script src="/public/emr-language-lock.js?v=3760"></script><link rel="stylesheet" href="/public/emr-required-fields.css?v=3770"><script src="/public/emr-required-fields.js?v=3770"></script>');
+   html = html.replace('</head>', '<link rel="stylesheet" href="/public/interface-theme.css?v=1970"><script src="/public/interface-theme.js?v=1970" defer></script></head>');
+   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
+-  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3780"><script src="/public/emr-encounter-editor.js?v=3780" defer></script></head>');
++  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3790"><script src="/public/emr-encounter-editor.js?v=3790" defer></script></head>');
+   html = html.replace('</head>', `<meta name="borkeo-version" content="${APP_VERSION}"></head>`);
+   if (!html.includes('/public/emr-language.js')) {
+-    const languageAssets = '<link rel="stylesheet" href="/public/emr-language.css?v=3780"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=3780" defer></script>';
++    const languageAssets = '<link rel="stylesheet" href="/public/emr-language.css?v=3790"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=3790" defer></script>';
+     html = html.replace('</head>', `${languageAssets}</head>`);
+   }
+   html = html.replace(/(\/public\/[^"'\s<>]+\?v=[^"'\s<>]+)/g, asset => `${asset}&build=${APP_VERSION}`);
+diff --git a/public/emr-encounter-editor.js b/public/emr-encounter-editor.js
+index 4df24f6..afe089e 100644
+--- a/public/emr-encounter-editor.js
++++ b/public/emr-encounter-editor.js
+@@ -36,10 +36,12 @@
+     if(!bar && !report){
+       bar=document.createElement('div');bar.className='emr-encounter-toolbar no-print';bar.dataset.emrTransient='';
+       bar.innerHTML='<button type="button" data-editor-toggle data-required-bypass></button><button type="button" data-editor-cancel data-required-bypass>បោះបង់ការកែប្រែ</button><button type="button" data-editor-print data-required-bypass>បោះពុម្ព</button><span data-editor-status role="status"></span>';
+-      page.before(bar);
++      page.after(bar);
+       bar.querySelector('[data-editor-toggle]').onclick=toggle;
+       bar.querySelector('[data-editor-cancel]').onclick=()=>{if(confirm('តើបោះបង់ការកែប្រែដែលមិនទាន់រក្សាទុកឬ?')){const url=new URL(location.href);url.searchParams.set('mode','view');url.searchParams.delete('edit');location.assign(url)}};
+-      bar.querySelector('[data-editor-print]').onclick=()=>window.printEmrReport?.({selectors:['#'+root.id],title:document.title});
++      const printButton=bar.querySelector('[data-editor-print]');
++      if(current==='register')printButton.remove();
++      else printButton.onclick=()=>window.printEmrReport?.({selectors:['#'+root.id],title:document.title});
+     }
+     const locked=report || !editing;
+     root.querySelectorAll('input,select,textarea,button').forEach(field=>{
+diff --git a/public/login.html b/public/login.html
+index fea5e8b..09d4b28 100644
+--- a/public/login.html
++++ b/public/login.html
+@@ -31,7 +31,7 @@
+         </div>
+         <div class="header-meta">
+           <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
+-          <span class="login-build-version" data-app-version data-language-exclude>v37.8</span>
++          <span class="login-build-version" data-app-version data-language-exclude>v37.9</span>
+         </div>
+       </header>
+ 
+@@ -67,7 +67,7 @@
+ 
+         <aside class="info-panel" aria-label="ព័ត៌មានប្រព័ន្ធ">
+           <div class="info-card accent">
+-            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v37.8</span></h3>
++            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v37.9</span></h3>
+             <p>គណនីសាកល្បងចូលបានដោយគ្មានពាក្យសម្ងាត់។ ប្រើតែទិន្នន័យសាកល្បងប៉ុណ្ណោះ។</p>
+           </div>
+           <div class="info-card">
+diff --git a/tests/v371-phone-policy.test.mjs b/tests/v371-phone-policy.test.mjs
+index a9a5151..66b6895 100644
+--- a/tests/v371-phone-policy.test.mjs
++++ b/tests/v371-phone-policy.test.mjs
+@@ -13,7 +13,7 @@ const ROOT = path.resolve('.');
+ 
+ test('v37.1 - Version metadata consistency across package.json, login.html, server.mjs, and HTML templates', () => {
+   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+-  assert.ok(['37.1.0', '37.2.0', '37.3.0', '37.4.0', '37.5.0', '37.6.0', '37.7.0', '37.8.0'].includes(pkg.version));
++  assert.ok(['37.1.0', '37.2.0', '37.3.0', '37.4.0', '37.5.0', '37.6.0', '37.7.0', '37.8.0', '37.9.0'].includes(pkg.version));
+ 
+   const loginHtml = fs.readFileSync(path.join(ROOT, 'public', 'login.html'), 'utf8');
+   assert.ok(loginHtml.includes('v' + pkg.version.split('.').slice(0,2).join('.')), 'login.html must contain v37.1');
+diff --git a/tests/v377-required-fields.test.mjs b/tests/v377-required-fields.test.mjs
+index 2220f59..200020f 100644
+--- a/tests/v377-required-fields.test.mjs
++++ b/tests/v377-required-fields.test.mjs
+@@ -44,14 +44,14 @@ test('a direct Registration save/transfer validates before clinical synchronizat
+ 
+ test('required validation assets are served through the public allowlist and metadata agrees', () => {
+   const pkg = JSON.parse(read('package.json'));
+-  assert.equal(pkg.version, '37.8.0');
++  assert.equal(pkg.version, '37.9.0');
+   const server = read('server/server.mjs');
+   for (const asset of ['emr-required-fields.js', 'emr-required-fields.css']) {
+     assert.ok(server.includes("['/public/" + asset + "', ['" + asset + "',"));
+     assert.ok(fs.existsSync('public/' + asset));
+   }
+-  assert.match(server, /Borkeo EMR v37\.8/);
+-  assert.match(read('public/login.html'), /data-app-version[^>]*>v37\.8</);
++  assert.match(server, /Borkeo EMR v37\.9/);
++  assert.match(read('public/login.html'), /data-app-version[^>]*>v37\.9</);
+ });
+ 
+ test('specialty storage cannot write a form that fails required-field validation', async () => {
+diff --git a/tests/v378-encounter-browser.mjs b/tests/v378-encounter-browser.mjs
+index acb70de..8b0fe4b 100644
+--- a/tests/v378-encounter-browser.mjs
++++ b/tests/v378-encounter-browser.mjs
+@@ -39,6 +39,8 @@ test('actual browser isolates View/Edit/Save and renders all seven management pa
+     const editor=document.createElement('iframe');editor.src='/emr?patient=synthetic&view=register&mode=view&__editorFixture=1';document.body.append(editor);
+     await wait(()=>editor.contentWindow.EmrEncounterEditor&&editor.contentDocument.querySelector('[data-editor-toggle]'),'editor toolbar');
+     const win=editor.contentWindow,doc=editor.contentDocument,input=doc.getElementById('reg');await wait(()=>input.disabled,'initial lock');
++    ok(doc.querySelector('.emr-encounter-toolbar').previousElementSibling===doc.getElementById('page1'),'Registration controls follow the form');
++    ok(!doc.querySelector('[data-editor-print]'),'Registration toolbar has no Print button');
+     doc.querySelector('#sub_reg button').click();ok(win.legacySaved===0,'View must not save');ok(input.disabled,'View disables editing');results.push('Registration View is read-only and blocks the legacy save');
+     doc.querySelectorAll('#sub_reg button')[1].click();ok(win.printed===1,'View permits printing');
+     doc.querySelector('[data-editor-toggle]').click();await wait(()=>!input.disabled,'edit unlock');
+@@ -50,6 +52,9 @@ test('actual browser isolates View/Edit/Save and renders all seven management pa
+       const frame=document.createElement('iframe');frame.src='/emr?patient=synthetic&mode=view&__editorFixture=1&role='+role+'&view='+view;document.body.append(frame);
+       await wait(()=>frame.contentDocument.querySelector('[data-editor-toggle]')&&!frame.contentDocument.querySelector('[data-editor-toggle]').disabled,role+' toolbar');
+       const page=frame.contentDocument.getElementById(root),field=page.querySelector('input');ok(field.disabled,role+' View locks fields');
++      const toolbar=frame.contentDocument.querySelector('.emr-encounter-toolbar');
++      ok(toolbar.previousElementSibling===(page.closest('.page')||page),role+' controls follow the form');
++      ok(toolbar.querySelector('[data-editor-print]'),role+' keeps Print');
+       ok(!page.hidden,role+' displays its own form');
+       frame.contentDocument.querySelector('[data-editor-toggle]').click();await wait(()=>!field.disabled,role+' Edit');
+       frame.contentDocument.querySelector('[data-editor-toggle]').click();await wait(()=>frame.contentWindow.saved===1&&field.disabled,role+' Save');
+@@ -64,6 +69,10 @@ test('actual browser isolates View/Edit/Save and renders all seven management pa
+     const chart=document.createElement('iframe');chart.src=eye.href;document.body.append(chart);
+     await wait(()=>chart.contentWindow.getLoadedEmrPatient?.()?.patientKey==='${key}'&&chart.contentDocument.querySelector('[data-editor-toggle]')&&!chart.contentDocument.querySelector('[data-editor-toggle]').disabled,'actual Registration chart');
+     const actualName=chart.contentDocument.getElementById('web_first_name');ok(actualName.disabled,'Actual Registration opens locked');
++    const actualBar=chart.contentDocument.querySelector('.emr-encounter-toolbar'),actualPage=chart.contentDocument.getElementById('page1');
++    ok(actualBar.previousElementSibling===actualPage,'Actual Registration controls follow the form');
++    ok(actualBar.getBoundingClientRect().top>=actualPage.getBoundingClientRect().bottom,'Actual Registration toolbar appears below the form');
++    ok(!actualBar.querySelector('[data-editor-print]'),'Actual Registration has no toolbar Print button');
+     chart.contentDocument.querySelector('[data-editor-toggle]').click();await wait(()=>!actualName.disabled,'actual Registration unlock');
+     results.push('Actual Registration form unlocks for an explicit Edit');chart.remove();
+     list.remove();await fetch('/api/auth/logout',{method:'POST'});
+END V37.9 PATCH

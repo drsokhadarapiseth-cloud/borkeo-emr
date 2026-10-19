@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200, user-scalable=yes">
+  <title>ផ្ទាំងលេខរៀង · ឱសថស្ថាន</title>
+  <link rel="stylesheet" href="/public/pharmacy-display.css?v=1500">
+  <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+  <script src="/public/pharmacy-display.js?v=1500" defer></script>
+</head>
+<body>
+  <main class="pharmacy-display">
+    <header class="display-heading"><h1>ផ្ទាំងលេខរៀង · ឱសថស្ថាន</h1><time id="display-clock">--:--</time></header>
+    <div class="display-columns">
+      <section class="display-column opd-column" aria-labelledby="opd-title">
+        <h2 id="opd-title">OPD</h2>
+        <div class="display-column-head"><span>លេខរៀង</span><span>ឈ្មោះអ្នកជំងឺ</span><span>ស្ថានភាព</span></div>
+        <ol id="opd-dispensing-rows" class="display-list"></ol>
+      </section>
+      <section class="display-column ipd-column" aria-labelledby="ipd-title">
+        <h2 id="ipd-title">អ្នកជំងឺ IPD បានចេញពីពេទ្យ</h2>
+        <div class="display-column-head"><span>លេខរៀង</span><span>ឈ្មោះអ្នកជំងឺ</span><span>ស្ថានភាព</span></div>
+        <ol id="ipd-dispensing-rows" class="display-list"></ol>
+      </section>
+    </div>
+    <footer id="display-updated">កំពុងទាញបញ្ជី…</footer>
+  </main>
+</body>
+</html>

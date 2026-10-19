@@ -1,0 +1,247 @@
+*{box-sizing:border-box}body{margin:0;background:#f2f8fb;color:#183b4a;font-family:"Khmer OS Battambang","Noto Sans Khmer",Arial,sans-serif}.imaging-shell{max-width:1600px;margin:auto;padding:16px}.imaging-banner{min-height:116px;padding:18px 24px;border-radius:18px;border:1px solid #c7e1ea;background:linear-gradient(135deg,#e6f6fa,#d5edf5);display:flex;justify-content:space-between;align-items:flex-start;position:relative}.imaging-banner h1{margin:2px 0}.imaging-banner p,.imaging-banner span{margin:0;color:#4b7b8e}.imaging-banner img{width:84px;height:84px;object-fit:contain;border-radius:12px}.imaging-toolbar[hidden],[hidden].imaging-toolbar,.imaging-toolbar.is-hidden-toolbar{display:none!important}.imaging-toolbar:not([hidden]):not(.is-hidden-toolbar){display:flex;gap:8px;align-items:center;justify-content:space-between;margin:12px 0;flex-wrap:nowrap;overflow-x:auto}.mod-tabs,.img-status-tabs{display:flex;gap:4px;flex-wrap:nowrap;flex-shrink:0}.mod-tabs button,.img-status-tabs button,.imaging-toolbar>button,.imaging-toolbar .toolbar-actions button,#imaging-detail button{border:1px solid #bfd8e2;background:#fff;color:#205b72;border-radius:8px;padding:5px 9px;font-size:12.5px;font-weight:700;line-height:1.25;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}.mod-tabs button:hover,.img-status-tabs button:hover,.imaging-toolbar>button:hover,.imaging-toolbar .toolbar-actions button:hover{background:#edf9fc;border-color:#0b8eb4}.mod-tabs button.active,.img-status-tabs button.active,#imaging-detail .primary{background:#0b89ae;color:#fff;border-color:#0b89ae}.imaging-toolbar input{margin-left:auto;min-width:170px;width:clamp(170px,15vw,240px);border:1px solid #bed6df;border-radius:8px;padding:5px 9px;font-size:12.5px}.imaging-layout{display:grid;grid-template-columns:minmax(320px,430px) 1fr;gap:14px;min-height:650px}#imaging-worklist,#imaging-detail{background:#fff;border:1px solid #d5e7ed;border-radius:14px;overflow:auto}.work-card{padding:14px;border-bottom:1px solid #e5eff3;cursor:pointer}.work-card:hover,.work-card.active{background:#eff9fc}.work-card.urgent{border-left:5px solid #c62d2d}.work-card strong,.work-card small{display:block}.work-card small{color:#62808c;margin-top:3px}.badge{display:inline-block;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800;background:#e7f3f8;color:#256782;margin-top:6px}.badge.urgent{background:#fff0f0;color:#b51d1d}#imaging-detail{padding:20px}.detail-head{display:flex;justify-content:space-between;gap:12px}.detail-head h2{margin:0}.request-box{background:#f3f9fb;border-radius:11px;padding:14px;margin:14px 0;white-space:pre-wrap}.report-grid label{display:block;font-weight:700;margin:13px 0}.report-grid textarea{width:100%;min-height:120px;border:1px solid #c2d9e2;border-radius:9px;padding:10px;font:inherit}.detail-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.attachments{margin-top:18px;border-top:1px solid #e3edf1;padding-top:14px}.attachment-list a{display:block;margin:5px 0}.empty{display:grid;place-items:center;min-height:500px;color:#6b8994}.released{background:#e8f7ed;color:#287146;border-radius:9px;padding:9px 12px;margin:12px 0}@media(max-width:950px){.imaging-layout{grid-template-columns:1fr}.imaging-toolbar{flex-wrap:wrap}.imaging-toolbar input{margin-left:0;min-width:0;flex:1}}
+.accession{font-weight:800;color:#21708e;letter-spacing:.02em}.work-card.safety{box-shadow:inset 0 0 0 2px #d18a24}.badge.safety{background:#fff0d6;color:#8a570d}.safety-banner{background:#fff6e8;border:1px solid #efce98;color:#7b5518;border-radius:10px;padding:10px 13px;margin:12px 0}.safety-banner ul{margin:6px 0 0 20px}.schedule-banner{background:#eef7ff;border:1px solid #c8e0f4;color:#285f86;border-radius:9px;padding:9px 12px;margin:10px 0}.performed-banner{background:#f0f8f4;border:1px solid #cae6d7;color:#2a694b;border-radius:9px;padding:9px 12px;margin:10px 0}@media print{body{background:#fff}.imaging-banner,.imaging-toolbar,#imaging-status,#imaging-worklist,.detail-actions,.attachments{display:none!important}.imaging-shell{max-width:none;padding:0}.imaging-layout{display:block;min-height:0}#imaging-detail{border:0;padding:0;overflow:visible}.report-grid textarea{border:0;min-height:0;resize:none;overflow:visible}}
+
+#imaging-status{min-height:24px;margin:4px 0 10px;font-weight:700;color:#a32922}#imaging-status.info{color:#0f6f95;background:#eef9fd;border:1px solid #c7e5f0;border-radius:10px;padding:8px 12px}.report-grid textarea:focus{outline:2px solid rgba(19,122,166,.16);border-color:#137aa6}
+
+.imaging-print-report{display:none}
+@font-face{font-family:ImagingBattambang;src:url('/public/fonts/Battambang-Regular.ttf') format('truetype')}
+@page{size:A4 portrait;margin:11mm}
+@media print{
+  body{background:#fff!important;color:#111!important;font-family:ImagingBattambang,'Khmer OS Battambang',Arial,sans-serif}
+  .imaging-shell{max-width:none;margin:0;padding:0}
+  .imaging-banner,.imaging-toolbar,#imaging-status,#imaging-worklist,#imaging-detail> :not(.imaging-print-report){display:none!important}
+  .imaging-layout{display:block;min-height:0}
+  #imaging-detail{display:block;border:0;border-radius:0;padding:0;margin:0;overflow:visible}
+  .imaging-print-report{display:block!important;color:#111;font:10px/1.45 ImagingBattambang,'Khmer OS Battambang',Arial,sans-serif}
+  .imaging-print-letterhead{position:relative;text-align:center;min-height:30mm;margin-bottom:6px;font-family:'Moul','Khmer OS Muol Light',serif}
+  .imaging-print-national-text{font-size:13px;line-height:1.55;max-width:calc(100% - 54mm);margin-inline:auto}
+  .imaging-print-national-text img{display:block;width:34mm;height:auto;max-height:5mm;object-fit:contain;margin:1mm auto 0}
+  .imaging-print-logo{position:absolute;top:7mm;left:7mm;right:auto;width:20mm;height:20mm;object-fit:contain}
+  .imaging-print-letterhead h1{font:400 15px/1.5 'Moul','Khmer OS Muol Light',serif;margin:2mm 0 0}
+  .imaging-print-patient-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;border:1px solid #888;padding:6px 8px}
+  .imaging-print-diagnosis{grid-column:1/-1}
+  .imaging-print-band{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px;margin-top:7px;padding:7px 9px;border:1px solid #777;background:#e7e7e7;print-color-adjust:exact;-webkit-print-color-adjust:exact;break-inside:avoid}
+  .imaging-print-band strong{grid-column:1/-1}
+  .imaging-print-request,.imaging-print-result{margin-top:8px;break-inside:avoid}
+  .imaging-print-request h2,.imaging-print-result h2{font:bold 10px Arial,sans-serif;border-bottom:1px solid #777;margin:0 0 4px;padding-bottom:3px}
+  .imaging-print-request>div,.imaging-print-result>div{white-space:pre-wrap;min-height:16px}
+  .imaging-print-signatures{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px;text-align:center;break-inside:avoid}
+}
+
+/* v18.6: English medical labels with original patient text support. */
+.imaging-shell{font-family:Arial,ImagingBattambang,sans-serif}
+@media print{.imaging-print-letterhead,.imaging-print-letterhead h1{font-family:Arial,ImagingBattambang,sans-serif;font-weight:700}}
+
+/* v24.8: Structured Modality Specific Forms & Print Tables */
+.structured-report-card{background:#f8fbfd;border:1px solid #d4e8f0;border-radius:12px;padding:16px;margin:14px 0}
+.structured-form-section{margin-bottom:14px}
+.structured-form-section h3{font-size:14px;font-weight:700;color:#185a73;margin:0 0 10px;padding-bottom:5px;border-bottom:1px solid #ddecfa;display:flex;align-items:center;gap:6px}
+.modality-param-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.modality-param-grid.col-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.modality-param-grid.col-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.modality-param-grid.col-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.field-group{display:flex;flex-direction:column;gap:4px}
+.field-group label{font-size:12px;font-weight:700;color:#2c5b6e;margin:0}
+.field-group input,.field-group select,.field-group textarea{border:1px solid #c2d9e2;border-radius:7px;padding:7px 9px;font-size:12.5px;font-family:inherit;background:#fff;color:#183b4a}
+.field-group input:focus,.field-group select:focus,.field-group textarea:focus{outline:2px solid rgba(19,122,166,.2);border-color:#137aa6}
+.field-group textarea{min-height:75px;resize:vertical}
+.full-span{grid-column:1/-1}
+
+.structured-print-summary{margin:8px 0;border:1px solid #999;background:#fafafa;padding:6px 8px;border-radius:4px;page-break-inside:avoid}
+.structured-print-summary h4{margin:0 0 4px;font-size:11px;font-weight:bold;color:#111;border-bottom:1px dashed #aaa;padding-bottom:2px}
+.structured-print-table{width:100%;border-collapse:collapse;margin:4px 0;font-size:9.5px}
+.structured-print-table th,.structured-print-table td{border:1px solid #888;padding:3px 6px;text-align:left;vertical-align:top}
+.structured-print-table th{background:#e6e6e6;font-weight:bold;color:#000;width:35%}
+.structured-print-table td{color:#222}
+
+/* Specialty Group Navigation Tabs & Sub-list Menus (Compact Single-Row Tab Style) */
+.imaging-toolbar[hidden],
+[hidden].imaging-toolbar,
+.workspace-toolbar[hidden],
+[hidden].workspace-toolbar,
+.film-field[hidden],
+.material-field[hidden],
+.medicine-field[hidden],
+.is-hidden-toolbar {
+  display: none !important;
+}
+
+.imaging-toolbar.workspace-toolbar:not([hidden]):not(.is-hidden-toolbar),
+.workspace-toolbar:not([hidden]):not(.is-hidden-toolbar){
+  overflow:visible !important;
+  position:relative !important;
+  z-index:100 !important;
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:6px !important;
+  padding:5px 10px !important;
+  min-height:44px !important;
+}
+.workspace-toolbar .toolbar-filters{
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  align-items:center !important;
+  gap:2px !important;
+  flex-shrink:1 !important;
+  min-width:0 !important;
+  overflow:visible !important;
+}
+.imaging-groups-bar{
+  display:inline-flex !important;
+  align-items:center !important;
+  gap:2px !important;
+  flex-wrap:nowrap !important;
+  overflow:visible !important;
+}
+.group-dropdown{
+  position:relative !important;
+  display:inline-block !important;
+  flex-shrink:0 !important;
+}
+.group-btn-all,
+.group-dropdown-btn,
+.group-btn-films,
+.tab-materials,
+a.group-btn-films{
+  background:transparent !important;
+  color:var(--tab-text, #86431f) !important;
+  border:none !important;
+  border-bottom:2px solid transparent !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  font:700 12.5px/1.3 BorkeoInterface,"Khmer OS Battambang",Arial,sans-serif !important;
+  min-height:32px !important;
+  height:32px !important;
+  padding:4px 7px 6px !important;
+  cursor:pointer !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:3px !important;
+  white-space:nowrap !important;
+  text-decoration:none !important;
+  flex-shrink:0 !important;
+  transition:background .16s ease, color .16s ease, box-shadow .16s ease !important;
+  box-sizing:border-box !important;
+}
+.group-btn-all:hover,
+.group-dropdown-btn:hover,
+.group-btn-films:hover,
+.tab-materials:hover,
+a.group-btn-films:hover{
+  background:rgba(0,0,0,0.035) !important;
+  color:var(--tab-text, #86431f) !important;
+  border-radius:5px !important;
+}
+.group-btn-all:is(.active,[aria-current=page],[aria-selected=true]),
+.group-dropdown-btn:is(.active,[aria-current=page],[aria-selected=true]),
+.group-btn-films:is(.active,[aria-current=page],[aria-selected=true]){
+  background:var(--tab-active-bg, transparent) !important;
+  color:var(--tab-active-text, #86431f) !important;
+  box-shadow:var(--tab-shadow, inset 0 -3px #a56132) !important;
+  border-bottom:3px solid var(--accent, #a56132) !important;
+  border-radius:0 !important;
+  font-weight:800 !important;
+}
+.group-dropdown-caret{
+  font-size:9px !important;
+  color:currentColor !important;
+  opacity:0.75 !important;
+  pointer-events:none !important;
+  margin-left:1px !important;
+}
+
+.workspace-toolbar .toolbar-actions{
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  align-items:center !important;
+  gap:6px !important;
+  flex-shrink:0 !important;
+  margin-left:auto !important;
+}
+.workspace-toolbar input#imaging-search{
+  width:clamp(120px, 11vw, 150px) !important;
+  min-width:110px !important;
+  height:32px !important;
+  min-height:32px !important;
+  font-size:12px !important;
+  padding:4px 8px !important;
+}
+#imaging-refresh{
+  height:32px !important;
+  min-height:32px !important;
+  font-size:12px !important;
+  padding:4px 9px !important;
+  flex-shrink:0 !important;
+}
+
+.group-dropdown-menu{
+  position:absolute !important;
+  top:calc(100% + 4px) !important;
+  left:0 !important;
+  z-index:99999 !important;
+  background:#fff !important;
+  border:1px solid #cce2eb !important;
+  border-radius:10px !important;
+  box-shadow:0 8px 24px rgba(7,81,111,.16) !important;
+  min-width:200px !important;
+  padding:5px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:2px !important;
+}
+.group-dropdown-menu[hidden]{
+  display:none !important;
+}
+.group-menu-item{
+  background:transparent !important;
+  border:none !important;
+  text-align:left !important;
+  padding:7px 11px !important;
+  font-size:12.5px !important;
+  font-weight:600 !important;
+  color:#173f50 !important;
+  border-radius:6px !important;
+  cursor:pointer !important;
+  width:100% !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  transition:background .12s ease, color .12s ease !important;
+  font-family:inherit !important;
+  box-sizing:border-box !important;
+}
+.group-menu-item:hover{
+  background:#eaf8fc !important;
+  color:#07516f !important;
+}
+.group-menu-item.group-menu-all{
+  font-weight:700 !important;
+  border-bottom:1px solid #e2edf2 !important;
+  border-radius:6px 6px 0 0 !important;
+  padding-bottom:7px !important;
+  margin-bottom:3px !important;
+  color:#087fa8 !important;
+}
+.group-menu-item.active{
+  background:#0b89ae !important;
+  color:#fff !important;
+  font-weight:700 !important;
+}
+.check-mark{
+  font-size:11px !important;
+  font-weight:800 !important;
+  color:#fff !important;
+  margin-left:8px !important;
+}
+.badge.group-badge{
+  background:#daf0f7;
+  color:#16627d;
+  font-weight:700;
+  margin-right:4px;
+  font-size:10px;
+}
+
+

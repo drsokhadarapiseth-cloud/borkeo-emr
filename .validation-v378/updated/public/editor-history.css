@@ -1,0 +1,9 @@
+.emr-editor-history { margin: 8px 0 14px; padding: 9px 12px; border: 1px solid #a9cfdf; border-radius: 8px; background: #f5fbfe; font: 13px/1.7 Battambang, sans-serif; }
+.emr-editor-history span { white-space: nowrap; }
+.emr-editor-history details { margin: 4px 0; }
+.emr-editor-history summary, .nursing-editor-history summary { cursor: pointer; color: #126184; }
+.emr-editor-history article, .nursing-editor-history article { padding: 5px 8px; border-top: 1px solid #bcd7e4; }
+.emr-editor-history ul, .nursing-editor-history ul { margin: 4px 0; padding-left: 20px; max-height: 190px; overflow: auto; }
+.nursing-editor-history { font-size: 11px; max-width: 100%; overflow-wrap: anywhere; }
+body.emr-director-view .emr-save-button, body.emr-director-view .action-bar button:not([onclick*="print"]), body.emr-director-view #user-form { display:none!important; }
+@media print { .emr-editor-history, .nursing-editor-history, [data-editor-history], [data-nursing-day-history] { display:none!important; } }

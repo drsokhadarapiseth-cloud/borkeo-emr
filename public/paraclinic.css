@@ -1,0 +1,425 @@
+.paraclinic-split{display:grid;grid-template-columns:minmax(0,7fr) minmax(300px,3fr);gap:16px;align-items:start}.paraclinic-medical-main{min-width:0}.paraclinic-panel{position:sticky;top:12px;border:1px solid #cfe2ea;border-radius:14px;background:#fff;box-shadow:0 8px 28px rgba(24,77,96,.08);overflow:hidden}.paraclinic-panel header{padding:13px 14px;background:#eaf7fb;border-bottom:1px solid #d4e8ee;display:flex;justify-content:space-between;align-items:center}.paraclinic-panel h3{margin:0;color:#185e79}.paraclinic-actions{display:flex;flex-direction:column;gap:10px;padding:12px 14px;background:#f8fafc;border-bottom:1px solid #e2e8f0}.paraclinic-branch-group{display:flex;flex-direction:column;gap:5px}.paraclinic-branch-group.lab-group{margin-bottom:2px}.branch-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#475569;padding-left:2px}.branch-buttons{display:grid;gap:6px}.branch-buttons.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.branch-buttons.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.paraclinic-actions button{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:34px;height:34px;padding:4px 8px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;color:#0f172a;font-family:BorkeoInterface,"Khmer OS Battambang",Arial,sans-serif!important;font-size:12px!important;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.05);transition:all .15s ease-in-out;white-space:nowrap}.paraclinic-actions button:hover{background:#f0f9ff;border-color:#38bdf8;color:#0284c7;box-shadow:0 2px 5px rgba(2,132,199,.15);transform:translateY(-1px)}.paraclinic-actions button:active{transform:translateY(0);background:#e0f2fe}.paraclinic-actions .btn-head-lab{width:100%;min-height:38px;height:38px;background:linear-gradient(135deg,#0284c7,#0369a1)!important;color:#fff!important;border:1px solid #0284c7!important;font-size:13.5px!important;font-weight:700;box-shadow:0 2px 6px rgba(2,132,199,.25)}.paraclinic-actions .btn-head-lab:hover{background:linear-gradient(135deg,#0369a1,#075985)!important;border-color:#0369a1!important;box-shadow:0 4px 10px rgba(2,132,199,.35);transform:translateY(-1px)}.paraclinic-panel .collapse{border:1px solid #cbd5e1;background:#fff;color:#334155;width:28px;height:28px;min-height:28px;padding:0;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.05);transition:all .15s ease}.paraclinic-panel .collapse:hover{background:#f1f5f9;border-color:#94a3b8;color:#0f172a}.paraclinic-recent{border-top:1px solid #e2edf1;max-height:520px;overflow:auto}.paraclinic-recent-title{padding:9px 12px;font-weight:800;color:#4e7483;background:#fafcfd}.paraclinic-order{padding:10px 12px;border-top:1px solid #edf3f5;cursor:pointer}.paraclinic-order:hover{background:#f2f9fb}.paraclinic-order strong,.paraclinic-order small{display:block}.paraclinic-order small{color:#66838e}.paraclinic-badge{display:inline-block;border-radius:999px;padding:2px 7px;font-size:10px;font-weight:800;margin-top:4px;background:#e7f2f6;color:#2c667d}.paraclinic-badge.urgent{background:#fff0f0;color:#b52121}.paraclinic-badge.new{background:#fff5d8;color:#8c6500}.paraclinic-split.collapsed{grid-template-columns:1fr auto}.paraclinic-split.collapsed .paraclinic-panel{width:54px}.paraclinic-split.collapsed .paraclinic-panel>*:not(header){display:none}.paraclinic-split.collapsed .paraclinic-panel header h3{display:none}.paraclinic-modal{position:fixed;inset:0;z-index:100000;background:rgba(8,31,41,.48);display:grid;place-items:center;padding:18px}.paraclinic-modal[hidden]{display:none}.paraclinic-modal-card{width:min(980px,96vw);max-height:92vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 22px 70px rgba(0,0,0,.3);padding:20px}.paraclinic-modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid #dce9ee;padding-bottom:10px}.paraclinic-modal-head h2{margin:0}.paraclinic-modal-head button{border:0;background:transparent;font-size:28px;cursor:pointer}.paraclinic-form label{display:block;font-weight:700;margin:12px 0}.paraclinic-form input[type=text],.paraclinic-form input[type=search],.paraclinic-form select,.paraclinic-form textarea{width:100%;border:1px solid #bfd8e1;border-radius:8px;padding:9px;font:inherit;margin-top:5px}.paraclinic-form textarea{min-height:85px}.priority-row{display:flex;gap:18px;align-items:center;padding:10px;background:#f5fafc;border-radius:9px}.lab-catalog-search{display:flex;gap:8px;align-items:center}.lab-catalog{max-height:430px;overflow:auto;border:1px solid #dce9ee;border-radius:10px;margin-top:10px}.lab-category{padding:8px 10px;background:#eef7fa;font-weight:800;position:sticky;top:0}.lab-test-row{display:grid;grid-template-columns:auto 1fr auto;gap:9px;align-items:center;padding:7px 10px;border-top:1px solid #edf3f5}.lab-test-row .urgent-test{border:1px solid #e3b7b7;border-radius:7px;background:#fff;color:#9e2525;padding:4px 7px;cursor:pointer}.lab-test-row .urgent-test.active{background:#b52626;color:#fff}.paraclinic-submit{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}.paraclinic-submit button{border:0;border-radius:9px;padding:10px 15px;font:inherit;cursor:pointer}.paraclinic-submit .primary{background:#167aa5;color:#fff}.result-item{display:grid;grid-template-columns:1.4fr .8fr .8fr 1fr;gap:8px;padding:7px 0;border-bottom:1px solid #edf3f5}.result-flag{font-weight:800;color:#b52c2c}.result-flag.CRITICAL_LOW,.result-flag.CRITICAL_HIGH{color:#9b0000;text-decoration:underline}.paraclinic-attachments a{display:block;margin:6px 0}@media(max-width:1100px){.paraclinic-split{grid-template-columns:1fr}.paraclinic-panel{position:static}.paraclinic-split.collapsed{grid-template-columns:1fr}.paraclinic-split.collapsed .paraclinic-panel{width:auto}}
+.paraclinic-panel header>div{display:grid;gap:2px}.paraclinic-panel header h3{margin:0}.paraclinic-panel header small{display:flex;gap:5px;flex-wrap:wrap}.panel-count{font-size:10px;background:#edf5f8;color:#52717e;padding:2px 6px;border-radius:999px}.panel-count.new{background:#e5f3ff;color:#17658e}.panel-count.critical{background:#b42318;color:#fff}.paraclinic-order.critical-order{border-left:4px solid #b42318}.paraclinic-badge.critical{background:#b42318;color:#fff}.paraclinic-badge.rejected{background:#fff0ed;color:#9f2c1e}.lab-category small{font-weight:500;opacity:.7}.lab-catalog details>.lab-category{cursor:pointer;list-style-position:inside}.lab-catalog-search span{white-space:nowrap;font-size:12px;color:#537885}.form-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.result-meta{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #e0ebef;padding-bottom:10px;margin-bottom:12px}.result-critical{background:#fff0ef;border:1px solid #e9aaa4;color:#8e1a12;border-radius:9px;padding:10px 12px;margin:12px 0}.result-rejected{background:#fff3f0;border:1px solid #efc2ba;color:#8d3023;border-radius:9px;padding:10px 12px;margin:12px 0}.result-item.critical-result{background:#fff4f3}.paraclinic-submit .critical-action{background:#b42318;color:#fff}.paraclinic-form input,.paraclinic-form select,.paraclinic-form textarea{width:100%;border:1px solid #c6dce4;border-radius:8px;padding:8px;font:inherit}.paraclinic-form .priority-row input{width:auto}.paraclinic-form label{display:grid;gap:5px;margin-top:10px;font-weight:700}.priority-row label{display:flex;align-items:center;gap:5px;margin-top:0}.priority-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}@media(max-width:700px){.form-two{grid-template-columns:1fr}}
+
+.panel-count.rejected{background:#b42318;color:#fff}.paraclinic-order.rejected-order{border-left:5px solid #b42318;background:#fff7f6}.paraclinic-order.rejected-order:hover{background:#fff0ee}
+.lab-category-shortcuts{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.lab-category-shortcuts button{border:1px solid #c5dde6;background:#f7fcfe;color:#1e627a;border-radius:999px;padding:5px 9px;font:inherit;font-size:11px;font-weight:800;cursor:pointer}.lab-category-shortcuts button:hover{background:#e8f6fa}
+.lab-test-row .test-long-name{display:block;color:#66818b;font-weight:500;margin-top:2px}.ward-lab-timeline{display:grid;grid-template-columns:repeat(7,minmax(125px,1fr));gap:7px;overflow-x:auto;margin:12px 0;padding-bottom:4px}.ward-lab-step{border:1px solid #d9e7ed;border-radius:10px;padding:8px;background:#f8fbfc;color:#7a9099}.ward-lab-step.done{background:#edf8f3;border-color:#c8e5d6;color:#256b4b}.ward-lab-step strong,.ward-lab-step span,.ward-lab-step small{display:block}.ward-lab-step strong{font-size:12px}.ward-lab-step span,.ward-lab-step small{font-size:10px;margin-top:3px}.ward-order-groups{margin:14px 0;padding:12px;border:1px solid #dcebef;border-radius:12px;background:#fbfeff}.ward-order-groups>h3{margin:0 0 8px;color:#185e79}.ward-order-group{border-top:1px solid #e7f0f3;padding:9px 0}.ward-order-group:first-of-type{border-top:0}.ward-order-group>strong{display:block;color:#315f72;margin-bottom:6px}.ward-result-groups{display:grid;gap:12px;margin-top:14px}.ward-result-group{border:1px solid #dbe8ed;border-radius:12px;overflow:hidden}.ward-result-group>h3{margin:0;padding:9px 11px;background:#edf8fb;color:#185e79;font-size:15px}.ward-result-group .result-item{padding-left:10px;padding-right:10px}.ward-result-group .result-item strong small{display:block;color:#69818b;font-weight:500;font-size:10px;margin-top:2px}.collection-alert{padding:10px 12px;border-radius:9px;background:#eef8fb;color:#285f74}.collection-alert.danger{background:#fff0ee;border:1px solid #efb9b2;color:#922519}.ward-seen-note{padding:9px 11px;border-radius:9px;background:#eef8f2;color:#286a49}
+@media(max-width:900px){.ward-lab-timeline{grid-template-columns:repeat(7,145px)}}
+
+@media print {
+  .paraclinic-split { display: block !important; }
+  .paraclinic-medical-main { width: 100% !important; }
+}
+
+html.opd-paraclinic-review .paraclinic-split{grid-template-columns:minmax(0,7fr) minmax(320px,3fr)!important;}
+html.opd-paraclinic-review .paraclinic-medical-main{display:block!important;min-width:0;}
+html.opd-paraclinic-review .paraclinic-medical-main::before{content:"Pre-payment Paraclinic Review — OPD clinical fields are locked until Cashier confirms payment.";display:block;margin:0 0 14px;padding:11px 14px;border:1px solid #b8d8e4;border-radius:10px;background:#f1fafc;color:#155e75;font-weight:800;}
+html.opd-paraclinic-review .paraclinic-panel{position:sticky;top:12px;width:auto;max-width:none;}
+html.opd-paraclinic-review .paraclinic-panel .paraclinic-actions{grid-template-columns:1fr 1fr;}
+html.opd-paraclinic-review .paraclinic-panel .paraclinic-actions .primary{grid-column:1/-1;}
+html.opd-paraclinic-review #patient-record-workspace-navigation{display:none!important;}
+.selected-tests{margin-top:10px;padding:9px 10px;border:1px solid #d6e7ed;border-radius:9px;background:#fbfdfe}.selected-tests strong{display:block;margin-bottom:7px;color:#305f70}.selected-test-chip{display:inline-flex;align-items:center;gap:5px;margin:3px;padding:5px 8px;border-radius:999px;background:#eaf6fa;color:#205e76;font-size:12px}.selected-test-chip button{border:0;background:transparent;color:#9a2a2a;font-weight:900;cursor:pointer}.lab-test-row.already-ordered{opacity:.55;background:#f5f5f5}.duplicate-note{display:block;color:#a34c00;font-size:11px;font-weight:700}.urgent-test:disabled{opacity:.45;cursor:not-allowed}.delete-paraclinic{margin-top:6px;border:1px solid #efb7b7;background:#fff5f5;color:#a32222;border-radius:7px;padding:4px 8px;cursor:pointer;font:inherit;font-size:11px}
+.selected-tests{margin-top:10px;padding:9px 10px;border:1px solid #d6e7ed;border-radius:9px;background:#fbfdfe}.selected-tests strong{display:block;margin-bottom:7px;color:#305f70}.selected-test-chip{display:inline-flex;align-items:center;gap:5px;margin:3px;padding:5px 8px;border-radius:999px;background:#eaf6fa;color:#205e76;font-size:12px}.selected-test-chip button{border:0;background:transparent;color:#9a2a2a;font-weight:900;cursor:pointer}.lab-test-row.already-ordered{opacity:.55;background:#f5f5f5}.duplicate-note{display:block;color:#a34c00;font-size:11px;font-weight:700}.urgent-test:disabled{opacity:.45;cursor:not-allowed}.delete-paraclinic{display:block;margin-top:6px;border:1px solid #efb7b7;background:#fff5f5;color:#a32222;border-radius:7px;padding:4px 8px;cursor:pointer;font:inherit;font-size:11px}
+.extra-paraclinic-fee{margin:14px 0;padding:12px;border:1px solid #c4e2d0;border-radius:10px;background:#f2fbf5}.extra-paraclinic-fee h3,.extra-paraclinic-fee p{margin:0 0 7px}.extra-paraclinic-fee h3{color:#176445}.extra-paraclinic-fee p,.extra-paraclinic-fee small{color:#58766a;font-size:12px}.extra-paraclinic-fee>div{display:grid;grid-template-columns:minmax(0,1fr) 90px auto;gap:8px;align-items:center}.extra-paraclinic-fee select,.extra-paraclinic-fee input{min-width:0;width:100%;min-height:38px;border:1px solid #bfd8ca;border-radius:7px;padding:6px 8px;font:inherit}.extra-paraclinic-fee button{min-height:38px;border:0;border-radius:7px;padding:7px 12px;background:#148754;color:#fff;font-weight:800;cursor:pointer}.extra-paraclinic-fee button:disabled{opacity:.5}.extra-paraclinic-fee small{display:block;margin-top:7px}@media(max-width:650px){.extra-paraclinic-fee>div{grid-template-columns:1fr 1fr}.extra-paraclinic-fee select,.extra-paraclinic-fee button{grid-column:1/-1}}
+.paraclinic-badge.free{background:#e8f7ed;color:#12663c}.opd-fee-choice{display:grid;gap:7px;margin:12px 0;padding:11px 13px;border:1px solid #b9dbe5;border-radius:10px;background:#f2fafc}.opd-fee-choice legend{padding:0 5px;color:#155e75;font-weight:900}.paraclinic-form .opd-fee-choice label{display:flex;align-items:center;gap:8px;margin:0;font-weight:800}.paraclinic-form .opd-fee-choice input[type=radio]{width:18px;min-width:18px;margin:0;accent-color:#087f9c}.opd-fee-choice small{color:#557781}
+.opd-handoff-choice{display:grid;gap:7px;margin:12px 0;padding:11px 13px;border:1px solid #b9dbe5;border-radius:10px;background:#f7fcfd}.opd-handoff-choice legend{padding:0 5px;color:#155e75;font-weight:900}.paraclinic-form .opd-handoff-choice label{display:flex;align-items:flex-start;gap:8px;margin:0;font-weight:800}.paraclinic-form .opd-handoff-choice input[type=radio]{width:18px;min-width:18px;margin:2px 0 0;accent-color:#087f9c}.opd-handoff-choice small{color:#557781;line-height:1.6}
+.paraclinic-form .opd-handoff-choice label{padding:9px 11px;border:1px solid #c5e0e8;border-radius:8px;background:#fff;cursor:pointer}.paraclinic-form .opd-handoff-choice label:has(input:checked){border-color:#0b8eaf;background:#e9f8fc;box-shadow:inset 0 0 0 1px #0b8eaf}
+
+.result-item {grid-template-columns:1.4fr .8fr .8fr}
+.result-value.abnormal-result {color:#c62828!important;font-weight:700}
+.result-seen-history p {margin:8px 0;padding:8px 10px;background:#eef8f2;color:#286a49;border-radius:8px}
+
+/* v29.0: inline clinical requests, no side panel or split wrapper. */
+.paraclinic-inline{width:100%;min-width:0;margin:12px 0;padding:12px;border:1px solid #b9dce7;border-radius:12px;background:#f6fcfe;box-sizing:border-box}
+.paraclinic-inline>header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.paraclinic-inline button,.paraclinic-choice-tabs button,.paraclinic-modality-grid button{font:inherit;min-height:42px}
+.paraclinic-inline .paraclinic-recent>summary{cursor:pointer;font-weight:700;margin:10px 0}
+.paraclinic-pending-banner{padding:10px;border:1px solid #f1d38e;border-radius:8px;background:#fffaf0;color:#744c10}
+.paraclinic-pending-banner>div{display:flex;flex-wrap:wrap;gap:5px 12px;margin-top:6px;padding-top:6px;border-top:1px solid #f3e7c9;overflow-wrap:anywhere}
+.paraclinic-pending-banner small{display:block}.paraclinic-inline .paraclinic-order{overflow-wrap:anywhere}
+.paraclinic-choice-tabs,.paraclinic-modality-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.paraclinic-choice-tabs button{padding:14px;border:1px solid #b9dce7;border-radius:10px;background:#f6fcfe;color:#075f81;font-weight:700}
+.paraclinic-choice-tabs button[aria-selected="true"]{background:#075f81;color:#fff}
+.paraclinic-modal [hidden]{display:none!important}.paraclinic-modal-card{max-height:92dvh;overflow:auto;box-sizing:border-box}
+.paraclinic-modality-grid button{white-space:normal;overflow-wrap:anywhere}
+@media(max-width:600px){.paraclinic-choice-tabs,.paraclinic-modality-grid{grid-template-columns:1fr}.paraclinic-modal{padding:8px}.paraclinic-inline>header{align-items:stretch;flex-direction:column}}
+@media print{.paraclinic-inline,.paraclinic-modal{display:none!important}}
+
+/* v30.5 Authentic Borkeo Hospital Laboratory Request Form & Clean Modality Badges */
+@font-face {
+  font-family: 'Moul';
+  font-display: swap;
+  src: url('/public/fonts/Moul-Khmer.woff2') format('woff2');
+  unicode-range: U+1780-17FF, U+19E0-19FF, U+200C-200D, U+25CC;
+}
+@font-face {
+  font-family: 'Moul';
+  font-display: swap;
+  src: url('/public/fonts/Moul-Latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF;
+}
+
+.imaging-card-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 32px;
+  padding: 0 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  color: #0369a1;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.paraclinic-order-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-print-order-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #0f172a;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s ease;
+}
+.btn-print-order-inline:hover {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.borkeo-lab-paper-modal {
+  width: min(1080px, 98vw);
+  max-height: 94vh;
+  padding: 16px 20px;
+  background: #fff;
+}
+
+.borkeo-lab-paper-form {
+  font-family: BorkeoInterface, "Khmer OS Battambang", Arial, sans-serif;
+  color: #111;
+  line-height: 1.35;
+}
+
+.lab-paper-header {
+  display: grid;
+  grid-template-columns: 240px 1fr 240px;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #0f172a;
+}
+.lab-paper-logo-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.lab-paper-logo {
+  height: 64px;
+  width: 64px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+.hospital-name-moul {
+  font-family: 'Moul', 'Khmer OS Muol Light', serif !important;
+  font-size: 14.5px !important;
+  color: #0284c7;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.lab-paper-title-block {
+  text-align: center;
+}
+.lab-paper-title-kh {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: .02em;
+}
+.lab-paper-title-en {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #334155;
+  letter-spacing: .04em;
+  margin-top: 2px;
+}
+.lab-paper-codes-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+}
+.lab-code-row, .pmrs-code-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.paper-input-box {
+  width: 120px;
+  padding: 3px 6px;
+  border: 1px solid #94a3b8;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.pmrs-boxes {
+  display: flex;
+  gap: 3px;
+}
+.pmrs-box {
+  width: 15px;
+  height: 20px;
+  border: 1px solid #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 11px;
+  background: #f8fafc;
+}
+
+.lab-paper-patient-card {
+  border: 1.5px solid #0f172a;
+  padding: 8px 12px;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  background: #fbfdfe;
+}
+.lab-paper-patient-card .lbl {
+  color: #334155;
+  font-weight: 600;
+}
+.lab-paper-patient-card .val {
+  color: #0f172a;
+  font-weight: 700;
+  margin-right: 12px;
+}
+.lab-paper-patient-card .patient-line-1,
+.lab-paper-patient-card .patient-line-2,
+.lab-paper-patient-card .patient-line-3,
+.lab-paper-patient-card .patient-line-4 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+.paper-line-input {
+  flex: 1;
+  min-width: 180px;
+  border: 0;
+  border-bottom: 1px dashed #64748b;
+  padding: 2px 4px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  background: transparent;
+}
+.urgent-highlight-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border: 2px solid #ea580c;
+  border-radius: 6px;
+  background: #fff7ed;
+  color: #c2410c;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.lab-paper-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1.5px solid #0f172a;
+  background: #fff;
+  margin-bottom: 10px;
+}
+.lab-col {
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11.5px;
+}
+.lab-col:not(:last-child) {
+  border-right: 1.5px solid #0f172a;
+}
+.col-head {
+  background: #e2e8f0;
+  padding: 4px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 12px;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+.col-subhead {
+  background: #f1f5f9;
+  padding: 3px 6px;
+  font-weight: 800;
+  font-size: 11px;
+  color: #1e293b;
+  margin-top: 6px;
+  border-top: 1px solid #cbd5e1;
+  border-bottom: 1px solid #cbd5e1;
+}
+.specimen-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  margin: 2px 0;
+}
+.specimen-tag.purple { color: #7e22ce; }
+.specimen-tag.red { color: #dc2626; }
+.specimen-tag.green { color: #15803d; }
+.specimen-tag.text-dark { color: #334155; }
+
+.test-check-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  line-height: 1.25;
+  transition: background .12s ease;
+  user-select: none;
+}
+.test-check-row:hover {
+  background: #f1f5f9;
+}
+.test-check-row .test-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #1e293b;
+}
+.test-check-row .test-label input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #0284c7;
+  cursor: pointer;
+  margin: 0;
+  flex-shrink: 0;
+}
+.test-check-row .test-label span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.test-check-row .test-star-urgent {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 4px;
+  color: #94a3b8;
+  flex-shrink: 0;
+  transition: transform .15s ease, color .15s ease;
+}
+.test-check-row .test-star-urgent:hover {
+  transform: scale(1.25);
+  color: #ef4444;
+}
+.test-check-row .test-star-urgent.active {
+  color: #dc2626;
+  font-weight: 800;
+  transform: scale(1.15);
+}
+.doctor-signature-stamp {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+.signed-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #15803d;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.lab-paper-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1.5px solid #0f172a;
+  background: #f8fafc;
+  padding: 8px 12px;
+  gap: 12px;
+  font-size: 11px;
+}
+.footer-box {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.lab-paper-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+.lab-paper-actions-bar .actions-left,
+.lab-paper-actions-bar .actions-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-paper-print {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: 1px solid #0284c7;
+  border-radius: 8px;
+  background: #f0f9ff;
+  color: #0369a1;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.btn-paper-print:hover {
+  background: #0284c7;
+  color: #fff;
+}

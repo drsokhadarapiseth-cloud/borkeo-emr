@@ -1,0 +1,12 @@
+# Database files
+data/*.sqlite*
+data/backups/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+
+# Backup files
+*.bak

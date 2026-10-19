@@ -1,0 +1,5467 @@
+{
+  "source": "Symptom Final.xlsx, first sheet; SYMP release 2026-07-30",
+  "license": "CC0-1.0 for original SYMP terminology; user-supplied Khmer labels",
+  "count": 842,
+  "items": [
+    {
+      "code": "SYMP:0000001",
+      "nameKh": "ចុកពោះ",
+      "nameEn": "abdominal cramp",
+      "synonyms": [
+        "stomach cramp"
+      ]
+    },
+    {
+      "code": "SYMP:0000188",
+      "nameKh": "មិនស្រួលក្នុងពោះ",
+      "nameEn": "abdominal discomfort",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000002",
+      "nameKh": "ពោះប៉ោង",
+      "nameEn": "abdominal distention",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000799",
+      "nameKh": "ដុំពកក្នុងពោះ",
+      "nameEn": "abdominal lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000798",
+      "nameKh": "ដុំក្នុងពោះ",
+      "nameEn": "abdominal mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000457",
+      "nameKh": "ឈឺពោះ",
+      "nameEn": "abdominal pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000454",
+      "nameKh": "ពោះឡើងរឹង",
+      "nameEn": "abdominal rigidity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000478",
+      "nameKh": "ហើមពោះ",
+      "nameEn": "abdominal swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000484",
+      "nameKh": "ឈឺពោះពេលសង្កត់",
+      "nameEn": "abdominal tenderness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000666",
+      "nameKh": "អាកប្បកិរិយាមិនប្រក្រតី",
+      "nameEn": "abnormal behavior",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000489",
+      "nameKh": "សំឡេងពោះវៀនមិនប្រក្រតី",
+      "nameEn": "abnormal bowel sound",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000587",
+      "nameKh": "សំឡេងក្នុងទ្រូងមិនប្រក្រតី",
+      "nameEn": "abnormal chest sound",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000519",
+      "nameKh": "លាមកមិនប្រក្រតី",
+      "nameEn": "abnormal feces",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000594",
+      "nameKh": "មានចលនាកន្ត្រាក់ដោយមិនបានបញ្ជារ",
+      "nameEn": "abnormal involuntary movement",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000618",
+      "nameKh": "ពិបាកទប់លំនឹងខ្លួន",
+      "nameEn": "abnormal posture",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020020",
+      "nameKh": "មានស្លាកស្នាមមិនប្រក្រតី",
+      "nameEn": "abnormal scar formation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000452",
+      "nameKh": "កំហាកមិនប្រក្រតី",
+      "nameEn": "abnormal sputum",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000436",
+      "nameKh": "ហូរឈាមតាមទ្វារមាសមិនប្រក្រតី",
+      "nameEn": "abnormal vaginal bleeding",
+      "synonyms": [
+        "abnormal menstruation"
+      ]
+    },
+    {
+      "code": "SYMP:0000455",
+      "nameKh": "ឡើងទម្ងន់មិនប្រក្រតី",
+      "nameEn": "abnormal weight gain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020013",
+      "nameKh": "ស្រកទម្ងន់មិនប្រក្រតី",
+      "nameEn": "abnormal weight loss",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020021",
+      "nameKh": "របួសក្រជាសះស្បើយ",
+      "nameEn": "abnormal wound healing",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000479",
+      "nameKh": "ការដើរមិនប្រក្រតី",
+      "nameEn": "abnormality of gait",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000197",
+      "nameKh": "ការរលូតកូន",
+      "nameEn": "abortion",
+      "synonyms": [
+        "infectious abortion"
+      ]
+    },
+    {
+      "code": "SYMP:0000672",
+      "nameKh": "កើតបូស",
+      "nameEn": "abscess",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000221",
+      "nameKh": "គ្មានរេផ្លិចជង្គង់",
+      "nameEn": "absence of knee jerk reflex",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000257",
+      "nameKh": "គ្មានរេផ្លិចខ្ជាក់",
+      "nameEn": "absent gag reflex",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020003",
+      "nameKh": "លាមកស្លេក គ្មានពណ៌",
+      "nameEn": "acholic stool",
+      "synonyms": [
+        "clay-colored bowel movement"
+      ]
+    },
+    {
+      "code": "SYMP:0020005",
+      "nameKh": "ការមើលពណ៌ខ្សោយដែលកើតក្រោយកំណើត",
+      "nameEn": "acquired color vision deficiency",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000200",
+      "nameKh": "រលាកសន្លាក់ស្រួចស្រាវ",
+      "nameEn": "acute arthritis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000674",
+      "nameKh": "មុខងារសរសៃប្រសាទក្បាលខុសប្រក្រតីស្រួចស្រាវ",
+      "nameEn": "acute cranial nerve dysfunction",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000675",
+      "nameKh": "រាគស្រួចស្រាវ",
+      "nameEn": "acute diarrhea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000679",
+      "nameKh": "ពិបាកដកដង្ហើមស្រួចស្រាវ",
+      "nameEn": "acute dyspnea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000676",
+      "nameKh": "រលាកពោះវៀនតូចស្រួចស្រាវ",
+      "nameEn": "acute enteritis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000677",
+      "nameKh": "រលាកក្រពះពោះវៀនស្រួចស្រាវ",
+      "nameEn": "acute gastroenteritis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000201",
+      "nameKh": "រលាកស្រោមខួរ និងខួរក្បាលស្រួចស្រាវ",
+      "nameEn": "acute meningoencephalitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000678",
+      "nameKh": "មុខងារផ្លូវចិត្តខុសប្រក្រតីស្រួចស្រាវ",
+      "nameEn": "acute mental dysfunction",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000622",
+      "nameKh": "រលាកកូនកណ្តុរក្នុងស្រោមពោះវៀនស្រួចស្រាវ",
+      "nameEn": "acute mesenteric lymphadenitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000839",
+      "nameKh": "ឈឺចាប់ស្រួចស្រាវ",
+      "nameEn": "acute pain",
+      "synonyms": [
+        "sudden pain"
+      ]
+    },
+    {
+      "code": "SYMP:0000202",
+      "nameKh": "បាត់បង់ការមើលឃើញស្រួចស្រាវជាមួយការឈឺចាប់",
+      "nameEn": "acute painful vision loss",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000623",
+      "nameKh": "ខ្សោយតម្រងនោមស្រួចស្រាវ",
+      "nameEn": "acute renal failure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000206",
+      "nameKh": "រលាកក្រពេញទឹកមាត់ប៉ារ៉ូទីតមានខ្ទុះស្រួចស្រាវ",
+      "nameEn": "acute suppurative parotiditis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020016",
+      "nameKh": "ឡើងទម្ងន់ភ្លាមៗ",
+      "nameEn": "acute weight gain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000680",
+      "nameKh": "ស្រកទម្ងន់ភ្លាមៗ",
+      "nameEn": "acute weight loss",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000503",
+      "nameKh": "ការចុះខ្សោយសុខភាព និងអាហារូបត្ថម្ភក្នុងមនុស្សពេញវ័យ",
+      "nameEn": "adult failure to thrive",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000207",
+      "nameKh": "គ្មានគ្រុនក្តៅ",
+      "nameEn": "afebrile",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020004",
+      "nameKh": "បាត់បង់ការដឹងរសជាតិ",
+      "nameEn": "ageusia",
+      "synonyms": [
+        "loss of taste"
+      ]
+    },
+    {
+      "code": "SYMP:0000681",
+      "nameKh": "អាកប្បកិរិយាឈ្លានពាន",
+      "nameEn": "aggressive behavior",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020006",
+      "nameKh": "អន្ទះអន្ទែង",
+      "nameEn": "agitation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000213",
+      "nameKh": "បាត់បង់សមត្ថភាពសរសេរ",
+      "nameEn": "agraphia",
+      "synonyms": [
+        "inability to write"
+      ]
+    },
+    {
+      "code": "SYMP:0020000",
+      "nameKh": "ផ្លូវដង្ហើមរួមតូច",
+      "nameEn": "airway stenosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000621",
+      "nameKh": "បាត់បង់សមត្ថភាពអាន",
+      "nameEn": "alexia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000900",
+      "nameKh": "ប្រតិកម្មអាលែកហ្ស៊ី",
+      "nameEn": "allergic reaction",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000840",
+      "nameKh": "ឈឺចាប់ដោយរំញោចដែលធម្មតាមិនបង្កឈឺ",
+      "nameEn": "allodynia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000244",
+      "nameKh": "ការប្រែប្រួលចំណង់អាហារ",
+      "nameEn": "alteration of appetite",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000482",
+      "nameKh": "ការប្រែប្រួលស្មារតី",
+      "nameEn": "alteration of consciousness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000682",
+      "nameKh": "ស្ថានភាពស្មារតីប្រែប្រួល",
+      "nameEn": "altered mental status",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000416",
+      "nameKh": "បាត់បង់ការមើលឃើញ",
+      "nameEn": "amaurosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000415",
+      "nameKh": "បាត់បង់ការមើលឃើញមួយភ្លែត",
+      "nameEn": "amaurosis fugax",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020002",
+      "nameKh": "បូសរន្ធគូថ",
+      "nameEn": "anal abscess",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000895",
+      "nameKh": "anaphylactic shock",
+      "nameEn": "anaphylactic shock",
+      "synonyms": [
+        "anaphylaxis"
+      ]
+    },
+    {
+      "code": "SYMP:0000433",
+      "nameKh": "ហើមទូទាំងខ្លួន",
+      "nameEn": "anasarca",
+      "synonyms": [
+        "generalized edema"
+      ]
+    },
+    {
+      "code": "SYMP:0000208",
+      "nameKh": "ស្លេកស្លាំង",
+      "nameEn": "anemia",
+      "synonyms": [
+        "anaemia"
+      ]
+    },
+    {
+      "code": "SYMP:0000253",
+      "nameKh": "ប្រស្រីភ្នែកទាំងពីរមានទំហំមិនស្មើគ្នា",
+      "nameEn": "anisocoria",
+      "synonyms": [
+        "enlargement of one pupil",
+        "pupils of different size"
+      ]
+    },
+    {
+      "code": "SYMP:0000640",
+      "nameKh": "កន្ទួលនៅកជើង",
+      "nameEn": "ankle rash",
+      "synonyms": [
+        "redness of ankle"
+      ]
+    },
+    {
+      "code": "SYMP:0000214",
+      "nameKh": "ពិបាកនឹកឈ្មោះវត្ថុ ឬពាក្យ",
+      "nameEn": "anomia",
+      "synonyms": [
+        "amnesic aphasia",
+        "amnestic aphasia",
+        "anomic aphasia",
+        "inability to name objects",
+        "nominal aphasia"
+      ]
+    },
+    {
+      "code": "SYMP:0000523",
+      "nameKh": "បាត់បង់ចំណង់អាហារ",
+      "nameEn": "anorexia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020007",
+      "nameKh": "រលាកស្រទាប់សភ្នែកផ្នែកខាងមុខ",
+      "nameEn": "anterior scleral inflammation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000852",
+      "nameKh": "គ្មានទឹកនោម",
+      "nameEn": "anuria",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000412",
+      "nameKh": "ការថប់បារម្ភ",
+      "nameEn": "anxiety",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000508",
+      "nameKh": "បាត់បង់ ឬខ្សោយសមត្ថភាពប្រើភាសា",
+      "nameEn": "aphasia",
+      "synonyms": [
+        "inability to comprehend language"
+      ]
+    },
+    {
+      "code": "SYMP:0000574",
+      "nameKh": "បាត់សំឡេង",
+      "nameEn": "aphonia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000600",
+      "nameKh": "ឈប់ដកដង្ហើម",
+      "nameEn": "apnea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020001",
+      "nameKh": "ដំបៅអាប់ត៍ក្នុងមាត់",
+      "nameEn": "apthous ulcer",
+      "synonyms": [
+        "aphthous stomatitis",
+        "canker sore"
+      ]
+    },
+    {
+      "code": "SYMP:0000220",
+      "nameKh": "អវត្តមានរេផ្លិច",
+      "nameEn": "areflexia",
+      "synonyms": [
+        "absence of neurological reflexes"
+      ]
+    },
+    {
+      "code": "SYMP:0000223",
+      "nameKh": "ខ្សោយដៃ",
+      "nameEn": "arm weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000287",
+      "nameKh": "ចង្វាក់បេះដូងមិនទៀងទាត់",
+      "nameEn": "arrhythmia",
+      "synonyms": [
+        "abnormal heart beat",
+        "abnormal heart rhythm",
+        "dysrhythmia",
+        "fluctuation of heart rate",
+        "heart rhythm symptom",
+        "irregular heartbeat"
+      ]
+    },
+    {
+      "code": "SYMP:0019169",
+      "nameKh": "រលាកសន្លាក់",
+      "nameEn": "arthritis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000526",
+      "nameKh": "ទឹកដក់ក្នុងពោះ",
+      "nameEn": "ascites",
+      "synonyms": [
+        "hydroperitoneum"
+      ]
+    },
+    {
+      "code": "SYMP:0000225",
+      "nameKh": "អស់កម្លាំង",
+      "nameEn": "asthenia",
+      "synonyms": [
+        "loss of strength"
+      ]
+    },
+    {
+      "code": "SYMP:0000211",
+      "nameKh": "នឿយភ្នែក",
+      "nameEn": "asthenopia",
+      "synonyms": [
+        "eye weakness",
+        "rapid eye fatigue"
+      ]
+    },
+    {
+      "code": "SYMP:0000005",
+      "nameKh": "ការសម្របសម្រួលចលនាខុសប្រក្រតី",
+      "nameEn": "ataxia",
+      "synonyms": [
+        "uncoordination"
+      ]
+    },
+    {
+      "code": "SYMP:0000275",
+      "nameKh": "ប្រកាច់ដោយបាត់ការកន្ត្រាក់សាច់ដុំ",
+      "nameEn": "atonic seizure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000226",
+      "nameKh": "ញ័របេះដូងថតខាងលើ",
+      "nameEn": "atrial fibrillation",
+      "synonyms": [
+        "a-fib",
+        "AF",
+        "AFib",
+        "auricular fibrillation"
+      ]
+    },
+    {
+      "code": "SYMP:0000006",
+      "nameKh": "ឈឺខ្នង",
+      "nameEn": "backache",
+      "synonyms": [
+        "back pain"
+      ]
+    },
+    {
+      "code": "SYMP:0020008",
+      "nameKh": "ក្អកសំឡេងដូចព្រុសក្នុងជំងឺ CROUP",
+      "nameEn": "barking croup cough",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000290",
+      "nameKh": "ភើ",
+      "nameEn": "belching",
+      "synonyms": [
+        "eructation"
+      ]
+    },
+    {
+      "code": "SYMP:0000684",
+      "nameKh": "ឈឺក្បាលផ្នែកថ្ងាសទាំងសងខាង",
+      "nameEn": "bifrontal headache",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000007",
+      "nameKh": "ហូរឈាម",
+      "nameEn": "bleeding",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020009",
+      "nameKh": "ចំណុចមើលមិនឃើញក្នុងដែនចក្ខុ",
+      "nameEn": "blind spot",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000008",
+      "nameKh": "ពិការភ្នែក",
+      "nameEn": "blindness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000009",
+      "nameKh": "ពងបែក",
+      "nameEn": "blister",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000420",
+      "nameKh": "ហើមពោះដោយខ្យល់",
+      "nameEn": "bloating",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020063",
+      "nameKh": "សម្ពាធឈាម",
+      "nameEn": "blood pressure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000227",
+      "nameKh": "ការឆ្លងមេរោគសរសៃឈាម",
+      "nameEn": "blood vessel infection",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000446",
+      "nameKh": "ភ្នែកក្រហម",
+      "nameEn": "bloodshot eye",
+      "synonyms": [
+        "red eye",
+        "redness of eye"
+      ]
+    },
+    {
+      "code": "SYMP:0020011",
+      "nameKh": "រាគមានឈាម",
+      "nameEn": "bloody diarrhea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000447",
+      "nameKh": "កំហាកមានឈាម",
+      "nameEn": "bloody sputum",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000229",
+      "nameKh": "លាមកមានឈាម",
+      "nameEn": "bloody stool",
+      "synonyms": [
+        "blood in stool"
+      ]
+    },
+    {
+      "code": "SYMP:0000743",
+      "nameKh": "កន្ទួលក្រហមជាបន្ទះៗ",
+      "nameEn": "blotchy red rash",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000012",
+      "nameKh": "មើលឃើញព្រិល",
+      "nameEn": "blurred vision",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020010",
+      "nameKh": "មើលឃើញព្រិល និងរង្វង់ពន្លឺជុំវិញវត្ថុ",
+      "nameEn": "blurred vision with haloes",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000230",
+      "nameKh": "ឈឺចុកចាប់ខ្លួន",
+      "nameEn": "body ache",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019160",
+      "nameKh": "បូសទ្រនិច",
+      "nameEn": "boil",
+      "synonyms": [
+        "furuncle"
+      ]
+    },
+    {
+      "code": "SYMP:0020022",
+      "nameKh": "ឮសំឡេងតាមឆ្អឹងខ្លាំងខុសប្រក្រតី",
+      "nameEn": "bone conduction hyperacusis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020023",
+      "nameKh": "ឈឺឆ្អឹង",
+      "nameEn": "bone pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000231",
+      "nameKh": "ចង្វាក់បេះដូងយឺត",
+      "nameEn": "bradycardia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000673",
+      "nameKh": "ចលនាយឺត",
+      "nameEn": "bradykinesia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000429",
+      "nameKh": "ដកដង្ហើមយឺត",
+      "nameEn": "bradypnea",
+      "synonyms": [
+        "abnormally slow breathing"
+      ]
+    },
+    {
+      "code": "SYMP:0000685",
+      "nameKh": "គីសក្នុងខួរក្បាល",
+      "nameEn": "brain cyst",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000838",
+      "nameKh": "ការឈឺចាប់កើនឡើងមួយរយៈលើការឈឺដែលធ្លាប់គ្រប់គ្រងបាន",
+      "nameEn": "breakthrough pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000868",
+      "nameKh": "បញ្ហាដកដង្ហើម",
+      "nameEn": "breathing problems",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020057",
+      "nameKh": "រលាកទងសួតតូច",
+      "nameEn": "bronchiole inflammation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000232",
+      "nameKh": "រលាកទងសួតតូច",
+      "nameEn": "bronchiolitis",
+      "synonyms": [
+        "bronchioles inflammation"
+      ]
+    },
+    {
+      "code": "SYMP:0000324",
+      "nameKh": "រលាកទងសួត",
+      "nameEn": "bronchitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000739",
+      "nameKh": "ហូរឈាមពីទងសួត និងសួត",
+      "nameEn": "bronchopulmonary bleeding",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020024",
+      "nameKh": "ទងសួតកន្ត្រាក់",
+      "nameEn": "bronchospasm",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000406",
+      "nameKh": "ជាំ",
+      "nameEn": "bruise",
+      "synonyms": [
+        "bruises",
+        "bruising",
+        "contusion",
+        "ecchymosis"
+      ]
+    },
+    {
+      "code": "SYMP:0000182",
+      "nameKh": "កូនកណ្តុរហើមឈឺ",
+      "nameEn": "adenopathie",
+      "synonyms": [
+        "buboes"
+      ]
+    },
+    {
+      "code": "SYMP:0000402",
+      "nameKh": "ស្គមស្គាំងដោយជំងឺ",
+      "nameEn": "cachexia",
+      "synonyms": [
+        "general physical wasting and malnutrition"
+      ]
+    },
+    {
+      "code": "SYMP:0000898",
+      "nameKh": "បេះដូងញ័រ",
+      "nameEn": "cardiac fibrillation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000449",
+      "nameKh": "ស្ហុកដោយបេះដូង",
+      "nameEn": "cardiogenic shock",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000000",
+      "nameKh": "រលាកជាលិកាក្រោមស្បែក",
+      "nameEn": "cellulitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020056",
+      "nameKh": "គ្រោះថ្នាក់សរសៃឈាមខួរក្បាល",
+      "nameEn": "cerebrovascular accident",
+      "synonyms": [
+        "apoplexy",
+        "cerebral accident",
+        "cerebral hemorrhage"
+      ]
+    },
+    {
+      "code": "SYMP:0000866",
+      "nameKh": "ហើមតំបន់ក",
+      "nameEn": "cervical edema",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000744",
+      "nameKh": "កូនកណ្តុរនៅករីកធំ",
+      "nameEn": "cervical lymphadenopathy",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000745",
+      "nameKh": "ការប្រែប្រួលអារម្មណ៍រាងកាយ",
+      "nameEn": "change in body sensation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000184",
+      "nameKh": "ការប្រែប្រួលពណ៌ស្បែក",
+      "nameEn": "change in skin color",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000535",
+      "nameKh": "ការប្រែប្រួលសភាពផ្ទៃស្បែក",
+      "nameEn": "change in skin texture",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020031",
+      "nameKh": "មិនស្រួលក្នុងទ្រូង",
+      "nameEn": "chest discomfort",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000846",
+      "nameKh": "ឈាមច្រើនក្នុងជាលិកាតំបន់ទ្រូង",
+      "nameEn": "chest hyperemia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000576",
+      "nameKh": "ឈឺទ្រូង",
+      "nameEn": "chest pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020032",
+      "nameKh": "តឹងទ្រូង",
+      "nameEn": "chest tightness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000599",
+      "nameKh": "ដង្ហើមប្រភេទ Cheyne–Stokes",
+      "nameEn": "cheyne-stokes respiration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019174",
+      "nameKh": "ញាក់",
+      "nameEn": "chills",
+      "synonyms": [
+        "rigors"
+      ]
+    },
+    {
+      "code": "SYMP:0000686",
+      "nameKh": "ក្អករ៉ាំរ៉ៃ",
+      "nameEn": "chronic cough",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000822",
+      "nameKh": "រលាកពោះវៀនតូចរ៉ាំរ៉ៃ",
+      "nameEn": "chronic enteritis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020026",
+      "nameKh": "រលាករ៉ាំរ៉ៃ",
+      "nameEn": "chronic inflammation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000837",
+      "nameKh": "ឈឺចាប់រ៉ាំរ៉ៃ",
+      "nameEn": "chronic pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020017",
+      "nameKh": "ឡើងទម្ងន់រ៉ាំរ៉ៃ",
+      "nameEn": "chronic weight gain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020014",
+      "nameKh": "ស្រកទម្ងន់រ៉ាំរ៉ៃ",
+      "nameEn": "chronic weight loss",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000424",
+      "nameKh": "ឈឺអវយវៈពេលដើរដែលធូរស្រាលពេលសម្រាក",
+      "nameEn": "claudication",
+      "synonyms": [
+        "blockage of leg arteries"
+      ]
+    },
+    {
+      "code": "SYMP:0000273",
+      "nameKh": "ប្រកាច់ប្រភេទកន្ត្រាក់ដដែលៗ",
+      "nameEn": "clonic seizure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000234",
+      "nameKh": "កញ្ចក់ភ្នែកល្អក់",
+      "nameEn": "cloudy cornea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000550",
+      "nameKh": "ចុងម្រាមដៃប៉ោងក្រម៉ោង",
+      "nameEn": "clubbing of fingers",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019143",
+      "nameKh": "ភាពខុសប្រក្រតីនៃការកកឈាម",
+      "nameEn": "coagulopathy",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000894",
+      "nameKh": "ស្បែកត្រជាក់ និងស្អិតដោយញើស",
+      "nameEn": "cold clammy skin",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000235",
+      "nameKh": "ឈឺចុករមួល",
+      "nameEn": "colic",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000605",
+      "nameKh": "សន្លប់បាត់ស្មារតីជ្រៅ",
+      "nameEn": "coma",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019185",
+      "nameKh": "ពិបាកទំនាក់ទំនង",
+      "nameEn": "communication difficulty",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000271",
+      "nameKh": "ប្រកាច់ផ្នែកមួយជាមួយស្មារតីខុសប្រក្រតី",
+      "nameEn": "complex partial seizure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020029",
+      "nameKh": "ពិបាកផ្តោតអារម្មណ៍",
+      "nameEn": "concentration difficulty",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000016",
+      "nameKh": "វង្វេងស្មារតី",
+      "nameEn": "confusion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000850",
+      "nameKh": "ស្រទាប់សភ្នែកមានឈាមច្រើន និងក្រហម",
+      "nameEn": "congested sclera",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000237",
+      "nameKh": "ការកកស្ទះ",
+      "nameEn": "congestion",
+      "synonyms": [
+        "blocked nose",
+        "nasal blockage",
+        "nasal obstruction",
+        "stuffed up nose",
+        "stuffy nose"
+      ]
+    },
+    {
+      "code": "SYMP:0020035",
+      "nameKh": "ភ្នាសភ្នែកមានឈាមច្រើន និងក្រហម",
+      "nameEn": "conjunctival congestion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020036",
+      "nameKh": "ភ្នាសភ្នែកចុះខ្សោយ",
+      "nameEn": "conjunctival degeneration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020037",
+      "nameKh": "ភ្នាសភ្នែកក្រហមរីករាលដាល",
+      "nameEn": "conjunctival suffusion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020038",
+      "nameKh": "ហើមភ្នាសភ្នែក",
+      "nameEn": "conjunctival swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000128",
+      "nameKh": "រលាកភ្នាសភ្នែក",
+      "nameEn": "conjunctivitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000625",
+      "nameKh": "ស្មារតីខុសប្រក្រតី",
+      "nameEn": "conscious disturbance",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000194",
+      "nameKh": "ការដឹងទីតាំងអវយវៈដោយស្មារតី",
+      "nameEn": "conscious proprioception",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019180",
+      "nameKh": "ទល់លាមក",
+      "nameEn": "constipation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000888",
+      "nameKh": "គ្រុនក្តៅជាប់ជានិច្ច",
+      "nameEn": "continuous fever",
+      "synonyms": [
+        "continued fever"
+      ]
+    },
+    {
+      "code": "SYMP:0000491",
+      "nameKh": "លេចទឹកនោមជាប់ជានិច្ច",
+      "nameEn": "continuous leakage of urine",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000238",
+      "nameKh": "ទឹកមាត់ច្រើនជាប់ជានិច្ច",
+      "nameEn": "continuous profuse salivation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000418",
+      "nameKh": "ប្រស្រីភ្នែករួមតូច",
+      "nameEn": "contracted pupil",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020039",
+      "nameKh": "សាច់ដុំ ឬសន្លាក់រួញជាប់",
+      "nameEn": "contracture",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000596",
+      "nameKh": "ប្រកាច់",
+      "nameEn": "convulsion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000240",
+      "nameKh": "កញ្ចក់ភ្នែកល្អក់",
+      "nameEn": "corneal opacity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020042",
+      "nameKh": "ស្នាមនៅកញ្ចក់ភ្នែក",
+      "nameEn": "corneal scarring",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000241",
+      "nameKh": "ដំបៅកញ្ចក់ភ្នែក",
+      "nameEn": "corneal ulcers",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000614",
+      "nameKh": "ក្អក",
+      "nameEn": "cough",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000242",
+      "nameKh": "ក្អកមានកំហាកលាយឈាម",
+      "nameEn": "cough with bloody sputum",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000689",
+      "nameKh": "រមួលសាច់ដុំ",
+      "nameEn": "cramp",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000690",
+      "nameKh": "ពិការសរសៃប្រសាទក្បាល",
+      "nameEn": "cranial nerve palsies",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000017",
+      "nameKh": "ស្បែកជ្រួញ",
+      "nameEn": "crinkle",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000537",
+      "nameKh": "សម្បុរស្បែកខៀវ",
+      "nameEn": "cyanosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000243",
+      "nameKh": "គ្រុនក្តៅជាវដ្ត",
+      "nameEn": "cyclic fever",
+      "synonyms": [
+        "intermittent fever",
+        "recurrent fever"
+      ]
+    },
+    {
+      "code": "SYMP:0000691",
+      "nameKh": "កោសិកាឈាមថយចុះ",
+      "nameEn": "cytopenia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020043",
+      "nameKh": "ទឹកនោមពណ៌ងងឹត",
+      "nameEn": "dark urine",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000018",
+      "nameKh": "ស្បែកប្រែពណ៌ងងឹត",
+      "nameEn": "darkening of skin",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000019",
+      "nameKh": "ថ្លង់",
+      "nameEn": "deafness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000245",
+      "nameKh": "ចំណង់អាហារថយចុះ",
+      "nameEn": "decreased appetite",
+      "synonyms": [
+        "poor appetite"
+      ]
+    },
+    {
+      "code": "SYMP:0000248",
+      "nameKh": "ការដឹងទីតាំងអវយវៈដោយស្មារតីថយចុះ",
+      "nameEn": "decreased conscious proprioception",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000693",
+      "nameKh": "អារម្មណ៍នៅមុខថយចុះ",
+      "nameEn": "decreased facial sensation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000694",
+      "nameKh": "កម្លាំងសាច់ដុំថ្គាមថយចុះ",
+      "nameEn": "decreased jaw tone",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020051",
+      "nameKh": "ការរំលាយអាហារ និងបម្លែងថាមពលថយចុះ",
+      "nameEn": "decreased metabolism",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000695",
+      "nameKh": "ការផលិតទឹកដោះថយចុះ",
+      "nameEn": "decreased milk production",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000696",
+      "nameKh": "ការឆ្លើយតបចលនាថយចុះ",
+      "nameEn": "decreased motor response",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000697",
+      "nameKh": "កម្លាំងសាច់ដុំបំពង់កថយចុះ",
+      "nameEn": "decreased pharyngeal tone",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000698",
+      "nameKh": "ការបឺតជញ្ជក់ថយចុះ",
+      "nameEn": "decreased sucking",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020050",
+      "nameKh": "ទឹកភ្នែកថយចុះ",
+      "nameEn": "decreased tearing",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000877",
+      "nameKh": "កម្លាំងសាច់ដុំអណ្តាតថយចុះ",
+      "nameEn": "decreased tongue tone",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000020",
+      "nameKh": "ខ្វះជាតិទឹក",
+      "nameEn": "dehydration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000466",
+      "nameKh": "ការឈានដល់ដំណាក់កាលអភិវឌ្ឍយឺត",
+      "nameEn": "delayed milestones",
+      "synonyms": [
+        "developmental delay"
+      ]
+    },
+    {
+      "code": "SYMP:0020049",
+      "nameKh": "ការអភិវឌ្ឍផ្លូវចិត្ត និងចលនាយឺត",
+      "nameEn": "delayed psychomotor development",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000021",
+      "nameKh": "វង្វេងស្មារតីស្រួចស្រាវ",
+      "nameEn": "delirium",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000699",
+      "nameKh": "ខ្សោយសាច់ដុំដេលតូអ៊ីត",
+      "nameEn": "deltoid muscle weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000022",
+      "nameKh": "ធ្លាក់ទឹកចិត្ត",
+      "nameEn": "depression",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000251",
+      "nameKh": "អាប់សែក្នុងស្បែក",
+      "nameEn": "dermal abscess",
+      "synonyms": [
+        "cutaneous abscess",
+        "dermal abscesses",
+        "skin abscess",
+        "subcutaneous abscess"
+      ]
+    },
+    {
+      "code": "SYMP:0020047",
+      "nameKh": "ពិការសាច់ដុំរាលពីលើចុះក្រោម",
+      "nameEn": "descending muscle paralysis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019152",
+      "nameKh": "បែកញើសច្រើន",
+      "nameEn": "diaphoresis",
+      "synonyms": [
+        "profuse perspiration"
+      ]
+    },
+    {
+      "code": "SYMP:0000570",
+      "nameKh": "រាគ",
+      "nameEn": "diarrhea",
+      "synonyms": [
+        "bacterial gastroenteritis",
+        "diarrhoea",
+        "fecal incontinence",
+        "incontinence of feces",
+        "loose bowel",
+        "loose bowels",
+        "the runs"
+      ]
+    },
+    {
+      "code": "SYMP:0000252",
+      "nameKh": "កន្ទួលរាលដាល",
+      "nameEn": "diffuse rash",
+      "synonyms": [
+        "diffuse erythema"
+      ]
+    },
+    {
+      "code": "SYMP:0000254",
+      "nameKh": "ប្រស្រីភ្នែករីកធំ",
+      "nameEn": "dilated pupil",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000256",
+      "nameKh": "រេផ្លិចខ្ជាក់ថយចុះ",
+      "nameEn": "diminished gag reflex",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000255",
+      "nameKh": "ចលនាក្រពះពោះវៀនថយចុះ",
+      "nameEn": "diminished gastro-intestinal motility",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000700",
+      "nameKh": "ចលនាដោយខ្លួនឯងថយចុះ",
+      "nameEn": "diminished spontaneous movement",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000651",
+      "nameKh": "ការហូរចេញនៃសារធាតុរាវ",
+      "nameEn": "discharge",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000023",
+      "nameKh": "វង្វេងទីកន្លែង ពេលវេលា ឬបុគ្គល",
+      "nameEn": "disorientation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000584",
+      "nameKh": "វដ្តដេក និងភ្ញាក់ ២៤ ម៉ោងខុសប្រក្រតី",
+      "nameEn": "disruptions of 24-hour sleep-wake cycle",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000702",
+      "nameKh": "ពោះវៀនប៉ោងដែលរកឃើញពេលពិនិត្យតាមរន្ធគូថ",
+      "nameEn": "distended loops of intestines on rectal",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000536",
+      "nameKh": "អារម្មណ៍ស្បែកខុសប្រក្រតី",
+      "nameEn": "disturbance of skin sensation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000551",
+      "nameKh": "ការដឹងក្លិន និងរសជាតិខុសប្រក្រតី",
+      "nameEn": "disturbances of sensation of smell and taste",
+      "synonyms": [
+        "taste alteration"
+      ]
+    },
+    {
+      "code": "SYMP:0000627",
+      "nameKh": "ការមើលឃើញខុសប្រក្រតី",
+      "nameEn": "disturbed vision",
+      "synonyms": [
+        "disturbance of vision"
+      ]
+    },
+    {
+      "code": "SYMP:0000610",
+      "nameKh": "វិលមុខ",
+      "nameEn": "dizziness",
+      "synonyms": [
+        "dizzy"
+      ]
+    },
+    {
+      "code": "SYMP:0000258",
+      "nameKh": "មើលឃើញរូបពីរ",
+      "nameEn": "double vision",
+      "synonyms": [
+        "diplopia"
+      ]
+    },
+    {
+      "code": "SYMP:0000703",
+      "nameKh": "ត្រចៀកធ្លាក់",
+      "nameEn": "droopy ears",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000024",
+      "nameKh": "ងងុយដេក",
+      "nameEn": "drowsiness",
+      "synonyms": [
+        "drowsy",
+        "somnolence"
+      ]
+    },
+    {
+      "code": "SYMP:0000025",
+      "nameKh": "ក្អកស្ងួត",
+      "nameEn": "dry cough",
+      "synonyms": [
+        "nonproductive cough"
+      ]
+    },
+    {
+      "code": "SYMP:0000259",
+      "nameKh": "ក្អកស្ងួតខ្លាំងដដែលៗ",
+      "nameEn": "dry hacking cough",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000260",
+      "nameKh": "ស្ងួតមាត់",
+      "nameEn": "dry mouth",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000261",
+      "nameKh": "ភ្នាសសើមស្ងួត",
+      "nameEn": "dry mucous membrane",
+      "synonyms": [
+        "dry mucous membranes"
+      ]
+    },
+    {
+      "code": "SYMP:0000414",
+      "nameKh": "និយាយមិនច្បាស់ដោយបញ្ហាចលនាសាច់ដុំ",
+      "nameEn": "dysarthria",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000816",
+      "nameKh": "ភាពខុសប្រក្រតីពេលភ្ញាក់ពីដំណេក",
+      "nameEn": "dysfunctions associated with arousal from sleep",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000580",
+      "nameKh": "ភាពខុសប្រក្រតីទាក់ទងនឹងដំណាក់កាលដំណេក",
+      "nameEn": "dysfunctions associated with sleep stages",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000404",
+      "nameKh": "ឈឺពេលរួមភេទ",
+      "nameEn": "dyspareunia",
+      "synonyms": [
+        "difficult sexual intercourse",
+        "painful sexual intercourse"
+      ]
+    },
+    {
+      "code": "SYMP:0000422",
+      "nameKh": "មិនរំលាយអាហារ",
+      "nameEn": "dyspepsia",
+      "synonyms": [
+        "indigestion"
+      ]
+    },
+    {
+      "code": "SYMP:0000493",
+      "nameKh": "ពិបាកលេប",
+      "nameEn": "dysphagia",
+      "synonyms": [
+        "difficulty in swallowing",
+        "difficulty swallowing",
+        "impaired swallowing"
+      ]
+    },
+    {
+      "code": "SYMP:0000704",
+      "nameKh": "សំឡេងខុសប្រក្រតី",
+      "nameEn": "dysphonia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019153",
+      "nameKh": "ពិបាកដកដង្ហើម",
+      "nameEn": "dyspnea",
+      "synonyms": [
+        "breathing difficulty",
+        "breathlessness",
+        "difficulty breathing",
+        "labored respiration",
+        "shortness of breath"
+      ]
+    },
+    {
+      "code": "SYMP:0000038",
+      "nameKh": "រលាកពោះវៀនតូចជាមួយពិបាកដកដង្ហើម",
+      "nameEn": "dyspneic enteritis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000485",
+      "nameKh": "ឈឺពេលបត់ជើងតូច",
+      "nameEn": "dysuria",
+      "synonyms": [
+        "difficult urine discharge",
+        "painful urine discharge"
+      ]
+    },
+    {
+      "code": "SYMP:0000392",
+      "nameKh": "រោគសញ្ញាត្រចៀក",
+      "nameEn": "ear symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000437",
+      "nameKh": "ឈឺត្រចៀក",
+      "nameEn": "earache",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000472",
+      "nameKh": "ឆាប់ឆ្អែត",
+      "nameEn": "early satiety",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000289",
+      "nameKh": "អេកសេម៉ា",
+      "nameEn": "eczema",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000538",
+      "nameKh": "ហើមដោយទឹក",
+      "nameEn": "edema",
+      "synonyms": [
+        "dropsy"
+      ]
+    },
+    {
+      "code": "SYMP:0000441",
+      "nameKh": "ឈឺកែងដៃ",
+      "nameEn": "elbow pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000360",
+      "nameKh": "ស្គមស្គាំង",
+      "nameEn": "emaciation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000090",
+      "nameKh": "រលាកខួរក្បាល",
+      "nameEn": "encephalitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000262",
+      "nameKh": "រលាកស្រទាប់ខាងក្នុងបេះដូង",
+      "nameEn": "endocarditis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000521",
+      "nameKh": "កូនកណ្តុររីកធំ",
+      "nameEn": "enlargement of lymph nodes",
+      "synonyms": [
+        "swelling of lymph nodes",
+        "swollen lymph glands"
+      ]
+    },
+    {
+      "code": "SYMP:0000039",
+      "nameKh": "រលាកពោះវៀនតូច",
+      "nameEn": "enteritis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000263",
+      "nameKh": "រលាកអេពីឌីឌីម",
+      "nameEn": "epididymitis",
+      "synonyms": [
+        "inflammation of the epididymis"
+      ]
+    },
+    {
+      "code": "SYMP:0000264",
+      "nameKh": "រលាកអេពីឌីឌីម និងពងស្វាស",
+      "nameEn": "epididymorchitis",
+      "synonyms": [
+        "epididymo-orchitis"
+      ]
+    },
+    {
+      "code": "SYMP:0000810",
+      "nameKh": "ដុំពកក្នុងពោះ តំបន់ចុងដង្ហើម",
+      "nameEn": "epigastric abdominal lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000802",
+      "nameKh": "ដុំក្នុងពោះ តំបន់ចុងដង្ហើម",
+      "nameEn": "epigastric abdominal mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000542",
+      "nameKh": "ឈឺពោះ តំបន់ចុងដង្ហើម",
+      "nameEn": "epigastric abdominal pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000469",
+      "nameKh": "ពោះរឹង តំបន់ចុងដង្ហើម",
+      "nameEn": "epigastric abdominal rigidity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000477",
+      "nameKh": "ហើមពោះ តំបន់ចុងដង្ហើម",
+      "nameEn": "epigastric abdominal swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000496",
+      "nameKh": "ឈឺពោះពេលសង្កត់ តំបន់ចុងដង្ហើម",
+      "nameEn": "epigastric abdominal tenderness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000776",
+      "nameKh": "ដុំពកក្នុងអាងត្រគាក តំបន់ចុងដង្ហើម",
+      "nameEn": "epigastric pelvic lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000784",
+      "nameKh": "ដុំក្នុងអាងត្រគាក តំបន់ចុងដង្ហើម",
+      "nameEn": "epigastric pelvic mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000792",
+      "nameKh": "ហើមអាងត្រគាក តំបន់ចុងដង្ហើម",
+      "nameEn": "epigastric pelvic swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000269",
+      "nameKh": "ប្រកាច់ដោយជំងឺឆ្កួតជ្រូក",
+      "nameEn": "epileptic seizure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000448",
+      "nameKh": "ហូរឈាមច្រមុះ",
+      "nameEn": "epistaxis",
+      "synonyms": [
+        "nosebleed"
+      ]
+    },
+    {
+      "code": "SYMP:0019158",
+      "nameKh": "សំបកជាលិកាងាប់លើរបួស",
+      "nameEn": "eschar",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000629",
+      "nameKh": "កន្ទួលស្បែករាលដាល",
+      "nameEn": "exanthema",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000762",
+      "nameKh": "កោសិកាលីមហ្វូស៊ីតច្រើនក្នុងទឹកខួរឆ្អឹងខ្នង",
+      "nameEn": "excess lymphocytes in cerebrospinal fluid",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000277",
+      "nameKh": "ទឹកមាត់ច្រើន",
+      "nameEn": "excess salivation",
+      "synonyms": [
+        "profuse salivation"
+      ]
+    },
+    {
+      "code": "SYMP:0000592",
+      "nameKh": "ទារកយំច្រើនខុសប្រក្រតី",
+      "nameEn": "excessive crying of infant",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019164",
+      "nameKh": "ទឹកភ្នែកច្រើន",
+      "nameEn": "excessive tearing",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000186",
+      "nameKh": "អស់កម្លាំងខ្លាំង",
+      "nameEn": "exhaustion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000896",
+      "nameKh": "ភ្នែកលៀន",
+      "nameEn": "exophthalmos",
+      "synonyms": [
+        "exophthalmia",
+        "exophthalmus",
+        "proptosis"
+      ]
+    },
+    {
+      "code": "SYMP:0000705",
+      "nameKh": "ខ្សោយសមត្ថភាពបញ្ចេញភាសា",
+      "nameEn": "expressive aphasia",
+      "synonyms": [
+        "agrammatic aphasia",
+        "Broca's aphasia"
+      ]
+    },
+    {
+      "code": "SYMP:0000278",
+      "nameKh": "ដំបៅរីកធំ",
+      "nameEn": "extensive ulcer",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000761",
+      "nameKh": "ការប្រែប្រួលសារធាតុរាវក្រៅកោសិកា",
+      "nameEn": "extracellular fluid alteration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000658",
+      "nameKh": "ខ្វិនសាច់ដុំបញ្ជាចលនាភ្នែក",
+      "nameEn": "extraocular muscles paralysis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000588",
+      "nameKh": "ទឹកនោមលេចចេញក្រៅផ្លូវទឹកនោម",
+      "nameEn": "extravasation of urine",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000279",
+      "nameKh": "អស់កម្លាំងខ្លាំងបំផុត",
+      "nameEn": "extreme exhaustion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000280",
+      "nameKh": "នឿយហត់ខ្លាំងបំផុត",
+      "nameEn": "extreme fatigue",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000747",
+      "nameKh": "ចុះខ្សោយខ្លាំងបំផុត",
+      "nameEn": "extreme prostration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000281",
+      "nameKh": "មានសារធាតុរាវហូរចេញពីភ្នែក",
+      "nameEn": "eye discharge",
+      "synonyms": [
+        "ocular discharge"
+      ]
+    },
+    {
+      "code": "SYMP:0000212",
+      "nameKh": "នឿយភ្នែក",
+      "nameEn": "eye strain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019163",
+      "nameKh": "រោគសញ្ញាភ្នែក",
+      "nameEn": "eye symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000844",
+      "nameKh": "ឈាមច្រើនក្នុងជាលិកាមុខ",
+      "nameEn": "face hyperemia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000748",
+      "nameKh": "ហើមមុខ",
+      "nameEn": "facial edema",
+      "synonyms": [
+        "facial swelling"
+      ]
+    },
+    {
+      "code": "SYMP:0000395",
+      "nameKh": "សាច់ដុំមុខកន្ត្រាក់",
+      "nameEn": "facial muscle twitching",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000283",
+      "nameKh": "ខ្វិនមុខ",
+      "nameEn": "facial paralysis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000863",
+      "nameKh": "ញ័រមុខ",
+      "nameEn": "facial tremor",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000706",
+      "nameKh": "ខ្សោយសាច់ដុំមុខ",
+      "nameEn": "facial weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000465",
+      "nameKh": "ការលូតលាស់មិនបានល្អ",
+      "nameEn": "failure to thrive",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019177",
+      "nameKh": "នឿយហត់",
+      "nameEn": "fatigue",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000595",
+      "nameKh": "ប្រកាច់ដោយគ្រុនក្តៅ",
+      "nameEn": "febrile convulsion",
+      "synonyms": [
+        "febrile seizure"
+      ]
+    },
+    {
+      "code": "SYMP:0000522",
+      "nameKh": "ពិបាកបំបៅ និងការបំបៅមិនត្រឹមត្រូវ",
+      "nameEn": "feeding difficulties and mismanagement",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020046",
+      "nameKh": "បញ្ហាបំបៅ ឬញ៉ាំអាហារ",
+      "nameEn": "feeding problem",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000613",
+      "nameKh": "គ្រុនក្តៅ",
+      "nameEn": "fever",
+      "synonyms": [
+        "pyrexia"
+      ]
+    },
+    {
+      "code": "SYMP:0000282",
+      "nameKh": "ប្រស្រីភ្នែករីកធំ និងមិនឆ្លើយតប",
+      "nameEn": "fixed dilated pupils",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000284",
+      "nameKh": "ប្រស្រីភ្នែកមិនឆ្លើយតប",
+      "nameEn": "fixed pupil",
+      "synonyms": [
+        "fixed pupils"
+      ]
+    },
+    {
+      "code": "SYMP:0000707",
+      "nameKh": "កម្លាំងសាច់ដុំទន់ខ្សោយ",
+      "nameEn": "flaccid muscle tone",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000285",
+      "nameKh": "ខ្វិនប្រភេទទន់",
+      "nameEn": "flaccid paralysis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000032",
+      "nameKh": "ភាពទន់ខ្សោយនៃសាច់ដុំ",
+      "nameEn": "flaccidity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000033",
+      "nameKh": "ស្រទាប់កេរ៉ាទីនរាបស្មើរាងស្រោម (flat keratotic capsule)",
+      "nameEn": "flat keratotic capsule",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000509",
+      "nameKh": "ខ្យល់ក្នុងពោះវៀន",
+      "nameEn": "flatulence",
+      "synonyms": [
+        "gas",
+        "gas production"
+      ]
+    },
+    {
+      "code": "SYMP:0000511",
+      "nameKh": "ក្រហមមុខ ឬស្បែកភ្លាមៗ",
+      "nameEn": "flushing",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000266",
+      "nameKh": "ប្រកាច់ផ្តើមពីផ្នែកមួយ",
+      "nameEn": "focal seizure",
+      "synonyms": [
+        "partial seizure"
+      ]
+    },
+    {
+      "code": "SYMP:0000861",
+      "nameKh": "ចលនាថយចុះប្រភេទជាប់គាំង",
+      "nameEn": "freezing hypokinesia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000630",
+      "nameKh": "ឈឺក្បាលផ្នែកថ្ងាស",
+      "nameEn": "frontal headache",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000843",
+      "nameKh": "ឈាមហូរច្រើនក្នុងជាលិកាពេលប្រើប្រាស់",
+      "nameEn": "functional hyperemia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000593",
+      "nameKh": "ដំបៅរលួយខ្មៅ",
+      "nameEn": "gangrene",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000291",
+      "nameKh": "ឈឺពោះដោយខ្យល់",
+      "nameEn": "gas pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019159",
+      "nameKh": "រលាកក្រពះពោះវៀន",
+      "nameEn": "gastroenteritis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000867",
+      "nameKh": "ហូរឈាមក្នុងផ្លូវរំលាយអាហារ",
+      "nameEn": "gastrointestinal bleeding",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000814",
+      "nameKh": "ដុំពកក្នុងពោះ ទូទៅ",
+      "nameEn": "generalized abdominal lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000804",
+      "nameKh": "ដុំក្នុងពោះ ទូទៅ",
+      "nameEn": "generalized abdominal mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000518",
+      "nameKh": "ឈឺពោះ ទូទៅ",
+      "nameEn": "generalized abdominal pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000468",
+      "nameKh": "ពោះរឹង ទូទៅ",
+      "nameEn": "generalized abdominal rigidity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000549",
+      "nameKh": "ហើមពោះ ទូទៅ",
+      "nameEn": "generalized abdominal swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000498",
+      "nameKh": "ឈឺពោះពេលសង្កត់ ទូទៅ",
+      "nameEn": "generalized abdominal tenderness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000609",
+      "nameKh": "បែកញើសច្រើនទូទាំងខ្លួន",
+      "nameEn": "generalized hyperhidrosis",
+      "synonyms": [
+        "secondary hyperhidrosis"
+      ]
+    },
+    {
+      "code": "SYMP:0000774",
+      "nameKh": "ដុំពកក្នុងអាងត្រគាក ទូទៅ",
+      "nameEn": "generalized pelvic lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000786",
+      "nameKh": "ដុំក្នុងអាងត្រគាក ទូទៅ",
+      "nameEn": "generalized pelvic mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000791",
+      "nameKh": "ហើមអាងត្រគាក ទូទៅ",
+      "nameEn": "generalized pelvic swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000267",
+      "nameKh": "ប្រកាច់ទូទាំងខ្លួន",
+      "nameEn": "generalized seizure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000740",
+      "nameKh": "ហូរឈាមប្រព័ន្ធទឹកនោម និងបន្តពូជ",
+      "nameEn": "genitourinary hemorrhage",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000015",
+      "nameKh": "វិលមុខ",
+      "nameEn": "giddiness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000709",
+      "nameKh": "រលាកប្រភេទក្រានុយឡូម៉ា",
+      "nameEn": "granulomatous inflammation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000851",
+      "nameKh": "ទឹកនោមមានឈាមដែលមើលឃើញដោយភ្នែក",
+      "nameEn": "gross hematuria",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000742",
+      "nameKh": "ហូរឈាមអញ្ចាញធ្មេញ",
+      "nameEn": "gum bleeding",
+      "synonyms": [
+        "gingival hemorrhage"
+      ]
+    },
+    {
+      "code": "SYMP:0000440",
+      "nameKh": "ជ្រុះសក់",
+      "nameEn": "hair loss",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020044",
+      "nameKh": "សក់ជ្រុះ",
+      "nameEn": "hair shedding",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000607",
+      "nameKh": "ការយល់ឃើញអ្វីដែលមិនមានពិត",
+      "nameEn": "hallucination",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020052",
+      "nameKh": "ខ្សោយដៃ",
+      "nameEn": "hand weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000597",
+      "nameKh": "រោគសញ្ញាក្បាល និងក",
+      "nameEn": "head and neck symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000507",
+      "nameKh": "ហើមក្បាល",
+      "nameEn": "head swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000387",
+      "nameKh": "រោគសញ្ញាក្បាល",
+      "nameEn": "head symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000504",
+      "nameKh": "ឈឺក្បាល",
+      "nameEn": "headache",
+      "synonyms": [
+        "cephalalgia"
+      ]
+    },
+    {
+      "code": "SYMP:0000292",
+      "nameKh": "ខ្សោយបេះដូង",
+      "nameEn": "heart failure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019147",
+      "nameKh": "ក្អួតឈាម",
+      "nameEn": "hematemesis",
+      "synonyms": [
+        "bloody vomit",
+        "haematemesis",
+        "vomiting blood"
+      ]
+    },
+    {
+      "code": "SYMP:0000421",
+      "nameKh": "បន្ទោរបង់ឈាមស្រស់",
+      "nameEn": "hematochezia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019156",
+      "nameKh": "តាមរយៈឈាម (hematogenous)",
+      "nameEn": "hematogenous",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000874",
+      "nameKh": "ដុំឈាមកកក្នុងជាលិកា",
+      "nameEn": "hematoma",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019140",
+      "nameKh": "រោគសញ្ញាប្រព័ន្ធបង្កើតកោសិកាឈាម",
+      "nameEn": "hematopoietic system symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000040",
+      "nameKh": "ទឹកនោមមានឈាម",
+      "nameEn": "hematuria",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0017795",
+      "nameKh": "រោគសញ្ញាប្រព័ន្ធឈាម និងភាពស៊ាំ",
+      "nameEn": "hemic and immune system symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000293",
+      "nameKh": "ខ្សោយអវយវៈមួយចំហៀងខ្លួន",
+      "nameEn": "hemiparesis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000749",
+      "nameKh": "ស្ថានភាពលំហូរឈាមមិននឹងនរ",
+      "nameEn": "hemodynamic instability",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000294",
+      "nameKh": "ការបែកគ្រាប់ឈាមក្រហម",
+      "nameEn": "hemolysis",
+      "synonyms": [
+        "haemolysis"
+      ]
+    },
+    {
+      "code": "SYMP:0000631",
+      "nameKh": "ស្លេកស្លាំងដោយការបែកគ្រាប់ឈាមក្រហម",
+      "nameEn": "hemolytic anemia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000517",
+      "nameKh": "ក្អកឈាម",
+      "nameEn": "hemoptysis",
+      "synonyms": [
+        "coughing up of blood",
+        "expectoration of blood",
+        "expectoration of blood-stained sputum",
+        "haemoptysis"
+      ]
+    },
+    {
+      "code": "SYMP:0000041",
+      "nameKh": "ហូរឈាម",
+      "nameEn": "hemorrhage",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000506",
+      "nameKh": "ហូរឈាមពីបំពង់ក",
+      "nameEn": "hemorrhage from throat",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000750",
+      "nameKh": "ហូរឈាមក្នុងភ្នាសសើម",
+      "nameEn": "hemorrhage into mucous membrane",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000751",
+      "nameKh": "ហូរឈាមក្នុងស្បែក",
+      "nameEn": "hemorrhage into skin",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000228",
+      "nameKh": "រាគមានឈាម",
+      "nameEn": "hemorrhagic diarrhea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000036",
+      "nameKh": "រលាកក្រពះពោះវៀនមានហូរឈាម",
+      "nameEn": "hemorrhagic gastroenteritis",
+      "synonyms": [
+        "haemorrhagic gastroenteritis"
+      ]
+    },
+    {
+      "code": "SYMP:0019154",
+      "nameKh": "រលាកតំបន់កណ្តាលទ្រូងមានហូរឈាម",
+      "nameEn": "hemorrhagic mediastinitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000295",
+      "nameKh": "អាប់សែថ្លើម",
+      "nameEn": "hepatic abscess",
+      "synonyms": [
+        "hepatic abscesses"
+      ]
+    },
+    {
+      "code": "SYMP:0000296",
+      "nameKh": "មុខងារថ្លើមខុសប្រក្រតី",
+      "nameEn": "hepatic dysfunction",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000045",
+      "nameKh": "ជាលិកាថ្លើមងាប់",
+      "nameEn": "hepatic necrosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000046",
+      "nameKh": "រលាកថ្លើម",
+      "nameEn": "hepatitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000460",
+      "nameKh": "ថ្លើមរីកធំ",
+      "nameEn": "hepatomegaly",
+      "synonyms": [
+        "enlargement of the liver"
+      ]
+    },
+    {
+      "code": "SYMP:0000047",
+      "nameKh": "ថ្លើម និងអណ្តើករីកធំ",
+      "nameEn": "hepatosplenomegaly",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000752",
+      "nameKh": "ដំបៅអ៊ែប៉េសលើបបូរមាត់ខាងលើ",
+      "nameEn": "herpetic lesion on upper lip",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000515",
+      "nameKh": "ត្អើក",
+      "nameEn": "hiccough",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020064",
+      "nameKh": "សម្ពាធឈាមខ្ពស់",
+      "nameEn": "high blood pressure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000882",
+      "nameKh": "គ្រុនក្តៅខ្លាំង",
+      "nameEn": "high fever",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000297",
+      "nameKh": "រលាកកូនកណ្តុរតំបន់ទ្វារសួត",
+      "nameEn": "hilar lymphadenitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000632",
+      "nameKh": "ឈឺត្រគាក",
+      "nameEn": "hip pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000298",
+      "nameKh": "សំឡេងស្អក",
+      "nameEn": "hoarse voice",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019181",
+      "nameKh": "ស្អក",
+      "nameEn": "hoarseness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000193",
+      "nameKh": "ការលោតលើជើង (hopping)",
+      "nameEn": "hopping",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000051",
+      "nameKh": "ទឹកដក់ក្នុងខួរក្បាល",
+      "nameEn": "hydrocephalus",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019183",
+      "nameKh": "សកម្មភាពហួសប្រមាណ",
+      "nameEn": "hyperactivity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000836",
+      "nameKh": "អារម្មណ៍ឈឺចាប់ខ្លាំងជាងធម្មតា",
+      "nameEn": "hyperalgesia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000299",
+      "nameKh": "ឈាមច្រើនក្នុងជាលិកា",
+      "nameEn": "hyperemia",
+      "synonyms": [
+        "hyperaemia",
+        "hyperemic"
+      ]
+    },
+    {
+      "code": "SYMP:0000845",
+      "nameKh": "ឈាមច្រើនក្នុងជាលិកាតំបន់ក",
+      "nameEn": "hyperemia of the neck",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000300",
+      "nameKh": "អារម្មណ៍រំញោចខ្លាំងជាងធម្មតា",
+      "nameEn": "hyperesthesia",
+      "synonyms": [
+        "hyperaesthesia"
+      ]
+    },
+    {
+      "code": "SYMP:0000854",
+      "nameKh": "ឈាមរដូវច្រើនខុសប្រក្រតី",
+      "nameEn": "hypermenorrhea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000056",
+      "nameKh": "សារធាតុពណ៌ស្បែកកើនឡើង",
+      "nameEn": "hyperpigmentation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000886",
+      "nameKh": "គ្រុនក្តៅខ្លាំងបំផុត",
+      "nameEn": "hyperpyrexia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000058",
+      "nameKh": "រេផ្លិចកើនឡើង",
+      "nameEn": "hyperreflexia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000582",
+      "nameKh": "ដេកច្រើនខុសប្រក្រតី",
+      "nameEn": "hypersomnia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000583",
+      "nameKh": "ដេកច្រើនជាមួយឈប់ដកដង្ហើមពេលដេក",
+      "nameEn": "hypersomnia with sleep apnea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000409",
+      "nameKh": "សីតុណ្ហភាពរាងកាយកើនឡើង",
+      "nameEn": "hyperthermia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000601",
+      "nameKh": "ខ្យល់ចេញចូលសួតច្រើនពេក",
+      "nameEn": "hyperventilation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000835",
+      "nameKh": "អារម្មណ៍ឈឺចាប់ថយចុះ",
+      "nameEn": "hypoalgesia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000834",
+      "nameKh": "អារម្មណ៍រំញោចថយចុះ",
+      "nameEn": "hypoesthesia",
+      "synonyms": [
+        "numbness"
+      ]
+    },
+    {
+      "code": "SYMP:0000858",
+      "nameKh": "ចលនាថយចុះ",
+      "nameEn": "hypokinesia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019146",
+      "nameKh": "សូដ្យូមក្នុងឈាមទាប",
+      "nameEn": "hyponatremia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000301",
+      "nameKh": "ខ្ទុះក្នុងបន្ទប់ខាងមុខនៃភ្នែក",
+      "nameEn": "hypopyon",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000059",
+      "nameKh": "សម្ពាធឈាមទាប",
+      "nameEn": "hypotension",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000893",
+      "nameKh": "មានសម្ពាធឈាមទាប",
+      "nameEn": "hypotensive",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000302",
+      "nameKh": "សីតុណ្ហភាពរាងកាយទាប",
+      "nameEn": "hypothermia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000428",
+      "nameKh": "ខ្យល់ចេញចូលសួតមិនគ្រប់គ្រាន់",
+      "nameEn": "hypoventilation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000303",
+      "nameKh": "អុកស៊ីសែនក្នុងឈាមទាប",
+      "nameEn": "hypoxemia",
+      "synonyms": [
+        "hypoxaemia"
+      ]
+    },
+    {
+      "code": "SYMP:0000870",
+      "nameKh": "ភ្នែកលឿង",
+      "nameEn": "icteric eyes",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000871",
+      "nameKh": "ភ្នាសសើមលឿង",
+      "nameEn": "icteric mucous membrane",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000872",
+      "nameKh": "ស្បែកលឿង",
+      "nameEn": "icteric skin",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019138",
+      "nameKh": "រោគសញ្ញាប្រព័ន្ធភាពស៊ាំ",
+      "nameEn": "immune system symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000304",
+      "nameKh": "ការសម្របសម្រួលចលនាខ្សោយ",
+      "nameEn": "impaired coordination",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000305",
+      "nameKh": "រេផ្លិចខ្ជាក់ខ្សោយ",
+      "nameEn": "impaired gag reflex",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000215",
+      "nameKh": "មិនអាចយល់ពាក្យនិយាយ",
+      "nameEn": "inability to comprehend speech",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000817",
+      "nameKh": "មិនអាចផ្តោតអារម្មណ៍",
+      "nameEn": "inability to concentrate",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000306",
+      "nameKh": "មិនអាចញ៉ាំ ឬបំបៅបាន",
+      "nameEn": "inability to feed",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000217",
+      "nameKh": "មិនអាចបង្កើតពាក្យនិយាយ",
+      "nameEn": "inability to form words",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000713",
+      "nameKh": "មិនអាចដេករាបស្មើ",
+      "nameEn": "inability to lie flat",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000216",
+      "nameKh": "មិនអាចនិយាយ",
+      "nameEn": "inability to speak",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000308",
+      "nameKh": "មិនអាចលេប",
+      "nameEn": "inability to swallow",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000233",
+      "nameKh": "មិនអាចគិតបានច្បាស់",
+      "nameEn": "inability to think clearly",
+      "synonyms": [
+        "clouded sensorium",
+        "decreased sensorium"
+      ]
+    },
+    {
+      "code": "SYMP:0000558",
+      "nameKh": "បញ្ចេញទឹកនោមពីប្លោកនោមមិនអស់",
+      "nameEn": "incomplete bladder emptying",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000578",
+      "nameKh": "លេចទឹកនោមដោយមិនដឹងខ្លួន",
+      "nameEn": "incontinence without sensory awareness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000164",
+      "nameKh": "ចលនាមិនសម្របសម្រួល",
+      "nameEn": "incoordination",
+      "synonyms": [
+        "lack of coordination"
+      ]
+    },
+    {
+      "code": "SYMP:0000246",
+      "nameKh": "ចំណង់អាហារកើនឡើង",
+      "nameEn": "increased appetite",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000712",
+      "nameKh": "មិនអាចមានកូន",
+      "nameEn": "infertility",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000310",
+      "nameKh": "ភ្នែករលាក",
+      "nameEn": "inflamed eyes",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000061",
+      "nameKh": "រលាក",
+      "nameEn": "inflammation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000633",
+      "nameKh": "ឈឺខ្នងក្រោមដោយការរលាក",
+      "nameEn": "inflammatory low back pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000307",
+      "nameKh": "មិនអាចឈរ",
+      "nameEn": "inibility to stand",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000571",
+      "nameKh": "គេងមិនលក់",
+      "nameEn": "insomnia",
+      "synonyms": [
+        "agrypnia"
+      ]
+    },
+    {
+      "code": "SYMP:0000579",
+      "nameKh": "គេងមិនលក់ជាមួយឈប់ដកដង្ហើមពេលដេក",
+      "nameEn": "insomnia with sleep apnea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000753",
+      "nameKh": "ថប់បារម្ភខ្លាំង",
+      "nameEn": "intense anxiety",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000755",
+      "nameKh": "ភាពពុលក្នុងឈាមខ្លាំង",
+      "nameEn": "intense toxemia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000063",
+      "nameKh": "ហូរឈាមពោះវៀន",
+      "nameEn": "intestinal hemorrhage",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000311",
+      "nameKh": "ចលនាពោះវៀនកើនឡើង",
+      "nameEn": "intestinal hypermotility",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019189",
+      "nameKh": "ហូរឈាមក្នុងជាលិកាខួរក្បាល",
+      "nameEn": "intracerebral hemorrhage",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019188",
+      "nameKh": "ហូរឈាមក្នុងលលាដ៍ក្បាល",
+      "nameEn": "intracranial hemorrhage",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000714",
+      "nameKh": "ហូរឈាមក្នុងរ៉េទីន",
+      "nameEn": "intraretinal hemorrhage",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000654",
+      "nameKh": "ឆាប់រំខាន ឬឆាប់ខឹង",
+      "nameEn": "irritability",
+      "synonyms": [
+        "Inconsolability"
+      ]
+    },
+    {
+      "code": "SYMP:0000209",
+      "nameKh": "ខ្វះឈាមទៅចិញ្ចឹមជាលិកា",
+      "nameEn": "ischemia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000657",
+      "nameKh": "ជាលិកាពោះវៀនតូចជេជុយណូមងាប់ដោយខ្វះឈាម",
+      "nameEn": "ischemic necrosis of jejunum",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000432",
+      "nameKh": "រមាស់",
+      "nameEn": "itching",
+      "synonyms": [
+        "pruritus"
+      ]
+    },
+    {
+      "code": "SYMP:0000539",
+      "nameKh": "ខាន់លឿង",
+      "nameEn": "jaundice",
+      "synonyms": [
+        "icteric",
+        "icterus"
+      ]
+    },
+    {
+      "code": "SYMP:0000313",
+      "nameKh": "រលាកសន្លាក់",
+      "nameEn": "joint inflammation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000064",
+      "nameKh": "ឈឺសន្លាក់",
+      "nameEn": "joint pain",
+      "synonyms": [
+        "arthralgia",
+        "arthromyalgia"
+      ]
+    },
+    {
+      "code": "SYMP:0000312",
+      "nameKh": "រោគសញ្ញាសន្លាក់",
+      "nameEn": "joint symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000824",
+      "nameKh": "ចង្វាក់បេះដូងលឿនផ្តើមពីតំបន់ប្រសព្វអាត្រីយ៉ូម និងវ៉ង់ទ្រីគុល",
+      "nameEn": "junctional tachycardia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000314",
+      "nameKh": "រលាកកញ្ចក់ភ្នែក",
+      "nameEn": "keratitis",
+      "synonyms": [
+        "corneitis",
+        "inflammation of the cornea of the eye"
+      ]
+    },
+    {
+      "code": "SYMP:0000066",
+      "nameKh": "ដុំកេរ៉ាទីនលើស្បែក",
+      "nameEn": "keratotic nodules of the skin",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000442",
+      "nameKh": "ឈឺជង្គង់",
+      "nameEn": "knee pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000464",
+      "nameKh": "ការអភិវឌ្ឍសរីរវិទ្យាក្នុងកុមារមិនបានតាមការរំពឹង",
+      "nameEn": "lack of expected normal physiological development in childhood",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000463",
+      "nameKh": "ការអភិវឌ្ឍសរីរវិទ្យាមិនប្រក្រតី",
+      "nameEn": "lack of normal physiological development",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000875",
+      "nameKh": "ដើរខ្ញើច",
+      "nameEn": "lameness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000068",
+      "nameKh": "រលាកបំពង់សំឡេង",
+      "nameEn": "laryngitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000069",
+      "nameKh": "រលាកបំពង់សំឡេង និងបំពង់ខ្យល់",
+      "nameEn": "laryngotracheitis",
+      "synonyms": [
+        "larynx and trachea inflammation"
+      ]
+    },
+    {
+      "code": "SYMP:0000315",
+      "nameKh": "ក្បាលបែរទៅចំហៀង និងចុះក្រោម",
+      "nameEn": "lateroventral deviation of the head",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000815",
+      "nameKh": "ដុំពកក្នុងពោះ ផ្នែកខាងក្រោមឆ្វេង",
+      "nameEn": "left lower quadrant abdominal lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000801",
+      "nameKh": "ដុំក្នុងពោះ ផ្នែកខាងក្រោមឆ្វេង",
+      "nameEn": "left lower quadrant abdominal mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000620",
+      "nameKh": "ឈឺពោះ ផ្នែកខាងក្រោមឆ្វេង",
+      "nameEn": "left lower quadrant abdominal pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000554",
+      "nameKh": "ពោះរឹង ផ្នែកខាងក្រោមឆ្វេង",
+      "nameEn": "left lower quadrant abdominal rigidity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000501",
+      "nameKh": "ហើមពោះ ផ្នែកខាងក្រោមឆ្វេង",
+      "nameEn": "left lower quadrant abdominal swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000483",
+      "nameKh": "ឈឺពោះពេលសង្កត់ ផ្នែកខាងក្រោមឆ្វេង",
+      "nameEn": "left lower quadrant abdominal tenderness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000777",
+      "nameKh": "ដុំពកក្នុងអាងត្រគាក ផ្នែកខាងក្រោមឆ្វេង",
+      "nameEn": "left lower quadrant pelvic lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000783",
+      "nameKh": "ដុំក្នុងអាងត្រគាក ផ្នែកខាងក្រោមឆ្វេង",
+      "nameEn": "left lower quadrant pelvic mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000793",
+      "nameKh": "ហើមអាងត្រគាក ផ្នែកខាងក្រោមឆ្វេង",
+      "nameEn": "left lower quadrant pelvic swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000811",
+      "nameKh": "ដុំពកក្នុងពោះ ផ្នែកខាងលើឆ្វេង",
+      "nameEn": "left upper quadrant abdominal lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000800",
+      "nameKh": "ដុំក្នុងពោះ ផ្នែកខាងលើឆ្វេង",
+      "nameEn": "left upper quadrant abdominal mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000456",
+      "nameKh": "ឈឺពោះ ផ្នែកខាងលើឆ្វេង",
+      "nameEn": "left upper quadrant abdominal pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000470",
+      "nameKh": "ពោះរឹង ផ្នែកខាងលើឆ្វេង",
+      "nameEn": "left upper quadrant abdominal rigidity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000555",
+      "nameKh": "ហើមពោះ ផ្នែកខាងលើឆ្វេង",
+      "nameEn": "left upper quadrant abdominal swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000591",
+      "nameKh": "ឈឺពោះពេលសង្កត់ ផ្នែកខាងលើឆ្វេង",
+      "nameEn": "left upper quadrant abdominal tenderness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000778",
+      "nameKh": "ដុំពកក្នុងអាងត្រគាក ផ្នែកខាងលើឆ្វេង",
+      "nameEn": "left upper quadrant pelvic lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000785",
+      "nameKh": "ដុំក្នុងអាងត្រគាក ផ្នែកខាងលើឆ្វេង",
+      "nameEn": "left upper quadrant pelvic mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000794",
+      "nameKh": "ហើមអាងត្រគាក ផ្នែកខាងលើឆ្វេង",
+      "nameEn": "left upper quadrant pelvic swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000316",
+      "nameKh": "រមួលសាច់ដុំជើង",
+      "nameEn": "leg cramp",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000717",
+      "nameKh": "ហើមជើង",
+      "nameEn": "leg swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000224",
+      "nameKh": "ខ្សោយជើង",
+      "nameEn": "leg weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000082",
+      "nameKh": "ដំបៅ ឬការខូចខាតក្នុងសួត",
+      "nameEn": "lesions in lung",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000865",
+      "nameKh": "ដំបៅក្នុងមាត់",
+      "nameEn": "lesions in mouth",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000070",
+      "nameKh": "ដំបៅ ឬការខូចខាតក្នុងសាច់ដុំបេះដូង",
+      "nameEn": "lesions in myocardium",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000864",
+      "nameKh": "ដំបៅក្នុងមាត់ និងបំពង់ក",
+      "nameEn": "lesions in oropharynx",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000100",
+      "nameKh": "ដំបៅ ឬការខូចខាតក្នុងលំពែង",
+      "nameEn": "lesions in pancreas",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000075",
+      "nameKh": "សន្លឹម",
+      "nameEn": "lethargy",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000634",
+      "nameKh": "គ្រាប់ឈាមសកើនឡើង",
+      "nameEn": "leukocytosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019165",
+      "nameKh": "ងាយរំខានដោយពន្លឺ",
+      "nameEn": "light sensitivity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019179",
+      "nameKh": "មានអារម្មណ៍ធេងធោង",
+      "nameEn": "lightheadedness",
+      "synonyms": [
+        "light-headedness"
+      ]
+    },
+    {
+      "code": "SYMP:0000340",
+      "nameKh": "ហើមអវយវៈដោយទឹក",
+      "nameEn": "limb edema",
+      "synonyms": [
+        "limb oedema",
+        "oedema of the limbs"
+      ]
+    },
+    {
+      "code": "SYMP:0000222",
+      "nameKh": "ខ្សោយអវយវៈ",
+      "nameEn": "limb weakness",
+      "synonyms": [
+        "extremities weakness"
+      ]
+    },
+    {
+      "code": "SYMP:0019184",
+      "nameKh": "ការយកចិត្តទុកដាក់មានកម្រិត",
+      "nameEn": "limited attention",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000347",
+      "nameKh": "ធ្លាក់បបូរមាត់",
+      "nameEn": "lip paralysis",
+      "synonyms": [
+        "paralysed lips"
+      ]
+    },
+    {
+      "code": "SYMP:0000076",
+      "nameKh": "ល្ហិតល្ហៃ គ្មានសកម្មភាព",
+      "nameEn": "listlessness",
+      "synonyms": [
+        "languid"
+      ]
+    },
+    {
+      "code": "SYMP:0000125",
+      "nameKh": "រលាកថ្លើម",
+      "nameEn": "liver inflammation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000556",
+      "nameKh": "ដុំពករាក់ក្នុងតំបន់ជាក់លាក់",
+      "nameEn": "localized superficial lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000818",
+      "nameKh": "ដុំរាក់ក្នុងតំបន់ជាក់លាក់",
+      "nameEn": "localized superficial mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000819",
+      "nameKh": "ហើមរាក់ក្នុងតំបន់ជាក់លាក់",
+      "nameEn": "localized superficial swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000309",
+      "nameKh": "បាត់បង់ចំណង់អាហារ",
+      "nameEn": "loss of appetite",
+      "synonyms": [
+        "inappetence",
+        "lack of appetite"
+      ]
+    },
+    {
+      "code": "SYMP:0000318",
+      "nameKh": "បាត់បង់លំនឹង",
+      "nameEn": "loss of balance",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000718",
+      "nameKh": "បាត់បង់ស្មារតី",
+      "nameEn": "loss of consciousness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000616",
+      "nameKh": "កម្ពស់ថយចុះ",
+      "nameEn": "loss of height",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000319",
+      "nameKh": "បាត់បង់រេផ្លិចសរសៃពួរ",
+      "nameEn": "loss of tendon reflex",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000321",
+      "nameKh": "បាត់បង់ការមើលឃើញ",
+      "nameEn": "loss of vision",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000635",
+      "nameKh": "ឈឺខ្នងក្រោម",
+      "nameEn": "low backache",
+      "synonyms": [
+        "low back pain"
+      ]
+    },
+    {
+      "code": "SYMP:0000322",
+      "nameKh": "ទម្ងន់ទាបពេលកើត",
+      "nameEn": "low birth weight",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000692",
+      "nameKh": "សម្ពាធឈាមទាប",
+      "nameEn": "low blood pressure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020060",
+      "nameKh": "គ្រាប់ឈាមសទាប",
+      "nameEn": "low white blood cell count",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000879",
+      "nameKh": "គ្រុនក្តៅតិចៗ",
+      "nameEn": "low-grade fever",
+      "synonyms": [
+        "low grade fever"
+      ]
+    },
+    {
+      "code": "SYMP:0000516",
+      "nameKh": "ដុំពកក្នុងទ្រូង",
+      "nameEn": "lump in chest",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000736",
+      "nameKh": "ហើមកូនកណ្តុរ",
+      "nameEn": "lymph gland swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019155",
+      "nameKh": "រលាកកូនកណ្តុរ",
+      "nameEn": "lymphadenitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019142",
+      "nameKh": "កូនកណ្តុររីកធំ",
+      "nameEn": "lymphadenopathy",
+      "synonyms": [
+        "adenopathy"
+      ]
+    },
+    {
+      "code": "SYMP:0000083",
+      "nameKh": "រលាកសរសៃទឹករងៃ",
+      "nameEn": "lymphangitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019141",
+      "nameKh": "រោគសញ្ញាប្រព័ន្ធទឹករងៃ",
+      "nameEn": "lymphatic system symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000084",
+      "nameKh": "ដុំកោសិកាលីមហ្វូប្លាស្ត៍",
+      "nameEn": "lymphoblastoma",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000086",
+      "nameKh": "កោសិកាលីមហ្វូស៊ីតថយចុះ",
+      "nameEn": "lymphopenia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000426",
+      "nameKh": "គ្រាប់ឈាមក្រហមធំខុសប្រក្រតី",
+      "nameEn": "macrocytosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000636",
+      "nameKh": "កន្ទួលរាប និងកន្ទួលលេច",
+      "nameEn": "maculopapular rash",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019176",
+      "nameKh": "ល្ហិតល្ហៃ",
+      "nameEn": "malaise",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000512",
+      "nameKh": "លេចទឹកនោមពេលប្រឹងក្នុងបុរស",
+      "nameEn": "male stress incontinence",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020053",
+      "nameKh": "រលាកក្រពេញដោះ",
+      "nameEn": "mammary gland inflammation",
+      "synonyms": [
+        "inflammation of mammary breast",
+        "mammitis"
+      ]
+    },
+    {
+      "code": "SYMP:0000820",
+      "nameKh": "ដុំក្នុងទ្រូង",
+      "nameEn": "mass in chest",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000323",
+      "nameKh": "លាមកខ្មៅដោយឈាម",
+      "nameEn": "melena",
+      "synonyms": [
+        "melaena"
+      ]
+    },
+    {
+      "code": "SYMP:0000719",
+      "nameKh": "ការចងចាំខ្សោយ",
+      "nameEn": "memory impairment",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000543",
+      "nameKh": "បាត់បង់ការចងចាំ",
+      "nameEn": "memory loss",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000552",
+      "nameKh": "រោគសញ្ញារំញោចស្រោមខួរ",
+      "nameEn": "meningismus",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000089",
+      "nameKh": "រលាកស្រោមខួរ និងខួរក្បាល",
+      "nameEn": "meningoencephalitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000756",
+      "nameKh": "ឈាមរដូវច្រើន ឬអូសបន្លាយ",
+      "nameEn": "menorrhagia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000855",
+      "nameKh": "ហូរឈាមស្បូនក្រៅពេលរដូវ",
+      "nameEn": "metrorrhagia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000720",
+      "nameKh": "ស្លេកស្លាំងដោយការបែកគ្រាប់ឈាមក្រហមក្នុងសរសៃឈាមតូច",
+      "nameEn": "microangiopathic hemolytic anemia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019144",
+      "nameKh": "ជំងឺសរសៃឈាមតូច",
+      "nameEn": "microangiopathy",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000325",
+      "nameKh": "រលាកទងសួតកម្រិតស្រាល",
+      "nameEn": "mild bronchitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000757",
+      "nameKh": "រលាកភ្នាសភ្នែកកម្រិតស្រាល",
+      "nameEn": "mild conjunctivitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000091",
+      "nameKh": "រលាកខួរក្បាលកម្រិតស្រាល",
+      "nameEn": "mild encephalitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000881",
+      "nameKh": "គ្រុនក្តៅកម្រិតស្រាល",
+      "nameEn": "mild fever",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000326",
+      "nameKh": "សម្ពាធឈាមទាបកម្រិតស្រាល",
+      "nameEn": "mild hypotension",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000328",
+      "nameKh": "ប្រកាច់កន្ត្រាក់ជាប់កម្រិតស្រាល",
+      "nameEn": "mild tetanic convulsion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000419",
+      "nameKh": "ប្រស្រីភ្នែករួមតូច",
+      "nameEn": "miosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000198",
+      "nameKh": "រលូតកូន",
+      "nameEn": "miscarriage",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000502",
+      "nameKh": "លេចទឹកនោមប្រភេទចម្រុះក្នុងស្ត្រី ឬបុរស",
+      "nameEn": "mixed incontinence (female) (male)",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000721",
+      "nameKh": "ស្លេកស្លាំងកម្រិតមធ្យម",
+      "nameEn": "moderate anemia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000722",
+      "nameKh": "ភ្នាសភ្នែកក្រហមកម្រិតមធ្យម",
+      "nameEn": "moderate conjuctival injection",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000848",
+      "nameKh": "ខ្វិនចលនា",
+      "nameEn": "motor paralysis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000329",
+      "nameKh": "ខ្សោយចលនា",
+      "nameEn": "motor weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000655",
+      "nameKh": "ហូរឈាមមាត់",
+      "nameEn": "mouth bleeding",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000109",
+      "nameKh": "កន្ទួលលេចក្នុងមាត់",
+      "nameEn": "mouth papules",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000330",
+      "nameKh": "ដំបៅមាត់",
+      "nameEn": "mouth sore",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000386",
+      "nameKh": "រោគសញ្ញាមាត់",
+      "nameEn": "mouth symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000723",
+      "nameKh": "អាប់សែច្រើនកន្លែង",
+      "nameEn": "multiple abscesses",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000724",
+      "nameKh": "ខ្សោយមុខងារសរីរាង្គច្រើន",
+      "nameEn": "multiple organ failure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000808",
+      "nameKh": "ដុំពកក្នុងពោះ ច្រើនកន្លែង",
+      "nameEn": "multiple sites abdominal lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000803",
+      "nameKh": "ដុំក្នុងពោះ ច្រើនកន្លែង",
+      "nameEn": "multiple sites abdominal mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000561",
+      "nameKh": "ឈឺពោះ ច្រើនកន្លែង",
+      "nameEn": "multiple sites abdominal pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000471",
+      "nameKh": "ពោះរឹង ច្រើនកន្លែង",
+      "nameEn": "multiple sites abdominal rigidity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000545",
+      "nameKh": "ហើមពោះ ច្រើនកន្លែង",
+      "nameEn": "multiple sites abdominal swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000490",
+      "nameKh": "ឈឺពោះពេលសង្កត់ ច្រើនកន្លែង",
+      "nameEn": "multiple sites abdominal tenderness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000780",
+      "nameKh": "ដុំពកក្នុងអាងត្រគាក ច្រើនកន្លែង",
+      "nameEn": "multiple sites pelvic lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000788",
+      "nameKh": "ដុំក្នុងអាងត្រគាក ច្រើនកន្លែង",
+      "nameEn": "multiple sites pelvic mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000790",
+      "nameKh": "ហើមអាងត្រគាក ច្រើនកន្លែង",
+      "nameEn": "multiple sites pelvic swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000331",
+      "nameKh": "ឈឺចុកចាប់សាច់ដុំ",
+      "nameEn": "muscle ache",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000093",
+      "nameKh": "រមួលសាច់ដុំ",
+      "nameEn": "muscle cramp",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000334",
+      "nameKh": "ជាលិកាសាច់ដុំងាប់",
+      "nameEn": "muscle necrosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019161",
+      "nameKh": "ឈឺសាច់ដុំ",
+      "nameEn": "muscle pain",
+      "synonyms": [
+        "myalgia"
+      ]
+    },
+    {
+      "code": "SYMP:0000332",
+      "nameKh": "ឈឺចុកសាច់ដុំ",
+      "nameEn": "muscle soreness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000183",
+      "nameKh": "រោគសញ្ញាសាច់ដុំ",
+      "nameEn": "muscle symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000333",
+      "nameKh": "ឈឺសាច់ដុំពេលសង្កត់",
+      "nameEn": "muscle tenderness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019162",
+      "nameKh": "តឹងសាច់ដុំ",
+      "nameEn": "muscle tightness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000394",
+      "nameKh": "សាច់ដុំកន្ត្រាក់",
+      "nameEn": "muscle twitching",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000094",
+      "nameKh": "ខ្សោយសាច់ដុំ",
+      "nameEn": "muscle weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000891",
+      "nameKh": "រោគសញ្ញាប្រព័ន្ធសាច់ដុំ និងឆ្អឹង",
+      "nameEn": "musculoskeletal system symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000396",
+      "nameKh": "ប្រស្រីភ្នែករីកធំ",
+      "nameEn": "mydriasis",
+      "synonyms": [
+        "excessive pupil dilation",
+        "prolonged pupil dilation"
+      ]
+    },
+    {
+      "code": "SYMP:0000095",
+      "nameKh": "រលាកសាច់ដុំបេះដូង",
+      "nameEn": "myocarditis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000272",
+      "nameKh": "ប្រកាច់ប្រភេទកន្ត្រាក់សាច់ដុំខ្លីៗ",
+      "nameEn": "myoclonic seizure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000444",
+      "nameKh": "ក្រចកប្រែពណ៌",
+      "nameEn": "nail discoloration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000741",
+      "nameKh": "ហូរឈាមច្រមុះ",
+      "nameEn": "nasal bleeding",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000869",
+      "nameKh": "តឹងច្រមុះ",
+      "nameEn": "nasal congestion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000701",
+      "nameKh": "មានសារធាតុរាវហូរចេញពីច្រមុះ",
+      "nameEn": "nasal discharge",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000458",
+      "nameKh": "ចង្អោរ",
+      "nameEn": "nausea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000829",
+      "nameKh": "ឈឺក",
+      "nameEn": "neck pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000384",
+      "nameKh": "រោគសញ្ញាក",
+      "nameEn": "neck symptom",
+      "synonyms": [
+        "cervicalgia"
+      ]
+    },
+    {
+      "code": "SYMP:0000335",
+      "nameKh": "ខ្សោយសាច់ដុំក",
+      "nameEn": "neck weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000132",
+      "nameKh": "ជាលិកាងាប់",
+      "nameEn": "necrosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019178",
+      "nameKh": "ដំបៅជាលិកាងាប់",
+      "nameEn": "necrotic lesion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000098",
+      "nameKh": "រលាកតម្រងនោម",
+      "nameEn": "nephritis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000758",
+      "nameKh": "ការប្រែប្រួលប្រព័ន្ធប្រសាទ",
+      "nameEn": "neurological alteration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000832",
+      "nameKh": "ឈឺចាប់ដោយការខូចសរសៃប្រសាទ",
+      "nameEn": "neuropathic pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000337",
+      "nameKh": "បែកញើសពេលយប់",
+      "nameEn": "night sweats",
+      "synonyms": [
+        "sleep hyperhidrosis"
+      ]
+    },
+    {
+      "code": "SYMP:0000564",
+      "nameKh": "បត់ជើងតូចពេលយប់",
+      "nameEn": "nocturia",
+      "synonyms": [
+        "nycturia"
+      ]
+    },
+    {
+      "code": "SYMP:0000606",
+      "nameKh": "នោមដាក់ពេលដេកយប់",
+      "nameEn": "nocturnal enuresis",
+      "synonyms": [
+        "bed wetting",
+        "nighttime incontinence"
+      ]
+    },
+    {
+      "code": "SYMP:0000338",
+      "nameKh": "គ្រាប់ភ្នែកញាក់ៗ",
+      "nameEn": "nystagmus",
+      "synonyms": [
+        "rapid involuntary rhythmic eye movement"
+      ]
+    },
+    {
+      "code": "SYMP:0000857",
+      "nameKh": "វិលមុខដោយមានអារម្មណ៍ថាវត្ថុជុំវិញវិល",
+      "nameEn": "objective vertigo",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000339",
+      "nameKh": "មើលឃើញរូបពីរម្តងម្កាល",
+      "nameEn": "occasional diplopia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019172",
+      "nameKh": "ដំបៅ ឬការខូចខាតភ្នែក",
+      "nameEn": "ocular lesion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000569",
+      "nameKh": "ទឹកនោមតិច",
+      "nameEn": "oliguria",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000637",
+      "nameKh": "ក្បាល និងខ្នងកោងទៅក្រោយដោយសាច់ដុំកន្ត្រាក់",
+      "nameEn": "opisthotonus",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000602",
+      "nameKh": "ពិបាកដកដង្ហើមពេលដេករាប",
+      "nameEn": "orthopnea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000873",
+      "nameKh": "រលាកត្រចៀក",
+      "nameEn": "otitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020061",
+      "nameKh": "ទល់លាមកដោយបញ្ហាបញ្ចេញលាមក",
+      "nameEn": "outlet dysfunction constipation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000586",
+      "nameKh": "លេចទឹកនោមដោយប្លោកនោមពេញហួស",
+      "nameEn": "overflow incontinence",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020018",
+      "nameKh": "លើសទម្ងន់",
+      "nameEn": "overweight",
+      "synonyms": [
+        "obesity"
+      ]
+    },
+    {
+      "code": "SYMP:0000099",
+      "nameKh": "ឈឺចាប់",
+      "nameEn": "pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000343",
+      "nameKh": "ឈឺកូនកណ្តុរ",
+      "nameEn": "painful lymph glands",
+      "synonyms": [
+        "painful lymph nodes"
+      ]
+    },
+    {
+      "code": "SYMP:0000726",
+      "nameKh": "កូនកណ្តុរក្នុងតំបន់រីកធំ និងឈឺ",
+      "nameEn": "painful reginal lymphadenopathy",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000540",
+      "nameKh": "ឈឺពេលដកដង្ហើម",
+      "nameEn": "painful respiration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000727",
+      "nameKh": "ខ្សោយក្រអូមមាត់",
+      "nameEn": "palate weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000656",
+      "nameKh": "ភ្នាសសើមស្លេក",
+      "nameEn": "pale mucous membrane",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000510",
+      "nameKh": "សម្បុរស្លេក",
+      "nameEn": "pallor",
+      "synonyms": [
+        "paleness"
+      ]
+    },
+    {
+      "code": "SYMP:0000344",
+      "nameKh": "ហើមត្របកភ្នែកដោយទឹក",
+      "nameEn": "palpebral edema",
+      "synonyms": [
+        "edema of the eyelid"
+      ]
+    },
+    {
+      "code": "SYMP:0000530",
+      "nameKh": "ញ័រទ្រូង",
+      "nameEn": "palpitation",
+      "synonyms": [
+        "abnormal heart beats"
+      ]
+    },
+    {
+      "code": "SYMP:0000345",
+      "nameKh": "ដកដង្ហើមហត់ញាប់ៗ",
+      "nameEn": "panting respiration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000638",
+      "nameKh": "កន្ទួលលេចលើស្បែក",
+      "nameEn": "papular rash",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000346",
+      "nameKh": "កន្ទួលលេច",
+      "nameEn": "papule",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000030",
+      "nameKh": "ខ្វិន",
+      "nameEn": "paralysis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000349",
+      "nameKh": "ខ្វិនអវយវៈក្រោមទាំងពីរ",
+      "nameEn": "paraplegia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000659",
+      "nameKh": "ខ្សោយអវយវៈ",
+      "nameEn": "pareses",
+      "synonyms": [
+        "partial paralysis"
+      ]
+    },
+    {
+      "code": "SYMP:0000435",
+      "nameKh": "អារម្មណ៍ស្ពឹក ឬចាក់ៗ",
+      "nameEn": "paresthesia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000350",
+      "nameKh": "អាប់សែក្រពេញទឹកមាត់ប៉ារ៉ូទីត",
+      "nameEn": "parotid abscess",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000759",
+      "nameKh": "ឈឺក្រពេញទឹកមាត់ប៉ារ៉ូទីត",
+      "nameEn": "parotid pain",
+      "synonyms": [
+        "salivary gland pain"
+      ]
+    },
+    {
+      "code": "SYMP:0020030",
+      "nameKh": "សក់ជ្រុះជាបន្ទះៗមានចំណុចខ្មៅ",
+      "nameEn": "patches of hair loss with a black dot pattern",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000887",
+      "nameKh": "គ្រុនក្តៅប្រភេទ Pel–Epstein",
+      "nameEn": "Pel-Epstein fever",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000773",
+      "nameKh": "ដុំពកក្នុងអាងត្រគាក",
+      "nameEn": "pelvic lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000772",
+      "nameKh": "ដុំក្នុងអាងត្រគាក",
+      "nameEn": "pelvic mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000771",
+      "nameKh": "ហើមអាងត្រគាក",
+      "nameEn": "pelvic swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000876",
+      "nameKh": "ទឹកដក់ក្នុងស្រោមបេះដូង",
+      "nameEn": "pericardial effusion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000352",
+      "nameKh": "ខ្សោយសាច់ដុំអវយវៈផ្នែកខាងចុង",
+      "nameEn": "peripheral muscle weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000102",
+      "nameKh": "រលាកស្រោមពោះ",
+      "nameEn": "peritonitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000809",
+      "nameKh": "ដុំពកក្នុងពោះ ជុំវិញផ្ចិត",
+      "nameEn": "periumbilic abdominal lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000805",
+      "nameKh": "ដុំក្នុងពោះ ជុំវិញផ្ចិត",
+      "nameEn": "periumbilic abdominal mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000611",
+      "nameKh": "ឈឺពោះ ជុំវិញផ្ចិត",
+      "nameEn": "periumbilic abdominal pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000612",
+      "nameKh": "ពោះរឹង ជុំវិញផ្ចិត",
+      "nameEn": "periumbilic abdominal rigidity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000541",
+      "nameKh": "ហើមពោះ ជុំវិញផ្ចិត",
+      "nameEn": "periumbilic abdominal swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000497",
+      "nameKh": "ឈឺពោះពេលសង្កត់ ជុំវិញផ្ចិត",
+      "nameEn": "periumbilic abdominal tenderness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000781",
+      "nameKh": "ដុំពកក្នុងអាងត្រគាក ជុំវិញផ្ចិត",
+      "nameEn": "periumbilic pelvic lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000787",
+      "nameKh": "ដុំក្នុងអាងត្រគាក ជុំវិញផ្ចិត",
+      "nameEn": "periumbilic pelvic mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000795",
+      "nameKh": "ហើមអាងត្រគាក ជុំវិញផ្ចិត",
+      "nameEn": "periumbilic pelvic swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000481",
+      "nameKh": "ស្ថានភាពភ្ញាក់ដោយគ្មានការដឹងខ្លួនជាប់លាប់",
+      "nameEn": "persistent vegetative state",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000760",
+      "nameKh": "ចំណុចហូរឈាមតូចៗក្រោមស្បែក",
+      "nameEn": "petechiae",
+      "synonyms": [
+        "petechial rash"
+      ]
+    },
+    {
+      "code": "SYMP:0000830",
+      "nameKh": "ឈឺចាប់នៅអវយវៈដែលត្រូវបានកាត់ចេញ",
+      "nameEn": "phantom pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020055",
+      "nameKh": "រលាកបំពង់ក",
+      "nameEn": "pharynx inflammation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000356",
+      "nameKh": "រលាកសរសៃឈាមវ៉ែន",
+      "nameEn": "phlebitis",
+      "synonyms": [
+        "inflammation of a vein"
+      ]
+    },
+    {
+      "code": "SYMP:0000353",
+      "nameKh": "ស្លេស្ម ឬកំហាក",
+      "nameEn": "phlegm",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000210",
+      "nameKh": "ខ្លាច ឬពិបាកទ្រាំពន្លឺ",
+      "nameEn": "photophobia",
+      "synonyms": [
+        "light intolerance"
+      ]
+    },
+    {
+      "code": "SYMP:0000106",
+      "nameKh": "កោសិកាប្លាស្មាកើនឡើង",
+      "nameEn": "plasmacytosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000107",
+      "nameKh": "ទឹកដក់ក្នុងស្រោមសួត",
+      "nameEn": "pleural effusion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000430",
+      "nameKh": "ឈឺទ្រូងពាក់ព័ន្ធនឹងស្រោមសួត",
+      "nameEn": "pleuritic chest pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000354",
+      "nameKh": "រលាកជាលិកាសួត",
+      "nameEn": "pneumonitis",
+      "synonyms": [
+        "inflammation of lung tissue"
+      ]
+    },
+    {
+      "code": "SYMP:0000560",
+      "nameKh": "ស្រេកទឹកខ្លាំងខុសប្រក្រតី",
+      "nameEn": "polydipsia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000524",
+      "nameKh": "ញ៉ាំច្រើនខុសប្រក្រតី",
+      "nameEn": "polyphagia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000565",
+      "nameKh": "ទឹកនោមច្រើន",
+      "nameEn": "polyuria",
+      "synonyms": [
+        "excessive secretion of urine"
+      ]
+    },
+    {
+      "code": "SYMP:0000218",
+      "nameKh": "បញ្ចេញសំឡេងពាក្យមិនច្បាស់",
+      "nameEn": "poor enunciation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000355",
+      "nameKh": "ញ៉ាំ ឬបៅបានតិច",
+      "nameEn": "poor feeding",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020028",
+      "nameKh": "របួសជាសះស្បើយមិនល្អ",
+      "nameEn": "poor wound healing",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000533",
+      "nameKh": "ទឹកនោមស្រក់ក្រោយបត់ជើងតូច",
+      "nameEn": "post-void dribbling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020019",
+      "nameKh": "ស្លេស្មហូរពីច្រមុះចុះទៅបំពង់ក",
+      "nameEn": "postnasal drainage",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000357",
+      "nameKh": "ដំបៅក្រោយរលាកសរសៃឈាមវ៉ែន",
+      "nameEn": "postphlebitic ulcer",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000860",
+      "nameKh": "ចលនាថយចុះជាមួយលំនឹងឥរិយាបថមិននឹងនរ",
+      "nameEn": "postural instability hypokinesia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000189",
+      "nameKh": "ប្រតិកម្មឥរិយាបថរាងកាយ",
+      "nameEn": "postural reaction",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000575",
+      "nameKh": "ឈឺទ្រូងតំបន់មុខបេះដូង",
+      "nameEn": "precordial pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000358",
+      "nameKh": "ឈឺពោះសម្រាលមុនគ្រប់ខែ",
+      "nameEn": "premature labor",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000359",
+      "nameKh": "ខ្សោយខ្លាំង",
+      "nameEn": "profound weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000361",
+      "nameKh": "ស្គមស្គាំងកាន់តែខ្លាំង",
+      "nameEn": "progressive emaciation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000362",
+      "nameKh": "ចុះខ្សោយកាន់តែខ្លាំង",
+      "nameEn": "progressive prostration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000363",
+      "nameKh": "ខ្សោយកាន់តែខ្លាំង",
+      "nameEn": "progressive weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000880",
+      "nameKh": "គ្រុនក្តៅអូសបន្លាយ",
+      "nameEn": "prolonged fever",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000247",
+      "nameKh": "រោគសញ្ញាការដឹងទីតាំងអវយវៈ",
+      "nameEn": "proprioception symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000365",
+      "nameKh": "អាប់សែក្រពេញប្រូស្តាត",
+      "nameEn": "prostatic abscess",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000366",
+      "nameKh": "ការឆ្លងមេរោគក្រពេញប្រូស្តាត",
+      "nameEn": "prostatic infection",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000116",
+      "nameKh": "ចុះខ្សោយខ្លាំង",
+      "nameEn": "prostration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000367",
+      "nameKh": "ប្រូតេអ៊ីនក្នុងទឹកនោម",
+      "nameEn": "proteinuria",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000368",
+      "nameKh": "ខ្វិនផ្នែកជិតដងខ្លួននៃដៃ និងជើង",
+      "nameEn": "proximal paralysis of arm and leg",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000369",
+      "nameKh": "ត្របកភ្នែកធ្លាក់",
+      "nameEn": "ptosis",
+      "synonyms": [
+        "droopiness"
+      ]
+    },
+    {
+      "code": "SYMP:0000729",
+      "nameKh": "ជាលិកាសួតរឹងដោយបាត់ខ្យល់ក្នុងថង់សួត",
+      "nameEn": "pulmonary consolidation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019151",
+      "nameKh": "ទឹកជ្រាបក្នុងសួត",
+      "nameEn": "pulmonary edema",
+      "synonyms": [
+        "oedematous lungs"
+      ]
+    },
+    {
+      "code": "SYMP:0000417",
+      "nameKh": "រោគសញ្ញាប្រស្រីភ្នែក",
+      "nameEn": "pupil symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000660",
+      "nameKh": "កន្ទួលពណ៌ស្វាយដោយហូរឈាមក្រោមស្បែក",
+      "nameEn": "purpuric rash",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019167",
+      "nameKh": "ពងខ្ទុះ",
+      "nameEn": "pustule",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000423",
+      "nameKh": "ក្រហាយចុងដង្ហើម",
+      "nameEn": "pyrosis",
+      "synonyms": [
+        "acid indigestion",
+        "heartburn"
+      ]
+    },
+    {
+      "code": "SYMP:0000118",
+      "nameKh": "សំឡេងក្រេបក្នុងសួត",
+      "nameEn": "rales",
+      "synonyms": [
+        "crackles",
+        "crepitations"
+      ]
+    },
+    {
+      "code": "SYMP:0000730",
+      "nameKh": "ដកដង្ហើមញាប់",
+      "nameEn": "rapid respiration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000487",
+      "nameKh": "កន្ទួលស្បែក",
+      "nameEn": "rash",
+      "synonyms": [
+        "erythema",
+        "rubor",
+        "skin eruption",
+        "skin rash",
+        "skin redness"
+      ]
+    },
+    {
+      "code": "SYMP:0000841",
+      "nameKh": "ឈាមហូរច្រើនក្រោយការផ្គត់ផ្គង់ឈាមត្រូវបានរាំងស្ទះ",
+      "nameEn": "reactive hyperemia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000219",
+      "nameKh": "ខ្សោយសមត្ថភាពយល់ភាសា",
+      "nameEn": "receptive aphasia",
+      "synonyms": [
+        "fluent aphasia",
+        "inability to perceive pitch, rhythm, and emotional tone of speech",
+        "sensory aphasia",
+        "Wernicke's aphasia"
+      ]
+    },
+    {
+      "code": "SYMP:0000639",
+      "nameKh": "ហូរឈាមពីរន្ធគូថ",
+      "nameEn": "rectorrhagia",
+      "synonyms": [
+        "rectal bleeding"
+      ]
+    },
+    {
+      "code": "SYMP:0000862",
+      "nameKh": "ឈឺចាប់នៅទីតាំងផ្សេងពីប្រភពឈឺ",
+      "nameEn": "referred pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000249",
+      "nameKh": "រោគសញ្ញារេផ្លិច",
+      "nameEn": "reflex symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000890",
+      "nameKh": "គ្រុនក្តៅឡើងវិញក្រោយបានធូរ",
+      "nameEn": "relapsing fever",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000889",
+      "nameKh": "គ្រុនក្តៅប្រែប្រួលដោយមិនចុះដល់ធម្មតា",
+      "nameEn": "remittent fever",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000370",
+      "nameKh": "អាប់សែតម្រងនោម",
+      "nameEn": "renal abscess",
+      "synonyms": [
+        "kidney abscess",
+        "perirenal abscess"
+      ]
+    },
+    {
+      "code": "SYMP:0000763",
+      "nameKh": "ការប្រែប្រួលតម្រងនោម",
+      "nameEn": "renal alteration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000494",
+      "nameKh": "ឈឺចុកតម្រងនោម",
+      "nameEn": "renal colic",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000731",
+      "nameKh": "ខ្សោយតម្រងនោម",
+      "nameEn": "renal failure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000641",
+      "nameKh": "មានការប៉ះពាល់ដល់តម្រងនោម",
+      "nameEn": "renal involvement",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019187",
+      "nameKh": "អាកប្បកិរិយាដដែលៗ",
+      "nameEn": "repetitive behavior",
+      "synonyms": [
+        "stimming"
+      ]
+    },
+    {
+      "code": "SYMP:0000196",
+      "nameKh": "រោគសញ្ញាប្រព័ន្ធបន្តពូជ",
+      "nameEn": "reproductive system symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000598",
+      "nameKh": "ការដកដង្ហើមមិនប្រក្រតី",
+      "nameEn": "respiratory abnormality",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000643",
+      "nameKh": "ខ្សោយមុខងារដង្ហើម",
+      "nameEn": "respiratory failure",
+      "synonyms": [
+        "respiratory dysfunction"
+      ]
+    },
+    {
+      "code": "SYMP:0000371",
+      "nameKh": "ខ្វិនសាច់ដុំដង្ហើម",
+      "nameEn": "respiratory paralysis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000514",
+      "nameKh": "រោគសញ្ញាប្រព័ន្ធដង្ហើម និងទ្រូង",
+      "nameEn": "respiratory system and chest symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000737",
+      "nameKh": "ដំបៅភ្នាសផ្លូវដង្ហើម",
+      "nameEn": "respiratory tract mucosa ulcer",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000425",
+      "nameKh": "គ្រាប់ឈាមក្រហមវ័យក្មេងកើនឡើង",
+      "nameEn": "reticulocytosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000764",
+      "nameKh": "ឈឺក្រោយគ្រាប់ភ្នែក",
+      "nameEn": "retrobulbar pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000372",
+      "nameKh": "ហៀរសំបោរ",
+      "nameEn": "rhinorrhea",
+      "synonyms": [
+        "runny nose"
+      ]
+    },
+    {
+      "code": "SYMP:0000812",
+      "nameKh": "ដុំពកក្នុងពោះ ផ្នែកខាងក្រោមស្តាំ",
+      "nameEn": "right lower quadrant abdominal lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000806",
+      "nameKh": "ដុំក្នុងពោះ ផ្នែកខាងក្រោមស្តាំ",
+      "nameEn": "right lower quadrant abdominal mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000546",
+      "nameKh": "ឈឺពោះ ផ្នែកខាងក្រោមស្តាំ",
+      "nameEn": "right lower quadrant abdominal pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000467",
+      "nameKh": "ពោះរឹង ផ្នែកខាងក្រោមស្តាំ",
+      "nameEn": "right lower quadrant abdominal rigidity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000548",
+      "nameKh": "ហើមពោះ ផ្នែកខាងក្រោមស្តាំ",
+      "nameEn": "right lower quadrant abdominal swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000500",
+      "nameKh": "ឈឺពោះពេលសង្កត់ ផ្នែកខាងក្រោមស្តាំ",
+      "nameEn": "right lower quadrant abdominal tenderness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000775",
+      "nameKh": "ដុំពកក្នុងអាងត្រគាក ផ្នែកខាងក្រោមស្តាំ",
+      "nameEn": "right lower quadrant pelvic lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000789",
+      "nameKh": "ដុំក្នុងអាងត្រគាក ផ្នែកខាងក្រោមស្តាំ",
+      "nameEn": "right lower quadrant pelvic mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000796",
+      "nameKh": "ហើមអាងត្រគាក ផ្នែកខាងក្រោមស្តាំ",
+      "nameEn": "right lower quadrant pelvic swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000813",
+      "nameKh": "ដុំពកក្នុងពោះ ផ្នែកខាងលើស្តាំ",
+      "nameEn": "right upper quadrant abdominal lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000807",
+      "nameKh": "ដុំក្នុងពោះ ផ្នែកខាងលើស្តាំ",
+      "nameEn": "right upper quadrant abdominal mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000547",
+      "nameKh": "ឈឺពោះ ផ្នែកខាងលើស្តាំ",
+      "nameEn": "right upper quadrant abdominal pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000453",
+      "nameKh": "ពោះរឹង ផ្នែកខាងលើស្តាំ",
+      "nameEn": "right upper quadrant abdominal rigidity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000562",
+      "nameKh": "ហើមពោះ ផ្នែកខាងលើស្តាំ",
+      "nameEn": "right upper quadrant abdominal swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000499",
+      "nameKh": "ឈឺពោះពេលសង្កត់ ផ្នែកខាងលើស្តាំ",
+      "nameEn": "right upper quadrant abdominal tenderness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000779",
+      "nameKh": "ដុំពកក្នុងអាងត្រគាក ផ្នែកខាងលើស្តាំ",
+      "nameEn": "right upper quadrant pelvic lump",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000782",
+      "nameKh": "ដុំក្នុងអាងត្រគាក ផ្នែកខាងលើស្តាំ",
+      "nameEn": "right upper quadrant pelvic mass",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000797",
+      "nameKh": "ហើមអាងត្រគាក ផ្នែកខាងលើស្តាំ",
+      "nameEn": "right upper quadrant pelvic swelling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000859",
+      "nameKh": "ចលនាថយចុះជាមួយសាច់ដុំរឹង",
+      "nameEn": "rigidity hypokinesia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000205",
+      "nameKh": "រោគសញ្ញាក្រពេញទឹកមាត់",
+      "nameEn": "salivary gland symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000373",
+      "nameKh": "ការបញ្ចេញទឹកមាត់",
+      "nameEn": "salivation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000374",
+      "nameKh": "បូសនៅថង់ពងស្វាស",
+      "nameEn": "scrotal abscess",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000124",
+      "nameKh": "ប្រកាច់",
+      "nameEn": "seizure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000765",
+      "nameKh": "អារម្មណ៍រំញោចខុសប្រក្រតី",
+      "nameEn": "sensory disturbance",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000451",
+      "nameKh": "ស្ហុកដោយការឆ្លងមេរោគ",
+      "nameEn": "septic shock",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019148",
+      "nameKh": "ការឆ្លងមេរោគក្នុងឈាម",
+      "nameEn": "septicemia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000375",
+      "nameKh": "រមួលពោះខ្លាំង",
+      "nameEn": "severe abdominal cramp",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000127",
+      "nameKh": "ឈឺខ្នងខ្លាំង",
+      "nameEn": "severe backache",
+      "synonyms": [
+        "intense back pain"
+      ]
+    },
+    {
+      "code": "SYMP:0020058",
+      "nameKh": "រលាកទងសួតតូចធ្ងន់ធ្ងរ",
+      "nameEn": "severe bronchiole inflammation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000754",
+      "nameKh": "ឈឺទ្រូងខ្លាំង",
+      "nameEn": "severe chest pain",
+      "synonyms": [
+        "intense chest pain"
+      ]
+    },
+    {
+      "code": "SYMP:0000129",
+      "nameKh": "រលាកភ្នាសភ្នែកធ្ងន់ធ្ងរ",
+      "nameEn": "severe conjunctivitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000376",
+      "nameKh": "រាគធ្ងន់ធ្ងរ",
+      "nameEn": "severe diarrhea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000130",
+      "nameKh": "ឈឺក្បាលខ្លាំង",
+      "nameEn": "severe headache",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000131",
+      "nameKh": "ឈឺសន្លាក់ខ្លាំង",
+      "nameEn": "severe joint pain",
+      "synonyms": [
+        "intense join pain"
+      ]
+    },
+    {
+      "code": "SYMP:0020054",
+      "nameKh": "រលាកក្រពេញដោះធ្ងន់ធ្ងរ",
+      "nameEn": "severe mammary gland inflammation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000379",
+      "nameKh": "ឈឺសាច់ដុំខ្លាំង",
+      "nameEn": "severe myalgia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000133",
+      "nameKh": "ជាលិកាងាប់ធ្ងន់ធ្ងរ",
+      "nameEn": "severe necrosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000662",
+      "nameKh": "ញ័រ",
+      "nameEn": "shakes",
+      "synonyms": [
+        "trembling"
+      ]
+    },
+    {
+      "code": "SYMP:0000450",
+      "nameKh": "ស្ហុក",
+      "nameEn": "shock",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000568",
+      "nameKh": "កម្ពស់ទាប",
+      "nameEn": "short stature",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000443",
+      "nameKh": "ឈឺស្មា",
+      "nameEn": "shoulder pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000270",
+      "nameKh": "ប្រកាច់ផ្នែកមួយដោយស្មារតីនៅល្អ",
+      "nameEn": "simple partial seizure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000823",
+      "nameKh": "ចង្វាក់បេះដូងដើរយឺត",
+      "nameEn": "sinus bradycardia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000826",
+      "nameKh": "ចង្វាក់បេះដូងដើរលឿន",
+      "nameEn": "sinus tachycardia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000134",
+      "nameKh": "រលាកប្រហោងឆ្អឹងមុខ",
+      "nameEn": "sinusitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000715",
+      "nameKh": "ស្បែករបកជាស្រកា",
+      "nameEn": "skin desquamation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000092",
+      "nameKh": "ដំបៅ ឬការខូចខាតស្បែក",
+      "nameEn": "skin lesion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020048",
+      "nameKh": "ស្បែករបក",
+      "nameEn": "skin peeling",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000136",
+      "nameKh": "ដំបៅស្បែក",
+      "nameEn": "skin ulcer",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000581",
+      "nameKh": "ឈប់ដកដង្ហើមពេលដេក",
+      "nameEn": "sleep apnea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000566",
+      "nameKh": "ដំណេកខុសប្រក្រតី",
+      "nameEn": "sleep disturbance",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000585",
+      "nameKh": "ជំងឺចលនាទាក់ទងនឹងដំណេក",
+      "nameEn": "sleep related movement disorder",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000766",
+      "nameKh": "ជីពចរយឺត",
+      "nameEn": "slow pulse",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000589",
+      "nameKh": "លំហូរទឹកនោមយឺត",
+      "nameEn": "slowing of urinary stream",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000342",
+      "nameKh": "និយាយមិនច្បាស់",
+      "nameEn": "slurred speech",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000139",
+      "nameKh": "កណ្តាស់",
+      "nameEn": "sneezing",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020062",
+      "nameKh": "ជាលិកាទន់ងាប់",
+      "nameEn": "soft tissue necrosis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000828",
+      "nameKh": "ឈឺភ្នែក",
+      "nameEn": "sore eyes",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000847",
+      "nameKh": "ខ្វិនប្រភេទសាច់ដុំរឹង",
+      "nameEn": "spastic paralysis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000141",
+      "nameKh": "ភាពកន្ត្រាក់រឹងនៃសាច់ដុំ",
+      "nameEn": "spasticity",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000381",
+      "nameKh": "អាប់សែអណ្តើក",
+      "nameEn": "spleen abscess",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000158",
+      "nameKh": "រោគសញ្ញាអណ្តើក",
+      "nameEn": "spleen symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000531",
+      "nameKh": "អណ្តើករីកធំ",
+      "nameEn": "splenomegaly",
+      "synonyms": [
+        "esplenomegaly"
+      ]
+    },
+    {
+      "code": "SYMP:0000572",
+      "nameKh": "លំហូរទឹកនោមបែកជាពីរ",
+      "nameEn": "splitting of urinary stream",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019171",
+      "nameKh": "រលាកឆ្អឹងកងខ្នង",
+      "nameEn": "spondylitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000199",
+      "nameKh": "រលូតកូនដោយឯកឯង",
+      "nameEn": "spontaneous abortion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000534",
+      "nameKh": "ស្នាមជាំហូរឈាមក្រោមស្បែកកើតដោយឯកឯង",
+      "nameEn": "spontaneous ecchymoses",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000431",
+      "nameKh": "កំហាក",
+      "nameEn": "sputum",
+      "synonyms": [
+        "sputum production"
+      ]
+    },
+    {
+      "code": "SYMP:0000382",
+      "nameKh": "ដើរទ្រេតទ្រោត",
+      "nameEn": "staggering gait",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000147",
+      "nameKh": "លាមកមានខ្លាញ់ច្រើន",
+      "nameEn": "steatorrhea",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000733",
+      "nameKh": "ខ្សោយសាច់ដុំ sternocleidomastoid នៅក",
+      "nameEn": "sternocleidomastoid weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000383",
+      "nameKh": "ករឹង",
+      "nameEn": "stiff neck",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000849",
+      "nameKh": "ទារកស្លាប់ក្នុងផ្ទៃ",
+      "nameEn": "stillbirth",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000853",
+      "nameKh": "លេចទឹកនោមពេលប្រឹង",
+      "nameEn": "stress incontinence",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000513",
+      "nameKh": "សំឡេងដង្ហើមស្រួចដោយផ្លូវដង្ហើមខាងលើរួមតូច",
+      "nameEn": "stridor",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000389",
+      "nameKh": "ស្មារតីស្រអាប់ឆ្លើយតបតែចំពោះរំញោចខ្លាំង",
+      "nameEn": "stupor",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000767",
+      "nameKh": "ហូរឈាមក្រោមភ្នាសភ្នែក",
+      "nameEn": "subconjunctival bleeding",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019190",
+      "nameKh": "ហូរឈាមក្រោមស្រោមខួររឹង",
+      "nameEn": "subdural hemorrhage",
+      "synonyms": [
+        "subdural hematoma"
+      ]
+    },
+    {
+      "code": "SYMP:0000856",
+      "nameKh": "វិលមុខដោយមានអារម្មណ៍ថាខ្លួនឯងវិល",
+      "nameEn": "subjective vertigo",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000732",
+      "nameKh": "ការសម្របសម្រួលចលនាខុសប្រក្រតីភ្លាមៗ",
+      "nameEn": "sudden ataxis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000671",
+      "nameKh": "គ្រុនក្តៅចាប់ផ្តើមភ្លាមៗ",
+      "nameEn": "sudden onset of fever",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020059",
+      "nameKh": "រលាកទងសួតតូចមានខ្ទុះ",
+      "nameEn": "suppurative bronchiole inflammation",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019175",
+      "nameKh": "បែកញើស",
+      "nameEn": "sweaty",
+      "synonyms": [
+        "perspire"
+      ]
+    },
+    {
+      "code": "SYMP:0000821",
+      "nameKh": "ហើមតំបន់ទ្រូង",
+      "nameEn": "swelling in chest",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000716",
+      "nameKh": "រោគសញ្ញាហើម",
+      "nameEn": "swelling symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000462",
+      "nameKh": "រោគសញ្ញា",
+      "nameEn": "symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000407",
+      "nameKh": "សន្លប់មួយភ្លែត",
+      "nameEn": "syncope",
+      "synonyms": [
+        "faint",
+        "fainting",
+        "loss of consciousness due to insuffiecient blood flow to the brain"
+      ]
+    },
+    {
+      "code": "SYMP:0000608",
+      "nameKh": "សន្លប់មួយភ្លែត និងដួល",
+      "nameEn": "syncope and collapse",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000646",
+      "nameKh": "រលាកភ្នាសសន្លាក់",
+      "nameEn": "synovitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000647",
+      "nameKh": "ស្នាមខ្មៅលើស្បែក (tache noire)",
+      "nameEn": "tache noire",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000529",
+      "nameKh": "ចង្វាក់បេះដូងលឿន",
+      "nameEn": "tachycardia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000603",
+      "nameKh": "ដកដង្ហើមញាប់",
+      "nameEn": "tachypnea",
+      "synonyms": [
+        "rapid breathing"
+      ]
+    },
+    {
+      "code": "SYMP:0020065",
+      "nameKh": "ឈឺពេលសង្កត់",
+      "nameEn": "tenderness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000648",
+      "nameKh": "ចង់បន្ទោរបង់ញឹកញាប់ ទោះមិនមានលាមកច្រើន",
+      "nameEn": "tenesmus",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000649",
+      "nameKh": "រលាកផ្នែកចុងពោះវៀនតូចអ៊ីលេអូម",
+      "nameEn": "terminal ileitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000768",
+      "nameKh": "ឈឺពងស្វាស",
+      "nameEn": "testicular pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000327",
+      "nameKh": "ប្រកាច់កន្ត្រាក់សាច់ដុំជាប់",
+      "nameEn": "tetanic convulsion",
+      "synonyms": [
+        "tetanic convulsions"
+      ]
+    },
+    {
+      "code": "SYMP:0000619",
+      "nameKh": "សាច់ដុំកន្ត្រាក់ជាប់ (tetany)",
+      "nameEn": "tetany",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000650",
+      "nameKh": "ស្រទាប់សារធាតុសក្រាស់លើអណ្តាត",
+      "nameEn": "thick white exudate on tongue",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000156",
+      "nameKh": "ស្រេកទឹក",
+      "nameEn": "thirst",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000348",
+      "nameKh": "ខ្វិនសាច់ដុំបំពង់ក",
+      "nameEn": "throat muscle paralysis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000505",
+      "nameKh": "ឈឺបំពង់ក",
+      "nameEn": "throat pain",
+      "synonyms": [
+        "sore throat"
+      ]
+    },
+    {
+      "code": "SYMP:0000385",
+      "nameKh": "រោគសញ្ញាបំពង់ក",
+      "nameEn": "throat symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000114",
+      "nameKh": "ប្លាកែតទាប",
+      "nameEn": "thrombocytopenia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000157",
+      "nameKh": "រោគសញ្ញាក្រពេញទីមុស",
+      "nameEn": "thymus symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000391",
+      "nameKh": "អាប់សែក្រពេញទីរ៉ូអ៊ីត",
+      "nameEn": "thyroid abscesses",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000390",
+      "nameKh": "រោគសញ្ញាក្រពេញទីរ៉ូអ៊ីត",
+      "nameEn": "thyroid symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000393",
+      "nameKh": "ហ៊ឹងត្រចៀក",
+      "nameEn": "tinnitus",
+      "synonyms": [
+        "sensation of noise"
+      ]
+    },
+    {
+      "code": "SYMP:0000187",
+      "nameKh": "នឿយហត់",
+      "nameEn": "tiredness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000274",
+      "nameKh": "ប្រកាច់ប្រភេទសាច់ដុំរឹងជាប់",
+      "nameEn": "tonic seizure",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000268",
+      "nameKh": "ប្រកាច់ប្រភេទសាច់ដុំរឹងជាប់ និងកន្ត្រាក់ដដែលៗ",
+      "nameEn": "tonic-clonic seizure",
+      "synonyms": [
+        "grand mal seizure"
+      ]
+    },
+    {
+      "code": "SYMP:0000438",
+      "nameKh": "ឈឺធ្មេញ",
+      "nameEn": "toothache",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000617",
+      "nameKh": "កវៀច",
+      "nameEn": "torticollis",
+      "synonyms": [
+        "twisted neck",
+        "wry neck"
+      ]
+    },
+    {
+      "code": "SYMP:0019149",
+      "nameKh": "ភាពពុលក្នុងឈាម",
+      "nameEn": "toxemia",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000112",
+      "nameKh": "រលាកបំពង់ខ្យល់",
+      "nameEn": "tracheitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000160",
+      "nameKh": "រលាកបំពង់ខ្យល់ និងទងសួត",
+      "nameEn": "tracheobronchitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000525",
+      "nameKh": "ការដឹងខ្លួនប្រែប្រួលមួយរយៈខ្លី",
+      "nameEn": "transient alteration of awareness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000878",
+      "nameKh": "គ្រុនក្តៅមួយរយៈខ្លី",
+      "nameEn": "transient fever",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000544",
+      "nameKh": "ខ្វិនអវយវៈមួយរយៈខ្លី",
+      "nameEn": "transient paralysis of limb",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000162",
+      "nameKh": "ញ័រ",
+      "nameEn": "tremor",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000663",
+      "nameKh": "ដើរមិនសម្របសម្រួល",
+      "nameEn": "uncoordinated gait",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000475",
+      "nameKh": "ទម្ងន់ទាប",
+      "nameEn": "underweight",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000397",
+      "nameKh": "ប្រស្រីភ្នែករីកធំ និងមិនឆ្លើយតប",
+      "nameEn": "unreactive mydriasis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000495",
+      "nameKh": "មានសារធាតុរាវហូរចេញពីបង្ហួរនោម",
+      "nameEn": "urethral discharge",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000532",
+      "nameKh": "លេចទឹកនោមពេលចង់នោមខ្លាំង",
+      "nameEn": "urge incontinence",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000563",
+      "nameKh": "បត់ជើងតូចញឹកញាប់",
+      "nameEn": "urinary frequency",
+      "synonyms": [
+        "frequent urination",
+        "nocturia"
+      ]
+    },
+    {
+      "code": "SYMP:0000492",
+      "nameKh": "លេចទឹកនោម",
+      "nameEn": "urinary incontinence",
+      "synonyms": [
+        "incontinence"
+      ]
+    },
+    {
+      "code": "SYMP:0000557",
+      "nameKh": "ទឹកនោមជាប់",
+      "nameEn": "urinary retention",
+      "synonyms": [
+        "inability to urinate",
+        "ischuria",
+        "retention of urine"
+      ]
+    },
+    {
+      "code": "SYMP:0000573",
+      "nameKh": "រោគសញ្ញាលំហូរទឹកនោម",
+      "nameEn": "urinary stream symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000486",
+      "nameKh": "រោគសញ្ញាប្រព័ន្ធទឹកនោម",
+      "nameEn": "urinary system symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000590",
+      "nameKh": "ចង់នោមបន្ទាន់",
+      "nameEn": "urinary urgency",
+      "synonyms": [
+        "urgency of urination"
+      ]
+    },
+    {
+      "code": "SYMP:0000434",
+      "nameKh": "កន្ទាលត្រអាក",
+      "nameEn": "urticaria",
+      "synonyms": [
+        "hives",
+        "nettle rash",
+        "uredo"
+      ]
+    },
+    {
+      "code": "SYMP:0000398",
+      "nameKh": "ធ្លាក់ស",
+      "nameEn": "vaginal discharge",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000405",
+      "nameKh": "សាច់ដុំទ្វារមាសកន្ត្រាក់ដោយអចេតនា",
+      "nameEn": "vaginismus",
+      "synonyms": [
+        "painful spasmodic vagina contractions"
+      ]
+    },
+    {
+      "code": "SYMP:0000769",
+      "nameKh": "ការប្រែប្រួលសរសៃឈាម",
+      "nameEn": "vascular alteration",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000153",
+      "nameKh": "រលាកសរសៃឈាម",
+      "nameEn": "vasculitis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000897",
+      "nameKh": "ចង្វាក់បន្ទប់ក្រោមបេះដូងយឺត",
+      "nameEn": "ventricular bradycardia",
+      "synonyms": [
+        "idioventricular rhythm",
+        "ventricular escape rhythm"
+      ]
+    },
+    {
+      "code": "SYMP:0000899",
+      "nameKh": "ញ័របន្ទប់ក្រោមបេះដូង",
+      "nameEn": "ventricular fibrillation",
+      "synonyms": [
+        "v-fib"
+      ]
+    },
+    {
+      "code": "SYMP:0000827",
+      "nameKh": "ចង្វាក់បន្ទប់ក្រោមបេះដូងលឿន",
+      "nameEn": "ventricular tachycardia",
+      "synonyms": [
+        "V-tach",
+        "VT"
+      ]
+    },
+    {
+      "code": "SYMP:0000399",
+      "nameKh": "វិលមុខបែបវិលជុំ",
+      "nameEn": "vertigo",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000883",
+      "nameKh": "គ្រុនក្តៅខ្លាំងណាស់",
+      "nameEn": "very high fever",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000833",
+      "nameKh": "ឈឺចាប់សរីរាង្គខាងក្នុង",
+      "nameEn": "visceral pain",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000520",
+      "nameKh": "ចលនាពោះវៀនដែលមើលឃើញ",
+      "nameEn": "visible peristalsis",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000628",
+      "nameKh": "ការមើលឃើញរូបភាពប្រែទ្រង់ទ្រាយ",
+      "nameEn": "vision distortion",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000320",
+      "nameKh": "រោគសញ្ញាការមើលឃើញ",
+      "nameEn": "vision symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000559",
+      "nameKh": "សំឡេងខុសប្រក្រតី",
+      "nameEn": "voice disturbance",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0019145",
+      "nameKh": "ក្អួត",
+      "nameEn": "vomiting",
+      "synonyms": [
+        "emesis"
+      ]
+    },
+    {
+      "code": "SYMP:0000174",
+      "nameKh": "ស្គមស្គាំងដោយបាត់បង់ជាលិកា",
+      "nameEn": "wasting",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000400",
+      "nameKh": "សំឡេងយំខ្សោយ",
+      "nameEn": "weak cry",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000177",
+      "nameKh": "ខ្សោយកម្លាំង",
+      "nameEn": "weakness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000185",
+      "nameKh": "នឿយហត់",
+      "nameEn": "weariness",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000403",
+      "nameKh": "ឡើងទម្ងន់",
+      "nameEn": "weight gain",
+      "synonyms": [
+        "gain of weight"
+      ]
+    },
+    {
+      "code": "SYMP:0000178",
+      "nameKh": "ស្រកទម្ងន់",
+      "nameEn": "weight loss",
+      "synonyms": [
+        "loss of weight"
+      ]
+    },
+    {
+      "code": "SYMP:0020012",
+      "nameKh": "រោគសញ្ញាទម្ងន់",
+      "nameEn": "weight symptom",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0020027",
+      "nameKh": "ក្អកមានកំហាក",
+      "nameEn": "wet cough",
+      "synonyms": [
+        "productive cough"
+      ]
+    },
+    {
+      "code": "SYMP:0000604",
+      "nameKh": "ដង្ហើមហួច",
+      "nameEn": "wheezing",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000401",
+      "nameKh": "ទ្រេតទ្រោត",
+      "nameEn": "wobble",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000652",
+      "nameKh": "មានសារធាតុរាវហូរចេញពីរបួស",
+      "nameEn": "wound discharge",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000665",
+      "nameKh": "មានសារធាតុរាវពណ៌លឿងហូរចេញពីភ្នែក",
+      "nameEn": "yellow exudate from eyes",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000664",
+      "nameKh": "មានសារធាតុរាវពណ៌លឿងហូរចេញពីច្រមុះ",
+      "nameEn": "yellow exudate from nose",
+      "synonyms": []
+    },
+    {
+      "code": "SYMP:0000738",
+      "nameKh": "រាគពណ៌លឿងបៃតង",
+      "nameEn": "yellowish green diarrhea",
+      "synonyms": []
+    }
+  ]
+}

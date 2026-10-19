@@ -1,0 +1,109 @@
+/* NSSF Member Verification Styling - Borkeo EMR v34.4 */
+.nssf-lookup-status {
+  font: inherit;
+  font-size: 0.9em;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nssf-lookup-status[title] {
+  cursor: pointer;
+}
+
+.nssf-lookup-status.status-valid {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.nssf-lookup-status.status-invalid {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.nssf-lookup-status.status-unknown {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.nssf-dialog {
+  width: min(720px, 94vw);
+  max-height: 85vh;
+  overflow-y: auto;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 20px;
+  font: inherit;
+  background: #ffffff;
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+}
+
+.nssf-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.nssf-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.nssf-dialog-header h2 {
+  font: inherit;
+  font-weight: bold;
+  font-size: 1.25em;
+  margin: 0;
+  color: #0f172a;
+}
+
+.nssf-dialog-close {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  color: #64748b;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.nssf-dialog-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.nssf-note-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  font-size: 0.88em;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.nssf-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.nssf-member-name {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.nssf-name-sub {
+  font-size: 0.9em;
+  color: #475569;
+  font-weight: 500;
+  margin-top: 1px;
+}
+

@@ -1,0 +1,14 @@
+.emr-language-switch{display:none!important}
+.emr-language-switch, [data-emr-language], #langBtn, .lang-btn {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  clip: rect(0, 0, 0, 0) !important;
+}
+

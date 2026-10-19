@@ -1,0 +1,43 @@
+/* Keep application chrome out of Lab and Imaging reports, including when
+   shared screen styles declare display/layout with !important. */
+@media print {
+  html body[data-paraclinic-print] {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    color: #111 !important;
+    min-height: 0 !important;
+  }
+
+  html body[data-paraclinic-print] > :not(.paraclinic-shell),
+  html body[data-paraclinic-print] #emr-session-control,
+  html body[data-paraclinic-print] .paraclinic-shell > :not(.workspace-layout),
+  html body[data-paraclinic-print] .workspace-layout > :not([data-paraclinic-report]),
+  html body[data-paraclinic-print] [data-paraclinic-report] > :not(.workspace-detail),
+  html body[data-paraclinic-print] .workspace-detail > :not(.lab-print-pages):not(.imaging-print-report) {
+    display: none !important;
+  }
+
+  html body[data-paraclinic-print] .paraclinic-shell,
+  html body[data-paraclinic-print] .workspace-layout,
+  html body[data-paraclinic-print] [data-paraclinic-report],
+  html body[data-paraclinic-print] .workspace-detail {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  html body[data-paraclinic-print] .lab-print-pages,
+  html body[data-paraclinic-print] .imaging-print-report {
+    display: block !important;
+  }
+}

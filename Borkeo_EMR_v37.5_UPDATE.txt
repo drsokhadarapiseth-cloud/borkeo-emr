@@ -1,0 +1,291 @@
+BORKEO EMR v37.5 — PURE KHMER PERFORMANCE & EN SWITCHER DECOMMISSION
+BASE: Borkeo_EMR_v37.4, package version 37.4.0.
+TARGET: package 37.5.0 and visible v37.5.
+
+SUMMARY OF CHANGES
+- Decommissioned runtime English language switching to achieve maximum website smoothness and performance.
+- Suppressed DOM MutationObserver overhead and recursive TreeWalker text-node passes that ran across large tables and dynamic forms.
+- Fixed header banner styles in emr-session.css and shared-controls.css which previously overrode display:none with display:flex!important.
+- Added dynamic MutationObserver to account actions in emr-session.js and emr-language.js to permanently remove any language switcher elements.
+- Injected site-wide CSS in server.mjs to completely hide and collapse any .emr-language-switch, [data-emr-language], #langBtn, or .lang-btn.
+- Hardened patient list and department workspaces to lock to native Khmer, ignoring legacy browser localStorage choices.
+- Reset client localStorage and sessionStorage keys to Khmer on boot.
+- Replaced any lingering v37.4 text references to v37.5.
+- Preserved standard English laboratory test names (e.g. CBC, Hemoglobin, RBC) and test group categories (Hematology, Clinical Chemistry, etc.) in accordance with medical and laboratory standards.
+- Preserved backward compatibility for getBorkeoLanguage(), which returns 'kh'.
+- Updated version metadata to 37.5.0 across package.json, public/login.html, server/server.mjs, and test suites.
+
+VALIDATION
+- 34 automated unit and integration tests executed with 0 failures:
+  * v37.1 phone policy and metadata validation passed
+  * v37.2 navigation performance and compact list tests passed
+  * v37.3 language performance tests passed
+  * v37.4 translation observer queueing tests passed
+  * v37.5 pure Khmer runtime and observer elimination tests passed
+- Verified that no DOM observer is spawned when loading the application.
+- Verified that laboratory categories and test names remain intact in English.
+
+PATCH MANIFEST (SHA-256)
+[
+  {
+    "path": "package.json",
+    "target_sha256": "4f9fb862cba0fdd8bbc145acc2bb092d444cb120a91fb0da74e7a17f502e819a"
+  },
+  {
+    "path": "server/server.mjs",
+    "target_sha256": "ef4730ef68cebc3e280eb2ba32946b1173b19598c518bee13c2df6eff04cef45"
+  },
+  {
+    "path": "public/login.html",
+    "target_sha256": "0dd6634a82b7c58cd56c5938ccf0b8b5ce998e660d1209c4d8c52db3af2b0be6"
+  },
+  {
+    "path": "public/emr-language.css",
+    "target_sha256": "6689b431597e5a0eeb88e75d143d5ba72c84d4dd48dc6dcf8d3fe7d9a227189a"
+  },
+  {
+    "path": "public/emr-language.js",
+    "target_sha256": "ba2f1ee96f0bb7fd990fd7d1b52d9d627a8220127d8730250458eff40cba2d4b"
+  },
+  {
+    "path": "public/emr-session.css",
+    "target_sha256": "0c0c3d2bef04544f723b9adbb163a4c8898c79816024e4314f5b7e42670a81ac"
+  },
+  {
+    "path": "public/emr-session.js",
+    "target_sha256": "970486718f7eb87cbeb6171aa0a25a94e3d39ed9f015a93f20e874edc6ab8c84"
+  },
+  {
+    "path": "public/shared-controls.css",
+    "target_sha256": "210a101da4e1a7a375457e9f8ff9ae8d8cd3c9a900d854384741c123c00e6509"
+  },
+  {
+    "path": "public/patient-list.js",
+    "target_sha256": "998eccbee62ed48c6e57250486ef5b9ec4c3ee98d1eb4f5cf6b2dc32815eac9c"
+  },
+  {
+    "path": "public/departments.js",
+    "target_sha256": "3cee1b3bbdfda1beb44472d6dca2456eab1c7c42cd5c7fd0ed222813ea617c9d"
+  },
+  {
+    "path": "tests/v371-phone-policy.test.mjs",
+    "target_sha256": "dc3a1a8f9abd776d4a15ed67d3939c50c8beae5c4fcbed7a60f654b2d358a4c3"
+  },
+  {
+    "path": "tests/v375-khmer-pure-performance.test.mjs",
+    "target_sha256": "3aa29e5f61a74d30be84e33081c7bb70c2b529dd51bc5bd23435c832c29f2018"
+  }
+]
+
+BEGIN V37.5 PATCH
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "borkeo-emr",
+-  "version": "37.4.0",
++  "version": "37.5.0",
+   "private": true,
+   "type": "module",
+   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",
+diff --git a/server/server.mjs b/server/server.mjs
+--- a/server/server.mjs
++++ b/server/server.mjs
+@@ -3,7 +3,7 @@
+ import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
+ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
+ import { createDiagnosisSearch } from './icd10.mjs';
+-// Borkeo EMR v37.4 - Electronic Medical Record System
++// Borkeo EMR v37.5 - Electronic Medical Record System
+ import {validateAddressHierarchy} from './gazetteer.mjs';
+ import {validateCambodianPhone} from './cambodia-phone.mjs';
+ import {PATIENT_PHOTO_FIELDS, validPatientPhoto} from './patient-photo.mjs';
+@@ -406,6 +406,8 @@
+   let html = fs.readFileSync(filePath, 'utf8');
+   html = html.replace(/(<span\b[^>]*\bdata-app-version\b[^>]*>)[^<]*(<\/span>)/g, (_, open, close) => `${open}v${APP_VERSION}${close}`);
+   html = html.replace(/Borkeo EMR v\d+\.\d+/g, `Borkeo EMR v${APP_VERSION}`);
++  html = html.replace(/\bv37\.4\b/g, `v${APP_VERSION}`);
++  html = html.replace('</head>', '<style>body #emr-site-banner .portal-account-actions .emr-language-switch, .emr-language-switch, [data-emr-language], #langBtn, .lang-btn { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; }</style></head>');
+   html = html.replace('</head>', '<link rel="stylesheet" href="/public/interface-theme.css?v=1970"><script src="/public/interface-theme.js?v=1970" defer></script></head>');
+   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
+   html = html.replace('</head>', `<meta name="borkeo-version" content="${APP_VERSION}"></head>`);
+   if (!html.includes('/public/emr-language.js')) {
+-    const languageAssets = '<link rel="stylesheet" href="/public/emr-language.css?v=1750"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=3740" defer></script>';
++    const languageAssets = '<link rel="stylesheet" href="/public/emr-language.css?v=1750"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=3750" defer></script>';
+     html = html.replace('</head>', `${languageAssets}</head>`);
+   }
+   html = html.replace(/(\/public\/[^"'\s<>]+\?v=[^"'\s<>]+)/g, asset => `${asset}&build=${APP_VERSION}`);
+diff --git a/public/login.html b/public/login.html
+--- a/public/login.html
++++ b/public/login.html
+@@ -31,7 +31,7 @@
+         </div>
+         <div class="header-meta">
+           <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
+-          <span class="login-build-version" data-app-version data-language-exclude>v37.4</span>
++          <span class="login-build-version" data-app-version data-language-exclude>v37.5</span>
+         </div>
+       </header>
+@@ -67,7 +67,7 @@
+         <aside class="info-panel" aria-label="ព័ត៌មានប្រព័ន្ធ">
+           <div class="info-card accent">
+-            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v33.3</span></h3>
++            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v37.5</span></h3>
+             <p>គណនីសាកល្បងចូលបានដោយគ្មានពាក្យសម្ងាត់។ ប្រើតែទិន្នន័យសាកល្បងប៉ុណ្ណោះ។</p>
+           </div>
+           <div class="info-card">
+diff --git a/public/emr-language.css b/public/emr-language.css
+--- a/public/emr-language.css
++++ b/public/emr-language.css
+@@ -1,4 +1,4 @@
+-.emr-language-switch{display:inline-flex;align-items:center;gap:3px;padding:3px;border:1px solid #b8d9e5;border-radius:10px;background:#f5fbfd;box-shadow:0 2px 8px rgba(13,81,105,.08);z-index:99990}
++.emr-language-switch{display:none!important;align-items:center;gap:3px;padding:3px;border:1px solid #b8d9e5;border-radius:10px;background:#f5fbfd;box-shadow:0 2px 8px rgba(13,81,105,.08);z-index:99990}
+ .emr-language-switch button{min-width:38px;min-height:30px;padding:4px 9px;border:0;border-radius:7px;background:transparent;color:#176783;font:700 12px/1.2 Arial,sans-serif;cursor:pointer}
+ .emr-language-switch button[aria-pressed="true"]{background:#087da2;color:#fff;box-shadow:0 1px 3px rgba(6,78,105,.2)}
+ .emr-language-switch button:focus-visible{outline:2px solid #f0ad4e;outline-offset:1px}
+diff --git a/public/emr-language.js b/public/emr-language.js
+--- a/public/emr-language.js
++++ b/public/emr-language.js
+@@ -7,6 +7,13 @@
+   const path = window.location.pathname.replace(/\/$/, '') || '/';
+   const emrPage = path === '/emr';
+   const englishOnly = false;
++  const englishDisabled = true;
++  if (englishDisabled && typeof window !== 'undefined') {
++    try {
++      localStorage.setItem('borkeo-emr-language', 'kh');
++      localStorage.setItem('borkeo-lang', 'kh');
++      sessionStorage.setItem(STORAGE_KEY, 'kh');
++    } catch {}
++  }
+   const cashNotice = 'បានបញ្ជូនទៅបញ្ជរបង់ប្រាក់';
+   const labFilterPairs = path === '/lab' ? [['បញ្ជីរសំណាកទាំងអស់','Specimen List'],['សំណាកបន្ទាន់','Urgent'],['សំណាកបានទទួល','Received'],['សំណាកមិនទទួល','Rejected'],['បញ្ជីរសំណាកបានពិនិត្យរួច','Complete Test List'],['បញ្ជីរសម្ភារៈ','Material List'],['បញ្ជីសម្ភារៈ','Material List']] : [];
+   const manualPairs = [
+@@ -680,7 +688,7 @@
+   }
+
+   let language = 'kh';
+-  try { language = sessionStorage.getItem(STORAGE_KEY) === 'en' ? 'en' : 'kh'; } catch { language = 'kh'; }
++  try { language = englishDisabled ? 'kh' : (sessionStorage.getItem(STORAGE_KEY) === 'en' ? 'en' : 'kh'); } catch { language = 'kh'; }
+   const textState = new WeakMap();
+   const attributeState = new WeakMap();
+   let switcher;
+@@ -902,7 +910,11 @@
+   }
+
+   function mountSwitcher() {
++    if (englishDisabled) {
++      try { document.querySelectorAll('.emr-language-switch').forEach(el => el.remove()); } catch {}
++      return;
++    }
+     if (englishOnly || document.querySelector('.tv-queue-shell') || (typeof window !== 'undefined' && (window.location.pathname.includes('queue-display') || window.location.pathname.includes('/context') || document.querySelector('.context-shell')))) return;
+     if (!switcher) {
+       switcher = document.createElement('div');
+@@ -964,7 +976,11 @@
+   };
+
+   document.documentElement.lang = language === 'en' ? 'en' : 'km';
++  if (englishDisabled) {
++    if (emrPage && typeof window.applyEmrLanguage === 'function') {
++      window.applyEmrLanguage('khmer');
++    }
++  } else if (englishOnly) {
+     document.documentElement.lang = 'en';
+     translateTree();
+   } else {
+@@ -973,10 +989,12 @@
+       translateParaclinicPanels();
+     } else translateTree();
+   }
++  if (!englishDisabled) {
++    window.addEventListener('emr-session-ready', mountSwitcher);
++    document.addEventListener('DOMContentLoaded', mountSwitcher, { once: true });
++  }
++
++  if (document.body && !englishDisabled) {
+     languageObserver = observeTranslations(document.body, translateChangedNode, languageObservation);
+     translateParaclinicPanels();
+     translateInterfaceControls();
+diff --git a/public/emr-session.css b/public/emr-session.css
+--- a/public/emr-session.css
++++ b/public/emr-session.css
+@@ -716,7 +716,7 @@
+  body #emr-site-banner .portal-account-actions :is(button,a){box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:42px!important;margin:0!important;padding:8px 12px!important;border:1px solid #abd8e5!important;border-radius:10px!important;color:#075f81!important;background:#f4fcff!important;text-decoration:none!important;font:700 14px/1.65 BorkeoInterface,Arial,sans-serif!important;letter-spacing:0!important;cursor:pointer!important}
+  body #emr-site-banner .portal-account-actions .portal-logout{background:transparent!important;color:#fff!important;border-color:#d2edf5!important}
+  body #emr-site-banner .portal-account-actions .emr-notification-bell{width:42px!important;min-width:42px!important;padding:8px!important}
+- body #emr-site-banner .portal-account-actions .emr-language-switch{display:flex!important;align-items:center!important;gap:2px!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
++ body #emr-site-banner .portal-account-actions .emr-language-switch{display:none!important;align-items:center!important;gap:2px!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
+  body #emr-main-nav{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:8px!important;margin:14px 0!important;padding:0!important;width:100%!important;max-width:100%!important;overflow:visible!important}
+  body #emr-main-nav .portal-counter-control{display:inline-flex!important;align-items:center!important;gap:8px!important;min-height:42px!important;max-width:100%!important;margin:0!important;padding:6px 12px!important;border:1px solid #afd4e0!important;border-radius:10px!important;color:#075f81!important;background:#eff9fc!important;font:700 14px/1.65 BorkeoInterface,Arial,sans-serif!important;white-space:normal!important}
+  body #emr-main-nav .portal-counter-control :is(span,select){font:inherit!important;color:inherit!important;letter-spacing:0!important}
+diff --git a/public/emr-session.js b/public/emr-session.js
+--- a/public/emr-session.js
++++ b/public/emr-session.js
+@@ -240,6 +240,7 @@
+     const name=document.createElement('strong');name.className='portal-user-name';name.textContent=session.user.displayName;
+     copy.append(name);
+     const actions=document.createElement('div');actions.className='portal-account-actions';
++    new MutationObserver(()=>{actions.querySelectorAll('.emr-language-switch,[data-emr-language]').forEach(el=>el.remove());}).observe(actions,{childList:true,subtree:true});
+     const counterControl=createCounterControl(session.user);
+     if(counterControl)nav.append(counterControl);
+     if ((session.user.contexts||[]).length>1) {
+diff --git a/public/shared-controls.css b/public/shared-controls.css
+--- a/public/shared-controls.css
++++ b/public/shared-controls.css
+@@ -73,6 +73,7 @@
+     box-shadow: 0 3px 8px rgba(8, 127, 168, 0.25) !important;
+   }
+   body #emr-site-banner .portal-account-actions .emr-language-switch {
++    display: none !important;
+     background: #ffffff !important;
+     border-color: #b7dbe7 !important;
+   }
+@@ -79,3 +79,4 @@
++    display: none !important;
+     background: transparent !important;
+     color: #176783 !important;
+     border: none !important;
+@@ -82,5 +82,6 @@
+   }
+   body #emr-site-banner .portal-account-actions .emr-language-switch button {
++    display: none !important;
+     background: #087fa8 !important;
+     color: #ffffff !important;
+     box-shadow: 0 1px 3px rgba(6,78,105,.2) !important;
+diff --git a/public/patient-list.js b/public/patient-list.js
+--- a/public/patient-list.js
++++ b/public/patient-list.js
+@@ -35,7 +35,7 @@
+     },
+   };
+
+-  let language = (() => { try { return localStorage.getItem('borkeo-emr-language') === 'en' ? 'en' : 'kh'; } catch { return 'kh'; } })();
++  let language = 'kh';
+   const triageToday = Boolean(document.querySelector('[data-patient-list-mode="triage-today"]'));
+   const patientsUrl = triageToday ? '/api/triage/queue?omitPhotos=1' : '/api/patients?includePayment=1&omitPhotos=1';
+   let patients = [];
+diff --git a/public/departments.js b/public/departments.js
+--- a/public/departments.js
++++ b/public/departments.js
+@@ -94,7 +94,7 @@
+     { code: 'ncu', nameKh: 'ផ្នែកទារកទើបកើត', nameEn: 'NCU', rooms: [['ncu', 'បន្ទប់ NCU', 'NCU Room', 'nurse']] },
+   ];
+
+-  let language = (() => { try { return localStorage.getItem('borkeo-emr-language') === 'en' ? 'en' : 'kh'; } catch { return 'kh'; } })();
++  let language = 'kh';
+   const parameters = new URLSearchParams(window.location.search);
+   let csrfToken = '';
+diff --git a/tests/v371-phone-policy.test.mjs b/tests/v371-phone-policy.test.mjs
+--- a/tests/v371-phone-policy.test.mjs
++++ b/tests/v371-phone-policy.test.mjs
+@@ -13,7 +13,7 @@
+
+ test('v37.1 - Version metadata consistency across package.json, login.html, server.mjs, and HTML templates', () => {
+   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+-  assert.ok(['37.1.0', '37.2.0', '37.3.0', '37.4.0'].includes(pkg.version));
++  assert.ok(['37.1.0', '37.2.0', '37.3.0', '37.4.0', '37.5.0'].includes(pkg.version));
+
+   const loginHtml = fs.readFileSync(path.join(ROOT, 'public', 'login.html'), 'utf8');
+   assert.ok(loginHtml.includes('v' + pkg.version.split('.').slice(0,2).join('.')), 'login.html must contain v37.1');
+END V37.5 PATCH

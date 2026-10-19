@@ -1,0 +1,24 @@
+@font-face{font-family:BorkeoBannerTitle;src:url('/public/fonts/Moul-Khmer.woff2') format('woff2');font-display:swap}
+@font-face{font-family:BorkeoInterface;src:url('/public/fonts/Battambang-Regular.ttf') format('truetype');font-display:swap}
+:root{--emr-primary:#087fa8;--emr-background:#eaf6fb;--emr-surface:#fff;--emr-text:#17394a;--emr-radius:18px;--emr-panel-shadow:0 10px 28px #07516f16}
+@media screen{
+ body{background:var(--emr-background)!important;color:var(--emr-text)!important}
+ body :is(.panel,.card,.patient-panel,.queue-panel,.modern-section,.service-manager-card,.login-panel,.opd-toolbar,.opd-table-wrap,.admin-dashboard){background:var(--emr-surface)!important;color:var(--emr-text)!important;border-radius:var(--emr-radius)!important;box-shadow:var(--emr-panel-shadow)!important}
+ body :is(button,.queue-action,.portal-main-nav a,.balance-button){border-radius:var(--emr-radius)!important}
+ body :is(.btn-blue,.btn-next,.balance-button,.queue-action,.portal-main-nav a.active,button[type=submit]){background:var(--emr-primary)!important;color:#fff!important}
+ body #emr-site-banner,body .login-panel .panel-header{background:linear-gradient(135deg,#f8fdff 0%,var(--emr-background) 100%)!important;border:1px solid #d8edf4!important;border-radius:var(--emr-radius)!important;color:var(--emr-text)!important}
+ body #emr-site-banner,body .login-panel .panel-header{padding:28px 34px!important}
+ body #emr-site-banner .emr-unified-brand{align-items:center!important;gap:18px!important}
+ body .login-panel .eyebrow{color:var(--emr-primary)!important;font:700 12px/1.6 BorkeoInterface,Arial,sans-serif!important}
+ body #emr-site-banner .emr-brand-mark{width:88px;height:88px;flex:0 0 88px;display:grid;place-items:center;border-radius:24px;background:linear-gradient(#fff,#f1fbfe);border:1px solid #d7edf4;box-shadow:0 12px 28px #0c546e1f}
+ body #emr-site-banner .emr-unified-brand .emr-brand-mark img{width:68px!important;height:68px!important;max-width:68px!important;flex:none!important;padding:0!important;background:none!important}
+ body #emr-site-banner .emr-brand-copy{min-width:0!important;text-align:left!important}
+ body #emr-site-banner .emr-brand-eyebrow{margin:0 0 6px!important;color:#004b99!important;font:700 12px/1.4 BorkeoInterface,Arial,sans-serif!important;text-align:left!important}
+ body #emr-site-banner .emr-unified-brand h1,body .hospital-name-kh{color:#003b8e!important;font:400 28px/1.4 BorkeoBannerTitle,"Khmer OS Moul Light",serif!important;text-align:left!important}
+ body #emr-site-banner .portal-user-name{color:var(--emr-text)!important}
+ body #emr-site-banner .portal-account-actions :is(button,a),body #emr-site-banner .portal-account-actions .portal-logout{color:var(--emr-primary)!important;background:#f4fcff!important;border:1px solid #abd8e5!important}
+ body #emr-sub-nav{margin:0 0 16px!important;padding:12px!important;background:var(--emr-surface)!important;border:1px solid #d2e8f0!important;border-radius:var(--emr-radius)!important;display:flex!important;flex-wrap:wrap;gap:8px}
+ body .theme-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px}body .theme-grid label{display:flex;align-items:center;gap:12px}body .theme-grid input[type=color]{width:65px;height:45px}
+ body .queue-patient{max-width:280px;overflow-wrap:anywhere}body .queue-patient small{display:none}body .opd-toolbar{gap:12px;padding:16px}body .opd-table-wrap table{min-width:980px}body .opd-table-wrap th,body .opd-table-wrap td{text-align:left;padding:12px}
+}
+@media screen and (max-width:700px){body #emr-site-banner{padding:16px!important}body #emr-site-banner .emr-brand-mark{width:56px;height:56px;flex-basis:56px}body #emr-site-banner .emr-unified-brand .emr-brand-mark img{width:44px!important;height:44px!important;max-width:44px!important}body #emr-site-banner .emr-unified-brand h1,body .hospital-name-kh{font-size:20px!important}}

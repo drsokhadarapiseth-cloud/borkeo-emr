@@ -1,0 +1,84 @@
+@font-face {
+  font-family: "Invoice Khmer";
+  src: url("/public/fonts/Battambang-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+}
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: "Khmer OS Battambang", "Invoice Khmer", "Noto Sans Khmer", sans-serif;
+  background: #f0f0f0;
+  color: #000;
+  padding: 20px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.print-toolbar { max-width: 880px; margin: 0 auto 10px; text-align: right; }
+.print-toolbar button { border: 0; border-radius: 7px; background: #0b789c; color: #fff; padding: 8px 14px; font: inherit; font-weight: 700; cursor: pointer; }
+.print-toolbar button:disabled { opacity: .6; cursor: wait; }
+.invoice-container { width: 880px; max-width: 100%; margin: 0 auto; background: #fff; padding: 40px; box-shadow: 0 0 10px #0002; }
+.header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px; gap: 12px; }
+.header-logo { flex: 0 0 100px; }
+.header-logo img { width: 100px; height: auto; display: block; }
+.header-text { text-align: center; flex: 1; min-width: 0; }
+.header-text h1 { margin: 0; font-size: 24px; font-weight: bold; line-height: 1.6; }
+.header-text h2 { margin: 5px 0 10px; font: bold 18px Arial, sans-serif; }
+.header-text h3 { margin: 0; font-size: 20px; text-decoration: underline; }
+.header-text .invoice-moul { font-family: "Moul", "Khmer OS Muol Light", "Khmer OS Moul Light", serif !important; font-weight: 400; }
+.header-barcode { flex: 0 0 150px; text-align: right; font: 12px "Courier New", monospace; overflow-wrap: anywhere; }
+.patient-info { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px 10px; margin-bottom: 20px; line-height: 1.6; }
+.patient-info > div { min-width: 0; overflow-wrap: anywhere; }
+.patient-info strong { padding: 0 2px; }
+.patient-date { grid-column: 1 / -1; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+th, td { border: 1px solid #000; padding: 8px 7px; text-align: center; vertical-align: middle; overflow-wrap: anywhere; }
+th { background: #f9f9f9; font-weight: bold; }
+td.text-left { text-align: left; }
+td.text-right { text-align: right; }
+.invoice-table { table-layout: fixed; }
+.col-index { width: 5%; }
+.col-invoice { width: 19%; }
+.col-department { width: 16%; }
+.col-service { width: 23%; }
+.col-quantity { width: 7%; }
+.col-unit, .col-total { width: 15%; }
+.invoice-no { font: 11px/1.5 Arial, sans-serif; }
+.invoice-table small { font-size: 11px; }
+.empty-row { height: 40px; }
+.middle-section { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 30px; }
+.disclaimer { width: 60%; font-style: italic; font-size: 13px; }
+.small-totals { width: 38%; }
+.small-totals table { margin: 0; }
+.small-totals td { padding: 5px 7px; }
+.small-totals td:last-child { white-space: nowrap; }
+.signatures { display: flex; justify-content: space-between; margin-bottom: 40px; font-weight: bold; }
+.signature-box { text-align: center; width: 35%; }
+.signature-line { margin-top: 50px; height: 40px; }
+.signature-name { font-weight: normal; color: #666; }
+@media screen and (max-width: 760px) {
+  body { padding: 8px; overflow-x: auto; }
+  .invoice-container { width: 800px; max-width: none; padding: 24px; }
+}
+@page { size: A4 portrait; margin: 12mm; }
+@media print {
+  html, body { width: auto; min-height: 0; background: #fff; padding: 0; }
+  .print-toolbar { display: none !important; }
+  .invoice-container { width: 100%; max-width: none; margin: 0; padding: 0; box-shadow: none; overflow: visible; }
+  .header-text h1 { font-size: 22px; }
+  .header-barcode { flex-basis: 130px; }
+  .patient-info { display: flex; flex-wrap: wrap; }
+  .patient-info > div { flex: 0 0 calc((100% - 20px) / 3); }
+  .patient-info > .patient-date { flex-basis: 100%; }
+  .header, .patient-info, .middle-section, .signatures { break-inside: avoid; }
+  thead { display: table-header-group; }
+  tr { break-inside: avoid; }
+  th, td { border: 1px solid #000 !important; }
+  .signatures { margin-bottom: 0; }
+}
+
+.combined-receipt-summary{border-bottom:1px solid #333;padding-bottom:12px;margin-bottom:18px}
+.combined-receipt-summary h3{margin:0;font-family:Moul,serif}
+.combined-receipt-reference{font-size:12px;margin:0 0 12px}

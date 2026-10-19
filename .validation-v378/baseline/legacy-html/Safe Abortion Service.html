@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Abortion Service Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Khmer OS', 'Suwannaphum', sans-serif;
+            padding: 20px;
+        }
+        .card {
+            border: 1px solid #dee2e6;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-shadow: none;
+        }
+        /* Blue Header Style */
+        .card-header-blue {
+            background-color: #e9eff5;
+            color: #0b5ed7;
+            font-weight: bold;
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px 15px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        /* Green Header Style */
+        .card-header-green {
+            background-color: #43a060;
+            color: white;
+            font-weight: bold;
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px 15px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        .form-label {
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+        .text-danger {
+            color: #dc3545 !important;
+        }
+        .form-control, .form-select {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .dashed-divider {
+            border-top: 1px dashed #dee2e6;
+            margin: 15px 0;
+        }
+        .form-check-label {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .btn-orange {
+            background-color: #f05a28;
+            color: white;
+            border: none;
+        }
+        .btn-orange:hover {
+            background-color: #d94a1b;
+            color: white;
+        }
+        .btn-green {
+            background-color: #43a060;
+            color: white;
+            border: none;
+        }
+        .btn-green:hover {
+            background-color: #36854e;
+            color: white;
+        }
+        .form-check-inline-custom {
+            display: inline-block;
+            margin-right: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid bg-white p-4 rounded border">
+
+    <!-- Maternity and Gynecology Section -->
+    <div class="card">
+        <div class="card-header-blue">ផ្នែកសម្ភព និងរោគស្ត្រី</div>
+        <div class="card-body">
+            
+            <div class="row align-items-center mb-3">
+                <div class="col-md-1">
+                    <label class="form-label mb-0">ទម្រង់</label>
+                </div>
+                <div class="col-md-11">
+                    <select class="form-select">
+                        <option selected>ផ្នែកសេវារំលូតកូនប្រកបដោយសុវត្ថិភាព</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="dashed-divider"></div>
+
+            <div class="mb-3 d-flex align-items-center gap-4">
+                <label class="form-label mb-0">ករណីជំងឺ <span class="text-danger">*</span></label>
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="radio" name="caseType" id="newCase">
+                    <label class="form-check-label" for="newCase">ករណីថ្មី</label>
+                </div>
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="radio" name="caseType" id="oldCase">
+                    <label class="form-check-label" for="oldCase">ករណីចាស់</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">រោគសញ្ញា <span class="text-danger">*</span></label>
+                <select class="form-select">
+                    <option selected>ជ្រើសរើស</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <label class="form-label">រោគវិនិច្ឆ័យចូល ICD10 <span class="text-danger">*</span></label>
+                    <select class="form-select">
+                        <option selected>ជ្រើសរើស</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">សេវាអមវេជ្ជសាស្ត្រ <span class="text-danger">*</span></label>
+                    <div class="d-flex gap-3 mt-1">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="medicalService" id="medYes">
+                            <label class="form-check-label" for="medYes">មាន</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="medicalService" id="medNo" checked>
+                            <label class="form-check-label" for="medNo">មិនមាន</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reproductive History -->
+            <div class="row mt-4">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">ចំនួនកូនរស់ <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="សូមបញ្ចូល">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">ចំនួនរំលូតកូន <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="សូមបញ្ចូល">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">ទំហំស្បូនគិតជាសប្តាហ៍ <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" placeholder="សូមបញ្ចូល">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complications on Arrival -->
+    <div class="card">
+        <div class="card-header-green">តើអតិថិជនមានបញ្ហាណាមួយពេលមកដល់?</div>
+        <div class="card-body py-2">
+            <div class="mb-2 mt-2">
+                <label class="form-label d-block">តើអតិថិជនមានបញ្ហាណាមួយពេលមកដល់? <span class="text-danger">*</span></label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="compArrival" id="arrYes">
+                    <label class="form-check-label" for="arrYes">មាន</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="compArrival" id="arrNo">
+                    <label class="form-check-label" for="arrNo">មិនមាន</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Abortion Method -->
+    <div class="card">
+        <div class="card-header-green">មធ្យោបាយរំលូត</div>
+        <div class="card-body py-2">
+            <div class="mb-2 mt-2">
+                <label class="form-label d-block">មធ្យោបាយរំលូត <span class="text-danger">*</span></label>
+                <div class="d-flex flex-wrap gap-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="abortMethod" id="mva">
+                        <label class="form-check-label" for="mva">MVA</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="abortMethod" id="eva">
+                        <label class="form-check-label" for="eva">EVA</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="abortMethod" id="dnc">
+                        <label class="form-check-label" for="dnc">D&C</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="abortMethod" id="dne">
+                        <label class="form-check-label" for="dne">D&E</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="abortMethod" id="ma">
+                        <label class="form-check-label" for="ma">MA</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Received Contraception -->
+    <div class="card">
+        <div class="card-header-green">តើអតិថិជនបានទទួលមធ្យោបាយពន្យារកំណើតមុនចេញទៅផ្ទះដែលឬទេ?</div>
+        <div class="card-body py-2">
+            <div class="mb-2 mt-2">
+                <label class="form-label d-block">តើអតិថិជនបានទទួលមធ្យោបាយពន្យារកំណើតមុនចេញទៅផ្ទះដែលឬទេ? <span class="text-danger">*</span></label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="recContra" id="recYes">
+                    <label class="form-check-label" for="recYes">បាន</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="recContra" id="recNo">
+                    <label class="form-check-label" for="recNo">មិនបាន</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contraception Type -->
+    <div class="card">
+        <div class="card-header-green">តើអតិថិជនបានទទួលមធ្យោបាយពន្យារកំណើតប្រភេទណា?</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="iud">
+                        <label class="form-check-label" for="iud">កងដាក់ក្នុងស្បូន</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="condom">
+                        <label class="form-check-label" for="condom">ស្រោមអនាម័យ</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="implant">
+                        <label class="form-check-label" for="implant">កងដាក់ក្រោមស្បែក</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="injectable">
+                        <label class="form-check-label" for="injectable">ថ្នាំចាក់</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="pill">
+                        <label class="form-check-label" for="pill">ថ្នាំគ្រាប់ស៊ីអូស៊ី</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="sterilization">
+                        <label class="form-check-label" for="sterilization">បញ្ឈប់កំណើត</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Poor ID -->
+    <div class="card">
+        <div class="card-header-green">តើគ្រួសារអតិថិជនមានបណ្ណក្រីក្រដែលឬទេ?</div>
+        <div class="card-body py-2">
+            <div class="mb-2 mt-2">
+                <label class="form-label d-block">តើគ្រួសារអតិថិជនមានបណ្ណក្រីក្រដែលឬទេ? <span class="text-danger">*</span></label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="poorId" id="poorYes">
+                    <label class="form-check-label" for="poorYes">មាន</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="poorId" id="poorNo">
+                    <label class="form-check-label" for="poorNo">មិនមាន</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complications After Service -->
+    <div class="card">
+        <div class="card-header-green">តើអតិថិជនមានជួបបញ្ហាក្រោយទទួលសេវាដែលឬទេ?</div>
+        <div class="card-body py-2">
+            <div class="mb-2 mt-2">
+                <label class="form-label d-block">តើអតិថិជនមានជួបបញ្ហាក្រោយទទួលសេវាដែលឬទេ? <span class="text-danger">*</span></label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="compAfter" id="aftYes">
+                    <label class="form-check-label" for="aftYes">មាន</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="compAfter" id="aftNo">
+                    <label class="form-check-label" for="aftNo">មិនមាន</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-end gap-2 mt-4 pb-2">
+        <button type="button" class="btn btn-orange px-4">
+            <i class="bi bi-arrow-left me-1"></i> ត្រឡប់ក្រោយ
+        </button>
+        <button type="button" class="btn btn-green px-4">
+            <i class="bi bi-floppy me-1"></i> រក្សាទុក
+        </button>
+        <button type="button" class="btn btn-green px-4">
+            រក្សាទុក និងបន្ត <i class="bi bi-arrow-right ms-1"></i>
+        </button>
+    </div>
+
+</div>
+
+<!-- Scroll to top button -->
+<div style="position: fixed; bottom: 20px; right: 20px;">
+    <button type="button" class="btn btn-green rounded-circle" style="width: 40px; height: 40px; padding: 0;">
+        <i class="bi bi-chevron-up"></i>
+    </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

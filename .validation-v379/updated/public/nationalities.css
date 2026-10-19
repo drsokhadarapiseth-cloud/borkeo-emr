@@ -1,0 +1,173 @@
+/* Borkeo EMR v34.9 - Nationalities & Cambodian Ethnic Groups Searchable Dropdown Styling */
+.emr-nat-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.emr-nat-combobox {
+  position: relative;
+  width: 100%;
+}
+
+.emr-nat-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1e293b;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+.emr-nat-btn:hover:not(:disabled) {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 1px #0284c7;
+}
+
+.emr-nat-btn:focus-visible {
+  outline: none;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.emr-nat-btn:disabled {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.emr-nat-btn .btn-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emr-nat-btn .btn-chevron {
+  font-size: 11px;
+  color: #64748b;
+  transition: transform 0.2s ease;
+}
+
+.emr-nat-combobox.open .btn-chevron {
+  transform: rotate(180deg);
+}
+
+.emr-nat-popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 340px;
+}
+
+.emr-nat-search-box {
+  padding: 8px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f8fafc;
+}
+
+.emr-nat-search-input {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.emr-nat-search-input:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+}
+
+.emr-nat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+  max-height: 280px;
+}
+
+.emr-nat-group-header {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  background: #f1f5f9;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.emr-nat-item {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #1e293b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: background 0.15s ease;
+  user-select: none;
+}
+
+.emr-nat-item:hover,
+.emr-nat-item.highlighted {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.emr-nat-item.selected {
+  font-weight: 600;
+  color: #0284c7;
+  background: #f0f9ff;
+}
+
+.emr-nat-item .item-label,
+.emr-nat-item .item-kh {
+  flex: 1;
+}
+
+.emr-nat-item .item-en {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.emr-nat-item.selected .item-en {
+  color: #0284c7;
+}
+
+.emr-nat-item-empty {
+  padding: 14px 12px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+}

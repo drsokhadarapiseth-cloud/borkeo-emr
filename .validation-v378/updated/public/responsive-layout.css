@@ -1,0 +1,258 @@
+/* Borkeo EMR v14.3 - responsive layout layer
+   Screen-only rules that let the application adapt from small laptops/tablets
+   to large monitors without changing print layouts or clinical workflow. */
+
+@media screen {
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+  body { min-height: 100vh; }
+  img, svg, video, canvas, iframe { max-width: 100%; }
+  button, input, select, textarea { max-width: 100%; box-sizing: border-box; }
+  main, header, section, article, aside, form, fieldset, .card, .panel,
+  [class$="-shell"], [class$="-content"], .container, .layout-container {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .table-wrap, .table-scroll, .table-container, .queue-table-wrap,
+  .opd-table-wrap, .responsive-table-scroll, .nursing-form-scroll,
+  .report-table-wrap, .table-area {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  /* Keep the primary application shells within the viewport. */
+  .home-shell, .patient-shell, .triage-shell, .opd-shell, .expense-shell,
+  .finance-shell, .lab-shell, .imaging-shell, .billing-shell,
+  .admin-shell, .department-shell, .pharmacy-shell, .ward-shell,
+  .context-shell, .shell, .page-shell {
+    width: min(100%, calc(100% - 24px));
+    margin-inline: auto;
+  }
+
+  /* Prevent flex children from forcing the page wider than the viewport. */
+  .home-hero, .patient-page-banner, .triage-banner, .opd-heading,
+  .expense-banner, .finance-banner, .lab-banner, .imaging-banner,
+  .billing-banner, .admin-banner, .department-page-banner, .clinical-appbar,
+  .queue-head, .panel-heading, .section-heading, .toolbar, .opd-toolbar,
+  .list-toolbar, .inpatient-view-toolbar, .nursing-form-toolbar {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .home-hero > *, .patient-page-banner > *, .triage-banner > *,
+  .opd-heading > *, .expense-banner > *, .finance-banner > *,
+  .clinical-appbar > *, .queue-head > *, .panel-heading > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* Common data-entry grids collapse progressively. */
+  .modern-grid, .modern-grid-2, .grid-2-col, .grid-3, .grid-4,
+  .patient-registration-grid, .monitoring-vitals-grid, .vitals-grid,
+  .ipd-body-grid, .discharge-form-grid, .admin-stats, .admin-approval-grid,
+  .report-columns, .report-summary-grid, .monthly-report-grid,
+  .monthly-service-summary, .total-grid, .day-columns, .expense-grid,
+  .content-grid, .patient-summary-demographics, .patient-summary-fields,
+  .followup-date-policy-panel {
+    min-width: 0;
+  }
+
+  /* Long form controls must shrink instead of creating horizontal scrolling. */
+  .form-group, .input-group, .filter-grid label, .discharge-form-grid label,
+  .patient-registration-grid > *, .modern-grid > *, .modern-grid-2 > *,
+  .grid-2-col > *, .grid-3 > *, .grid-4 > *, .vitals-grid > *,
+  .monitoring-vitals-grid > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .page-a4 {
+    max-width: 100% !important;
+    overflow: visible;
+  }
+}
+
+@media screen and (max-width: 1199px) {
+  .home-shell, .patient-shell, .triage-shell, .opd-shell, .expense-shell,
+  .finance-shell, .lab-shell, .imaging-shell, .billing-shell,
+  .admin-shell, .department-shell, .pharmacy-shell, .ward-shell,
+  .context-shell, .shell, .page-shell {
+    width: min(100%, calc(100% - 20px));
+  }
+
+  .patient-page-banner, .triage-banner, .home-hero, .opd-heading,
+  .expense-banner, .finance-banner, .lab-banner, .imaging-banner,
+  .billing-banner, .admin-banner, .department-page-banner {
+    padding-inline: clamp(16px, 2.5vw, 28px);
+  }
+
+  .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .module-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .admin-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+
+@media screen and (max-width: 960px) {
+  .home-hero, .patient-page-banner, .triage-banner, .opd-heading,
+  .expense-banner, .finance-banner, .lab-banner, .imaging-banner,
+  .billing-banner, .admin-banner, .department-page-banner {
+    min-height: 138px;
+    padding-block: 34px 38px;
+  }
+
+  .patient-page-banner img, .triage-banner img, .home-hero img,
+  .expense-banner img, .finance-banner img, .lab-banner img,
+  .imaging-banner img, .billing-banner img, .admin-banner img,
+  .department-page-banner img {
+    width: 68px;
+    height: 68px;
+    flex: 0 0 68px;
+  }
+
+  .modern-grid, .modern-grid-2, .grid-2-col, .grid-3, .grid-4,
+  .patient-registration-grid, .monitoring-vitals-grid, .vitals-grid,
+  .ipd-body-grid, .discharge-form-grid, .report-columns,
+  .monthly-report-grid, .expense-grid, .content-grid, .day-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .sidebar { max-width: 100%; min-width: 0 !important; }
+  .layout-container { min-width: 0 !important; }
+
+  .queue-head, .panel-heading, .section-heading { align-items: stretch; }
+  .queue-tools, .toolbar, .opd-toolbar { min-width: 0; }
+  .queue-tools input { min-width: 0 !important; width: min(100%, 360px); }
+}
+
+@media screen and (max-width: 720px) {
+  .home-shell, .patient-shell, .triage-shell, .opd-shell, .expense-shell,
+  .finance-shell, .lab-shell, .imaging-shell, .billing-shell,
+  .admin-shell, .department-shell, .pharmacy-shell, .ward-shell,
+  .context-shell, .shell, .page-shell {
+    width: calc(100% - 14px);
+  }
+
+  .home-hero, .patient-page-banner, .triage-banner, .opd-heading,
+  .expense-banner, .finance-banner, .lab-banner, .imaging-banner,
+  .billing-banner, .admin-banner, .department-page-banner {
+    border-radius: 12px;
+    gap: 12px;
+    padding: 28px 14px 32px;
+  }
+
+  .home-hero h1, .patient-page-banner h1, .triage-banner h1,
+  .opd-heading h1, .expense-banner h1, .finance-banner h1,
+  .lab-banner h1, .imaging-banner h1, .billing-banner h1,
+  .admin-banner h1, .department-page-banner h1 {
+    font-size: clamp(21px, 6vw, 31px) !important;
+    line-height: 1.25;
+  }
+
+  .patient-page-banner img, .triage-banner img, .home-hero img,
+  .expense-banner img, .finance-banner img, .lab-banner img,
+  .imaging-banner img, .billing-banner img, .admin-banner img,
+  .department-page-banner img { display: none; }
+
+  .filter-grid, .modern-grid, .modern-grid-2, .grid-2-col, .grid-3, .grid-4,
+  .patient-registration-grid, .monitoring-vitals-grid, .vitals-grid,
+  .ipd-body-grid, .discharge-form-grid, .report-columns,
+  .report-summary-grid, .monthly-report-grid, .monthly-service-summary,
+  .total-grid, .day-columns, .expense-grid, .content-grid,
+  .admin-stats, .admin-approval-grid, .patient-summary-demographics {
+    grid-template-columns: 1fr !important;
+  }
+
+  .patient-registration-grid > *, .modern-grid > *, .modern-grid-2 > *,
+  .grid-2-col > *, .grid-3 > *, .grid-4 > * { grid-column: auto !important; }
+
+  .panel-heading, .queue-head, .section-heading, .expense-history header,
+  .followup-date-policy-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .list-toolbar, .opd-toolbar, .toolbar { flex-direction: column; align-items: stretch; }
+  .list-toolbar > *, .opd-toolbar > *, .toolbar > * { width: 100%; max-width: 100%; }
+  .queue-tools { width: 100%; justify-content: stretch; }
+  .queue-tools input, .queue-tools button { flex: 1 1 auto; min-width: 0 !important; width: 100%; }
+
+  .patient-panel, .queue-panel, .panel, .card, .modern-section, .opd-section {
+    border-radius: 12px;
+  }
+
+  .patient-panel, .queue-panel { overflow: hidden; }
+  .table-wrap, .table-scroll, .table-container, .queue-table-wrap,
+  .opd-table-wrap, .responsive-table-scroll, .nursing-form-scroll,
+  .report-table-wrap, .table-area { -webkit-overflow-scrolling: touch; }
+
+  /* Clinical pages previously used A4-like minimum widths for print. On a small
+     screen the live form uses the viewport width; print rules remain unchanged. */
+  .page-a4, .page-a4 * { min-width: 0 !important; }
+  .page-a4 { width: 100% !important; max-width: 100% !important; }
+  .responsive-table-scroll > table { min-width: 680px; }
+
+  .patient-summary-drawer { width: min(420px, 94vw); }
+  .patient-summary-tab { max-width: none; overflow: visible; }
+
+  #emr-session-control { max-width: calc(100vw - 16px) !important; }
+  .portal-main-nav { max-width: 100%; overflow-x: auto; }
+}
+
+@media screen and (max-width: 440px) {
+  body { font-size: 13px; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  .home-shell, .patient-shell, .triage-shell, .opd-shell, .expense-shell,
+  .finance-shell, .lab-shell, .imaging-shell, .billing-shell,
+  .admin-shell, .department-shell, .pharmacy-shell, .ward-shell,
+  .context-shell, .shell, .page-shell { width: calc(100% - 10px); }
+
+  .home-hero, .patient-page-banner, .triage-banner, .opd-heading,
+  .expense-banner, .finance-banner, .lab-banner, .imaging-banner,
+  .billing-banner, .admin-banner, .department-page-banner {
+    padding: 18px 10px 22px;
+    gap: 8px;
+  }
+
+  .home-hero h1, .patient-page-banner h1, .triage-banner h1,
+  .opd-heading h1, .expense-banner h1, .finance-banner h1,
+  .lab-banner h1, .imaging-banner h1, .billing-banner h1,
+  .admin-banner h1, .department-page-banner h1 {
+    font-size: 18px !important;
+    line-height: 1.3 !important;
+    word-break: break-word;
+  }
+
+  .patient-page-banner p, .triage-banner p, .home-hero p,
+  .expense-banner p, .finance-banner p, .lab-banner p,
+  .imaging-banner p, .billing-banner p, .admin-banner p,
+  .department-page-banner p {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+  }
+
+  .modern-section, .opd-section, .card, .panel, .patient-panel, .queue-panel {
+    padding-inline: 10px;
+  }
+
+  .patient-summary-tab { right: 0; }
+  .patient-summary-tab.open { right: min(94vw, 420px); }
+}
+
+@media print {
+  /* Responsive rules intentionally do nothing to printed/A4 layouts. */
+}
+
+@media screen and (max-width:700px){
+ body .modern-grid,body .filter-grid,body .settings-grid,body .profile-grid{grid-template-columns:minmax(0,1fr)!important}
+ body .modern-grid>*,body .filter-grid>*,body .settings-grid>*{grid-column:1!important;min-width:0}
+ body .page,body .sub-tab,body .modern-section{min-width:0!important;max-width:100%!important}
+ body .modern-input,body input:not([type=checkbox]):not([type=radio]),body textarea{min-width:0;max-width:100%}
+ body .inpatient-context-card{grid-template-columns:1fr!important}
+ body .modal,body dialog,body .service-manager-card{max-width:calc(100vw - 20px)!important;max-height:calc(100dvh - 20px);overflow:auto}
+ body .table-scroll,body .table-wrap,body .nursing-form-scroll{width:100%;overflow-x:auto}
+}
+

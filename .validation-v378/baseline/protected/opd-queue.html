@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="km"><head><meta charset="utf-8"><meta name="viewport" content="width=1200, user-scalable=yes">
+<title>បញ្ជីរង់ចាំ OPD · Borkeo EMR</title>
+<link rel="stylesheet" href="/public/ocean-theme.css"><link rel="stylesheet" href="/public/emr-session.css?v=1208">
+<link rel="stylesheet" href="/public/opd-queue.css?v=1560">
+<style>.opd-heading.session-host{padding-top:76px!important}.opd-heading #emr-session-control .portal-identity-copy,.opd-heading #emr-session-control .portal-account-button,.opd-heading+#emr-main-nav{display:none!important}.opd-heading #emr-session-control .portal-logout{font-size:0!important;width:38px;min-width:38px;padding:0!important}.opd-heading #emr-session-control .portal-logout::before{content:'↪';font-size:20px}.opd-heading #emr-session-control .portal-logout{position:absolute;right:0;top:0}@media(max-width:760px){.opd-heading.session-host{padding-top:64px!important}}</style>
+<script src="/public/emr-session.js?v=1970" defer></script><script src="/public/opd-queue.js?v=1560" defer></script>
+  <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+</head><body><main class="opd-shell">
+<header class="opd-heading" data-session-host><h1>បញ្ជីរង់ចាំ OPD</h1></header>
+<section class="opd-toolbar">
+<label class="opd-counter-label" for="opd-counter"><span>Counter</span> <select id="opd-counter"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
+<label class="opd-date-label" for="queue-date"><span>ថ្ងៃខែឆ្នាំ</span> <input type="date" id="queue-date"></label>
+<label class="opd-search-label" for="queue-search"><span>ស្វែងរក</span> <input type="search" id="queue-search" placeholder="ឈ្មោះ លេខករណី ឬលេខបណ្ណសុខភាព"></label>
+<button type="button" id="queue-refresh">ទាញទិន្នន័យ</button>
+<span id="queue-count" aria-live="polite"></span></section>
+<p id="queue-status" role="status"></p>
+<div class="opd-table-wrap"><table><thead><tr><th>លេខរៀង</th><th>ឈ្មោះអ្នកជំងឺ</th><th>ភេទ</th><th>អាយុ</th><th>ទូរស័ព្ទ</th><th>លេខបណ្ណសុខភាព</th><th>បណ្ណសមធម៌</th><th>ប្រភេទបង់ប្រាក់</th><th>ផ្នែក</th><th>បើកកំណត់ត្រា</th></tr></thead>
+<tbody id="queue-rows"></tbody></table></div>
+
+</main></body></html>

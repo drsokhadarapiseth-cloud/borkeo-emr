@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1200, user-scalable=yes">
+    <title>OPD Lite — Borkeo EMR</title>
+    <link rel="stylesheet" href="/public/ocean-theme.css">
+    <link rel="stylesheet" href="/public/responsive-layout.css">
+    <link rel="stylesheet" href="/public/patient-list.css">
+    <link rel="stylesheet" href="/public/triage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #E6F9FF;
+            font-family: 'Khmer OS System', 'Khmer OS Battambang', sans-serif;
+            padding: 20px;
+        }
+        .lite-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+        .lite-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid #00BFFF;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .panel-title {
+            font-family: 'Moul', cursive;
+            color: #0088CC;
+            border-bottom: 2px solid #00BFFF;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #475569;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .btn-primary {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+        .btn-primary:hover {
+            background: #0369a1;
+        }
+        .treatment-area {
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .treatment-area textarea {
+            flex-grow: 1;
+            min-height: 300px;
+            padding: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="lite-container">
+        <!-- LEFT PANEL: Patient Entry & Vitals -->
+        <aside class="lite-panel">
+            <div class="panel-title">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>ចុះឈ្មោះ និង ទ្រីយ៉ា</span>
+            </div>
+
+            <section id="patient-entry">
+                <div class="form-group">
+                    <label>ឈ្មោះអ្នកជំងឺ</label>
+                    <input type="text" id="lite-patient-name" placeholder="បញ្ចូលឈ្មោះ...">
+                </div>
+                <div class="form-group">
+                    <label>លេខបណ្ណសុខភាព</label>
+                    <input type="text" id="lite-patient-id" placeholder="ស្វែងរក ឬ បង្កើតលេខថ្មី...">
+                </div>
+                <div class="vitals-grid">
+                    <div class="form-group">
+                        <label>សម្ពាធឈាម (BP)</label>
+                        <input type="text" id="lite-bp" placeholder="120/80">
+                    </div>
+                    <div class="form-group">
+                        <label>សីតុណ្ហភាព (Temp)</label>
+                        <input type="text" id="lite-temp" placeholder="36.5">
+                    </div>
+                    <div class="form-group">
+                        <label>ទម្ងន់ (Weight)</label>
+                        <input type="text" id="lite-weight" placeholder="kg">
+                    </div>
+                    <div class="form-group">
+                        <label>កម្ពស់ (Height)</label>
+                        <input type="text" id="lite-height" placeholder="cm">
+                    </div>
+                </div>
+                <button id="btn-save-patient" class="btn-primary">រក្សាទុកព័ត៌មានអ្នកជំងឺ</button>
+            </section>
+        </aside>
+
+        <!-- RIGHT PANEL: Treatment -->
+        <main class="lite-panel">
+            <div class="panel-title">
+                <i class="fa-solid fa-stethoscope"></i>
+                <span>ការពិនិត្យ និងព្យាបាល (Treatment)</span>
+            </div>
+
+            <section class="treatment-area">
+                <div class="form-group">
+                    <label>រោគវិនិច្ឆ័យ និង ការព្យាបាល</label>
+                    <textarea id="lite-treatment-note" placeholder="សរសេរការពិនិត្យ និងវេជ្ជបញ្ជា..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button id="btn-clear" class="btn-secondary" style="padding: 12px; border: 1px solid #ccc; border-radius: 6px; cursor: pointer;">សម្អាត</button>
+                    <button id="btn-save-treatment" class="btn-primary">រក្សាទុកការព្យាបាល</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/public/emr-session.js" defer></script>
+    <script src="/public/opd-lite.js" defer></script>
+</body>
+</html>

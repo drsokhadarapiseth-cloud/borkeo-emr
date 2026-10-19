@@ -1,0 +1,733 @@
+:root {
+  --portal-ocean-900: #07516f;
+  --portal-ocean-800: #096789;
+  --portal-ocean-700: #087fa8;
+  --portal-ocean-600: #0c96bc;
+  --portal-ocean-100: #dff5fb;
+  --portal-ocean-border: #a8d8e7;
+}
+
+.emr-demo-ribbon {
+  margin: 0;
+  padding: 6px 16px;
+  background: #fff1c7;
+  color: #754707;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
+@media print { .emr-demo-ribbon { display: none !important; } }
+
+/* Patient-record actions and route-specific treatment workflow. */
+.emr-workflow-hidden {
+  display: none !important;
+}
+
+.emr-save-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border: 1px solid #b8deeb;
+  border-radius: 12px;
+  background: #effaff;
+}
+
+.emr-save-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.emr-record-status {
+  min-height: 0;
+  margin: 12px 0;
+  padding: 0 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  color: #075985;
+}
+
+.emr-record-status:not(:empty) {
+  padding-block: 10px;
+  border: 1px solid #bae6fd;
+  background: #f0f9ff;
+}
+
+.emr-record-status[data-state="saved"] {
+  color: #166534;
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.emr-record-status[data-state="error"] {
+  color: #991b1b;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.emr-care-route-notice {
+  margin: -6px 0 18px;
+  padding: 12px 16px;
+  border-inline-start: 5px solid #0e91b7;
+  border-radius: 8px;
+  background: #edfaff;
+  color: #075985;
+  font-weight: 700;
+}
+
+.nursing-section-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding: 10px;
+  border: 1px solid #cde4ec;
+  border-radius: 12px;
+  background: #f8fdff;
+}
+
+.nursing-auxiliary-panel[hidden],
+#nursing-care-section[hidden] {
+  display: none !important;
+}
+
+@media print {
+  .emr-save-bar,
+  .emr-record-status,
+  .emr-care-route-notice,
+  .nursing-section-tabs {
+    display: none !important;
+  }
+}
+
+.session-host { position: relative !important; }
+
+.clinical-appbar.session-host {
+  min-height: 132px !important;
+  padding: 50px 20px 58px !important;
+}
+
+.clinical-appbar.session-host .clinical-brand {
+  position: relative;
+  z-index: 2;
+}
+
+#emr-session-control {
+  position: absolute;
+  z-index: 30;
+  inset: 14px 18px auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "spacer identity"
+    "nav nav";
+  gap: 10px 14px;
+  align-items: start;
+  pointer-events: none;
+  color: #fff;
+  font: 13px/1.4 "Khmer OS Battambang", "Noto Sans Khmer", "Kantumruy Pro", sans-serif;
+}
+
+#emr-session-control nav {
+  position: static;
+  grid-area: nav;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+  pointer-events: auto;
+  scrollbar-width: thin;
+}
+
+#emr-session-control nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 37px;
+  padding: 7px 12px;
+  border: 1px solid #ffffff70;
+  border-radius: 8px;
+  background: #ffffff16;
+  color: #effcff;
+  text-decoration: none;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: none;
+}
+
+#emr-session-control nav a:hover,
+#emr-session-control nav a.active {
+  border-color: #fff;
+  background: #fff;
+  color: var(--portal-ocean-900);
+  box-shadow: 0 3px 10px #06496532;
+}
+
+#emr-session-control .portal-identity {
+  position: static;
+  grid-area: identity;
+  justify-self: end;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 7px;
+  min-width: 0;
+  max-width: 100%;
+  pointer-events: auto;
+}
+
+#emr-session-control .portal-user-name {
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fff;
+  text-shadow: 0 1px 2px #06496566;
+}
+
+#emr-session-control .portal-role {
+  padding: 3px 8px;
+  border: 1px solid #ffffff82;
+  border-radius: 999px;
+  color: #effcff;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+#emr-session-control .portal-logout {
+  min-height: 34px !important;
+  margin: 0 !important;
+  padding: 6px 11px !important;
+  border: 1px solid #ffffffad !important;
+  border-radius: 8px !important;
+  background: #ffffff18 !important;
+  color: #fff !important;
+  cursor: pointer;
+  font: inherit !important;
+  font-weight: 700 !important;
+  box-shadow: none !important;
+  white-space: nowrap;
+}
+
+#emr-session-control .portal-logout:hover {
+  background: #fff !important;
+  color: var(--portal-ocean-900) !important;
+}
+
+#emr-session-control.session-control-fallback {
+  position: sticky;
+  inset: 0 0 auto;
+  width: 100%;
+  min-height: 92px;
+  padding: 12px;
+  background: linear-gradient(100deg, #075f81, #0c96bc);
+  pointer-events: auto;
+}
+
+
+@media print {
+  #emr-session-control { display: none !important; }
+}
+.portal-identity-copy{display:flex;flex-direction:column;line-height:1.2}.portal-account-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.portal-account-button{border:1px solid rgba(20,96,126,.22);background:#fff;color:#1b607b;border-radius:8px;padding:6px 9px;font:inherit;font-size:12px;text-decoration:none;cursor:pointer}.session-password-overlay{position:fixed;inset:0;background:rgba(8,31,41,.45);z-index:99999;display:grid;place-items:center;padding:20px}.session-password-overlay[hidden]{display:none}.session-password-dialog{width:min(460px,100%);background:#fff;border-radius:16px;padding:20px;box-shadow:0 18px 60px rgba(0,0,0,.25)}.session-password-dialog header{display:flex;justify-content:space-between;align-items:center;font-size:19px}.session-password-dialog header button{border:0;background:transparent;font-size:28px;cursor:pointer}.session-password-dialog label{display:block;font-weight:700;margin:12px 0}.session-password-dialog input{width:100%;border:1px solid #bcd5df;border-radius:9px;padding:10px;font:inherit;margin-top:5px}.session-password-save{width:100%;border:0;border-radius:9px;padding:11px;background:#1677a1;color:#fff;font:inherit;font-weight:700}.session-password-status{min-height:23px;color:#a42d2d;margin-bottom:8px}
+.emr-permission-hidden{display:none!important}.emr-permission-readonly{position:relative}.emr-permission-readonly input:disabled,.emr-permission-readonly select:disabled,.emr-permission-readonly textarea:disabled{background:#f5f8fa!important;color:#324a55!important;opacity:1!important}.emr-permission-readonly [contenteditable="false"]{background:#f5f8fa!important}.emr-permission-readonly::before{content:"Read only";display:inline-block;margin:0 0 8px;padding:3px 8px;border:1px solid #c6dce5;border-radius:999px;background:#f4fbfd;color:#496875;font-size:10px;font-weight:800}
+#emr-session-control .portal-build-version{color:#e9fbff;font-size:9px;font-weight:800;letter-spacing:.04em;opacity:.9}
+
+.home-hero.session-host,
+.patient-page-banner.session-host,
+.department-page-banner.session-host,
+.admin-banner.session-host,
+.lab-banner.session-host,
+.imaging-banner.session-host,
+.billing-banner.session-host,
+.finance-banner.session-host {
+  padding-top: 98px !important;
+}
+
+.lab-banner.session-host,
+.billing-banner.session-host,
+.finance-banner.session-host {
+  min-height: 170px;
+}
+
+#emr-session-control .portal-account-actions {
+  justify-content: flex-end;
+}
+
+#emr-session-control .portal-account-button,
+#emr-session-control .portal-logout {
+  box-shadow: 0 3px 12px rgba(5, 56, 76, 0.12);
+}
+
+@media (max-width: 980px) {
+  .home-hero.session-host,
+  .patient-page-banner.session-host,
+  .department-page-banner.session-host,
+  .admin-banner.session-host,
+  .lab-banner.session-host,
+  .imaging-banner.session-host,
+  .billing-banner.session-host,
+  .finance-banner.session-host {
+    padding-top: 122px !important;
+  }
+
+  #emr-session-control {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "identity"
+      "nav";
+    gap: 8px;
+  }
+
+  #emr-session-control .portal-identity {
+    width: 100%;
+    justify-self: stretch;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 760px) {
+  #emr-session-control { inset: 9px 10px auto; }
+  #emr-session-control .portal-user-name,
+  #emr-session-control .portal-role { display: none; }
+  #emr-session-control nav { gap: 4px; }
+  #emr-session-control nav a { min-height: 33px; padding: 5px 8px; font-size: 11px; }
+  #emr-session-control .portal-logout { min-height: 31px !important; padding: 4px 8px !important; }
+
+  .home-hero.session-host,
+  .patient-page-banner.session-host,
+  .department-page-banner.session-host,
+  .admin-banner.session-host,
+  .lab-banner.session-host,
+  .imaging-banner.session-host,
+  .billing-banner.session-host,
+  .finance-banner.session-host {
+    padding-top: 106px !important;
+  }
+}
+
+/* v0.9.4: navigation is deliberately isolated below the banner. */
+#emr-session-control{display:block!important;inset:12px 18px auto!important;width:auto!important;height:auto!important;pointer-events:none!important}
+#emr-session-control .portal-identity{position:static!important;display:flex!important;justify-content:flex-end!important;align-items:flex-start!important;pointer-events:auto!important}
+.portal-main-nav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0 16px;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;overflow-x:auto;scrollbar-width:thin;font:13px/1.4 "Khmer OS Battambang","Noto Sans Khmer","Kantumruy Pro",sans-serif}
+.portal-main-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 13px;border:0;border-radius:var(--emr-radius,9px);background:transparent;color:#075f82;text-decoration:none;font-weight:800;white-space:nowrap}
+.portal-main-nav a:hover,.portal-main-nav a.active{background:#0b789c;color:#fff;border-color:transparent;box-shadow:0 3px 9px rgba(7,95,130,.18)}
+.home-hero.session-host,.patient-page-banner.session-host,.department-page-banner.session-host,.admin-banner.session-host,.lab-banner.session-host,.imaging-banner.session-host,.billing-banner.session-host,.finance-banner.session-host{padding-top:74px!important}
+.clinical-appbar.session-host{padding-top:74px!important;padding-bottom:22px!important}
+@media(max-width:760px){#emr-session-control{inset:8px 10px auto!important}.portal-main-nav{margin:8px 0 12px;padding:0;gap:6px}.portal-main-nav a{min-height:35px;padding:6px 9px;font-size:11px}.home-hero.session-host,.patient-page-banner.session-host,.department-page-banner.session-host,.admin-banner.session-host,.lab-banner.session-host,.imaging-banner.session-host,.billing-banner.session-host,.finance-banner.session-host,.clinical-appbar.session-host{padding-top:62px!important}}
+@media print{.portal-main-nav{display:none!important}}
+
+.patient-history-overlay{position:fixed;inset:0;z-index:100060;background:rgba(7,40,53,.52);display:grid;place-items:center;padding:18px}.patient-history-dialog{width:min(1050px,100%);max-height:92vh;overflow:hidden;display:flex;flex-direction:column;background:#fff;border:1px solid #bddce7;border-radius:18px;box-shadow:0 24px 90px rgba(0,0,0,.28)}.patient-history-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid #dcebf0;background:linear-gradient(180deg,#f8fdff,#eef9fc)}.patient-history-dialog>header h2,.patient-history-dialog>header p{margin:0}.patient-history-dialog>header h2{color:#075f81}.patient-history-dialog>header p{margin-top:3px;color:#66818d;font-size:12px}.patient-history-dialog>header button{border:0;background:transparent;font-size:30px;cursor:pointer}.patient-history-content{padding:16px;overflow:auto;display:grid;gap:12px}.patient-history-encounter{border:1px solid #cfe4eb;border-radius:13px;background:#fff;overflow:hidden}.patient-history-encounter>header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#f7fcfe;border-bottom:1px solid #dfecef}.patient-history-encounter>header div>*{display:block}.patient-history-date{font-size:12px;font-weight:900;color:#0b89ae}.patient-history-encounter>header strong{color:#173f50}.patient-history-encounter>header small{margin-top:2px;color:#6c838e}.patient-history-encounter>header a{white-space:nowrap;padding:7px 10px;border-radius:8px;background:#0b89ae;color:#fff;text-decoration:none;font-weight:800}.patient-history-section{border-bottom:1px solid #edf3f5}.patient-history-section:last-child{border-bottom:0}.patient-history-section summary{cursor:pointer;padding:10px 14px;font-weight:800;color:#075f81}.patient-history-section summary span{float:right;border-radius:999px;background:#e8f5f9;padding:1px 7px;font-size:11px}.patient-history-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:0 14px 12px}.patient-history-fields>div{padding:8px 10px;border:1px solid #e2edf1;border-radius:8px;background:#fbfeff}.patient-history-fields strong,.patient-history-fields span{display:block}.patient-history-fields strong{font-size:11px;color:#647d88}.patient-history-fields span{margin-top:2px;white-space:pre-wrap;color:#173f50}.patient-history-loading,.patient-history-error{padding:30px;text-align:center;color:#66818d}.patient-history-error{color:#a32922}@media(max-width:700px){.patient-history-fields{grid-template-columns:1fr}.patient-history-encounter>header{align-items:flex-start;flex-direction:column}}
+
+.emr-esign-slot{min-width:240px}.emr-esign-content{margin-top:8px;min-height:70px}.emr-esign-stamp{display:inline-flex;min-width:220px;flex-direction:column;align-items:center;justify-content:center;padding:4px 12px 6px;color:#173f50}.emr-esign-stamp img{width:170px;height:54px;object-fit:contain;margin-bottom:2px}.emr-esign-stamp strong{font-size:13px;margin-bottom:2px}.emr-esign-line{width:100%;min-width:180px;border-bottom:1px solid #91adba;margin:3px 0 4px}.emr-esign-stamp small{font-size:10px;color:#617b87}.emr-esign-empty,.emr-esign-no-image{color:#78909a;font-size:11px;font-weight:600}.emr-nursing-esign{margin:22px 0 4px;padding:14px;border:1px solid #c7e0e9;border-radius:10px;background:#f9fdff;text-align:right}.emr-nursing-esign .emr-esign-content{display:flex;justify-content:flex-end}.emr-esign-label{font-weight:800;color:#174c60}@media print{.emr-esign-stamp{break-inside:avoid}.emr-esign-empty{display:none!important}.emr-nursing-esign{border:0;background:transparent;padding:8px 0}}
+
+
+/* v0.9.18: one consistent application banner on every protected page. */
+body .home-hero[data-session-host],
+body .patient-page-banner[data-session-host],
+body .department-page-banner[data-session-host],
+body .admin-banner[data-session-host],
+body .lab-banner[data-session-host],
+body .imaging-banner[data-session-host],
+body .billing-banner[data-session-host],
+body .finance-banner[data-session-host],
+body .expense-banner[data-session-host],
+body .triage-banner[data-session-host],
+body .clinical-appbar[data-session-host] {
+  position: relative !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 20px !important;
+  min-height: 168px !important;
+  margin: 0 !important;
+  padding: 76px 28px 24px !important;
+  overflow: hidden !important;
+  border: 1px solid #087fa8 !important;
+  border-radius: 18px !important;
+  background: linear-gradient(115deg,#075f81 0%,#087fa8 62%,#13a6c4 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 30px rgba(7,81,111,.13) !important;
+}
+
+body .home-hero[data-session-host] h1,
+body .patient-page-banner[data-session-host] h1,
+body .department-page-banner[data-session-host] h1,
+body .admin-banner[data-session-host] h1,
+body .lab-banner[data-session-host] h1,
+body .imaging-banner[data-session-host] h1,
+body .billing-banner[data-session-host] h1,
+body .finance-banner[data-session-host] h1,
+body .expense-banner[data-session-host] h1,
+body .triage-banner[data-session-host] h1,
+body .clinical-appbar[data-session-host] .clinical-brand-title {
+  margin: 0 !important;
+  max-width: min(980px, calc(100% - 120px)) !important;
+  color: #fff !important;
+  font-family: "Moul","Khmer OS Moul Light","Khmer OS Muol Light",serif !important;
+  font-size: clamp(27px, 3vw, 42px) !important;
+  font-weight: 400 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0 !important;
+  text-shadow: 0 2px 6px rgba(2,55,76,.18) !important;
+}
+
+body .home-hero[data-session-host] > div > p,
+body .patient-page-banner[data-session-host] .banner-copy > p,
+body .department-page-banner[data-session-host] .banner-copy > p,
+body .admin-banner[data-session-host] > div > p,
+body .lab-banner[data-session-host] .banner-kicker,
+body .lab-banner[data-session-host] .banner-subtitle,
+body .imaging-banner[data-session-host] .banner-kicker,
+body .imaging-banner[data-session-host] .banner-subtitle,
+body .billing-banner[data-session-host] > div > p,
+body .finance-banner[data-session-host] > div > p,
+body .expense-banner[data-session-host] > div > p,
+body .triage-banner[data-session-host] > div > p,
+body .clinical-appbar[data-session-host] .clinical-brand-subtitle {
+  display: none !important;
+}
+
+body .home-hero[data-session-host] > img,
+body .patient-page-banner[data-session-host] > img,
+body .department-page-banner[data-session-host] > img,
+body .admin-banner[data-session-host] > img,
+body .lab-banner[data-session-host] > img,
+body .imaging-banner[data-session-host] > img,
+body .billing-banner[data-session-host] > img,
+body .finance-banner[data-session-host] > img,
+body .expense-banner[data-session-host] > img,
+body .triage-banner[data-session-host] > img {
+  width: 76px !important;
+  height: 76px !important;
+  flex: 0 0 76px !important;
+  margin: 0 !important;
+  border: 4px solid rgba(255,255,255,.96) !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  background: #fff !important;
+  box-shadow: 0 8px 20px rgba(2,52,72,.18) !important;
+}
+
+body .clinical-appbar[data-session-host] .clinical-brand {
+  width: 100% !important;
+  display: flex !important;
+  align-items: flex-end !important;
+}
+body .clinical-appbar[data-session-host] .clinical-brand-mark {
+  position: absolute !important;
+  right: 28px !important;
+  bottom: 24px !important;
+  width: 76px !important;
+  height: 76px !important;
+  border: 4px solid rgba(255,255,255,.96) !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  box-shadow: 0 8px 20px rgba(2,52,72,.18) !important;
+}
+
+@media (max-width: 760px) {
+  body .home-hero[data-session-host],
+  body .patient-page-banner[data-session-host],
+  body .department-page-banner[data-session-host],
+  body .admin-banner[data-session-host],
+  body .lab-banner[data-session-host],
+  body .imaging-banner[data-session-host],
+  body .billing-banner[data-session-host],
+  body .finance-banner[data-session-host],
+  body .expense-banner[data-session-host],
+  body .triage-banner[data-session-host],
+  body .clinical-appbar[data-session-host] {
+    min-height: 142px !important;
+    padding: 62px 18px 18px !important;
+  }
+  body .home-hero[data-session-host] h1,
+  body .patient-page-banner[data-session-host] h1,
+  body .department-page-banner[data-session-host] h1,
+  body .admin-banner[data-session-host] h1,
+  body .lab-banner[data-session-host] h1,
+  body .imaging-banner[data-session-host] h1,
+  body .billing-banner[data-session-host] h1,
+  body .finance-banner[data-session-host] h1,
+  body .expense-banner[data-session-host] h1,
+  body .triage-banner[data-session-host] h1,
+  body .clinical-appbar[data-session-host] .clinical-brand-title {
+    max-width: calc(100% - 76px) !important;
+    font-size: clamp(22px, 7vw, 30px) !important;
+  }
+  body .home-hero[data-session-host] > img,
+  body .patient-page-banner[data-session-host] > img,
+  body .department-page-banner[data-session-host] > img,
+  body .admin-banner[data-session-host] > img,
+  body .lab-banner[data-session-host] > img,
+  body .imaging-banner[data-session-host] > img,
+  body .billing-banner[data-session-host] > img,
+  body .finance-banner[data-session-host] > img,
+  body .expense-banner[data-session-host] > img,
+  body .triage-banner[data-session-host] > img,
+  body .clinical-appbar[data-session-host] .clinical-brand-mark {
+    width: 58px !important;
+    height: 58px !important;
+    flex-basis: 58px !important;
+  }
+  body .clinical-appbar[data-session-host] .clinical-brand-mark { right:18px !important; bottom:18px !important; }
+}
+
+
+/* v0.9.20: single-line banner identity: large round logo at left, one Moul title at right. */
+body .home-hero[data-session-host],
+body .patient-page-banner[data-session-host],
+body .department-page-banner[data-session-host],
+body .admin-banner[data-session-host],
+body .lab-banner[data-session-host],
+body .imaging-banner[data-session-host],
+body .billing-banner[data-session-host],
+body .finance-banner[data-session-host],
+body .expense-banner[data-session-host],
+body .triage-banner[data-session-host],
+body .clinical-appbar[data-session-host] {
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 20px !important;
+  min-height: 166px !important;
+  padding: 66px 26px 18px !important;
+}
+
+body .home-hero[data-session-host] > img,
+body .patient-page-banner[data-session-host] > img,
+body .department-page-banner[data-session-host] > img,
+body .admin-banner[data-session-host] > img,
+body .lab-banner[data-session-host] > img,
+body .imaging-banner[data-session-host] > img,
+body .billing-banner[data-session-host] > img,
+body .finance-banner[data-session-host] > img,
+body .expense-banner[data-session-host] > img,
+body .triage-banner[data-session-host] > img {
+  order: 0 !important;
+  width: 88px !important;
+  height: 88px !important;
+  flex: 0 0 88px !important;
+}
+
+body .home-hero[data-session-host] > div,
+body .patient-page-banner[data-session-host] > .banner-copy,
+body .department-page-banner[data-session-host] > .banner-copy,
+body .admin-banner[data-session-host] > div,
+body .lab-banner[data-session-host] > .banner-copy,
+body .imaging-banner[data-session-host] > .banner-copy,
+body .billing-banner[data-session-host] > div,
+body .finance-banner[data-session-host] > div,
+body .expense-banner[data-session-host] > div,
+body .triage-banner[data-session-host] > div {
+  order: 1 !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+body .home-hero[data-session-host] h1,
+body .patient-page-banner[data-session-host] h1,
+body .department-page-banner[data-session-host] h1,
+body .admin-banner[data-session-host] h1,
+body .lab-banner[data-session-host] h1,
+body .imaging-banner[data-session-host] h1,
+body .billing-banner[data-session-host] h1,
+body .finance-banner[data-session-host] h1,
+body .expense-banner[data-session-host] h1,
+body .triage-banner[data-session-host] h1,
+body .clinical-appbar[data-session-host] .clinical-brand-title {
+  max-width: 100% !important;
+  width: 100% !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: clamp(22px, 2.15vw, 36px) !important;
+  line-height: 1.65 !important;
+  height: auto !important;
+  min-height: 1.8em !important;
+  padding: .12em .04em .16em !important;
+  margin-block: 0 !important;
+}
+
+body .clinical-appbar[data-session-host] .clinical-brand {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 20px !important;
+}
+body .clinical-appbar[data-session-host] .clinical-brand-mark {
+  position: static !important;
+  order: 0 !important;
+  width: 88px !important;
+  height: 88px !important;
+  flex: 0 0 88px !important;
+}
+body .clinical-appbar[data-session-host] .clinical-brand > div:last-child {
+  order: 1 !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+@media (max-width: 760px) {
+  body .home-hero[data-session-host],
+  body .patient-page-banner[data-session-host],
+  body .department-page-banner[data-session-host],
+  body .admin-banner[data-session-host],
+  body .lab-banner[data-session-host],
+  body .imaging-banner[data-session-host],
+  body .billing-banner[data-session-host],
+  body .finance-banner[data-session-host],
+  body .expense-banner[data-session-host],
+  body .triage-banner[data-session-host],
+  body .clinical-appbar[data-session-host] {
+    min-height: 132px !important;
+    padding: 60px 14px 14px !important;
+    gap: 12px !important;
+  }
+  body .home-hero[data-session-host] > img,
+  body .patient-page-banner[data-session-host] > img,
+  body .department-page-banner[data-session-host] > img,
+  body .admin-banner[data-session-host] > img,
+  body .lab-banner[data-session-host] > img,
+  body .imaging-banner[data-session-host] > img,
+  body .billing-banner[data-session-host] > img,
+  body .finance-banner[data-session-host] > img,
+  body .expense-banner[data-session-host] > img,
+  body .triage-banner[data-session-host] > img,
+  body .clinical-appbar[data-session-host] .clinical-brand-mark {
+    display: block !important;
+    width: 64px !important;
+    height: 64px !important;
+    flex: 0 0 64px !important;
+  }
+  body .home-hero[data-session-host] h1,
+  body .patient-page-banner[data-session-host] h1,
+  body .department-page-banner[data-session-host] h1,
+  body .admin-banner[data-session-host] h1,
+  body .lab-banner[data-session-host] h1,
+  body .imaging-banner[data-session-host] h1,
+  body .billing-banner[data-session-host] h1,
+  body .finance-banner[data-session-host] h1,
+  body .expense-banner[data-session-host] h1,
+  body .triage-banner[data-session-host] h1,
+  body .clinical-appbar[data-session-host] .clinical-brand-title {
+    font-size: clamp(18px, 4.8vw, 27px) !important;
+    line-height: 1.7 !important;
+    min-height: 1.9em !important;
+    padding-block: .14em .18em !important;
+  }
+  body .clinical-appbar[data-session-host] .clinical-brand { gap: 12px !important; }
+}
+/* The director reviews all modules. Clinical and financial changes still use
+   their own server-side role checks; hide editing controls in the review UI. */
+body.emr-director-view #charge-form,
+body.emr-director-view #payment-form,
+body.emr-director-view #profile-form,
+body.emr-director-view #toggle-profile,
+body.emr-director-view #balance-shortcuts,
+body.emr-director-view #toggle-partial-payment,
+body.emr-director-view #expense-form,
+body.emr-director-view #expenses-body .void-btn,
+body.emr-director-view #user-form,
+body.emr-director-view #esign-list [data-esign] { display:none!important; }
+
+/* v18.2: counter choice remains on the page, including narrow screens. */
+#emr-session-control .portal-counter-control{display:inline-flex;align-items:center;gap:7px;color:#1b607b;font-size:13px;font-weight:700}
+#emr-session-control .portal-counter-control select{width:auto;min-width:64px;min-height:36px;margin:0;padding:6px 10px;border:1px solid #8bbaca;border-radius:8px;background:#fff;color:#174c64;font:inherit;cursor:pointer}
+
+/* v18.5: one bell and message popup per account. */
+@font-face{font-family:NotificationKhmer;src:url('/public/fonts/Battambang-Regular.ttf') format('truetype');font-display:swap}
+.emr-notification-bell{position:relative;display:inline-flex!important;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;padding:9px!important;box-sizing:border-box;color:#075f81!important;background:#f1fbff!important;border:1px solid #9ed4e4!important;border-radius:12px!important;cursor:pointer;flex:none}
+.emr-notification-bell svg{width:24px!important;height:24px!important;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.emr-notification-bell strong{position:absolute;right:-7px;top:-7px;display:grid;place-items:center;min-width:22px;height:22px;padding:0 4px;border:2px solid #fff;border-radius:999px;box-sizing:border-box;background:#b42318;color:#fff;font:700 12px Arial,sans-serif!important;pointer-events:none}
+.emr-notification-bell strong[hidden]{display:none!important}
+.emr-notification-bell.has-notifications{border-color:#e4a460!important}
+.emr-notification-bell:focus-visible{outline:3px solid #25a9cf;outline-offset:3px}
+.emr-notification-dialog{box-sizing:border-box;width:min(820px,calc(100vw - 28px));max-height:88vh;margin:auto;padding:20px;border:1px solid #9fc7d9;border-radius:16px;background:#f7fcff;color:#153743;overflow:auto;font-family:NotificationKhmer,Arial,sans-serif;box-shadow:0 20px 70px #062d4640}
+.emr-notification-dialog::backdrop{background:#062d4680}
+.emr-notification-heading{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:14px}
+.emr-notification-heading h2{margin:0;font-size:21px;line-height:1.5}
+.emr-notification-heading button{flex:none;border:1px solid #a6cedc;border-radius:9px;padding:2px 11px;color:#075b73;background:#e5f4fc;font:28px Arial,sans-serif;cursor:pointer}
+.emr-notification-dialog [data-notification-source]+[data-notification-source]{margin-top:18px;padding-top:18px;border-top:1px solid #b7d8e6}
+@media(max-width:600px){.emr-notification-dialog{padding:14px}.emr-notification-heading h2{font-size:18px}}
+@media print{.emr-notification-bell,.emr-notification-dialog{display:none!important}}
+
+@font-face{font-family:BorkeoInterface;src:url('/public/fonts/Battambang-Regular.ttf') format('truetype');font-display:swap}
+/* v19.2 shared banner: a stable title and aligned identity on every staff page. */
+@media screen {
+ .emr-legacy-banner-copy{display:none!important}
+ body .emr-unified-banner.session-host{display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;min-height:0!important;width:100%!important;max-width:100%!important;padding:20px 24px!important;background:linear-gradient(120deg,#07536f,#0b9bbb)!important;border-radius:18px!important;color:#fff!important}
+ .emr-unified-brand{display:flex;flex:1 1 420px;align-items:center;gap:16px;min-width:0}
+ body .emr-unified-brand img{width:66px!important;height:66px!important;flex:0 0 66px;object-fit:contain;background:white;padding:4px;border-radius:50%}
+ body .emr-unified-brand h1{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;position:static!important;margin:0!important;min-width:0!important;color:#fff!important;font:700 clamp(18px,1.7vw,28px)/1.4 BorkeoInterface,"Battambang","Khmer OS Battambang",Arial,sans-serif!important;text-align:center!important;white-space:normal!important;overflow-wrap:anywhere}
+ body .emr-unified-brand h1 span{display:block!important;width:100%!important;text-align:center!important;margin:0!important;padding:0!important;line-height:1.4!important}
+ body .emr-unified-banner #emr-session-control{position:static!important;inset:auto!important;width:auto!important;max-width:100%!important;margin:0!important;padding:0!important;flex:0 1 auto}
+ body .emr-unified-banner .portal-identity{display:flex!important;flex-wrap:wrap;align-items:center!important;justify-content:flex-end;gap:12px!important;min-width:0}
+ body .emr-unified-banner .portal-identity-copy{align-self:center!important;min-width:0}
+ body .emr-unified-banner .portal-account-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px!important;margin:0!important}
+ body .emr-unified-banner .portal-user-name,body .emr-unified-banner .portal-counter-control,body .emr-unified-banner .portal-account-actions :is(button,a,span,select),body .portal-main-nav a{font:700 14px/1.65 BorkeoInterface,"Battambang","Khmer OS Battambang",Arial,sans-serif!important;letter-spacing:normal!important}
+ body .emr-unified-banner .portal-user-name,body .emr-unified-banner .portal-counter-control{color:#fff!important}
+ body .emr-unified-banner .portal-account-actions :is(button,a,select){min-height:42px!important;display:inline-flex!important;align-items:center;justify-content:center;border-radius:9px!important;padding:7px 12px!important;margin:0!important}
+ body .emr-unified-banner .portal-counter-control{display:flex;align-items:center;gap:8px}
+ body .emr-unified-banner .portal-counter-control select{color:#07536f!important;background:#fff!important}
+ body .emr-unified-banner .emr-notification-bell{width:42px!important;padding:8px!important}
+ body .emr-unified-banner .emr-notification-bell svg{width:23px;height:23px}
+ body .portal-main-nav{display:flex;flex-wrap:wrap;gap:7px;max-width:100%;overflow:visible;border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important}
+ .patient-id-link{display:inline-block;max-width:100%;padding:0;border:0;background:transparent;color:#087dff;font:inherit;font-weight:700;text-decoration:none;cursor:pointer;overflow-wrap:anywhere}
+ .patient-id-link:hover{color:#0556b3;text-decoration:underline}
+ .patient-id-link:focus-visible{outline:2px solid #087dff;outline-offset:2px;border-radius:2px}
+ .patient-new-record-dialog{width:min(480px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;padding:22px;border:1px solid #9ccddd;border-radius:16px;color:#153743;font-family:"Battambang",Arial,sans-serif}
+ .patient-new-record-dialog::backdrop{background:#073b5370}
+ .patient-new-record-dialog h2{margin:0 0 12px;font-size:18px;line-height:1.8}
+ .patient-new-record-dialog>div{display:flex;gap:10px;flex-wrap:wrap}
+ .patient-new-record-dialog button{min-height:42px;padding:9px 14px;border:1px solid #087e9f;border-radius:9px;font:inherit;font-weight:700;color:#fff;background:linear-gradient(#159cbd,#087e9f);cursor:pointer}
+ .patient-new-record-dialog [data-cancel-record]{color:#07536f;background:#eef7fa;border-color:#b5d9e6}
+}
+@media screen and (max-width:700px){
+ body .emr-unified-banner.session-host{padding:14px!important;gap:14px!important}
+ .emr-unified-brand{flex-basis:100%;gap:12px}
+ body .emr-unified-brand img{width:48px!important;height:48px!important;flex-basis:48px}
+ body .emr-unified-banner #emr-session-control{width:100%!important;flex-basis:100%}
+ body .emr-unified-banner .portal-identity{justify-content:flex-start!important}
+ body .emr-unified-banner .portal-account-actions{width:100%}
+}
+
+/* v19.3: one banner design; IDs keep page styles from overriding the shared UI. */
+@font-face{font-family:BorkeoBannerTitle;src:url('/public/fonts/Moul-Khmer.woff2') format('woff2');font-display:swap}
+@media screen{
+ body #emr-site-banner{box-sizing:border-box!important;position:relative!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:140px!important;height:auto!important;margin:0!important;padding:24px!important;border:1px solid #087fa8!important;border-radius:24px!important;background:linear-gradient(115deg,#075f81,#0b9bbb)!important;color:#fff!important;box-shadow:0 12px 30px #07516f21!important;overflow:visible!important;text-align:left!important;font:700 14px/1.65 BorkeoInterface,Arial,sans-serif!important}
+ body #emr-site-banner::before,body #emr-site-banner::after{display:none!important}
+ body #emr-site-banner .emr-unified-brand{display:flex!important;flex:1 1 580px!important;align-items:center!important;gap:20px!important;min-width:0!important;width:auto!important;max-width:100%!important;margin:0!important;padding:0!important}
+ body #emr-site-banner .emr-unified-brand img{position:static!important;width:72px!important;height:72px!important;max-width:72px!important;flex:0 0 72px!important;margin:0!important;padding:4px!important;object-fit:contain!important;background:#fff!important;border-radius:50%!important;transform:none!important;opacity:1!important}
+ body #emr-site-banner .emr-unified-brand h1{display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;position:static!important;flex:0 1 auto!important;width:auto!important;min-width:0!important;max-width:none!important;margin:0!important;padding:0!important;color:#0b7bb0!important;font:400 28px/1.4 BorkeoBannerTitle,"Khmer OS Moul Light",serif!important;letter-spacing:0!important;text-align:left!important;text-transform:none!important;text-shadow:none!important;white-space:normal!important;overflow-wrap:anywhere!important}
+ body #emr-site-banner .emr-unified-brand h1 span{display:block!important;width:100%!important;text-align:left!important;margin:0!important;padding:0!important;line-height:1.4!important}
+ body #emr-site-banner #emr-session-control{position:static!important;inset:auto!important;display:block!important;flex:0 1 auto!important;width:auto!important;max-width:100%!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;transform:none!important}
+ body #emr-site-banner #emr-session-control .portal-identity{display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:wrap!important;gap:12px!important;margin:0!important;padding:0!important}
+ body #emr-site-banner .portal-identity-copy{display:flex!important;align-items:center!important;margin:0!important;padding:0!important;min-width:0!important}
+ body #emr-site-banner .portal-user-name{margin:0!important;padding:0!important;color:#fff!important;max-width:240px!important;overflow-wrap:anywhere!important;font:700 14px/1.65 BorkeoInterface,Arial,sans-serif!important}
+ body #emr-site-banner .portal-account-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:wrap!important;gap:8px!important;margin:0!important;padding:0!important}
+ body #emr-site-banner .portal-account-actions :is(button,a){box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:42px!important;margin:0!important;padding:8px 12px!important;border:1px solid #abd8e5!important;border-radius:10px!important;color:#075f81!important;background:#f4fcff!important;text-decoration:none!important;font:700 14px/1.65 BorkeoInterface,Arial,sans-serif!important;letter-spacing:0!important;cursor:pointer!important}
+ body #emr-site-banner .portal-account-actions .portal-logout{background:transparent!important;color:#fff!important;border-color:#d2edf5!important}
+ body #emr-site-banner .portal-account-actions .emr-notification-bell{width:42px!important;min-width:42px!important;padding:8px!important}
+ body #emr-site-banner .portal-account-actions .emr-language-switch{display:none!important;align-items:center!important;gap:2px!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important}
+ body #emr-main-nav{display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:8px!important;margin:14px 0!important;padding:0!important;width:100%!important;max-width:100%!important;overflow:visible!important}
+ body #emr-main-nav .portal-counter-control{display:inline-flex!important;align-items:center!important;gap:8px!important;min-height:42px!important;max-width:100%!important;margin:0!important;padding:6px 12px!important;border:1px solid #afd4e0!important;border-radius:10px!important;color:#075f81!important;background:#eff9fc!important;font:700 14px/1.65 BorkeoInterface,Arial,sans-serif!important;white-space:normal!important}
+ body #emr-main-nav .portal-counter-control :is(span,select){font:inherit!important;color:inherit!important;letter-spacing:0!important}
+ body #emr-main-nav .portal-counter-control select{width:64px!important;min-width:64px!important;min-height:30px!important;margin:0!important;padding:2px 6px!important;border:1px solid #9bc7d6!important;border-radius:6px!important;background:white!important}
+}
+@media screen and (max-width:700px){
+ body #emr-site-banner{min-height:140px!important;gap:14px!important;padding:16px!important;border-radius:18px!important}
+ body #emr-site-banner .emr-unified-brand{flex-basis:100%!important;gap:12px!important}
+ body #emr-site-banner .emr-unified-brand img{width:48px!important;height:48px!important;max-width:48px!important;flex-basis:48px!important}
+ body #emr-site-banner .emr-unified-brand h1{font-size:20px!important;line-height:1.4!important;text-align:center!important}
+ body #emr-site-banner #emr-session-control{width:100%!important;flex-basis:100%!important}
+ body #emr-site-banner #emr-session-control .portal-identity,body #emr-site-banner .portal-account-actions{justify-content:flex-start!important}
+}
+@media print{#emr-site-banner,#emr-main-nav{display:none!important}}

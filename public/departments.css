@@ -1,0 +1,283 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  background: #eaf8fc;
+  color: #173f50;
+  font-family: "Khmer OS Battambang", "Noto Sans Khmer", "Kantumruy Pro", system-ui, sans-serif;
+}
+button, select, input { font: inherit; }
+.department-shell { width: min(1600px, calc(100% - 32px)); margin: 24px auto 48px; }
+.department-page-banner {
+  position: relative; display: flex; align-items: center; justify-content: space-between;
+  min-height: 178px; padding: 58px 34px 64px; overflow: hidden;
+  border: 1px solid #71c3d8; border-radius: 18px;
+  background: linear-gradient(110deg, #075c7c, #12a5c3); color: #fff;
+  box-shadow: 0 10px 28px #07516f20;
+}
+.banner-copy { position: relative; z-index: 2; }
+.banner-copy p { margin: 0 0 5px; color: #e3faff; font-weight: 700; }
+.banner-copy h1 { margin: 0; font-size: clamp(22px, 3.5vw, 36px); }
+.department-build-badge { display: inline-flex; margin-top: 9px; padding: 3px 9px; border: 1px solid #bdeaf4; border-radius: 999px; background: #ffffff20; color: #fff; font-size: 11px; font-weight: 900; }
+.department-page-banner img { width: 92px; height: 92px; margin-top: 16px; border: 4px solid #fff; border-radius: 50%; object-fit: cover; }
+.map-panel { margin-top: 20px; padding: 20px; border: 1px solid #aedbe8; border-radius: 16px; background: #f9fdff; box-shadow: 0 8px 25px #07516f12; }
+.map-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 16px; border-bottom: 2px solid #c4e5ef; }
+.map-toolbar h2 { margin: 0 0 4px; color: #075f81; }
+.map-toolbar p { margin: 0; color: #68838e; font-size: 13px; }
+.toolbar-actions, body .map-toolbar .toolbar-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: flex-end !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+}
+.ward-filter-label, body .map-toolbar .ward-filter-label {
+  display: grid !important;
+  min-width: 220px !important;
+  gap: 4px !important;
+  color: #315f70 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+}
+.ward-filter-label select, body .map-toolbar .ward-filter-label select {
+  min-height: 40px !important;
+  height: 40px !important;
+  padding: 7px 32px 7px 10px !important;
+  border: 1px solid #78bfd2 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: #075f81 !important;
+  font-weight: 800 !important;
+  box-sizing: border-box !important;
+}
+.button, body .map-toolbar .toolbar-actions > .button {
+  min-height: 40px !important;
+  height: 40px !important;
+  min-width: 140px !important;
+  flex: 0 0 auto !important;
+  padding: 8px 16px !important;
+  border: 1px solid #0b8eb4 !important;
+  border-radius: 8px !important;
+  background: #0b89ae !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  font-weight: 800 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+.button:hover, body .map-toolbar .toolbar-actions > .button:hover { filter: brightness(.96); }
+.button.secondary, body .map-toolbar .toolbar-actions > .button.secondary { background: #fff !important; color: #075f81 !important; }
+.button.success, body .map-toolbar .toolbar-actions > .button.success { border-color: #15803d !important; background: #15803d !important; color: #fff !important; }
+.button.small { min-height: 31px !important; height: auto !important; min-width: auto !important; padding: 5px 9px !important; font-size: 12px !important; }
+.button.danger { border-color: #c2410c !important; background: #fff7ed !important; color: #9a3412 !important; }
+.map-status { min-height: 0; margin: 12px 0; color: #166534; font-weight: 700; }
+.map-status:not(:empty) { padding: 9px 12px; border-radius: 8px; background: #f0fdf4; }
+.map-status[data-state="error"] { color: #991b1b; background: #fef2f2; }
+.map-status[data-state="dirty"] { color: #854d0e; background: #fefce8; }
+.map-layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(300px, 1fr); gap: 18px; min-height: 540px; }
+.department-grid { display: grid; grid-template-columns: repeat(2, minmax(300px, 1fr)); gap: 16px; align-content: start; }
+.department-card { overflow: hidden; border: 1px solid #b9dce7; border-radius: 14px; background: #fff; }
+.department-card > header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px; background: #eaf8fc; }
+.department-card h3 { margin: 0; color: #075f81; }
+.room-list { display: grid; gap: 10px; padding: 12px; }
+.room { padding: 10px; border: 1px solid #d6e8ee; border-radius: 10px; background: #f9fcfd; }
+.room > header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; color: #3c6271; font-weight: 800; }
+.bed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; }
+.bed { min-height: 104px; padding: 9px; border: 1px solid #7bc8dc; border-radius: 9px; background: #e7f9fd; color: #07516f; }
+.bed.occupied { border-color: #80bfd0; background: #f8fdff; color: #07516f; box-shadow: inset 4px 0 #0b8eb4; }
+.bed .bed-patient { margin: 6px 0; font-size: clamp(10px, 0.95vw, 12px); font-weight: 800; white-space: normal; overflow-wrap: anywhere; word-break: break-word; line-height: 1.2; }
+.bed .bed-state { margin-top: 7px; color: #428096; font-size: 11px; }
+.bed-actions { margin-top: 7px; }
+.patient-action-row, .transfer-row {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; margin-top: 7px;
+}
+.patient-action-row select, .transfer-row select {
+  min-width: 0; width: 100%; padding: 6px 7px; border: 1px solid #9ccbd7; border-radius: 7px;
+  background: #fff; color: #174b60; font-size: 11px;
+}
+.transfer-row[hidden] { display: none; }
+.empty-room { padding: 12px; color: #718b95; text-align: center; }
+.admission-sidebar { align-self: start; position: sticky; top: 12px; padding: 16px; border: 1px solid #b9dce7; border-radius: 14px; background: #fff; }
+.admission-sidebar > header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid #dcecef; }
+.admission-sidebar h2 { margin: 0; color: #075f81; font-size: 18px; }
+.count-badge { display: grid; min-width: 30px; height: 30px; padding-inline: 7px; place-items: center; border-radius: 999px; background: #0b89ae; color: #fff; font-weight: 800; }
+.pending-card { margin-top: 11px; padding: 12px; border: 1px solid #d8e8ed; border-radius: 10px; background: #f9fcfd; }
+.pending-card.assignment-focus { border: 2px solid #0b8cac; background: #edfaff; box-shadow: 0 0 0 4px rgba(11,140,172,.12); }
+.pending-card strong, .pending-card small { display: block; }
+.pending-card small { margin-top: 3px; color: #6c8791; }
+.pending-group { margin-top: 15px; padding-top: 8px; border-top: 1px solid #d9ebf0; }
+.pending-group:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.pending-group > h3 { margin: 0 0 4px; color: #0b6b89; font-size: 14px; }
+.assign-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 7px; margin-top: 10px; }
+.assign-row select { min-width: 0; padding: 7px; border: 1px solid #bcd7e0; border-radius: 7px; background: #fff; }
+.empty-pending { padding: 30px 8px; color: #6c8791; text-align: center; }
+@media (max-width: 1050px) {
+  .map-layout { grid-template-columns: 1fr; }
+  .admission-sidebar { position: static; }
+}
+@media (max-width: 760px) {
+  .department-shell { width: calc(100% - 18px); margin-top: 9px; }
+  .department-page-banner { min-height: 168px; padding-inline: 18px; }
+  .department-page-banner img { display: none; }
+  .map-panel { padding: 12px; }
+  .map-toolbar { align-items: flex-start; flex-direction: column; }
+  .toolbar-actions { justify-content: flex-start; }
+  .department-grid { grid-template-columns: 1fr; }
+}
+
+.bed-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin:7px 0;padding:7px;border:1px solid #d8e9ee;border-radius:7px;background:#fff;font-size:10px;color:#63808c}.bed-meta-grid span{min-width:0}.bed-meta-grid .wide{grid-column:1/-1}.bed-meta-grid b{display:block;overflow:hidden;text-overflow:ellipsis;color:#173f50;white-space:nowrap;font-size:10px}.payment-short{display:inline-block!important;padding:2px 6px;border-radius:999px;background:#fff3f1;color:#a32920;font-weight:900!important;white-space:nowrap}.payment-PAID{background:#eef9f3;color:#087447}.payment-NSSF{background:#eef8fc;color:#075f82}.payment-HEF_EQUITY,.payment-HEF_VULNERABLE{background:#f6f0ff;color:#674398}.payment-EXEMPT{background:#f2f5f6;color:#4c626d}.payment-DISCOUNT{background:#fff8e8;color:#835c09}.pending-mini-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.pending-mini-meta>span:not(.payment-short){padding:2px 6px;border-radius:999px;background:#eef8fb;color:#4a7181;font-size:10px}
+
+
+/* v0.9.20: occupied beds are compact by default and expand on click. */
+.bed.occupied{min-height:0;padding:0;overflow:hidden}
+.bed-summary{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border:0!important;background:transparent!important;color:#07516f!important;box-shadow:none!important;text-align:left;cursor:pointer}
+.bed-summary-copy{min-width:0;display:block!important;flex:1 1 auto}
+.bed-summary .bed-patient{display:block!important;margin:4px 0 0;min-width:0;white-space:nowrap;overflow:visible;font-size:11px;font-weight:900;color:#173f50;letter-spacing:-0.2px}
+.bed-toggle-icon{display:grid!important;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:999px;background:#e7f6fa;color:#087fa8;font-size:18px;font-weight:900;transition:transform .18s ease}
+.bed.expanded .bed-toggle-icon{transform:rotate(180deg)}
+.bed-details{padding:0 9px 9px;border-top:1px solid #e0edf1}
+.bed-details[hidden]{display:none!important}
+.bed.collapsed .bed-summary{padding-block:10px}
+
+.payment-PARTIAL{background:#fff8e8;color:#95640a}
+
+/* Numbered bed icons, with state text as well as color. */
+.management-map{grid-template-columns:1fr}.management-map .admission-sidebar{display:none}.bed-grid{grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px}.bed{padding:0!important;background:#eef7ff!important;border:2px solid #2587cc!important;border-radius:12px;overflow:hidden}.bed.occupied{background:#fff1f2!important;border-color:#ce4655!important}.bed-summary{min-height:86px;font:14px Battambang,sans-serif!important}.bed-picture{display:block;width:48px;flex:0 0 48px;color:#237fc2}.bed.occupied .bed-picture{color:#cc3548}.bed-picture svg{width:48px;height:40px;fill:currentColor}.bed-summary-copy strong,.bed-state{font-size:14px!important}.room>header{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.room>header>span{flex:1 1 160px}.room-editor{border:1px solid #c0d5e3;border-radius:14px;width:min(500px,88vw);padding:24px;max-height:90vh;overflow:auto;font-family:Battambang,sans-serif}.room-editor::backdrop{background:#17364b80}.room-editor label{display:block;margin:12px 0}.room-editor input,.room-editor select{display:block;width:100%;font:inherit;padding:8px;border:1px solid #abc3d1;border-radius:8px;box-sizing:border-box}.room-editor [data-error]{color:#b3273d}.bed-details{padding-top:10px}.bed-details>.button{margin-bottom:8px}@media(max-width:500px){.bed-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.bed-summary{gap:4px;padding:6px}.bed-picture{width:34px;flex-basis:34px}.bed-picture svg{width:34px}.bed-summary-copy{overflow-wrap:anywhere}.bed-patient{white-space:normal!important}}
+
+.bed-actions[hidden]{display:none!important}
+
+/* Spacious modal window for internal patient bed & room transfer */
+.bed-transfer-dialog {
+  width: min(640px, 94vw);
+  max-height: 90vh;
+  border: 2px solid #6cb5cb;
+  border-radius: 18px;
+  padding: 24px 28px;
+  background: #ffffff;
+  color: #173f50;
+  box-shadow: 0 20px 50px rgba(7, 81, 111, 0.25);
+  overflow-y: auto;
+  font-family: "Khmer OS Battambang", "Noto Sans Khmer", "Kantumruy Pro", system-ui, sans-serif;
+}
+.bed-transfer-dialog::backdrop {
+  background: rgba(7, 45, 60, 0.65);
+  backdrop-filter: blur(3px);
+}
+.bed-transfer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.bed-transfer-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #d4ebf2;
+}
+.bed-transfer-header-icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #e7f7fb;
+  color: #0b89ae;
+  flex-shrink: 0;
+}
+.bed-transfer-patient-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid #c2e2ec;
+  border-radius: 12px;
+  background: #f4fbfe;
+}
+.bed-transfer-meta-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.bed-transfer-meta-row .meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.bed-transfer-meta-row .meta-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #638592;
+}
+.bed-transfer-meta-row .meta-value {
+  font-size: 13px;
+  color: #173f50;
+}
+.bed-transfer-meta-row .meta-value.patient-highlight {
+  font-size: 15px;
+  font-weight: 900;
+  color: #075c7c;
+}
+.bed-transfer-meta-row .meta-value.current-loc {
+  font-weight: 800;
+  color: #a32920;
+}
+.bed-transfer-selection-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid #d0e7ee;
+  border-radius: 12px;
+  background: #ffffff;
+}
+.bed-transfer-selection-card .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bed-transfer-selection-card .label-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0d5f7c;
+}
+.bed-transfer-selection-card .dialog-select {
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1.5px solid #8ec8d7;
+  border-radius: 9px;
+  background: #fafdff;
+  color: #134658;
+  font-size: 14px;
+  font-weight: 700;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.bed-transfer-selection-card .dialog-select:focus {
+  border-color: #0b89ae;
+  box-shadow: 0 0 0 3px rgba(11, 137, 174, 0.2);
+}
+.bed-transfer-selection-card .transfer-note {
+  font-size: 12px;
+  color: #991b1b;
+  min-height: 14px;
+  font-weight: 700;
+}
+.bed-transfer-dialog .dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e0edf1;
+}
+.bed-transfer-dialog .dialog-actions .button {
+  min-height: 40px;
+  padding: 8px 20px;
+  font-size: 14px;
+}
+

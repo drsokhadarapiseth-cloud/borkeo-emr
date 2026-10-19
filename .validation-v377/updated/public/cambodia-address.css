@@ -1,0 +1,167 @@
+/* Borkeo EMR - Cambodia Address Searchable Dropdown Styling */
+.cambodia-address-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.cambodia-address-combobox {
+  position: relative;
+  width: 100%;
+}
+
+.cambodia-address-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1e293b;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+.cambodia-address-btn:hover:not(:disabled) {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 1px #0284c7;
+}
+
+.cambodia-address-btn:focus-visible {
+  outline: none;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.cambodia-address-btn:disabled {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.cambodia-address-btn .btn-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cambodia-address-btn .btn-text.placeholder {
+  color: #94a3b8;
+}
+
+.cambodia-address-btn .btn-chevron {
+  font-size: 11px;
+  color: #64748b;
+  transition: transform 0.2s ease;
+}
+
+.cambodia-address-combobox.open .btn-chevron {
+  transform: rotate(180deg);
+}
+
+.cambodia-address-popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 320px;
+}
+
+.cambodia-address-search-box {
+  padding: 8px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f8fafc;
+}
+
+.cambodia-address-search-input {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.cambodia-address-search-input:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+}
+
+.cambodia-address-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  overflow-y: auto;
+  max-height: 250px;
+}
+
+.cambodia-address-item {
+  padding: 8px 12px;
+  font-size: 13.5px;
+  color: #1e293b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: background 0.15s ease;
+}
+
+.cambodia-address-item:hover,
+.cambodia-address-item.highlighted {
+  background: #f0f9ff;
+  color: #0369a1;
+}
+
+.cambodia-address-item.selected {
+  background: #e0f2fe;
+  color: #0284c7;
+  font-weight: 600;
+}
+
+.cambodia-address-item .item-code {
+  font-size: 11px;
+  color: #64748b;
+  font-family: monospace;
+}
+
+.cambodia-address-status {
+  padding: 12px;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.cambodia-address-status.error {
+  color: #e11d48;
+}
+
+.address-code-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #e2e8f0;
+  color: #334155;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: monospace;
+  margin-left: 6px;
+}

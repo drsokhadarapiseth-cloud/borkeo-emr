@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200, user-scalable=yes">
+  <title>Medical Imaging</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Moul&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/public/ocean-theme.css">
+  <link rel="stylesheet" href="/public/emr-session.css?v=1200">
+  <link rel="stylesheet" href="/public/paraclinic-workspace.css?v=1620">
+  <link rel="stylesheet" href="/public/imaging.css?v=2520">
+  <script src="/public/emr-session.js?v=1970" defer></script>
+  <script src="/public/report-print.js?v=1771" defer></script>
+  <script src="/public/imaging.js?v=2520" defer></script>
+  <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+  <link rel="stylesheet" href="/public/paraclinic-print.css?v=1750">
+</head>
+<body data-paraclinic-print="imaging">
+<main class="imaging-shell paraclinic-shell">
+  <section class="imaging-banner paraclinic-banner" data-session-host>
+    <div class="banner-copy">
+      <h1>Medical Imaging</h1>
+      
+    </div>
+    <img src="/public/logo-hospital.jpg" alt="Hospital logo">
+  </section>
+
+  <!-- Row 1: Primary Modality Toolbar (Group Buttons with Sub-Dropdowns + Search + Refresh) -->
+  <section class="imaging-toolbar workspace-toolbar" aria-label="Imaging procedures and actions" data-language-exclude>
+    <div class="toolbar-filters" data-language-exclude>
+      <div class="imaging-groups-bar toolbar-group" id="imaging-groups-bar" data-language-exclude></div>
+      <a href="/imaging/films" class="group-btn-all group-btn-films" id="imaging-films-tab" role="button" data-language-exclude>Films & Materials</a>
+    </div>
+    <div class="toolbar-actions">
+      <input id="imaging-search" type="search" placeholder="Search patients or examinations">
+      <button id="imaging-refresh">Refresh</button>
+      <button id="imaging-catalog-manage" hidden>គ្រប់គ្រងសេវារូបភាព</button>
+    </div>
+  </section>
+
+  <!-- Row 2: Status Sub-tabs Bar -->
+  <section class="imaging-subtoolbar workspace-subtoolbar" aria-label="Imaging status sub-tabs">
+    <div class="img-status-tabs toolbar-group" id="imaging-status-subtabs">
+      <button class="active" data-status="">All Statuses</button>
+      <button data-status="URGENT">Urgent</button>
+      <button data-status="ORDERED">Waiting</button>
+      <button data-status="SCHEDULED">Scheduled</button>
+      <button data-status="RESULT_AVAILABLE">Reported</button>
+    </div>
+  </section>
+
+  <div id="imaging-status" class="workspace-status" role="status"></div>
+  <section class="imaging-layout workspace-layout">
+    <aside class="workspace-card">
+      <header class="workspace-card-header"><div><h2>Imaging Orders</h2><small>Select an order to complete the examination</small></div></header>
+      <div id="imaging-worklist" class="workspace-list"></div>
+    </aside>
+    <section class="workspace-card" data-paraclinic-report>
+      <header class="workspace-card-header"><div><h2>Report and Details</h2><small>Exam request, safety, report, and attachments</small></div></header>
+      <div id="imaging-detail" class="workspace-detail"><div class="empty">Select an Imaging Request</div></div>
+    </section>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,18 @@
+'use strict';
+(async function(){
+  const session=window.emrSession||await fetch('/api/auth/me',{credentials:'same-origin'}).then(r=>r.json());
+  const role=session?.user?.activeRole;if(!['REGISTRATION','ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(role))return;
+  const host=document.getElementById('page1');if(!host)return;const csrf=session.csrfToken||'';
+  const panel=document.createElement('section');panel.className='appointment-panel no-print';panel.innerHTML=`<header><div><h2>បញ្ជីអ្នកជំងឺណាត់ជួប</h2><p>Appointment patient list — call and open Registration quickly</p></div><label>ថ្ងៃណាត់<input type="date" data-date></label></header>
+    <form data-form><input name="patientName" placeholder="ឈ្មោះអ្នកជំងឺ" required><input name="phone" placeholder="លេខទូរស័ព្ទ"><input name="appointmentTime" type="time"><input name="reason" placeholder="មូលហេតុណាត់"><button type="submit">+ បន្ថែមការណាត់</button></form>
+    <div data-status></div><div class="appointment-list" data-list></div>`;
+  host.prepend(panel);const date=panel.querySelector('[data-date]'),form=panel.querySelector('[data-form]'),list=panel.querySelector('[data-list]'),status=panel.querySelector('[data-status]');
+  date.value=new Date().toISOString().slice(0,10);
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  async function api(url,opt={}){opt.credentials='same-origin';opt.headers={...(opt.headers||{}),...(opt.method?{'X-CSRF-Token':csrf}:{})};const r=await fetch(url,opt);const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||'Request failed');return d;}
+  async function load(){const d=await api(`/api/appointments?date=${encodeURIComponent(date.value)}`);list.innerHTML=(d.appointments||[]).map(a=>`<article class="appointment-row ${a.status.toLowerCase()}"><div><strong>${esc(a.appointmentTime||'—')} · ${esc(a.patientName)}</strong><small>${esc(a.phone||'')} ${a.reason?`· ${esc(a.reason)}`:''}</small></div><span>${esc(a.status)}</span><button type="button" data-call="${esc(a.id)}" data-patient="${esc(a.patientKey)}" data-name="${esc(a.patientName)}" data-phone="${esc(a.phone)}">ហៅ / Call</button></article>`).join('')||'<p class="appointment-empty">មិនមានអ្នកជំងឺណាត់ជួបនៅថ្ងៃនេះទេ។</p>';}
+  date.onchange=()=>load().catch(e=>status.textContent=e.message);
+  form.onsubmit=async e=>{e.preventDefault();try{const patient=window.getLoadedEmrPatient?.();await api('/api/appointments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({patientKey:patient?.patientKey||'',patientName:form.elements.patientName.value,phone:form.elements.phone.value,appointmentDate:date.value,appointmentTime:form.elements.appointmentTime.value,reason:form.elements.reason.value,departmentCode:'opd'})});form.reset();status.textContent='បានរក្សាទុកការណាត់ជួប។';await load();}catch(error){status.textContent=error.message;}};
+  list.onclick=async e=>{const b=e.target.closest('[data-call]');if(!b)return;try{await api(`/api/appointments/${b.dataset.call}/status`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'CALLED'})});if(b.dataset.patient){location.assign(`/emr?patient=${encodeURIComponent(b.dataset.patient)}&view=register`);return;}const names=String(b.dataset.name||'').trim().split(/\s+/);const first=document.getElementById('web_first_name'),last=document.getElementById('web_last_name'),phone=document.getElementById('web_phone');if(first)first.value=names.pop()||'';if(last)last.value=names.join(' ');if(phone)phone.value=b.dataset.phone||'';document.getElementById('web_adm_no')?.focus();await load();}catch(error){status.textContent=error.message;}};
+  await load();
+})().catch(console.error);

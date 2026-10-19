@@ -1,0 +1,374 @@
+
+:root{
+  --pc-ocean-900:#07516f;
+  --pc-ocean-800:#075f81;
+  --pc-ocean-700:#087fa8;
+  --pc-ocean-600:#0c96bc;
+  --pc-soft:#eaf8fc;
+  --pc-soft-2:#f8fdff;
+  --pc-border:#b9dce8;
+  --pc-line:#dcecf2;
+  --pc-text:#173f50;
+  --pc-muted:#66818d;
+  --pc-danger:#b42318;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#eaf8fc;
+  color:var(--pc-text);
+  font-family:"Khmer OS Battambang","Noto Sans Khmer","Kantumruy Pro",system-ui,sans-serif;
+}
+button,input,select,textarea{font:inherit}
+.paraclinic-shell{
+  width:min(1600px,calc(100% - 32px));
+  margin:24px auto 48px;
+  padding:0!important;
+  max-width:none!important;
+}
+.paraclinic-banner{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  min-height:178px!important;
+  padding:58px 34px 64px!important;
+  overflow:hidden;
+  border:1px solid #71c3d8!important;
+  border-radius:18px!important;
+  background:linear-gradient(110deg,#075c7c,#12a5c3)!important;
+  color:#fff!important;
+  box-shadow:0 10px 28px rgba(7,81,111,.13)!important;
+}
+.paraclinic-banner::after{
+  content:"";
+  position:absolute;
+  width:300px;height:300px;
+  right:-70px;bottom:-190px;
+  border-radius:50%;
+  background:rgba(255,255,255,.09);
+  pointer-events:none;
+}
+.paraclinic-banner .banner-copy{position:relative;z-index:2;min-width:0}
+.paraclinic-banner .banner-kicker{
+  margin:0 0 6px!important;
+  color:#def8ff!important;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.paraclinic-banner h1{
+  margin:0!important;
+  color:#fff!important;
+  font-size:clamp(25px,3.5vw,38px)!important;
+  line-height:1.35;
+}
+.paraclinic-banner .banner-subtitle{
+  display:block;
+  margin-top:8px!important;
+  color:#e5faff!important;
+  font-size:13px;
+  line-height:1.65;
+}
+.paraclinic-banner img{
+  position:relative;z-index:2;
+  width:92px!important;height:92px!important;
+  margin-top:16px;
+  border:4px solid #fff!important;
+  border-radius:50%!important;
+  object-fit:cover!important;
+  background:#fff;
+  box-shadow:0 8px 22px rgba(3,61,83,.16);
+}
+.paraclinic-badge{
+  display:inline-flex;
+  align-items:center;
+  margin-top:10px;
+  padding:4px 10px;
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:999px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+}
+.workspace-toolbar[hidden],
+[hidden].workspace-toolbar,
+.workspace-toolbar.is-hidden-toolbar,
+.film-field[hidden],
+.material-field[hidden],
+.medicine-field[hidden] {
+  display: none !important;
+}
+.workspace-toolbar:not([hidden]):not(.is-hidden-toolbar){
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  flex-wrap:nowrap!important;
+  gap:8px!important;
+  margin:0 0 16px!important;
+  padding:8px 12px!important;
+  border:1px solid var(--pc-border)!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  box-shadow:0 5px 16px rgba(7,81,111,.07)!important;
+  overflow-x:auto!important;
+  scrollbar-width:thin;
+}
+.workspace-toolbar .toolbar-filters{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:nowrap!important;
+  flex-shrink:0!important;
+}
+.workspace-toolbar .toolbar-actions{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:nowrap!important;
+  gap:6px!important;
+  margin-left:auto!important;
+  flex-shrink:0!important;
+}
+.workspace-toolbar .toolbar-group{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:nowrap!important;
+  gap:4px!important;
+}
+.workspace-toolbar .toolbar-group + .toolbar-group{
+  padding-left:8px;
+  border-left:1px solid var(--pc-line);
+}
+.workspace-subtoolbar{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:nowrap!important;
+  gap:6px!important;
+  margin:-6px 0 16px!important;
+  padding:6px 12px!important;
+  border:1px solid #c7e1ea!important;
+  border-radius:12px!important;
+  background:#f8fdff!important;
+  box-shadow:0 3px 10px rgba(7,81,111,.04)!important;
+  overflow-x:auto!important;
+}
+.workspace-subtoolbar .toolbar-group{
+  display:flex!important;
+  align-items:center!important;
+  flex-wrap:nowrap!important;
+  gap:4px!important;
+}
+.workspace-toolbar>button{
+  min-height:33px;
+  padding:5px 9px;
+  border:1px solid #78bfd2;
+  border-radius:8px;
+  background:#fff;
+  color:#075f81;
+  font-size:12.5px;
+  font-weight:700;
+  line-height:1.25;
+  white-space:nowrap;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:none;
+}
+.workspace-toolbar>button:hover{
+  background:#edf9fc;
+  border-color:#0b8eb4;
+}
+.workspace-toolbar>button.active{
+  background:#0b89ae;
+  border-color:#0b89ae;
+  color:#fff;
+}
+.workspace-toolbar input{
+  min-height:33px!important;
+  min-width:170px!important;
+  width:clamp(170px, 15vw, 240px)!important;
+  margin-left:0!important;
+  padding:5px 9px!important;
+  border:1px solid #9ccbd9!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:var(--pc-text)!important;
+  font-size:12.5px!important;
+}
+  outline:none;
+}
+.workspace-toolbar input:focus{border-color:#0b8eb4!important;box-shadow:0 0 0 3px rgba(11,142,180,.12)}
+.workspace-status{min-height:0;margin:0 0 12px;font-weight:700;color:#0b6b89}
+.workspace-status:not(:empty){padding:9px 12px;border:1px solid #c8e4ed;border-radius:9px;background:#f5fcfe}
+.workspace-layout{
+  display:grid!important;
+  grid-template-columns:minmax(320px,430px) minmax(0,1fr)!important;
+  gap:16px!important;
+  min-height:650px!important;
+}
+.workspace-card{
+  min-width:0;
+  overflow:hidden!important;
+  border:1px solid var(--pc-border)!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-shadow:0 7px 20px rgba(7,81,111,.06)!important;
+}
+.workspace-card-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:13px 15px;
+  border-bottom:1px solid var(--pc-line);
+  background:linear-gradient(180deg,#f7fdff,#edf9fc);
+}
+.workspace-card-header h2{
+  margin:0;
+  color:#075f81;
+  font-size:17px;
+}
+.workspace-card-header small{color:var(--pc-muted);font-size:11px}
+.workspace-list{
+  max-height:720px;
+  overflow:auto!important;
+  padding:8px!important;
+  background:#fbfeff!important;
+  border:0!important;
+  border-radius:0!important;
+}
+.workspace-detail{
+  min-height:650px;
+  overflow:auto!important;
+  padding:20px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:#fff!important;
+}
+.work-card{
+  margin:0 0 8px!important;
+  padding:13px!important;
+  border:1px solid #d5e8ee!important;
+  border-radius:11px!important;
+  background:#fff!important;
+  box-shadow:0 2px 8px rgba(7,81,111,.04)!important;
+  transition:border-color .15s ease,background .15s ease,transform .15s ease!important;
+}
+.work-card:last-child{margin-bottom:0!important}
+.work-card:hover{transform:translateY(-1px);border-color:#7cc3d6!important;background:#f7fdff!important}
+.work-card.active{border-color:#0b8eb4!important;background:#eaf8fc!important;box-shadow:inset 4px 0 #0b8eb4!important}
+.work-card.urgent{border-left:5px solid #c2410c!important}
+.detail-head{
+  padding-bottom:14px;
+  border-bottom:1px solid var(--pc-line);
+}
+.detail-head h2{color:#075f81!important}
+.badge{border-radius:999px!important;padding:4px 9px!important;font-weight:900!important}
+.badge.urgent{background:#fff2ef!important;color:#b42318!important;border:1px solid #efc0ba!important}
+.detail-actions button,
+.workspace-detail button{
+  min-height:38px;
+  padding:7px 12px;
+  border:1px solid #78bfd2;
+  border-radius:9px;
+  background:#fff;
+  color:#075f81;
+  font-weight:800;
+  cursor:pointer;
+}
+.detail-actions button:hover,.workspace-detail button:hover{background:#edf9fc}
+.detail-actions .primary,.workspace-detail .primary{background:#0b89ae!important;border-color:#0b89ae!important;color:#fff!important}
+.result-table,.report-grid{color:var(--pc-text)}
+.result-table th{background:#edf9fc!important;color:#315f70!important;font-size:12px}
+.result-table th,.result-table td{border-bottom:1px solid #e1edf1!important;padding:9px!important}
+.result-table input,.result-table select,.result-table textarea,.report-grid textarea{
+  border:1px solid #bcd7e0!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:#173f50!important;
+}
+.request-box,.warning,.released-banner,.released,.safety-banner,.schedule-banner,.performed-banner,.critical-banner,.rejected-banner{
+  border-radius:10px!important;
+}
+.empty-state,.empty{min-height:500px!important;color:#718b95!important}
+@media(max-width:1050px){
+  .workspace-layout{grid-template-columns:1fr!important}
+  .workspace-list{max-height:340px}
+}
+@media(max-width:760px){
+  .paraclinic-shell{width:calc(100% - 18px);margin-top:9px}
+  .paraclinic-banner{min-height:168px!important;padding-inline:18px!important}
+  .paraclinic-banner img{display:none}
+  .workspace-toolbar{align-items:stretch!important}
+  .workspace-toolbar .toolbar-group{width:100%}
+  .workspace-toolbar .toolbar-group + .toolbar-group{padding-left:0;border-left:0;border-top:1px solid var(--pc-line);padding-top:9px}
+  .workspace-toolbar input{width:100%!important;min-width:0!important;margin-left:0!important}
+  .workspace-detail{padding:14px!important}
+}
+@media print{
+  .paraclinic-banner,.workspace-toolbar,.workspace-card-header,.workspace-list,.workspace-status{display:none!important}
+  .paraclinic-shell{width:100%;margin:0}
+  .workspace-layout{display:block!important;min-height:0!important}
+  .workspace-card{border:0!important;box-shadow:none!important}
+  .workspace-detail{min-height:0;overflow:visible!important;padding:0!important}
+}
+
+/* v0.9.8: Lab and Imaging use the same ocean visual language as the main EMR home. */
+.paraclinic-shell{width:min(1480px,calc(100% - 32px));margin:28px auto 48px}
+.paraclinic-banner{
+  min-height:178px!important;
+  padding:64px clamp(24px,4vw,48px) 58px!important;
+  border:1px solid #87cadc!important;
+  border-radius:18px!important;
+  background:linear-gradient(115deg,#075f81 0%,#087fa8 62%,#13a6c4 100%)!important;
+  box-shadow:0 12px 30px rgba(7,81,111,.13)!important;
+}
+.paraclinic-banner h1{font:700 clamp(25px,3vw,40px)/1.45 "Moul","Khmer OS Muol Light",serif!important}
+.workspace-toolbar,.workspace-card{border-color:#b9dce8!important;border-radius:14px!important;background:#fff!important;box-shadow:0 5px 17px rgba(7,81,111,.07)!important}
+.workspace-card-header{background:#f8fdff!important}
+.workspace-list{background:#f8fdff!important}
+body{background:#eaf8fc!important}
+
+/* Paraclinic toolbar: single row compact layout without wrapping */
+.workspace-toolbar[hidden],[hidden].workspace-toolbar,.material-field[hidden],.film-field[hidden],.medicine-field[hidden],.is-hidden-toolbar,[hidden]{display:none!important}
+.workspace-toolbar:not([hidden]):not(.is-hidden-toolbar){display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
+.toolbar-filters{min-width:0;display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:4px!important}
+.toolbar-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:6px!important;flex-wrap:nowrap!important}
+.toolbar-actions input{margin-left:0!important;min-width:170px!important;max-width:240px!important}
+.toolbar-actions button{white-space:nowrap!important}
+.toolbar-group{gap:4px!important;display:flex!important;flex-wrap:nowrap!important}
+.extra-paraclinic-fee{margin:14px 0;padding:12px;border:1px solid #c4e2d0;border-radius:10px;background:#f2fbf5}.extra-paraclinic-fee h3,.extra-paraclinic-fee p{margin:0 0 7px}.extra-paraclinic-fee h3{color:#176445}.extra-paraclinic-fee p,.extra-paraclinic-fee small{color:#58766a;font-size:12px}.extra-paraclinic-fee>div{display:grid;grid-template-columns:minmax(0,1fr) 90px auto;gap:8px;align-items:center}.extra-paraclinic-fee select,.extra-paraclinic-fee input{min-width:0;width:100%;min-height:38px;border:1px solid #bfd8ca;border-radius:7px;padding:6px 8px;font:inherit}.extra-paraclinic-fee button{min-height:38px;border:0;border-radius:7px;padding:7px 12px;background:#148754;color:#fff;font-weight:800;cursor:pointer}.extra-paraclinic-fee button:disabled{opacity:.5}.extra-paraclinic-fee small{display:block;margin-top:7px}@media(max-width:650px){.extra-paraclinic-fee>div{grid-template-columns:1fr 1fr}.extra-paraclinic-fee select,.extra-paraclinic-fee button{grid-column:1/-1}}
+
+/* Unified Master-Detail 2-Column Layout for Lab & Imaging Orders */
+.master-detail-order-layout{display:grid;grid-template-columns:260px 1fr;gap:0;min-height:480px;max-height:580px;border:1px solid #cde3ec;border-radius:12px;overflow:hidden;background:#fff;margin:12px 0}
+.master-sidebar{background:#f6fbfd;border-right:1px solid #d4e7ef;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.sidebar-header{padding:10px 14px;font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#356376;border-bottom:1px solid #dcecf2;background:#eaf5f9}
+.sidebar-category-list{flex:1;overflow-y:auto;padding:8px 6px;display:flex;flex-direction:column;gap:3px}
+.sidebar-cat-btn{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;width:100%!important;padding:8px 12px!important;border:0!important;background:transparent!important;border-radius:8px!important;font-family:inherit!important;font-size:12.5px!important;font-weight:600!important;color:#1d4e60!important;text-align:left!important;cursor:pointer!important;transition:all .15s ease!important;min-height:36px!important;box-shadow:none!important}
+.sidebar-cat-btn:hover{background:#e5f3f7!important;color:#076383!important}
+.sidebar-cat-btn.active{background:#0c7fa6!important;color:#fff!important;font-weight:700!important;box-shadow:0 2px 6px rgba(12,127,166,.25)!important}
+.sidebar-cat-btn .cat-count-badge{font-size:11px;padding:2px 7px;border-radius:999px;background:#d7edf4;color:#11576f;font-weight:700}
+.sidebar-cat-btn.active .cat-count-badge{background:rgba(255,255,255,.25);color:#fff}
+.master-content-panel{display:flex;flex-direction:column;min-height:0;overflow:hidden;background:#fff}
+.content-panel-header{padding:10px 16px;background:#fafdfd;border-bottom:1px solid #eef5f8;display:flex;align-items:center;justify-content:space-between;font-weight:700;color:#185368;font-size:13.5px}
+.content-panel-header small{color:#648694;font-size:11.5px;font-weight:500}
+.lab-test-items-container{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:12px}
+.category-tests-block{border:1px solid #e2eff4;border-radius:9px;overflow:hidden;background:#fff}
+.category-block-header{padding:7px 12px;background:#f0f8fb;font-weight:700;font-size:12px;color:#165b73;border-bottom:1px solid #e2eff4}
+.category-block-grid{display:flex;flex-direction:column}
+.imaging-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;padding:14px;overflow-y:auto;flex:1}
+.imaging-modality-card{border:1px solid #cfe2eb;border-radius:12px;padding:14px;background:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:10px;transition:all .16s ease;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.imaging-modality-card:hover{border-color:#0c7fa6;transform:translateY(-2px);box-shadow:0 5px 15px rgba(12,127,166,.15)}
+.imaging-card-head{display:flex;align-items:flex-start;gap:10px}
+.imaging-card-icon{font-size:22px;line-height:1;background:#eff7fa;border-radius:8px;padding:6px}
+.imaging-card-titles strong{display:block;font-size:13px;color:#144e63}
+.imaging-card-titles small{display:block;color:#678996;font-size:11.5px;margin-top:2px}
+.imaging-card-group-badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:700;background:#e5f3f7;color:#135d77}
+.imaging-card-btn{width:100%;border-radius:8px;padding:8px 12px;background:#0c7fa6;color:#fff;border:0;font-weight:700;font-size:12px;cursor:pointer;transition:background .15s ease}
+.imaging-modality-card:hover .imaging-card-btn{background:#096685}
+@media(max-width:850px){.master-detail-order-layout{grid-template-columns:1fr}.master-sidebar{max-height:160px;border-right:0;border-bottom:1px solid #d4e7ef}}

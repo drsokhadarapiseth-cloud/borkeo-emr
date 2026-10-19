@@ -1,0 +1,953 @@
+BORKEO EMR v37.3 — FAST KH/EN LANGUAGE SWITCHING
+One file supports v37.1 OR v37.2 as the starting version.
+Contains actual tested code patches. Do not paste individual snippets over existing files.
+
+CONFIRMED CAUSE
+The language action was invoking clinical synchronization and full patient-context restoration in addition to translation. In the IPD module it re-filled registration/discharge/nursing forms, fetched payment data and reactivated the requested panel. Another record module re-ran treatment routing, which could dispatch specialty-form change events. The old language button also scheduled duplicate refreshes alongside the canonical language event. Bulk label replacements then generated more mutations for the translation observer to process.
+
+v37.3 FIXES
+- Language changes update displayed labels/header text without restoring saved patient data into unsaved forms or loading payment status.
+- Do not reopen/reselect OPD/IPD/nursing panels merely because the language changed; preserve the active specialty/view.
+- Run initialization synchronization once, rather than repeating department/field/nursing-order synchronization on every toggle. Real data-edit handlers remain intact.
+- A repeated selection of the currently active language does nothing. Legacy button and canonical KH/EN events share one scheduled refresh per module.
+- Only replace dictionary/static text and attributes if they changed. Pause the language observer during its own bulk translation, then resume observation even if translation fails. Permission observers and backend permissions remain intact.
+- Preserve per-workspace language selection, Khmer/English labels, patient fields, prescriptions, medication times, Triage transfer/Edit behavior, and current ward/location.
+- Includes all earlier v37.2 performance improvements if they are not installed, including smaller patient lists, unchanged-order redraw avoidance and non-empty demo-database protection.
+
+VERIFICATION
+24 focused checks passed: 6 language tests, 6 performance tests, and 12 phone-policy checks.
+Checks cover duplicate events, KH/EN round trips, initialization-only synchronization, unsaved clinical field preservation, no payment fetching from label-only context refresh, no language-driven care routing, and observer recovery after an error.
+Changed JavaScript/MJS and all 6 executable inline EMR scripts passed syntax checks.
+v37.2 full suite: 870 tests, 671 pass, 199 fail.
+v37.3 full suite: 876 tests, 677 pass, 199 fail. Identical failing names; no new failures. Existing stale release/UI assertions and other baseline issues remain; do not claim the full suite is green.
+Both installation paths (37.1 -> 37.2 -> 37.3 and 37.2 -> 37.3) passed patch checks, exact target-byte reconstruction and reverse checks.
+Tests used isolated synthetic databases and mocked DOM behavior. Actual Windows KH/EN timing and visual rendering still require a browser smoke check. No whole-site speed percentage is claimed.
+No uploaded patient databases/photos were opened, reset or replaced.
+
+ANTIGRAVITY JOB — APPLY THE TESTED UPDATE
+1. Open the CURRENT project root containing package.json and stop its npm server cleanly. Read its version first. Preserve all local patient databases/photos and current clinical workflows. Do not run demo resets/seeding or overwrite data files.
+2. If package version is 37.1.0, apply STAGE 1 below and then STAGE 2. If it is 37.2.0, skip STAGE 1 and apply STAGE 2 only. If it is already 37.3.0 with matching target files, do not reapply. If it is newer or semantically modified, preserve newer code and inspect the affected changes rather than forcing/downgrading it.
+3. Make a reversible source-code backup/commit. Check each stage's base SHA-256 manifest before applying. On Windows, line-ending-only differences may be resolved after comparing normalized source text; do not disregard semantic mismatches. New test files should be absent before their stage unless the same update is already installed.
+4. Extract text BETWEEN the relevant BEGIN STAGE N PATCH and END STAGE N PATCH markers, excluding the marker lines, into a UTF-8 stageN.diff. Use Node fs.readFileSync/writeFileSync so Khmer text and patch bytes remain intact; avoid old PowerShell Set-Content encoding defaults.
+5. For each required stage, run git apply --check stageN.diff, then git apply stageN.diff. Check target files. Do not use --force/--reject or overwrite divergent files. End at package 37.3.0 / displayed v37.3. Stage 1 has 13 source/test changes; Stage 2 has 9; neither contains patient data or database migrations.
+6. Run node --check server/server.mjs and the focused tests in a disposable synthetic copy:
+   node --test tests/v373-language-performance.test.mjs tests/v372-navigation-performance.test.mjs tests/v371-phone-policy.test.mjs
+   Existing full-suite failures are documented above; distinguish them from new failures. Do not execute destructive test fixtures against the user's database.
+7. Restart npm start, then Ctrl+F5. Test KH -> EN -> KH in Registration, Triage, OPD, IPD, Nursing and any currently open specialty form. Type an UNSAVED synthetic note, switch language twice and confirm it remains intact. The language change must preserve active tab, focus where possible, patient identity, current ward/bed and workflow status. No new invoice, transfer, queue entry or order may be generated.
+8. Check the browser Network panel: toggling language must not restore the patient record, fetch payment status because of a header translation, or re-open a specialty iframe. Labels should update promptly. Preserve real clinical-edit/save actions, medication calculation handlers, notifications and print behavior. Report any remaining slow page and actual timing without including patient data in logs.
+
+STAGE 1 MANIFEST — v37.1.0 TO v37.2.0 (SKIP IF ALREADY v37.2.0)
+[
+  {
+    "path": "package.json",
+    "base_sha256": "1258f9388a79bbecbd9c75c6628cec6adff3095d01f8d5a56975a402e681a6d2",
+    "target_sha256": "531778a1b974e28fddfad5af7347997107d90cc7d6e14e5d1b8df5ce39105b1c"
+  },
+  {
+    "path": "server/database.mjs",
+    "base_sha256": "66491aed811b6238057fa8f04c96ce3429ae099497fff098ba8e5c2765684770",
+    "target_sha256": "972bda27c2cafa7971f5f8b396dd2f09ffbf66bde91e56892a8a2bcd38426d9b"
+  },
+  {
+    "path": "server/server.mjs",
+    "base_sha256": "4012766cacaac21122523d9175969aa2f14a397f9c2919181aae0e8f245bb40e",
+    "target_sha256": "faa66ecdff06df95eff0a81bf1c4fab2e9cda496ac721f0787530fdca2efda55"
+  },
+  {
+    "path": "public/patient-list.js",
+    "base_sha256": "5597624606081bab8ebd11e7b5b651620c0c4136cf7dd0b2ec598a2ba01d252d",
+    "target_sha256": "b7322ef06791900b6dff11b356745dbf674c41d1dab77aa34e4e0bdfa1a62bdf"
+  },
+  {
+    "path": "public/paraclinic.js",
+    "base_sha256": "7d3a8933c1c67077168841b3a6d180601b7e4c308d9cd6e0f4f6ee59ab07ebac",
+    "target_sha256": "ee2fd54bad623f99b76937070d21cca3db511280bd4f89e570774e2de9b53ccc"
+  },
+  {
+    "path": "public/paraclinic.css",
+    "base_sha256": "91564c60356b772003c714aac305e22b5dea244b46c2c6bb52e165c72baa67b2",
+    "target_sha256": "f2399f6397b66a2e5a825b3e6f51c4c623d7b680a3ba66eb2b10b6a276d4fa7a"
+  },
+  {
+    "path": "public/login.html",
+    "base_sha256": "4c2aa027594018fd642ff777a90b7f3ef13e2c2a7cf85de441547c1530bb2b7d",
+    "target_sha256": "782cc03ad2128425a3701b3679baba7c7cea1b698c450e630a580ea1a785b0d2"
+  },
+  {
+    "path": "protected/patient-list.html",
+    "base_sha256": "10ad8e0004da728d125a20b4dc20505947124603a976f4a761b1dbeea4349177",
+    "target_sha256": "82dc1f69a754f387f401eec6752344f3b12ceb5672f615613b4d53e06a217c24"
+  },
+  {
+    "path": "protected/triage.html",
+    "base_sha256": "2160ef3e3f64d8c24352b9ed1377644b1dc2ff80ff5661cb9689e413509519f4",
+    "target_sha256": "3f15da8db23da23de78594744e0b8c6ca0649b92132820af773065d77690180b"
+  },
+  {
+    "path": "protected/EMR.html",
+    "base_sha256": "17b919d272fb797280a2c1e2e665fdb5c24b6619f672f446aeb9d59a44f852b1",
+    "target_sha256": "01fee0515c7d80629286a60c7b14ef7d2892ed2023b7d87bb03de7fbc5e60d3c"
+  },
+  {
+    "path": "tests/v363-speed-and-patient-summaries.test.mjs",
+    "base_sha256": "580fc94f8c1d91fc2050d31bdfe0fce7a684e9383f909d534780f60d46e52ac5",
+    "target_sha256": "e900fbbc6239a0e6e24e2ce31e3f015472c71cb29ee7f8064d8161f7ef9a8a20"
+  },
+  {
+    "path": "tests/v371-phone-policy.test.mjs",
+    "base_sha256": "6b41558aad0428f43c6721141ec8a4e63a81654633723f8d99fc14410f5ae2d8",
+    "target_sha256": "85f6900ab671c4fcbb9c0bfcc8a671ccce8474c4458207a30b4e4b7ada6d13fd"
+  },
+  {
+    "path": "tests/v372-navigation-performance.test.mjs",
+    "base_sha256": null,
+    "target_sha256": "e9bdeeac9fbf9a1aa3dccb85dd6dfcf5ee359df30ae6ef78efd2eb95dfb8fc2a"
+  }
+]
+
+BEGIN STAGE 1 PATCH
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "borkeo-emr",
+-  "version": "37.1.0",
++  "version": "37.2.0",
+   "private": true,
+   "type": "module",
+   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",
+diff --git a/server/database.mjs b/server/database.mjs
+--- a/server/database.mjs
++++ b/server/database.mjs
+@@ -167,6 +167,20 @@
+       equity_card, payment_type, department_code, department_name_kh,
+       department_name_en, service_mode, entry_date, discharge_date,
+       version, created_at, updated_at, record_json,
++      json_extract(record_json, '$."system:registrationQueueNumber"') as queue_num_1,
++      json_extract(record_json, '$."scope:registration:id:registration_queue_number"') as queue_num_2,
++      json_extract(record_json, '$."system:admissionStatus"') as admission_status,
++      json_extract(record_json, '$."system:triageStatus"') as triage_status,
++      json_extract(record_json, '$."system:triageCompletedAt"') as triage_completed_at
++      FROM patient_records
++      ORDER BY CASE WHEN entry_date = '' THEN 1 ELSE 0 END, entry_date DESC, updated_at DESC`),
++    listPatientListSummaries: sqlite.prepare(`SELECT id, patient_key, case_number, health_id,
++      first_name, last_name, full_name, sex, age, date_of_birth, phone,
++      equity_card, payment_type, department_code, department_name_kh,
++      department_name_en, service_mode, entry_date, discharge_date,
++      version, created_at, updated_at,
++      json_remove(record_json, '$."scope:registration:id:web_patient_photo"',
++        '$."scope:registration:id:patient_photo"', '$."system:patientPhoto"') AS record_json,
+       json_extract(record_json, '$."system:registrationQueueNumber"') as queue_num_1,
+       json_extract(record_json, '$."scope:registration:id:registration_queue_number"') as queue_num_2,
+       json_extract(record_json, '$."system:admissionStatus"') as admission_status,
+@@ -300,7 +314,9 @@
+       );
+     },
+     listPatients() { return statements.listPatients.all(); },
+-    listPatientSummaries() { return statements.listPatientSummaries.all(); },
++    listPatientSummaries({ omitPhotos = false } = {}) {
++      return (omitPhotos ? statements.listPatientListSummaries : statements.listPatientSummaries).all();
++    },
+     findPatient(patientKey) { return statements.findPatient.get(patientKey) ?? null; },
+     upsertPatient(record) {
+       const summary = record.summary;
+diff --git a/server/server.mjs b/server/server.mjs
+--- a/server/server.mjs
++++ b/server/server.mjs
+@@ -3,7 +3,7 @@
+ import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
+ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
+ import { createDiagnosisSearch } from './icd10.mjs';
+-// Borkeo EMR v37.1 - Electronic Medical Record System
++// Borkeo EMR v37.2 - Electronic Medical Record System
+ import {validateAddressHierarchy} from './gazetteer.mjs';
+ import {validateCambodianPhone} from './cambodia-phone.mjs';
+ import {PATIENT_PHOTO_FIELDS, validPatientPhoto} from './patient-photo.mjs';
+@@ -1773,7 +1773,8 @@
+   ensureEditorHistorySchema(database);
+   if (config.demoMode) {
+     const existingCount = database.sqlite.prepare('SELECT COUNT(*) count FROM patient_records').get()?.count || 0;
+-    if (existingCount !== 30) {
++    // Seed a new demo only; never reset existing patients when restarting.
++    if (existingCount === 0) {
+       resetAndSeedThirtyTriagePatients(database);
+     }
+   }
+@@ -3169,7 +3170,7 @@
+         const dispensedKeys = new Set(database.sqlite.prepare(`SELECT DISTINCT patient_key FROM pharmacy_prescriptions WHERE dispensed_at IS NOT NULL`).all().map(r => r.patient_key));
+         const role = requireContext(session);
+         return sendJson(response, 200, {
+-          patients: database.listPatientSummaries().map(row => {
++          patients: database.listPatientSummaries({ omitPhotos: url.searchParams.get('omitPhotos') === '1' }).map(row => {
+             const data = row._parsedData ?? (row._parsedData = parseStoredJson(row.record_json));
+             const patient = patientRecordResponse(row, false, data);
+             patient.queueNumber = Number(row.queue_num_1 || row.queue_num_2 || 0) || null;
+@@ -3188,7 +3189,7 @@
+         const role = requireContext(session);
+         if (!['ADMIN','VICE_DIRECTOR','DIRECTOR','TRIAGE'].includes(role)) return sendJson(response, 403, { error: 'Triage access is required.' }, { secure: config.cookieSecure });
+         const dispensedKeys = new Set(database.sqlite.prepare(`SELECT DISTINCT patient_key FROM pharmacy_prescriptions WHERE dispensed_at IS NOT NULL`).all().map(r => r.patient_key));
+-        const allPatients = database.listPatientSummaries().map(row => {
++        const allPatients = database.listPatientSummaries({ omitPhotos: url.searchParams.get('omitPhotos') === '1' }).map(row => {
+           const data = row._parsedData ?? (row._parsedData = parseStoredJson(row.record_json));
+           const patient = patientRecordResponse(row, false, data);
+           patient.queueNumber = Number(row.queue_num_1 || row.queue_num_2 || 0) || null;
+diff --git a/public/patient-list.js b/public/patient-list.js
+--- a/public/patient-list.js
++++ b/public/patient-list.js
+@@ -37,7 +37,7 @@
+ 
+   let language = (() => { try { return localStorage.getItem('borkeo-emr-language') === 'en' ? 'en' : 'kh'; } catch { return 'kh'; } })();
+   const triageToday = Boolean(document.querySelector('[data-patient-list-mode="triage-today"]'));
+-  const patientsUrl = triageToday ? '/api/triage/queue' : '/api/patients?includePayment=1';
++  const patientsUrl = triageToday ? '/api/triage/queue?omitPhotos=1' : '/api/patients?includePayment=1&omitPhotos=1';
+   let patients = [];
+   let csrfToken = '';
+   let activeRole = (() => { try { return String(window.emrSession?.user?.activeRole || window.sessionStorage?.getItem('borkeo-active-role') || '').toUpperCase(); } catch { return ''; } })();
+@@ -312,7 +312,14 @@
+     ensureAdmissionPanel();
+   }
+ 
++  let patientRequestGeneration = 0;
++  let refreshInFlight = false;
++  let patientLoads = 0;
++  let lastPatientSnapshot = null;
++
+   async function loadPatients() {
++    ++patientLoads;
++    const generation = ++patientRequestGeneration;
+     showStatus(text('loading'));
+     try {
+       const sessionPromise = session();
+@@ -323,7 +330,9 @@
+       const response = await patientsPromise;
+       if (!response.ok) throw new Error('សំណើមិនបានជោគជ័យ');
+       const result = await response.json();
++      if (generation !== patientRequestGeneration) return;
+       patients = (triageToday ? result.completed : result.patients) || [];
++      lastPatientSnapshot = JSON.stringify(patients);
+       showStatus('');
+       renderDepartmentFilter();
+       renderPaymentFilter();
+@@ -331,19 +340,27 @@
+       if (!triageToday && ['ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(activeRole)) void loadAdmissionApprovals();
+     } catch (error) {
+       console.error(error);
+-      showStatus(text('loadError'), 'error');
+-    }
++      if (generation === patientRequestGeneration) showStatus(text('loadError'), 'error');
++    } finally { --patientLoads; }
+   }
+ 
+   async function refreshPaymentStatuses() {
+-    if(document.visibilityState==='hidden' || document.activeElement?.matches('[data-date-field]'))return;
++    if(patientLoads || refreshInFlight || document.hidden || document.activeElement?.matches('[data-date-field]'))return;
++    refreshInFlight = true;
++    const generation = ++patientRequestGeneration;
+     try {
+       const response=await fetch(patientsUrl,{credentials:'same-origin',cache:'no-store'});
+       if(!response.ok)return;
+       const result=await response.json();
+-      patients=(triageToday ? result.completed : result.patients) || [];
++      if(generation !== patientRequestGeneration || document.hidden || document.activeElement?.matches('[data-date-field]'))return;
++      const nextPatients=(triageToday ? result.completed : result.patients) || [];
++      const snapshot=JSON.stringify(nextPatients);
++      if(snapshot === lastPatientSnapshot)return;
++      patients=nextPatients;
++      lastPatientSnapshot=snapshot;
+       renderDepartmentFilter();renderPaymentFilter();renderTable();
+     } catch(error){console.warn('Unable to refresh patient list.',error);}
++    finally { refreshInFlight = false; }
+   }
+ 
+   async function updateDates(input) {
+@@ -353,6 +370,7 @@
+     const entryDate = row.querySelector('[data-date-field="entryDate"]').value;
+     const previousEntryDate = patient.entryDate;
+     input.disabled = true;
++    ++patientRequestGeneration; // Ignore a pre-edit poll that completes after this save.
+     try {
+       const response = await fetch('/api/patient-dates', {
+         method: 'PATCH', credentials: 'same-origin',
+@@ -362,6 +380,7 @@
+       const result = await response.json().catch(() => ({}));
+       if (!response.ok) throw new Error(result.error || 'សំណើមិនបានជោគជ័យ');
+       Object.assign(patient, result.patient);
++      lastPatientSnapshot = null;
+       showStatus(text('saved'));
+       renderTable();
+       if (!triageToday && ['ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(activeRole)) void loadAdmissionApprovals();
+diff --git a/public/paraclinic.js b/public/paraclinic.js
+--- a/public/paraclinic.js
++++ b/public/paraclinic.js
+@@ -358,12 +358,24 @@
+     }).join(' • ');
+   }
+ 
++  let refreshRequest = null;
++  const renderedOrderSnapshots = new WeakMap();
+   async function refresh() {
+     if (!patient?.patientKey || !panels.length) return;
++    const requestedPatient = patient;
++    const requestedKey = patient.patientKey;
++    if (refreshRequest?.patient === requestedPatient) {
++      refreshRequest.again = true;
++      return refreshRequest.promise;
++    }
++    const request = { patient: requestedPatient, again: false };
++    refreshRequest = request;
++    request.promise = (async () => {
+     try {
+-      const data = await json(`/api/paraclinic/orders?patientKey=${encodeURIComponent(patient.patientKey)}`);
++      const data = await json(`/api/paraclinic/orders?patientKey=${encodeURIComponent(requestedKey)}`);
+       const allOrders = data.orders || [];
+       if (!catalog && allOrders.some(order => order.modality === 'LAB')) await getCatalog();
++      if (patient !== requestedPatient || patient?.patientKey !== requestedKey) return;
+       if (isPrePaymentOpdReview()) currentOrders = allOrders.filter(order => order.status === 'PAYMENT_PENDING');
+       else currentOrders = isWardNursingRole() ? allOrders.filter(order => order.modality === 'LAB') : allOrders;
+       const newCount = isWardNursingRole()
+@@ -371,7 +383,9 @@
+         : currentOrders.filter(order => order.releasedAt && !order.reviewedAt).length;
+       const criticalCount = currentOrders.filter(order => order.hasCritical && !order.criticalAckAt).length;
+       const rejectedCount = currentOrders.filter(order => order.modality === 'LAB' && order.status === 'REJECTED').length;
++      const snapshot = JSON.stringify([requestedKey, currentOrders, user?.id, user?.activeRole, window.getBorkeoLanguage?.()]);
+       for (const panel of panels) {
++        if (renderedOrderSnapshots.get(panel) === snapshot) continue;
+         const summary = panel.querySelector('[data-summary]');
+         summary.innerHTML = `${pendingBanner(currentOrders)}${rejectedCount ? `<span class="panel-count rejected">${rejectedCount} Rejected</span>` : ''}${newCount ? `<span class="panel-count new">${newCount} New</span>` : ''}${criticalCount ? `<span class="panel-count critical">${criticalCount} Critical</span>` : ''}${!newCount && !criticalCount && !rejectedCount ? '<span class="panel-count">មិនមានការជូនដំណឹងថ្មី</span>' : ''}`;
+         const box = panel.querySelector('[data-recent]');
+@@ -394,8 +408,15 @@
+           ${['PAYMENT_PENDING','ORDERED'].includes(order.status) && (['ADMIN','VICE_DIRECTOR'].includes(user?.activeRole) || (user?.activeRole === 'DOCTOR' && order.requestedBy === user?.id)) ? `<button type="button" class="delete-paraclinic" data-delete-order="${esc(order.id)}">Delete</button>` : ''}
+         </div>`;
+         }).join('') || '<div class="paraclinic-order"><small>No orders yet.</small></div>';
++        renderedOrderSnapshots.set(panel, snapshot);
+       }
+     } catch (error) { console.warn(error); }
++    finally {
++      if (refreshRequest === request) refreshRequest = null;
++      if (request.again && patient === requestedPatient && !document.hidden) void refresh();
++    }
++    })();
++    return request.promise;
+   }
+ 
+   function modal(title, body, customCardClass = '') {
+diff --git a/public/paraclinic.css b/public/paraclinic.css
+--- a/public/paraclinic.css
++++ b/public/paraclinic.css
+@@ -48,11 +48,13 @@
+ /* v30.5 Authentic Borkeo Hospital Laboratory Request Form & Clean Modality Badges */
+ @font-face {
+   font-family: 'Moul';
++  font-display: swap;
+   src: url('/public/fonts/Moul-Khmer.woff2') format('woff2');
+   unicode-range: U+1780-17FF, U+19E0-19FF, U+200C-200D, U+25CC;
+ }
+ @font-face {
+   font-family: 'Moul';
++  font-display: swap;
+   src: url('/public/fonts/Moul-Latin.woff2') format('woff2');
+   unicode-range: U+0000-00FF;
+ }
+diff --git a/public/login.html b/public/login.html
+--- a/public/login.html
++++ b/public/login.html
+@@ -31,7 +31,7 @@
+         </div>
+         <div class="header-meta">
+           <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
+-          <span class="login-build-version" data-app-version data-language-exclude>v37.1</span>
++          <span class="login-build-version" data-app-version data-language-exclude>v37.2</span>
+         </div>
+       </header>
+ 
+diff --git a/protected/patient-list.html b/protected/patient-list.html
+--- a/protected/patient-list.html
++++ b/protected/patient-list.html
+@@ -7,7 +7,7 @@
+   <link rel="stylesheet" href="/public/emr-session.css?v=1200">
+   <link rel="stylesheet" href="/public/patient-list.css?v=1770">
+   <script src="/public/emr-session.js?v=1970" defer></script>
+-  <script src="/public/patient-list.js?v=3710" defer></script>
++  <script src="/public/patient-list.js?v=3720" defer></script>
+   <script src="/public/appointment-list.js?v=1920" defer></script>
+   <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+ </head>
+diff --git a/protected/triage.html b/protected/triage.html
+--- a/protected/triage.html
++++ b/protected/triage.html
+@@ -11,7 +11,7 @@
+   <script src="/public/triage.js?v=4" defer></script>
+   <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+   <link rel="stylesheet" href="/public/patient-list.css?v=1810">
+-  <script src="/public/patient-list.js?v=3710" defer></script>
++  <script src="/public/patient-list.js?v=3720" defer></script>
+ </head>
+ <body>
+ <main class="triage-shell">
+diff --git a/protected/EMR.html b/protected/EMR.html
+--- a/protected/EMR.html
++++ b/protected/EMR.html
+@@ -6,7 +6,7 @@
+     <meta name="viewport" content="width=1200, user-scalable=yes">
+     <title>Borkeo Referral Hospital EMR</title>
+     <link rel="preload" href="/public/fonts/Battambang-Regular.ttf" as="font" type="font/ttf" crossorigin>
+-    <link rel="stylesheet" href="/public/paraclinic.css?v=2900">
++    <link rel="stylesheet" href="/public/paraclinic.css?v=3720">
+     <link rel="stylesheet" href="/public/cambodia-address.css?v=2910">
+     <link rel="stylesheet" href="/public/nationalities.css?v=3500">
+     <link rel="stylesheet" href="/public/editor-history.css?v=1">
+@@ -76,9 +76,6 @@
+     </style>
+ 
+     <!-- ================= AUTO FONT LOADER ================= -->
+-    <link rel="preconnect" href="https://fonts.googleapis.com">
+-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+-    <link href="https://fonts.googleapis.com/css2?family=Moul&display=swap" rel="stylesheet">
+ 
+     <!-- ================= FONT AWESOME FOR ICONS ================= -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+@@ -22156,7 +22153,8 @@
+   function updatePatient() {
+     frames.forEach(frame => {
+       const label = frame.contentDocument?.getElementById('opd-patient-context');
+-      if (label) label.textContent = patientText();
++      const text = patientText();
++      if (label && label.textContent !== text) label.textContent = text;
+     });
+   }
+   function show() {
+@@ -22502,7 +22500,7 @@
+     <script src="/public/cambodia-phone.js?v=3710"></script>
+     <script src="/public/emr-inpatient-workflow.js?v=3710"></script>
+     <script src="/public/emr-patient-record.js?v=3710"></script>
+-    <script src="/public/paraclinic.js?v=3090"></script>
++    <script src="/public/paraclinic.js?v=3720"></script>
+     <script src="/public/emr-session.js?v=1970"></script>
+     <script src="/public/emr-permissions.js?v=3710"></script>
+ 
+diff --git a/tests/v363-speed-and-patient-summaries.test.mjs b/tests/v363-speed-and-patient-summaries.test.mjs
+--- a/tests/v363-speed-and-patient-summaries.test.mjs
++++ b/tests/v363-speed-and-patient-summaries.test.mjs
+@@ -64,13 +64,13 @@
+ 
+   // /api/patients uses listPatientSummaries
+   assert.ok(
+-    serverCode.includes('database.listPatientSummaries().map(row => {'),
++    serverCode.includes("database.listPatientSummaries({ omitPhotos: url.searchParams.get('omitPhotos') === '1' }).map(row => {"),
+     'GET /api/patients must use database.listPatientSummaries() for zero-overhead summaries'
+   );
+ 
+   // /api/triage/queue uses listPatientSummaries
+   assert.ok(
+-    serverCode.includes('const allPatients = database.listPatientSummaries().map(row => {'),
++    serverCode.includes("const allPatients = database.listPatientSummaries({ omitPhotos: url.searchParams.get('omitPhotos') === '1' }).map(row => {"),
+     'GET /api/triage/queue must use database.listPatientSummaries() for fast triage queue loading'
+   );
+ });
+diff --git a/tests/v371-phone-policy.test.mjs b/tests/v371-phone-policy.test.mjs
+--- a/tests/v371-phone-policy.test.mjs
++++ b/tests/v371-phone-policy.test.mjs
+@@ -13,13 +13,13 @@
+ 
+ test('v37.1 - Version metadata consistency across package.json, login.html, server.mjs, and HTML templates', () => {
+   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+-  assert.equal(pkg.version, '37.1.0');
++  assert.ok(['37.1.0', '37.2.0'].includes(pkg.version));
+ 
+   const loginHtml = fs.readFileSync(path.join(ROOT, 'public', 'login.html'), 'utf8');
+-  assert.ok(loginHtml.includes('v37.1'), 'login.html must contain v37.1');
++  assert.ok(loginHtml.includes('v' + pkg.version.split('.').slice(0,2).join('.')), 'login.html must contain v37.1');
+ 
+   const serverMjs = fs.readFileSync(path.join(ROOT, 'server', 'server.mjs'), 'utf8');
+-  assert.ok(serverMjs.includes('Borkeo EMR v37.1'), 'server.mjs must contain Borkeo EMR v37.1');
++  assert.ok(serverMjs.includes('Borkeo EMR v' + pkg.version.split('.').slice(0,2).join('.')), 'server.mjs must contain Borkeo EMR v37.1');
+ 
+   const emrHtml = fs.readFileSync(path.join(ROOT, 'protected', 'EMR.html'), 'utf8');
+   assert.ok(emrHtml.includes('/public/cambodia-phone.js?v=3710'), 'EMR.html must load cambodia-phone.js');
+diff --git a/tests/v372-navigation-performance.test.mjs b/tests/v372-navigation-performance.test.mjs
+new file mode 100644
+--- /dev/null
++++ b/tests/v372-navigation-performance.test.mjs
+@@ -0,0 +1,83 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import vm from 'node:vm';
++import { createEmrServer } from '../server/server.mjs';
++
++test('compact lists preserve non-photo fields, access flags and stored photos', async () => {
++ const app=createEmrServer({demoMode:true,databasePath:':memory:',port:0,nodeEnv:'test'});
++ await new Promise(r=>app.server.listen(0,'127.0.0.1',r));
++ const origin='http://127.0.0.1:'+app.server.address().port;app.config.appOrigin=origin;
++ try {
++  const photo='data:image/jpeg;base64,'+Buffer.concat([Buffer.from([255,216,255]),Buffer.alloc(48000,42)]).toString('base64');
++  for(const row of app.database.listPatients()) {
++   const data=JSON.parse(row.record_json);
++   for(const key of ['scope:registration:id:web_patient_photo','scope:registration:id:patient_photo','system:patientPhoto'])data[key]=photo;
++   app.database.sqlite.prepare('UPDATE patient_records SET record_json=? WHERE patient_key=?').run(JSON.stringify(data),row.patient_key);
++  }
++  const before=app.database.listPatients();
++  for(const username of ['admin','triage']) {
++   const login=await fetch(origin+'/api/auth/login',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({username})});
++   assert.equal(login.status,200);const Cookie=login.headers.get('set-cookie').split(';')[0];
++   for(const url of ['/api/patients?includePayment=1','/api/triage/queue?counter=1']) {
++    const full=await fetch(origin+url,{headers:{Cookie}});const fullText=await full.text();assert.equal(full.status,200);
++    const compact=await fetch(origin+url+'&omitPhotos=1',{headers:{Cookie}});const compactText=await compact.text();assert.equal(compact.status,200);
++    assert.equal(compact.headers.get('cache-control'),'no-store');
++    const expected=JSON.parse(fullText);for(const key of ['patients','waiting','completed'])for(const p of expected[key]||[])p.photo='';
++    assert.deepEqual(JSON.parse(compactText),expected);
++    assert.ok(compactText.length < fullText.length/2);
++    if(username==='admin' && url.startsWith('/api/patients'))console.log('Synthetic 30-patient list bytes:',Buffer.byteLength(fullText),'->',Buffer.byteLength(compactText));
++   }
++   const record=await(await fetch(origin+'/api/patient-record?patientKey='+encodeURIComponent(before[0].patient_key),{headers:{Cookie}})).json();assert.equal(record.patient.photo,photo);
++  }
++  assert.deepEqual(app.database.listPatients(),before);
++  assert.equal((await fetch(origin+'/api/patients?omitPhotos=1')).status,401);
++ }finally{await new Promise(r=>app.server.close(r));app.database.close();}
++});
++const listSource=fs.readFileSync(new URL('../public/patient-list.js',import.meta.url),'utf8');
++function listHarness(){
++ const snippet=listSource.slice(listSource.indexOf('  async function refreshPaymentStatuses()'),listSource.indexOf('  async function updateDates'));
++ let calls=0,renders=0,payload={patients:[{patientKey:'one',version:1}]};
++ const c=vm.createContext({document:{hidden:false,activeElement:null},console,patientsUrl:'/api/patients',triageToday:false,patientLoads:0,refreshInFlight:false,patientRequestGeneration:0,lastPatientSnapshot:null,patients:[],fetch:async()=>{calls++;return{ok:true,json:async()=>payload}},renderDepartmentFilter:()=>renders++,renderPaymentFilter:()=>renders++,renderTable:()=>renders++});
++ vm.runInContext(snippet,c);return{c,run:()=>c.refreshPaymentStatuses(),calls:()=>calls,renders:()=>renders,setPayload:p=>payload=p};
++}
++test('unchanged list polls avoid DOM rebuilds; changed data remains live',async()=>{
++ const h=listHarness();await h.run();assert.equal(h.renders(),3);await h.run();assert.equal(h.renders(),3);
++ h.setPayload({patients:[{patientKey:'one',version:2}]});await h.run();assert.equal(h.renders(),6);
++ h.c.document.hidden=true;await h.run();assert.equal(h.calls(),3);
++});
++test('overlapping list polls coalesce and pre-edit responses are discarded',async()=>{
++ const h=listHarness();let release,calls=0;h.c.fetch=async()=>{calls++;await new Promise(r=>release=r);return{ok:true,json:async()=>({patients:[{patientKey:'old'}]})}};
++ const first=h.run();await h.run();assert.equal(calls,1);h.c.patientRequestGeneration++;release();await first;assert.equal(h.renders(),0);assert.equal(h.c.refreshInFlight,false);
++ h.c.patientLoads=1;await h.run();assert.equal(calls,1);
++});
++const paraSource=fs.readFileSync(new URL('../public/paraclinic.js',import.meta.url),'utf8');
++function paraHarness(){
++ const snippet=paraSource.slice(paraSource.indexOf('  let refreshRequest ='),paraSource.indexOf('  function modal('));
++ let writes=0;const panel={querySelector:()=>({set innerHTML(v){writes++}})};
++ const c=vm.createContext({console,patient:{patientKey:'one'},panels:[panel],catalog:{},currentOrders:[],user:{id:'staff',activeRole:'DOCTOR'},window:{getBorkeoLanguage:()=> 'kh'},document:{hidden:false},json:async()=>({orders:[]}),isPrePaymentOpdReview:()=>false,isWardNursingRole:()=>false,pendingBanner:()=>'',getCatalog:async()=>{},esc:String});
++ vm.runInContext(snippet,c);return{c,run:()=>c.refresh(),writes:()=>writes};
++}
++test('unchanged order panels retain DOM and switched patients reject stale responses',async()=>{
++ const h=paraHarness();await h.run();assert.equal(h.writes(),2);await h.run();assert.equal(h.writes(),2);
++ let release;h.c.json=async()=>{await new Promise(r=>release=r);return{orders:[]}};const pending=h.run();h.c.patient={patientKey:'two'};release();await pending;assert.equal(h.writes(),2);
++ h.c.json=async()=>({orders:[]});await h.run();assert.equal(h.writes(),4);
++});
++test('an in-flight order refresh queues one follow-up after a mutation',async()=>{
++ const h=paraHarness();let release,calls=0;h.c.json=async()=>{calls++;if(calls===1)await new Promise(r=>release=r);return{orders:[]}};
++ const first=h.run();const second=h.run();assert.equal(calls,1);release();await Promise.all([first,second]);await new Promise(r=>setImmediate(r));assert.equal(calls,2);assert.equal(h.writes(),2);
++});
++
++test('startup seeding leaves every non-empty demo database untouched',()=>{
++ const source=fs.readFileSync(new URL('../server/server.mjs',import.meta.url),'utf8');
++ // Normalize Windows newlines before extracting the actual startup block.
++ const normalized=source.replace(/\r\n/g,'\n');
++ const a=normalized.indexOf('  if (config.demoMode) {\n    const existingCount');
++ const block=normalized.slice(a,normalized.indexOf('  ensureAppointmentSchema',a));
++ assert.ok(a>0 && block.includes('resetAndSeedThirtyTriagePatients'));
++ for(const count of [0,1,29,30,31,100]) {
++  let seeds=0;
++  vm.runInNewContext(block,{config:{demoMode:true},database:{sqlite:{prepare:()=>({get:()=>({count})})}},resetAndSeedThirtyTriagePatients:()=>seeds++});
++  assert.equal(seeds,count===0?1:0,'existing patient count '+count);
++ }
++});
+END STAGE 1 PATCH
+
+STAGE 2 MANIFEST — v37.2.0 TO v37.3.0
+[
+  {
+    "path": "package.json",
+    "base_sha256": "531778a1b974e28fddfad5af7347997107d90cc7d6e14e5d1b8df5ce39105b1c",
+    "target_sha256": "ceb6a423fa521cd3d79b0c7d5651138a19dda18943ecbef150c73029ddd7c44c"
+  },
+  {
+    "path": "server/server.mjs",
+    "base_sha256": "faa66ecdff06df95eff0a81bf1c4fab2e9cda496ac721f0787530fdca2efda55",
+    "target_sha256": "b66d837026a01f9e604d9d81f1cde0e41e62b69c270b4f39197f334049dc6a45"
+  },
+  {
+    "path": "public/login.html",
+    "base_sha256": "782cc03ad2128425a3701b3679baba7c7cea1b698c450e630a580ea1a785b0d2",
+    "target_sha256": "33cb3ebf3c076f5ed422a79722cd0b850d6fc395cd5a51d9c114557d8e6cd4fa"
+  },
+  {
+    "path": "protected/EMR.html",
+    "base_sha256": "01fee0515c7d80629286a60c7b14ef7d2892ed2023b7d87bb03de7fbc5e60d3c",
+    "target_sha256": "1b935127cc3cebe61774b3efeeb6ffc91f69f93f9a8fdd682c2a41ad470e184b"
+  },
+  {
+    "path": "public/emr-language.js",
+    "base_sha256": "5f2632bf0c73212e50607556ac48b6d2f89459fc22f0971c4ae9fe84b1119ee3",
+    "target_sha256": "cce32e5a5fa17f7ffef9cfbc9ca1ed5e055cf2b2a8af059f659346a49897f7c5"
+  },
+  {
+    "path": "public/emr-inpatient-workflow.js",
+    "base_sha256": "27e401049d18bbce31a7ecfa13bb18d212b0c3e100869af115d70ee425e4956e",
+    "target_sha256": "1d1af505e876b42a6c5f51438f3398327b33c1e720d5356ebf42372f69bd3ebc"
+  },
+  {
+    "path": "public/emr-patient-record.js",
+    "base_sha256": "d218c79043215f56ba51dd383546b59539b99fcab35951aaea15986bc0ef410a",
+    "target_sha256": "3d231cec8625fb722a60687afe5f31dce14c08c61be46a70b599d3b8d1e173b3"
+  },
+  {
+    "path": "tests/v371-phone-policy.test.mjs",
+    "base_sha256": "85f6900ab671c4fcbb9c0bfcc8a671ccce8474c4458207a30b4e4b7ada6d13fd",
+    "target_sha256": "8129680ff554135d6f412d675973911800c98ba82e5976cac1bee20aa9b4f28a"
+  },
+  {
+    "path": "tests/v373-language-performance.test.mjs",
+    "base_sha256": null,
+    "target_sha256": "5d164330fd7efd85aed96734c71d2aecd3e724b85b99dbd9d6a65f82a4ef3892"
+  }
+]
+
+BEGIN STAGE 2 PATCH
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "borkeo-emr",
+-  "version": "37.2.0",
++  "version": "37.3.0",
+   "private": true,
+   "type": "module",
+   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",
+diff --git a/server/server.mjs b/server/server.mjs
+--- a/server/server.mjs
++++ b/server/server.mjs
+@@ -3,7 +3,7 @@
+ import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
+ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
+ import { createDiagnosisSearch } from './icd10.mjs';
+-// Borkeo EMR v37.2 - Electronic Medical Record System
++// Borkeo EMR v37.3 - Electronic Medical Record System
+ import {validateAddressHierarchy} from './gazetteer.mjs';
+ import {validateCambodianPhone} from './cambodia-phone.mjs';
+ import {PATIENT_PHOTO_FIELDS, validPatientPhoto} from './patient-photo.mjs';
+@@ -410,7 +410,7 @@
+   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
+   html = html.replace('</head>', `<meta name="borkeo-version" content="${APP_VERSION}"></head>`);
+   if (!html.includes('/public/emr-language.js')) {
+-    const languageAssets = '<link rel="stylesheet" href="/public/emr-language.css?v=1750"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=1970" defer></script>';
++    const languageAssets = '<link rel="stylesheet" href="/public/emr-language.css?v=1750"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=3730" defer></script>';
+     html = html.replace('</head>', `${languageAssets}</head>`);
+   }
+   html = html.replace(/(\/public\/[^"'\s<>]+\?v=[^"'\s<>]+)/g, asset => `${asset}&build=${APP_VERSION}`);
+diff --git a/public/login.html b/public/login.html
+--- a/public/login.html
++++ b/public/login.html
+@@ -31,7 +31,7 @@
+         </div>
+         <div class="header-meta">
+           <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
+-          <span class="login-build-version" data-app-version data-language-exclude>v37.2</span>
++          <span class="login-build-version" data-app-version data-language-exclude>v37.3</span>
+         </div>
+       </header>
+ 
+diff --git a/protected/EMR.html b/protected/EMR.html
+--- a/protected/EMR.html
++++ b/protected/EMR.html
+@@ -16248,7 +16248,10 @@
+             var node;
+             while ((node = walker.nextNode())) {
+                 if (!node.parentElement.closest('button,a[href],[role="button"]')) initializeStaticTranslationNode(node);
+-                if (node._staticKhmer !== undefined) node.nodeValue = lang === 'english' ? node._staticEnglish : node._staticKhmer;
++                if (node._staticKhmer !== undefined) {
++                    var translated = lang === 'english' ? node._staticEnglish : node._staticKhmer;
++                    if (node.nodeValue !== translated) node.nodeValue = translated;
++                }
+             }
+             ['placeholder', 'title', 'aria-label'].forEach(function (attribute) {
+                 root.querySelectorAll('[' + attribute + ']').forEach(function (element) {
+@@ -16258,7 +16261,10 @@
+                         element[originalKey] = removeDescriptiveEnglishFromKhmer(element.getAttribute(attribute));
+                         element[englishKey] = staticAttributeEnglish[normalizeStaticLabel(element.getAttribute(attribute))] || deriveStaticEnglish(element.getAttribute(attribute));
+                     }
+-                    if (element[originalKey] !== undefined) element.setAttribute(attribute, lang === 'english' ? element[englishKey] : element[originalKey]);
++                    if (element[originalKey] !== undefined) {
++                        var translated = lang === 'english' ? element[englishKey] : element[originalKey];
++                        if (element.getAttribute(attribute) !== translated) element.setAttribute(attribute, translated);
++                    }
+                 });
+             });
+             staticFormTranslationsInitialized = true;
+@@ -22039,12 +22045,16 @@
+         // ==========================================
+         // LANGUAGE FUNCTIONS
+         // ==========================================
++        var languageUiInitialized = false;
+         function applyLanguage(lang) {
++            if (languageUiInitialized && currentLang === lang) return;
++            var initializingLanguage = !languageUiInitialized;
+             currentLang = lang;
+             document.querySelectorAll("[data-key]").forEach(function (el) {
+                 var key = el.getAttribute("data-key");
+                 if (dictionary[currentLang] && dictionary[currentLang][key]) {
+-                    el.innerHTML = dictionary[currentLang][key];
++                    var label = dictionary[currentLang][key];
++                    if (el.innerHTML !== label) el.innerHTML = label;
+                 }
+             });
+ 
+@@ -22093,8 +22103,8 @@
+ 
+             var langBtn = document.getElementById("langBtn");
+             if (langBtn) langBtn.innerText = dictionary[currentLang].btn_lang;
+-            syncDepartments();
+-            syncFields();
++            // Clinical synchronization belongs to initialization/data edits, not label switching.
++            if (initializingLanguage) { syncDepartments(); syncFields(); }
+             if (window.EMRNationalities?.syncLanguage) window.EMRNationalities.syncLanguage();
+             if (document.getElementById('web_dob') && document.getElementById('web_dob').value) {
+                 calculateAgeFromDOB(); // Updates a DOB-calculated age when switching language
+@@ -22104,8 +22114,9 @@
+             evaluateTriageVitalStates();
+             updateCounselNote();
+             refreshNursingMedicationScheduleLanguage();
+-            syncNursingMedicationOrders();
++            if (initializingLanguage) syncNursingMedicationOrders();
+             scheduleNursingChartRender();
++            languageUiInitialized = true;
+         }
+ 
+         window.applyEmrLanguage = function (lang) {
+@@ -22498,8 +22509,8 @@
+     <script src="/public/emr-icd10.js?v=3090"></script>
+     <script src="/public/patient-photo.js?v=3450"></script>
+     <script src="/public/cambodia-phone.js?v=3710"></script>
+-    <script src="/public/emr-inpatient-workflow.js?v=3710"></script>
+-    <script src="/public/emr-patient-record.js?v=3710"></script>
++    <script src="/public/emr-inpatient-workflow.js?v=3730"></script>
++    <script src="/public/emr-patient-record.js?v=3730"></script>
+     <script src="/public/paraclinic.js?v=3720"></script>
+     <script src="/public/emr-session.js?v=1970"></script>
+     <script src="/public/emr-permissions.js?v=3710"></script>
+diff --git a/public/emr-language.js b/public/emr-language.js
+--- a/public/emr-language.js
++++ b/public/emr-language.js
+@@ -9,7 +9,7 @@
+   const englishOnly = false;
+   const cashNotice = 'បានបញ្ជូនទៅបញ្ជរបង់ប្រាក់';
+   const labFilterPairs = path === '/lab' ? [['បញ្ជីរសំណាកទាំងអស់','Specimen List'],['សំណាកបន្ទាន់','Urgent'],['សំណាកបានទទួល','Received'],['សំណាកមិនទទួល','Rejected'],['បញ្ជីរសំណាកបានពិនិត្យរួច','Complete Test List'],['បញ្ជីរសម្ភារៈ','Material List'],['បញ្ជីសម្ភារៈ','Material List']] : [];
+-  const manualPairs = [
++  const manualPairs = [
+     ["កែប្រែ", "Edit"],
+     ["ការស្នើសុំ", "Requests & Approvals"],
+     ["ការស្នើរសុំ", "Requests & Approvals"],
+@@ -853,6 +853,7 @@
+ 
+   function setLanguage(next) {
+     if (englishOnly) return;
++    if (language === (next === 'en' ? 'en' : 'kh')) return;
+     language = next === 'en' ? 'en' : 'kh';
+     try { sessionStorage.setItem(STORAGE_KEY, language); } catch {}
+     document.documentElement.lang = language === 'en' ? 'en' : 'km';
+@@ -862,13 +863,18 @@
+ 
+   window.setBorkeoLanguage = setLanguage;
+   window.getBorkeoLanguage = () => language;
++  let languageObserver = null;
++  const languageObservation = { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['placeholder', 'title', 'aria-label', 'alt'] };
+   window.addEventListener('borkeo-language-change', event => {
++    languageObserver?.disconnect();
++    try {
+     if (emrPage && typeof window.applyEmrLanguage === 'function') {
+       window.applyEmrLanguage(event.detail?.language === 'en' ? 'english' : 'khmer');
+       translateParaclinicPanels();
+     } else translateTree();
+     translateInterfaceControls();
+     updateButtons();
++    } finally { languageObserver?.observe(document.body, languageObservation); }
+   });
+ 
+   const medicalDialogActive = () => englishOnly || Boolean(document.querySelector('.paraclinic-modal') || document.activeElement?.closest('.paraclinic-panel'));
+@@ -926,7 +932,8 @@
+         });
+       }
+     });
+-    observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['placeholder', 'title', 'aria-label', 'alt'] });
++    languageObserver = observer;
++    observer.observe(document.body, languageObservation);
+     translateParaclinicPanels();
+     translateInterfaceControls();
+   }
+diff --git a/public/emr-inpatient-workflow.js b/public/emr-inpatient-workflow.js
+--- a/public/emr-inpatient-workflow.js
++++ b/public/emr-inpatient-workflow.js
+@@ -420,7 +420,7 @@
+     }
+   }
+ 
+-  function setPatientContext(patient) {
++  function setPatientContext(patient, { labelsOnly = false } = {}) {
+     currentPatient = patient;
+     const values = {
+       name: patient.fullName || text('unknown'),
+@@ -440,8 +440,9 @@
+     };
+     Object.entries(values).forEach(([key, nextValue]) => {
+       const node = document.querySelector(`[data-patient-context="${key}"]`);
+-      if (node) node.textContent = nextValue;
+-    });
++      if (node && node.textContent !== nextValue) node.textContent = nextValue;
++    });
++    if (labelsOnly) return;
+     fillPatientIdentityForms(patient, values);
+     fillDischargeForm(patient);
+     applyNursingCare(patient);
+@@ -1294,7 +1295,7 @@
+     });
+     const title = document.getElementById('inpatient-view-title');
+     if (title) title.textContent = text(requestedView || 'medical');
+-    if (currentPatient) setPatientContext(currentPatient);
++    if (currentPatient) setPatientContext(currentPatient, { labelsOnly: true });
+     document.querySelectorAll('#mon_modal label').forEach(label => {
+       if (label.querySelector('.fa-capsules')) label.lastChild.textContent = ` ${text('treatment')}`;
+     });
+@@ -1345,14 +1346,17 @@
+         if (status) status.textContent = text('medicalComplete');
+       }
+     });
+-    document.getElementById('langBtn')?.addEventListener('click', () => window.setTimeout(() => {
+-      refreshLanguage();
+-      window.setTimeout(activateRequestedPanel, 0);
+-    }, 0));
+-    window.addEventListener('borkeo-language-change', () => window.setTimeout(() => {
+-      refreshLanguage();
+-      window.setTimeout(activateRequestedPanel, 0);
+-    }, 0));
++    // Both language controls use one event. Do not refill clinical forms or reopen tabs.
++    let languageRefreshPending = false;
++    const scheduleLanguageRefresh = () => {
++      if (languageRefreshPending) return;
++      languageRefreshPending = true;
++      window.setTimeout(() => { languageRefreshPending = false; refreshLanguage(); }, 0);
++    };
++    document.getElementById('langBtn')?.addEventListener('click', () => {
++      if (typeof window.setBorkeoLanguage !== 'function') scheduleLanguageRefresh();
++    });
++    window.addEventListener('borkeo-language-change', scheduleLanguageRefresh);
+   }
+ 
+   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize);
+diff --git a/public/emr-patient-record.js b/public/emr-patient-record.js
+--- a/public/emr-patient-record.js
++++ b/public/emr-patient-record.js
+@@ -1932,9 +1932,11 @@
+   function refreshLanguage() {
+     document.querySelectorAll('.emr-save-button span').forEach(node => { node.textContent = t('save'); });
+     document.querySelectorAll('[data-nursing-section]').forEach(button => {
+-      button.querySelector('span').textContent = t(button.dataset.nursingSection);
+-    });
+-    configureTreatmentWorkflow();
++      const label = button.querySelector('span');
++      if (label) label.textContent = t(button.dataset.nursingSection);
++    });
++    const notice = document.getElementById('emr-care-route-notice');
++    if (notice) notice.textContent = t(notice.dataset.mode === 'opd' ? 'opdOnly' : 'ipdOnly');
+   }
+ 
+   function organizeOpdHeader() {
+@@ -2024,8 +2026,16 @@
+       statusAnchor?.insertAdjacentElement('afterend', status);
+     }
+ 
+-    document.getElementById('langBtn')?.addEventListener('click', () => setTimeout(refreshLanguage, 0));
+-    window.addEventListener('borkeo-language-change', () => setTimeout(refreshLanguage, 0));
++    let languageRefreshPending = false;
++    const scheduleLanguageRefresh = () => {
++      if (languageRefreshPending) return;
++      languageRefreshPending = true;
++      setTimeout(() => { languageRefreshPending = false; refreshLanguage(); }, 0);
++    };
++    document.getElementById('langBtn')?.addEventListener('click', () => {
++      if (typeof window.setBorkeoLanguage !== 'function') scheduleLanguageRefresh();
++    });
++    window.addEventListener('borkeo-language-change', scheduleLanguageRefresh);
+     document.getElementById('btn_view_patient_history')?.addEventListener('click', () => void openPatientHistory());
+     document.addEventListener('emr:patient-saved', event => {
+       if (event.detail?.patient) { loadedPatient = event.detail.patient; renderRecordSignatures(); }
+diff --git a/tests/v371-phone-policy.test.mjs b/tests/v371-phone-policy.test.mjs
+--- a/tests/v371-phone-policy.test.mjs
++++ b/tests/v371-phone-policy.test.mjs
+@@ -13,7 +13,7 @@
+ 
+ test('v37.1 - Version metadata consistency across package.json, login.html, server.mjs, and HTML templates', () => {
+   const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+-  assert.ok(['37.1.0', '37.2.0'].includes(pkg.version));
++  assert.ok(['37.1.0', '37.2.0', '37.3.0'].includes(pkg.version));
+ 
+   const loginHtml = fs.readFileSync(path.join(ROOT, 'public', 'login.html'), 'utf8');
+   assert.ok(loginHtml.includes('v' + pkg.version.split('.').slice(0,2).join('.')), 'login.html must contain v37.1');
+@@ -23,7 +23,7 @@
+ 
+   const emrHtml = fs.readFileSync(path.join(ROOT, 'protected', 'EMR.html'), 'utf8');
+   assert.ok(emrHtml.includes('/public/cambodia-phone.js?v=3710'), 'EMR.html must load cambodia-phone.js');
+-  assert.ok(emrHtml.includes('/public/emr-patient-record.js?v=3710'), 'EMR.html must cache-bust emr-patient-record.js to v3710');
++  assert.ok(/\/public\/emr-patient-record\.js\?v=(3710|3730)/.test(emrHtml), 'EMR.html must cache-bust emr-patient-record.js to v3710');
+   assert.ok(emrHtml.includes('/public/emr-permissions.js?v=3710'), 'EMR.html must cache-bust emr-permissions.js to v3710');
+ });
+ 
+diff --git a/tests/v373-language-performance.test.mjs b/tests/v373-language-performance.test.mjs
+new file mode 100644
+--- /dev/null
++++ b/tests/v373-language-performance.test.mjs
+@@ -0,0 +1,52 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import vm from 'node:vm';
++const read=n=>fs.readFileSync(new URL('../'+n,import.meta.url),'utf8').replace(/\r\n/g,'\n');
++
++test('repeated language choices do not resynchronize clinical data or rewrite identical labels',()=>{
++ const html=read('protected/EMR.html');const start=html.indexOf('        var languageUiInitialized = false;');const end=html.indexOf('        window.applyEmrLanguage',start);
++ const calls={departments:0,fields:0,medications:0,writes:0};
++ const label={getAttribute:()=> 'heading',get innerHTML(){return this.value||''},set innerHTML(v){this.value=v;calls.writes++}};
++ const c=vm.createContext({currentLang:'khmer',document:{querySelectorAll:s=>s==='[data-key]'?[label]:[],getElementById:()=>null},dictionary:{khmer:{heading:'ខ្មែរ'},english:{heading:'English'}},refreshMedicationTimingLanguage(){},applyStaticFormLanguage(){},syncDepartments:()=>calls.departments++,syncFields:()=>calls.fields++,calculateAgeFromDOB(){},formatManualAgeInput(){},evaluateTriageVitalStates(){},updateCounselNote(){},refreshNursingMedicationScheduleLanguage(){},syncNursingMedicationOrders:()=>calls.medications++,scheduleNursingChartRender(){},window:{}});
++ vm.runInContext(html.slice(start,end),c);
++ for(const lang of ['khmer','english','english','khmer','khmer'])c.applyLanguage(lang);
++ assert.deepEqual(calls,{departments:1,fields:1,medications:1,writes:3});assert.equal(label.value,'ខ្មែរ');
++});
++
++test('header-only language refresh preserves unsaved clinical forms and does not fetch payment data',()=>{
++ const source=read('public/emr-inpatient-workflow.js');const start=source.indexOf('  function setPatientContext(');const end=source.indexOf('  function ensureOpdDispositionPanel',start);
++ const edited={nursing:'unsaved nursing note',discharge:'unsaved discharge note',diagnosis:'new diagnosis'};const header={textContent:''};let fills=0;
++ const c=vm.createContext({currentPatient:null,document:{querySelector:()=>header},text:k=>k,formatEntry:()=> '2026-10-17',localized:(a,b)=>a||b,queryOrPatient:()=> '',fillPatientIdentityForms:()=>{fills++;edited.diagnosis='saved'},fillDischargeForm:()=>{fills++;edited.discharge='saved'},applyNursingCare:()=>{fills++;edited.nursing='saved'},updateDailyGate(){},ensureOpdDispositionPanel(){},loadPaymentStatus:()=>{throw Error('Unexpected network request')}});
++ vm.runInContext(source.slice(start,end),c);
++ c.setPatientContext({fullName:'Synthetic patient',patientKey:'test',sex:'F',age:'10'},{labelsOnly:true});
++ assert.equal(fills,0);assert.deepEqual(edited,{nursing:'unsaved nursing note',discharge:'unsaved discharge note',diagnosis:'new diagnosis'});
++ assert.ok(header.textContent);
++});
++
++test('same-language selection emits no duplicate events; KH/EN round trip keeps per-page storage',()=>{
++ const source=read('public/emr-language.js');const a=source.indexOf('  function setLanguage(next)');const b=source.indexOf('  window.setBorkeoLanguage',a);const events=[],stored=[];
++ const c=vm.createContext({englishOnly:false,language:'kh',STORAGE_KEY:'workspace-key',sessionStorage:{setItem:(...x)=>stored.push(x)},document:{documentElement:{}},updateButtons(){},window:{dispatchEvent:e=>events.push(e)},CustomEvent:class{constructor(type,data){this.type=type;this.detail=data.detail}}});
++ vm.runInContext(source.slice(a,b),c);
++ for(const lang of ['kh','en','en','kh'])c.setLanguage(lang);
++ assert.deepEqual(events.map(e=>e.detail.language),['en','kh']);assert.equal(stored.length,2);assert.ok(stored.every(x=>x[0]==='workspace-key'));
++});
++
++test('one legacy-button click and canonical event schedule only one label refresh and never reactivate forms',()=>{
++ const source=read('public/emr-inpatient-workflow.js');const a=source.indexOf('    let languageRefreshPending = false;');const b=source.indexOf('\n  }',a);let count=0,activations=0;const timers=[],handlers={};
++ const c=vm.createContext({refreshLanguage:()=>count++,activateRequestedPanel:()=>activations++,document:{getElementById:()=>({addEventListener:(type,fn)=>handlers.click=fn})},window:{setBorkeoLanguage(){},setTimeout:fn=>timers.push(fn),addEventListener:(type,fn)=>handlers[type]=fn}});
++ vm.runInContext(source.slice(a,b),c);handlers.click();handlers['borkeo-language-change']();handlers['borkeo-language-change']();assert.equal(timers.length,1);timers.shift()();assert.equal(count,1);assert.equal(activations,0);
++});
++
++test('language observer resumes even if a bulk translation fails',()=>{
++ const source=read('public/emr-language.js');const a=source.indexOf("  window.addEventListener('borkeo-language-change', event => {");const b=source.indexOf('  const medicalDialogActive',a);let callback,paused=0,resumed=0;
++ const c=vm.createContext({window:{addEventListener:(type,fn)=>callback=fn,applyEmrLanguage:()=>{throw Error('translation failure')}},languageObserver:{disconnect:()=>paused++,observe:()=>resumed++},languageObservation:{},document:{body:{}},emrPage:true,translateParaclinicPanels(){},translateTree(){},translateInterfaceControls(){},updateButtons(){}});
++ vm.runInContext(source.slice(a,b),c);assert.throws(()=>callback({detail:{language:'en'}}),/translation failure/);assert.equal(paused,1);assert.equal(resumed,1);
++});
++
++test('record label refresh never reopens a specialty form or changes care routing',()=>{
++ const source=read('public/emr-patient-record.js');const a=source.indexOf('  function refreshLanguage() {');const b=source.indexOf('  function organizeOpdHeader()',a);
++ const notice={dataset:{mode:'opd'},textContent:''};let routing=0;
++ const c=vm.createContext({document:{querySelectorAll:()=>[],getElementById:()=>notice},t:key=>key,configureTreatmentWorkflow:()=>routing++});
++ vm.runInContext(source.slice(a,b),c);c.refreshLanguage();assert.equal(routing,0);assert.equal(notice.textContent,'opdOnly');
++});
+END STAGE 2 PATCH

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMR Login - Borkeo Referral Hospital</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Moul&family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8fafc;
+        }
+        .font-moul {
+            font-family: 'Moul', cursive;
+        }
+        /* Frosted Glass Effect */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden">
+
+    <!-- ================= LEFT PANEL (LOGIN) ================= -->
+    <div class="w-full lg:w-[40%] xl:w-[35%] bg-white flex flex-col justify-between h-full px-8 py-10 shadow-2xl z-10 relative">
+        
+        <!-- Header / Logo -->
+        <div class="flex flex-col items-center mt-8">
+            <img src="LOGO%20HOSPITAL.jpg" alt="Logo" class="w-24 h-24 object-contain mb-6 rounded-full shadow-md border border-gray-100">
+            <h2 class="text-xl font-moul text-[#0f172a] text-center mb-2">មន្ទីរពេទ្យបង្អែក បរកែវ</h2>
+            <p class="text-sm text-gray-500 font-medium tracking-wide uppercase">ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យអ្នកជំងឺ</p>
+        </div>
+
+        <!-- Form Area -->
+        <div class="w-full max-w-sm mx-auto mt-10">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">ចូលគណនី / Login</h3>
+            
+            <form class="space-y-5">
+                <!-- Username -->
+                <div>
+                    <label class="block text-gray-700 text-sm font-medium mb-1.5">ឈ្មោះអ្នកប្រើប្រាស់*</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <i class="fa-regular fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" value="dr_sokha_darapiseth" class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all" readonly>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label class="block text-gray-700 text-sm font-medium mb-1.5">ពាក្យសម្ងាត់*</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" value="12345678" class="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
+                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center cursor-pointer text-gray-400 hover:text-blue-600 transition-colors">
+                            <i class="fa-regular fa-eye"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Button -->
+                <button type="button" class="w-full bg-[#1e40af] hover:bg-[#1e3a8a] text-white font-medium py-3.5 rounded-lg transition-all duration-200 shadow-lg shadow-blue-900/20 flex justify-center items-center gap-2 mt-2">
+                    ចូលប្រើប្រាស់ប្រព័ន្ធ <i class="fa-solid fa-arrow-right text-sm"></i>
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <a href="#" class="text-blue-600 text-sm hover:text-blue-800 font-medium transition-colors">បង្កើតគណនីថ្មី?</a>
+            </div>
+        </div>
+
+        <!-- Footer / Copyright -->
+        <div class="text-center text-xs text-gray-400 font-medium leading-relaxed mt-10">
+            <p class="text-gray-500">រក្សារសិទ្ធដោយ វេជ្ជ.សុខា ដារាពិសិដ្ឋ</p>
+            <p>All right reserve to Dr. SOKHA DARAPISETH</p>
+        </div>
+    </div>
+
+    <!-- ================= RIGHT PANEL (HERO IMAGE & INFO) ================= -->
+    <div class="hidden lg:flex w-full lg:w-[60%] xl:w-[65%] relative">
+        <!-- Background Image -->
+        <img src="Hospital%20Image.png" alt="Hospital Building" class="absolute inset-0 w-full h-full object-cover object-center">
+        
+        <!-- Elegant Color Overlay (Deep Blue Gradient) -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#0f172a]/90 via-[#1e3a8a]/80 to-[#3b82f6]/70 mix-blend-multiply"></div>
+
+        <!-- Content over Image -->
+        <div class="absolute inset-0 flex flex-col justify-between p-12 lg:p-16 xl:p-24 text-white z-10">
+            
+            <!-- Top Right: QR Code in Glass Panel -->
+            <div class="flex justify-end w-full">
+                <div class="glass-panel p-3 rounded-xl flex flex-col items-center gap-2 shadow-2xl">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=BorkeoReferralHospital&color=1e3a8a" alt="QR Code" class="w-20 h-20 rounded-md bg-white p-1">
+                    <span class="text-[10px] uppercase tracking-wider font-semibold opacity-80">ស្កេនដើម្បីទីតាំង</span>
+                </div>
+            </div>
+
+            <!-- Bottom Content: Mission & Contact -->
+            <div class="max-w-3xl">
+                <h1 class="text-4xl xl:text-5xl font-moul mb-2 drop-shadow-lg leading-tight text-white">មន្ទីរពេទ្យបង្អែក បរកែវ</h1>
+                <h2 class="text-2xl font-serif text-blue-200 font-semibold tracking-widest uppercase mb-8">Borkeo Referral Hospital</h2>
+                
+                <p class="text-lg leading-relaxed text-blue-50/90 text-justify mb-10 max-w-2xl border-l-4 border-blue-400 pl-6">
+                    មន្ទីរពេទ្យបង្អែកបរកែវជាអង្គភាពផ្តល់សេវាសុខាភិបាលជូនប្រជាពលរដ្ឋទូទៅប្រកបដោយប្រសិទ្ធភាព គុណភាព និងតម្លាភាពខ្ពស់ដែលធ្វើយ៉ាងណាអោយប្រជាពលរដ្ឋរស់នៅប្រកបដោយភាពសុខដុមរមនាទាំងផ្លូវកាយ និងផ្លូវចិត្ត ។
+                </p>
+
+                <!-- Glassmorphism Contact Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="glass-panel rounded-lg p-4 flex items-center gap-4 transition-transform hover:-translate-y-1">
+                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-phone text-white"></i>
+                        </div>
+                        <span class="text-sm font-medium">(855) 0977 230 230</span>
+                    </div>
+                    
+                    <div class="glass-panel rounded-lg p-4 flex items-center gap-4 transition-transform hover:-translate-y-1">
+                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-location-dot text-white"></i>
+                        </div>
+                        <span class="text-sm font-medium">ឃុំ ឡាមិញ ស្រុក បរកែវ</span>
+                    </div>
+
+                    <div class="glass-panel rounded-lg p-4 flex items-center gap-4 transition-transform hover:-translate-y-1 md:col-span-1">
+                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-envelope text-white"></i>
+                        </div>
+                        <span class="text-xs font-medium truncate">borkeoreferralhospital<br>@gmail.com</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

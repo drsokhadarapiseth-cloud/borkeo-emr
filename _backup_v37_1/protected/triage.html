@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200, user-scalable=yes">
+  <title>ផ្នែកទ្រីយ៉ា — បញ្ជីរង់ចាំអ្នកជំងឺ — Borkeo EMR</title>
+  <link rel="stylesheet" href="/public/ocean-theme.css">
+  <link rel="stylesheet" href="/public/emr-session.css?v=1208">
+  <link rel="stylesheet" href="/public/triage.css?v=1208">
+  <script src="/public/emr-session.js?v=1970" defer></script>
+  <script src="/public/triage.js?v=4" defer></script>
+  <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+  <link rel="stylesheet" href="/public/patient-list.css?v=1810">
+  <script src="/public/patient-list.js?v=3710" defer></script>
+</head>
+<body>
+<main class="triage-shell">
+  <section class="triage-banner" data-session-host>
+    <div><h1>ផ្នែកទ្រីយ៉ា — បញ្ជីរង់ចាំអ្នកជំងឺ</h1></div>
+    <img src="/public/logo-hospital.jpg" alt="មន្ទីរពេទ្យបង្អែកបរកែវ">
+  </section>
+  <section class="queue-panel">
+    <header class="queue-head"><div><h2>អ្នកជំងឺរង់ចាំទ្រីយ៉ា</h2><p>អ្នកជំងឺដែលបានចុះឈ្មោះហើយ និងមិនទាន់បំពេញទ្រីយ៉ា — មកមុននៅខាងលើ</p></div><div class="queue-tools"><span id="triage-count" class="count">0</span><input id="triage-search" type="search" placeholder="ស្វែងរកឈ្មោះ លេខករណី ឬលេខបណ្ណសុខភាព"><button id="triage-refresh" type="button">ទាញឡើងវិញ</button></div></header>
+    <div id="triage-status" class="status" role="status"></div>
+    <div class="queue-table-wrap"><table><thead><tr><th>ល.រ.</th><th>កាលបរិច្ឆេទចុះឈ្មោះ</th><th>អ្នកជំងឺ</th><th>លេខបណ្ណសុខភាព / លេខករណី</th><th>ភេទ</th><th>អាយុ</th><th>សកម្មភាព</th></tr></thead><tbody id="triage-body-waiting"></tbody></table></div>
+  </section>
+  <section class="queue-panel skipped-panel">
+    <header class="queue-head"><div><h2>អ្នកជំងឺមកយឺត / បានរំលង</h2><p>លេខរៀងនៅតែរក្សាទុក ហើយអាចហៅមកបំពេញទ្រីយ៉ាបានពេលអ្នកជំងឺមកដល់</p></div><div><span id="triage-skipped-count" class="count">0</span></div></header>
+    <div class="queue-table-wrap"><table><thead><tr><th>ល.រ.</th><th>ពេលរំលង</th><th>អ្នកជំងឺ</th><th>លេខបណ្ណសុខភាព / លេខករណី</th><th>ភេទ</th><th>អាយុ</th><th>សកម្មភាព</th></tr></thead><tbody id="triage-body-skipped"></tbody></table></div>
+  </section>
+    <section class="patient-panel completed-panel" data-patient-list-mode="triage-today" aria-labelledby="patient-list-heading">
+      <header class="panel-heading">
+        <div>
+          <h2 id="patient-list-heading" data-i18n="completedTitle">អ្នកជំងឺបានបំពេញទ្រីយ៉ាថ្ងៃនេះ</h2>
+          <p data-i18n="completedHint">កាលបរិច្ឆេទចូលអាចកែបាន។ កាលបរិច្ឆេទចេញបង្ហាញតែបន្ទាប់ពីគ្រូពេទ្យរក្សាទុកទម្រង់បញ្ចេញអ្នកជំងឺ។</p>
+        </div>
+        
+      </header>
+
+      <div class="filter-grid">
+        <label>
+          <span data-i18n="entryDate">កាលបរិច្ឆេទចូល</span>
+          <input id="entry-filter" type="date">
+        </label>
+        <label>
+          <span data-i18n="dischargeDate">កាលបរិច្ឆេទចេញ</span>
+          <input id="discharge-filter" type="date">
+        </label>
+        <label>
+          <span data-i18n="department">ផ្នែក</span>
+          <select id="department-filter">
+            <option value="" data-i18n="allDepartments">ផ្នែកទាំងអស់</option>
+          </select>
+        </label>
+        <label>
+          <span data-i18n="paymentType">ប្រភេទនៃការបង់</span>
+          <select id="payment-filter"></select>
+        </label>
+      </div>
+
+      <div class="list-controls">
+        <input id="patient-search" type="search" data-i18n-placeholder="searchPlaceholder" aria-label="Search patients" placeholder="ឈ្មោះ លេខករណី ឬលេខប័ណ្ណសុខភាព">
+        <details id="column-settings"><summary data-i18n="columns">ការគ្រប់គ្រងជួរឈរ</summary><div id="column-options"></div></details>
+        <button type="button" class="secondary-button" id="reset-filters" data-i18n="reset">កំណត់ឡើងវិញ</button>
+      </div>
+      <div class="list-toolbar">
+        <label class="page-size-control"><span data-i18n="pageSize">ចំនួនក្នុងមួយទំព័រ</span><select id="page-size"><option>10</option><option>25</option><option>50</option><option>100</option></select></label>
+        <strong id="patient-total">សរុប 0</strong><span id="triage-completed-count" class="count">0</span>
+        <button type="button" id="language-button" hidden aria-hidden="true" tabindex="-1"></button>
+        <nav id="patient-pagination" aria-label="Patient list pages"></nav>
+      </div>
+
+      <div id="list-status" class="list-status" role="status" aria-live="polite"></div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" data-column="number" data-i18n="number">ល.រ</th>
+              <th scope="col" data-column="patientName" data-i18n="patientName">ឈ្មោះអ្នកជំងឺ</th>
+              <th scope="col" data-column="sex" data-i18n="sex">ភេទ</th>
+              <th scope="col" data-column="age" data-i18n="age">អាយុ</th>
+              <th scope="col" data-column="phone" data-i18n="phone">លេខទូរស័ព្ទ</th>
+              <th scope="col" data-column="patientId" data-i18n="patientId">លេខបណ្ណសុខភាព</th>
+              <th scope="col" data-column="equityCard" data-i18n="equityCard">លេខបណ្ណសមធម៌</th>
+              <th scope="col" data-column="paymentType" data-i18n="paymentType">ប្រភេទនៃការបង់</th>
+              <th scope="col" data-column="department" data-i18n="department">ផ្នែក</th>
+              <th scope="col" data-column="entryDate" data-i18n="entryDate">កាលបរិច្ឆេទចូល</th>
+              <th scope="col" data-column="dischargeDate" data-i18n="dischargeDate">កាលបរិច្ឆេទចេញ</th>
+              <th scope="col" data-column="action" data-i18n="action">សកម្មភាព</th>
+            </tr>
+          </thead>
+          <tbody id="triage-body-completed"></tbody>
+        </table>
+      </div>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,6 @@
+Extract this entire ZIP, then open EMR.html.
+Go to Treatment > OPD and choose a form in the new selector.
+The four added forms retain input while switching during the same page session. Reloading does not save their records. Backend storage is not implemented.
+Use the new Print form button for the selected specialty form.
+Abortion.html is preserved for later and is not connected. Login, patient list and department files are retained separately, without new authentication or database behavior.
+Existing forms depend on external fonts and CSS CDNs, so an internet connection is needed for their original appearance.
