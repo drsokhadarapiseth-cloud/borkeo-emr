@@ -24,6 +24,7 @@ import { listPendingAdmissionApprovals } from '../admission-approvals.mjs';
 import { validateUsername, validatePassword, hashPassword } from '../password.mjs';
 import { disabledDemoPasswordHash } from '../demo-accounts.mjs';
 import { validate, Schemas } from '../validation.mjs';
+import { createDatabaseBackup } from '../backup.mjs';
 
 export function mountAdminRoutes(router) {
   // 1. Health Facility (Single handler or sub-routes for facility)
@@ -291,6 +292,22 @@ export function mountAdminRoutes(router) {
       }, { secure: config.cookieSecure });
     } catch (error) {
       return sendJson(response, 400, { error: error.message }, { secure: config.cookieSecure });
+    }
+  });
+
+  router.post('/api/admin/backup', async (ctx) => {
+    const { session, database, sendJson, response, config, sessionRole, request, audit } = ctx;
+    if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
+    if (!['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'].includes(sessionRole(session))) {
+      return sendJson(response, 403, { error: 'Administrator access is required.' }, { secure: config.cookieSecure });
+    }
+    try {
+      const backupDir = path.join(config.dataDirectory || path.resolve(process.cwd(), 'data'), 'backups');
+      const result = createDatabaseBackup(database, { backupDirectory: backupDir, keepCount: 14 });
+      audit(database, request, 'DATABASE_BACKUP_CREATED', { userId: session.user_id, details: { filename: result.filename, sizeBytes: result.sizeBytes } });
+      return sendJson(response, 201, result, { secure: config.cookieSecure });
+    } catch (error) {
+      return sendJson(response, 500, { error: error.message }, { secure: config.cookieSecure });
     }
   });
 

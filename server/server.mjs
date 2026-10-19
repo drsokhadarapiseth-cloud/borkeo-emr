@@ -3,7 +3,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v38.7 - Electronic Medical Record System
+// Borkeo EMR v38.8 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -45,6 +45,7 @@ import {
   serializeSessionCookie, SESSION_COOKIE,
 } from './security.mjs';
 import { Logger, defaultLogger } from './logger.mjs';
+import { startBackupScheduler, checkDatabaseIntegrity } from './backup.mjs';
 import {
   ROLES, WARDS, buildIdentity, canAccessPatient, defaultContext, ensureAccessSchema, getUserAccess,
   listUsers, roleCanPage, roleRequiresWard, roleWardAllowed, sessionRole, sessionWard, patientWorkWard,
@@ -1784,6 +1785,10 @@ export function createEmrServer(configOverrides = {}) {
     ? preparePersistentDatabase({ projectRoot: config.projectRoot || path.resolve(path.dirname(currentFile), '..'), targetPath: config.databasePath })
     : { created: false, sourcePath: '', candidates: [] };
   const database = openDatabase(config.databasePath);
+  const integrity = checkDatabaseIntegrity(database);
+  if (!integrity.ok) {
+    defaultLogger.error('Database integrity check reported issues on startup', { errors: integrity.errors });
+  }
   ensureFacilitySchema(database);
   ensureSymptomSchema(database);
   const diagnosisSearch = createDiagnosisSearch();
@@ -2099,7 +2104,9 @@ export async function startServer() {
 
   const cleanup = setInterval(() => application.database.deleteExpiredSessions(Date.now()), 30 * 60_000);
   cleanup.unref();
+  const backupScheduler = startBackupScheduler(application.database, application.config);
   const stop = () => application.server.close(() => {
+    backupScheduler.stop();
     application.database.close();
     process.exit(0);
   });
@@ -2115,5 +2122,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(currentFil
   });
 }
 
-export { Logger, defaultLogger };
+export { Logger, defaultLogger, checkDatabaseIntegrity, startBackupScheduler };
 

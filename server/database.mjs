@@ -373,6 +373,32 @@ export function openDatabase(databasePath) {
         record.stateKey, JSON.stringify(record.state), record.userId, record.savedAt,
       );
     },
+    checkIntegrity() {
+      const rows = sqlite.prepare('PRAGMA integrity_check').all();
+      const fkRows = sqlite.prepare('PRAGMA foreign_key_check').all();
+      const errors = [];
+      for (const row of rows) {
+        const val = row.integrity_check || Object.values(row)[0];
+        if (val !== 'ok') errors.push(`Integrity error: ${val}`);
+      }
+      for (const fk of fkRows) {
+        errors.push(`Foreign key violation in table ${fk.table || fk.from || 'unknown'}`);
+      }
+      return { ok: errors.length === 0, errors };
+    },
+    backup(options = {}) {
+      const now = new Date();
+      const timestampStr = now.toISOString().replace(/[:.]/g, '-');
+      const defaultDir = path.resolve(process.cwd(), 'data', 'backups');
+      const backupDir = options.backupDirectory || defaultDir;
+      fs.mkdirSync(backupDir, { recursive: true });
+      const filename = options.filename || `borkeo-emr-backup-${timestampStr}.sqlite`;
+      const targetPath = path.join(backupDir, filename);
+      if (fs.existsSync(targetPath)) fs.unlinkSync(targetPath);
+      const sqlitePath = targetPath.replace(/\\/g, '/');
+      sqlite.exec(`VACUUM INTO '${sqlitePath}'`);
+      return { ok: true, filepath: targetPath, filename, sizeBytes: fs.statSync(targetPath).size };
+    },
     close() { sqlite.close(); },
   };
 }
