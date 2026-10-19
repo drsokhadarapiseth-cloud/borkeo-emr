@@ -1,0 +1,448 @@
+/**
+ * Borkeo EMR - 4-Color Coded Doctor SOAP Component (Phase 5)
+ * WCAG 2.2 AA / IEC 62366-1 Compliant Medical Ergonomics.
+ * High-contrast, glanceable clinical layout for doctor notes.
+ */
+
+/* ==========================================================================
+   1. SOAP Colour Families & Tokens
+   ========================================================================== */
+:root {
+  --soap-s-stripe: #0284c7;
+  --soap-s-bg: #f0f9ff;
+  --soap-s-border: #bae6fd;
+  --soap-s-text: #0369a1;
+
+  --soap-o-stripe: #16a34a;
+  --soap-o-bg: #f0fdf4;
+  --soap-o-border: #bbf7d0;
+  --soap-o-text: #15803d;
+
+  --soap-a-stripe: #ea580c;
+  --soap-a-bg: #fff7ed;
+  --soap-a-border: #fed7aa;
+  --soap-a-text: #c2410c;
+
+  --soap-p-stripe: #9333ea;
+  --soap-p-bg: #faf5ff;
+  --soap-p-border: #e9d5ff;
+  --soap-p-text: #7e22ce;
+}
+
+/* ==========================================================================
+   2. SOAP 2x2 Grid Container
+   ========================================================================== */
+.emr-soap-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 14px 0 20px;
+}
+
+.emr-soap-container.single-column {
+  grid-template-columns: 1fr;
+}
+
+/* Individual SOAP Box */
+.emr-soap-box {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-default, #cbd5e1);
+  border-radius: var(--radius-xl, 12px);
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.15s ease;
+}
+
+.emr-soap-box:focus-within {
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+/* Section Header Bar */
+.emr-soap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle, #e2e8f0);
+  user-select: none;
+}
+
+.emr-soap-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.emr-soap-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.emr-soap-title-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.emr-soap-title {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.emr-soap-hint {
+  font-size: 11px;
+  color: var(--text-muted, #64748b);
+  line-height: 1.2;
+}
+
+.emr-soap-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.emr-soap-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-default, #cbd5e1);
+  transition: background 0.15s ease;
+}
+
+.emr-soap-status-dot.filled {
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.emr-soap-collapse-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted, #64748b);
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emr-soap-collapse-toggle:hover {
+  background: var(--bg-canvas, #f8fafc);
+  color: var(--text-primary, #0f172a);
+}
+
+.emr-soap-collapse-toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.emr-soap-box.is-collapsed .emr-soap-collapse-toggle svg {
+  transform: rotate(-90deg);
+}
+
+/* Box Content Area */
+.emr-soap-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.emr-soap-box.is-collapsed .emr-soap-body {
+  display: none !important;
+}
+
+/* Auto-growing Textarea */
+.emr-soap-textarea {
+  width: 100%;
+  min-height: 84px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-default, #cbd5e1);
+  border-radius: var(--radius-md, 8px);
+  background: var(--bg-surface, #ffffff);
+  color: var(--text-primary, #0f172a);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.emr-soap-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary-500, #0ea5e9);
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.15);
+}
+
+.emr-soap-textarea::placeholder {
+  color: var(--text-muted, #94a3b8);
+}
+
+/* Embedded controls inside SOAP boxes (Vitals in O, ICD-10 in A, Rx in P) */
+.emr-soap-embedded {
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: var(--radius-md, 8px);
+  padding: 10px 12px;
+}
+
+.emr-soap-actions-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.emr-soap-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  border-radius: var(--radius-md, 6px);
+  border: 1px solid var(--border-default, #cbd5e1);
+  background: var(--bg-surface, #ffffff);
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.emr-soap-btn:hover {
+  background: var(--bg-canvas, #f8fafc);
+  color: var(--text-primary, #0f172a);
+  border-color: var(--border-strong, #94a3b8);
+}
+
+.emr-soap-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Quick Phrase Chips */
+.emr-soap-chips-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.emr-soap-chip {
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--bg-surface, #ffffff);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  color: var(--text-secondary, #475569);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+
+.emr-soap-chip:hover {
+  background: var(--color-primary-50, #f0f9ff);
+  border-color: var(--color-primary-300, #7dd3fc);
+  color: var(--color-primary-700, #0369a1);
+}
+
+/* Specific Section Color Themes */
+/* S: Subjective (Blue) */
+.emr-soap-box.section-s {
+  border-left: 5px solid var(--soap-s-stripe);
+}
+.emr-soap-box.section-s .emr-soap-header {
+  background: var(--soap-s-bg);
+  border-bottom-color: var(--soap-s-border);
+}
+.emr-soap-box.section-s .emr-soap-badge {
+  background: var(--soap-s-stripe);
+}
+.emr-soap-box.section-s .emr-soap-title {
+  color: var(--soap-s-text);
+}
+
+/* O: Objective (Green) */
+.emr-soap-box.section-o {
+  border-left: 5px solid var(--soap-o-stripe);
+}
+.emr-soap-box.section-o .emr-soap-header {
+  background: var(--soap-o-bg);
+  border-bottom-color: var(--soap-o-border);
+}
+.emr-soap-box.section-o .emr-soap-badge {
+  background: var(--soap-o-stripe);
+}
+.emr-soap-box.section-o .emr-soap-title {
+  color: var(--soap-o-text);
+}
+
+/* A: Assessment (Amber/Orange) */
+.emr-soap-box.section-a {
+  border-left: 5px solid var(--soap-a-stripe);
+}
+.emr-soap-box.section-a .emr-soap-header {
+  background: var(--soap-a-bg);
+  border-bottom-color: var(--soap-a-border);
+}
+.emr-soap-box.section-a .emr-soap-badge {
+  background: var(--soap-a-stripe);
+}
+.emr-soap-box.section-a .emr-soap-title {
+  color: var(--soap-a-text);
+}
+
+/* P: Plan (Purple) */
+.emr-soap-box.section-p {
+  border-left: 5px solid var(--soap-p-stripe);
+}
+.emr-soap-box.section-p .emr-soap-header {
+  background: var(--soap-p-bg);
+  border-bottom-color: var(--soap-p-border);
+}
+.emr-soap-box.section-p .emr-soap-badge {
+  background: var(--soap-p-stripe);
+}
+.emr-soap-box.section-p .emr-soap-title {
+  color: var(--soap-p-text);
+}
+
+/* ==========================================================================
+   3. SOAP Display Cards in Feed (#daily_monitoring_feed)
+   ========================================================================== */
+.emr-soap-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.emr-soap-card-sec {
+  padding: 8px 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12px;
+}
+
+.emr-soap-card-sec.sec-s { background: var(--soap-s-bg); border-left: 3px solid var(--soap-s-stripe); }
+.emr-soap-card-sec.sec-o { background: var(--soap-o-bg); border-left: 3px solid var(--soap-o-stripe); }
+.emr-soap-card-sec.sec-a { background: var(--soap-a-bg); border-left: 3px solid var(--soap-a-stripe); }
+.emr-soap-card-sec.sec-p { background: var(--soap-p-bg); border-left: 3px solid var(--soap-p-stripe); }
+
+.emr-soap-card-sec-head {
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.emr-soap-card-sec-head.color-s { color: var(--soap-s-text); }
+.emr-soap-card-sec-head.color-o { color: var(--soap-o-text); }
+.emr-soap-card-sec-head.color-a { color: var(--soap-a-text); }
+.emr-soap-card-sec-head.color-p { color: var(--soap-p-text); }
+
+.emr-soap-card-text {
+  color: var(--text-primary, #0f172a);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.emr-soap-card-text.is-expanded {
+  -webkit-line-clamp: unset;
+}
+
+.emr-soap-toggle-more {
+  background: transparent;
+  border: none;
+  color: var(--color-primary-600, #0284c7);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 0;
+  align-self: flex-start;
+}
+
+.emr-legacy-note-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full, 9999px);
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   4. Responsive Adjustments
+   ========================================================================== */
+@media screen and (max-width: 768px) {
+  .emr-soap-container {
+    grid-template-columns: 1fr;
+  }
+  .emr-soap-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   5. Print Layout (Clean A4 B&W / Grayscale Compatible)
+   ========================================================================== */
+@media print {
+  .emr-soap-container,
+  .emr-soap-card-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .emr-soap-card-sec {
+    border: 1px solid #94a3b8 !important;
+    background: #ffffff !important;
+    padding: 6px 8px !important;
+  }
+
+  .emr-soap-card-sec.sec-s { border-left: 3px solid #000000 !important; }
+  .emr-soap-card-sec.sec-o { border-left: 3px solid #333333 !important; }
+  .emr-soap-card-sec.sec-a { border-left: 3px solid #666666 !important; }
+  .emr-soap-card-sec.sec-p { border-left: 3px solid #999999 !important; }
+
+  .emr-soap-card-text {
+    -webkit-line-clamp: unset !important;
+    color: #000000 !important;
+    font-size: 11px !important;
+  }
+
+  .emr-soap-chips-wrap,
+  .emr-soap-actions-strip,
+  .emr-soap-toggle-more,
+  .emr-soap-collapse-toggle {
+    display: none !important;
+  }
+}

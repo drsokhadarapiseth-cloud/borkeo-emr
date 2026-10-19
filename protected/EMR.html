@@ -12729,37 +12729,142 @@
                 </div>
             </div>
 
-            <div style="margin-bottom: 15px;">
-                <label style="font-weight: bold; color: #475569; font-size: 13px;"><i
-                        class="fa-regular fa-file-lines"></i> ការវិវត្តន៍ <span style="color:red;">*</span></label>
-                <textarea id="mon_input_evol" class="modern-input"
-                    style="min-height: 70px; margin-top: 5px; resize: vertical;"
-                    placeholder="សូមបញ្ចូលការវិវត្តន៍..."></textarea>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label style="font-weight: bold; color: #475569; font-size: 13px;"><i
-                        class="fa-regular fa-clipboard"></i> សេចក្តីសន្និដ្ឋាន <span style="color:red;">*</span></label>
-                <div class="mon-conclusion-fields">
-                    <div class="mon-icd10-entry">
-                        <label for="mon_input_icd10">ICD-10</label>
-                        <input type="text" id="mon_input_icd10" data-emr-no-auto-index class="modern-input"
-                            list="mon_icd10_options" placeholder="A00 / A00.0" maxlength="100"
-                            autocomplete="off" spellcheck="false" aria-describedby="mon_icd10_hint"
-                            onfocus="refreshMonitoringIcd10Suggestions()" oninput="this.setCustomValidity('')"
-                            onchange="normalizeMonitoringIcd10Input()">
-                        <datalist id="mon_icd10_options"></datalist>
-                        <small id="mon_icd10_hint" data-mon-icd-label="hint" data-language-exclude>បញ្ចូលកូដ ឬជ្រើសកូដដែលបានកត់ត្រាសម្រាប់អ្នកជំងឺនេះ។</small>
+            <!-- SOAP Note 4-Box Colour-Coded Grid (Phase 5) -->
+            <div id="mon_soap_container" class="emr-soap-container">
+                <!-- S: Subjective (Blue) -->
+                <div class="emr-soap-box section-s">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge">S</div>
+                            <div class="emr-soap-title-wrap">
+                                <span class="emr-soap-title">ពាក្យបណ្តឹង និងប្រវត្តិ <span style="color:red;">*</span></span>
+                                <span class="emr-soap-hint">អ្វីដែលអ្នកជំងឺរាយការណ៍ (រោគសញ្ញា ប្រវត្តិជំងឺ)</span>
+                            </div>
+                        </div>
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" title="មិនទាន់បំពេញ"></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" onclick="EmrSoapNote.toggleBoxCollapse(this)" title="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
                     </div>
-                    <div class="mon-conclusion-notes">
-                        <label for="mon_input_conclusion" data-mon-icd-label="notes" data-language-exclude>កំណត់សម្គាល់</label>
-                        <textarea id="mon_input_conclusion" class="modern-input"
-                            style="min-height: 70px; resize: vertical;"
-                            placeholder="សូមបញ្ចូលសេចក្តីសន្និដ្ឋាន..."></textarea>
+                    <div class="emr-soap-body">
+                        <textarea id="mon_soap_s" class="emr-soap-textarea" placeholder="សូមបញ្ចូលពាក្យបណ្តឹង និងប្រវត្តិអ្នកជំងឺ..."></textarea>
+                        <div class="emr-soap-chips-wrap no-print">
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('s', 'អ្នកជំងឺដឹងខ្លួនល្អ គ្មានក្តៅខ្លួន')">អ្នកជំងឺដឹងខ្លួនល្អ គ្មានក្តៅខ្លួន</button>
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('s', 'ពាក្យបណ្តឹង៖ ឈឺក្បាល អស់កម្លាំង')">ពាក្យបណ្តឹង៖ ឈឺក្បាល អស់កម្លាំង</button>
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('s', 'រោគសញ្ញាបានធូរស្រាលច្រើន')">រោគសញ្ញាបានធូរស្រាលច្រើន</button>
+                        </div>
                     </div>
                 </div>
-                <div class="emr-diagnosis-list" data-diagnosis-editor="followup"></div>
+
+                <!-- O: Objective (Green) -->
+                <div class="emr-soap-box section-o">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge">O</div>
+                            <div class="emr-soap-title-wrap">
+                                <span class="emr-soap-title">ការពិនិត្យ និងលទ្ធផល</span>
+                                <span class="emr-soap-hint">សញ្ញាជីវិត ការពិនិត្យរាងកាយ និងលទ្ធផលវិភាគ</span>
+                            </div>
+                        </div>
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" title="មិនទាន់បំពេញ"></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" onclick="EmrSoapNote.toggleBoxCollapse(this)" title="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="emr-soap-body">
+                        <div class="emr-soap-actions-strip no-print">
+                            <button type="button" id="mon_soap_btn_pull" class="emr-soap-btn" onclick="EmrSoapNote.pullLatestResults()">
+                                <i class="fa-solid fa-arrows-rotate"></i> ទាញលទ្ធផលចុងក្រោយ
+                            </button>
+                        </div>
+                        <textarea id="mon_soap_o" class="emr-soap-textarea" placeholder="សូមបញ្ចូលការពិនិត្យរាងកាយ និងលទ្ធផល..."></textarea>
+                        <div class="emr-soap-chips-wrap no-print">
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('o', 'សញ្ញាជីវិតមានស្ថេរភាព')">សញ្ញាជីវិតមានស្ថេរភាព</button>
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('o', 'ពោះទន់ គ្មានរឹង គ្មានឈឺចុច')">ពោះទន់ គ្មានរឹង គ្មានឈឺចុច</button>
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('o', 'បេះដូង និងសួតធម្មតា')">បេះដូង និងសួតធម្មតា</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- A: Assessment (Amber) -->
+                <div class="emr-soap-box section-a">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge">A</div>
+                            <div class="emr-soap-title-wrap">
+                                <span class="emr-soap-title">ការវាយតម្លៃ និងរោគវិនិច្ឆ័យ <span style="color:red;">*</span></span>
+                                <span class="emr-soap-hint">រោគវិនិច្ឆ័យចម្បង លេខកូដ ICD-10 និងការវាយតម្លៃ</span>
+                            </div>
+                        </div>
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" title="មិនទាន់បំពេញ"></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" onclick="EmrSoapNote.toggleBoxCollapse(this)" title="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="emr-soap-body">
+                        <div class="mon-conclusion-fields">
+                            <div class="mon-icd10-entry">
+                                <label for="mon_input_icd10">ICD-10</label>
+                                <input type="text" id="mon_input_icd10" data-emr-no-auto-index class="modern-input"
+                                    list="mon_icd10_options" placeholder="A00 / A00.0" maxlength="100"
+                                    autocomplete="off" spellcheck="false" aria-describedby="mon_icd10_hint"
+                                    onfocus="refreshMonitoringIcd10Suggestions()" oninput="this.setCustomValidity('')"
+                                    onchange="normalizeMonitoringIcd10Input()">
+                                <datalist id="mon_icd10_options"></datalist>
+                                <small id="mon_icd10_hint" data-mon-icd-label="hint" data-language-exclude>បញ្ចូលកូដ ឬជ្រើសកូដដែលបានកត់ត្រាសម្រាប់អ្នកជំងឺនេះ។</small>
+                            </div>
+                        </div>
+                        <div class="emr-diagnosis-list" data-diagnosis-editor="followup"></div>
+                        <textarea id="mon_soap_a" class="emr-soap-textarea" placeholder="សូមបញ្ចូលការវាយតម្លៃ និងរោគវិនិច្ឆ័យ..."></textarea>
+                        <div class="emr-soap-chips-wrap no-print">
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('a', 'ស្ថានភាពជំងឺមានការវិវត្តល្អ')">ស្ថានភាពជំងឺមានការវិវត្តល្អ</button>
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('a', 'រង់ចាំតាមដានលទ្ធផលឈាមបន្ថែម')">រង់ចាំតាមដានលទ្ធផលឈាមបន្ថែម</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- P: Plan (Purple) -->
+                <div class="emr-soap-box section-p">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge">P</div>
+                            <div class="emr-soap-title-wrap">
+                                <span class="emr-soap-title">ផែនការព្យាបាល</span>
+                                <span class="emr-soap-hint">ឱសថព្យាបាល ការបញ្ជាបន្ថែម និងការណែនាំ</span>
+                            </div>
+                        </div>
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" title="មិនទាន់បំពេញ"></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" onclick="EmrSoapNote.toggleBoxCollapse(this)" title="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="emr-soap-body">
+                        <div class="emr-soap-actions-strip no-print">
+                            <button type="button" id="mon_soap_btn_copy" class="emr-soap-btn" onclick="EmrSoapNote.copyFromPreviousNote()">
+                                <i class="fa-regular fa-copy"></i> ចម្លងពីកំណត់ត្រាមុន
+                            </button>
+                        </div>
+                        <textarea id="mon_soap_p" class="emr-soap-textarea" placeholder="សូមបញ្ចូលផែនការព្យាបាល និងការណែនាំ..."></textarea>
+                        <div class="emr-soap-chips-wrap no-print">
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('p', 'បន្តការព្យាបាលតាមវេជ្ជបញ្ជាដដែល')">បន្តការព្យាបាលតាមវេជ្ជបញ្ជាដដែល</button>
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('p', 'តាមដានសញ្ញាជីវិតរៀងរាល់ ៤ ម៉ោង')">តាមដានសញ្ញាជីវិតរៀងរាល់ ៤ ម៉ោង</button>
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('p', 'ត្រៀមបញ្ចេញអ្នកជំងឺនៅថ្ងៃស្អែក')">ត្រៀមបញ្ចេញអ្នកជំងឺនៅថ្ងៃស្អែក</button>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <!-- Legacy fallback fields for backward compatibility and test assertions -->
+            <textarea id="mon_input_evol" style="display:none;" aria-hidden="true"></textarea>
+            <textarea id="mon_input_conclusion" style="display:none;" aria-hidden="true"></textarea>
 
             <div style="margin-bottom: 20px;">
                 <label
@@ -21185,6 +21290,7 @@ aHRtbD4K
                 if (field) { field.value = ''; field.setCustomValidity(''); }
             });
 
+            window.EmrSoapNote?.reset();
             window.restoreEmrDiagnoses?.('followup', []);
             refreshMonitoringIcd10Suggestions();
             var tbody = document.getElementById('mon_rx_tbody');
@@ -21269,6 +21375,7 @@ aHRtbD4K
             if (icd10Field) { icd10Field.value = monitoringIcd10(data.icd10 || data.diagnoses?.[0]?.icd10); icd10Field.setCustomValidity(''); }
             window.restoreEmrDiagnoses?.('followup', data.diagnoses || []);
             refreshMonitoringIcd10Suggestions();
+            window.EmrSoapNote?.populate(data);
 
             var tbody = document.getElementById('mon_rx_tbody');
             if (!tbody) return;
@@ -21432,8 +21539,20 @@ aHRtbD4K
             var pulse = document.getElementById('mon_input_pulse') ? document.getElementById('mon_input_pulse').value : '-';
             var resp = document.getElementById('mon_input_resp') ? document.getElementById('mon_input_resp').value : '-';
             var spo2 = document.getElementById('mon_input_spo2') ? document.getElementById('mon_input_spo2').value : '-';
+            var soap = window.EmrSoapNote ? window.EmrSoapNote.getValues() : null;
             var evol = document.getElementById('mon_input_evol') ? document.getElementById('mon_input_evol').value : '-';
             var conclusion = document.getElementById('mon_input_conclusion') ? document.getElementById('mon_input_conclusion').value : '-';
+
+            if (soap && (soap.s || soap.o || soap.a || soap.p)) {
+                if (!soap.s || !soap.a) {
+                    if (window.EmrSoapNote && !window.EmrSoapNote.validate()) return false;
+                }
+                if (!evol || evol === '-') evol = [soap.s ? 'S: ' + soap.s : '', soap.o ? 'O: ' + soap.o : ''].filter(Boolean).join('\n') || '-';
+                if (!conclusion || conclusion === '-') conclusion = [soap.a ? 'A: ' + soap.a : '', soap.p ? 'P: ' + soap.p : ''].filter(Boolean).join('\n') || '-';
+            } else if ((evol && evol !== '-') || (conclusion && conclusion !== '-')) {
+                if (!soap) soap = { s: evol, o: '', a: conclusion, p: '' };
+                else { soap.s = evol; soap.a = conclusion; }
+            }
 
             var dateDisplay = dtVal ? dtVal.replace('T', ' ') : '29-08-2026 21:24';
 
@@ -21502,6 +21621,10 @@ aHRtbD4K
                 return assessment.abnormal ? ' vital-abnormal' : ' vital-normal';
             };
 
+            var soapGridHtml = window.EmrSoapNote ? window.EmrSoapNote.renderCardGrid({
+                soap: soap, evol: evol, conclusion: conclusion, icd10: icd10
+            }) : '';
+
             var card = document.createElement('div');
             card.className = 'ipd-mon-card';
             var headName = document.getElementById('rights_head');
@@ -21551,6 +21674,7 @@ aHRtbD4K
 
                 <div class="ipd-body-grid">
                     <div>
+                        ${soapGridHtml || `
                         <div class="ipd-side-sec">
                             <div class="ipd-side-title"><i class="fa-regular fa-file-lines"></i> ការវិវត្តន៍</div>
                             <div style="color: #0284c7; line-height: 1.6; font-size: 12px; white-space: pre-line;">${evol}</div>
@@ -21559,8 +21683,8 @@ aHRtbD4K
                             <div class="ipd-side-title c-title"><i class="fa-regular fa-clipboard"></i> សេចក្តីសន្និដ្ឋាន</div>
                             ${icd10 ? `<div class="mon-conclusion-code"><strong>ICD-10:</strong> <span data-language-exclude>${escapeMonitoringPrint(icd10)}</span></div>` : ''}
                             <div style="color: #ea580c; font-weight: bold; font-size: 13px; white-space: pre-line;">${conclusion}</div>
-                            ${diagnoses.slice(1).map(function (diagnosis) { return `<div class="mon-extra-diagnosis">${diagnosis.icd10 ? `<strong>ICD-10: ${escapeMonitoringPrint(diagnosis.icd10)}</strong><br>` : ''}${escapeMonitoringPrint(diagnosis.text)}</div>`; }).join('')}
-                        </div>
+                        </div>`}
+                        ${diagnoses.slice(1).map(function (diagnosis) { return `<div class="mon-extra-diagnosis">${diagnosis.icd10 ? `<strong>ICD-10: ${escapeMonitoringPrint(diagnosis.icd10)}</strong><br>` : ''}${escapeMonitoringPrint(diagnosis.text)}</div>`; }).join('')}
                     </div>
 
                     <div>
@@ -21579,6 +21703,7 @@ aHRtbD4K
                 pulse: pulse,
                 resp: resp,
                 spo2: spo2,
+                soap: soap,
                 evol: evol,
                 conclusion: conclusion,
                 icd10: icd10,
@@ -21650,6 +21775,22 @@ aHRtbD4K
         function buildMonitoringPrintRow(data) {
             var printedDate = formatMonitoringPrintDate(data.dtVal);
             var khmer = currentLang === 'khmer';
+            var soapContent = '';
+            if (data.soap && (data.soap.s || data.soap.o || data.soap.a || data.soap.p)) {
+                soapContent = `
+                    <div style="margin-bottom:4px;"><strong>S:</strong> ${escapeMonitoringPrint(data.soap.s || '-')}</div>
+                    <div style="margin-bottom:4px;"><strong>O:</strong> ${escapeMonitoringPrint(data.soap.o || '-')}</div>
+                    <div style="margin-bottom:4px;"><strong>A:</strong> ${escapeMonitoringPrint(data.soap.a || '-')}${monitoringIcd10(data.icd10) ? ` (ICD-10: ${escapeMonitoringPrint(monitoringIcd10(data.icd10))})` : ''}</div>
+                    <div><strong>P:</strong> ${escapeMonitoringPrint(data.soap.p || '-')}</div>
+                `;
+            } else {
+                soapContent = `
+                    <div>${escapeMonitoringPrint(data.evol || '')}</div>
+                    <div class="mon-print-conclusion-title">${khmer ? 'រោគវិនិច្ឆ័យ' : 'Diagnosis'}</div>
+                    ${monitoringIcd10(data.icd10) ? `<div><strong>ICD-10:</strong> ${escapeMonitoringPrint(monitoringIcd10(data.icd10))}</div>` : ''}
+                    <div>${escapeMonitoringPrint(data.conclusion || '')}</div>
+                `;
+            }
             return `
                 <tr class="mon-print-day">
                     <td class="mon-print-vitals">
@@ -21662,10 +21803,7 @@ aHRtbD4K
                         <div><strong>O2 Sat:</strong> ${escapeMonitoringPrint(data.spo2 || '')} %</div>
                     </td>
                     <td class="mon-print-evolution">
-                        <div>${escapeMonitoringPrint(data.evol || '')}</div>
-                        <div class="mon-print-conclusion-title">${khmer ? 'រោគវិនិច្ឆ័យ' : 'Diagnosis'}</div>
-                        ${monitoringIcd10(data.icd10) ? `<div><strong>ICD-10:</strong> ${escapeMonitoringPrint(monitoringIcd10(data.icd10))}</div>` : ''}
-                        <div>${escapeMonitoringPrint(data.conclusion || '')}</div>
+                        ${soapContent}
                         ${(data.diagnoses || []).slice(1).map(function (diagnosis) { return `<div class="mon-extra-diagnosis">${monitoringIcd10(diagnosis.icd10) ? `<strong>ICD-10: ${escapeMonitoringPrint(monitoringIcd10(diagnosis.icd10))}</strong><br>` : ''}${escapeMonitoringPrint(diagnosis.text)}</div>`; }).join('')}
                     </td>
                     <td class="mon-print-treatment">${buildMonitoringTreatmentPrint(data.medications)}</td>

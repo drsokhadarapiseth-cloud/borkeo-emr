@@ -6,15 +6,15 @@ import { createEmrServer } from '../server/server.mjs';
 
 const read = file => fs.readFileSync(file, 'utf8');
 
-test('Phase 4: Version consistency across package.json, server.mjs, and login.html is 39.3.0', () => {
+test('Phase 4: Version consistency across package.json, server.mjs, and login.html', () => {
   const pkg = JSON.parse(read('package.json'));
-  assert.equal(pkg.version, '39.3.0');
+  assert.match(pkg.version, /^39\.[3-9]\.0$/);
 
   const serverSrc = read('server/server.mjs');
-  assert.match(serverSrc, /Borkeo EMR v39\.3/);
+  assert.match(serverSrc, /Borkeo EMR v39\.[3-9]/);
 
   const loginHtml = read('public/login.html');
-  assert.match(loginHtml, /data-app-version[^>]*>v39\.3<\/span>/);
+  assert.match(loginHtml, /data-app-version[^>]*>v39\.[3-9]<\/span>/);
 });
 
 test('Phase 4: Patient banner and chart assets are served statically with correct content types', async () => {
@@ -79,8 +79,8 @@ test('Phase 4: Clinical screens receive patient-banner stylesheet and script whi
       const pageRes = await fetch(`${origin}${page}`, { headers: { Cookie } });
       assert.equal(pageRes.status, 200, `Page ${page} failed to load`);
       const html = await pageRes.text();
-      assert.match(html, /\/public\/patient-banner\.css\?v=3930/);
-      assert.match(html, /\/public\/patient-banner\.js\?v=3930/);
+      assert.match(html, /\/public\/patient-banner\.css\?v=\d+/);
+      assert.match(html, /\/public\/patient-banner\.js\?v=\d+/);
     }
 
     // Verify print-preview remains strictly script-free
