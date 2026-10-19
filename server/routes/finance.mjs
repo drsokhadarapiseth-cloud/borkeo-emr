@@ -27,6 +27,7 @@ import {
   serviceCatalog, setFinanceProfile, setServiceCatalogItem, voidFinanceItem,
   startPatientInvoice, exchangeRateState, proposeExchangeRate, reviewExchangeRate,
 } from '../finance.mjs';
+import { validate, Schemas } from '../validation.mjs';
 
 export function mountFinanceRoutes(router) {
   router.post('/api/hef/lookup', async (ctx) => {
@@ -937,8 +938,10 @@ export function mountFinanceRoutes(router) {
       return sendJson(response, 403, { error: 'Accounting access is required.' }, { secure: config.cookieSecure });
     }
     const body = await readJson(request, config.maxBodyBytes);
+    const validExpense = validate(body, Schemas.expense);
+    if (!validExpense.valid) return sendJson(response, 400, { error: validExpense.error, details: validExpense.errors }, { secure: config.cookieSecure });
     try {
-      const expense = addExpense(database, body || {}, session.user_id);
+      const expense = addExpense(database, validExpense.data, session.user_id);
       audit(database, request, 'FINANCE_EXPENSE_RECORDED', { userId: session.user_id, subjectUsername: session.username, details: { expenseId: expense.id, amount: expense.amount, currency: expense.currency, category: expense.category } });
       return sendJson(response, 201, { expense }, { secure: config.cookieSecure });
     } catch (error) {
@@ -954,17 +957,19 @@ export function mountFinanceRoutes(router) {
       return sendJson(response, 403, { error: 'Accounting access is required.' }, { secure: config.cookieSecure });
     }
     const body = await readJson(request, config.maxBodyBytes);
-    if (role === 'CLERK' && body?.kind !== 'charge') {
+    const validVoid = validate(body, Schemas.voidFinance);
+    if (!validVoid.valid) return sendJson(response, 400, { error: validVoid.error, details: validVoid.errors }, { secure: config.cookieSecure });
+    if (role === 'CLERK' && validVoid.data.kind !== 'charge') {
       return sendJson(response, 403, { error: 'Cashiers can delete unpaid service fees only.' }, { secure: config.cookieSecure });
     }
     try {
-      if (body?.kind === 'payment') {
-        const payment = getFinancePayment(database, String(body?.id || ''));
+      if (validVoid.data.kind === 'payment') {
+        const payment = getFinancePayment(database, String(validVoid.data.id || ''));
         if (payment) assertCashierInvoiceWritable(database, payment.patient_key || payment.patientKey, payment.invoice_id || payment.invoiceId, role);
       }
-      const ok = voidFinanceItem(database, String(body?.kind || ''), String(body?.id || ''), body?.reason, session.user_id, Date.now(), { unpaidOnly: true });
+      const ok = voidFinanceItem(database, validVoid.data.kind, validVoid.data.id, validVoid.data.reason, session.user_id, Date.now(), { unpaidOnly: true });
       if (!ok) return sendJson(response, 404, { error: 'Finance item was not found or is already void.' }, { secure: config.cookieSecure });
-      audit(database, request, 'FINANCE_ITEM_VOIDED', { userId: session.user_id, subjectUsername: session.username, details: { kind: String(body?.kind || ''), id: body?.id } });
+      audit(database, request, 'FINANCE_ITEM_VOIDED', { userId: session.user_id, subjectUsername: session.username, details: { kind: validVoid.data.kind, id: validVoid.data.id } });
       return sendJson(response, 200, { ok: true }, { secure: config.cookieSecure });
     } catch (error) {
       return sendJson(response, 400, { error: error.message }, { secure: config.cookieSecure });

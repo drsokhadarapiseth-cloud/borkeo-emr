@@ -3,6 +3,7 @@ import {
 } from '../password.mjs';
 import { defaultContext, getUserAccess, setSessionContext, readSessionContext, sessionRole } from '../access.mjs';
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from '../totp.mjs';
+import { validate, Schemas } from '../validation.mjs';
 
 const dummyPasswordHash = 'scrypt$32768$8$1$MDAwMDAwMDAwMDAwMDAwMA$qM8HKw2pZpspPRTL7ogxHkbKyCS16wfj9nXQEvqHjsqDxIZAFCPmi5VMUNk7uHaRY_xUAyguLh4k6j8W3mimNQ';
 
@@ -36,8 +37,9 @@ export function mountAuthRoutes(router) {
       return sendJson(response, 403, { error: 'Request origin was rejected.' }, { secure: config.cookieSecure });
     }
     const body = await readJson(request, config.maxBodyBytes);
-    if (!body || typeof body !== 'object' || Array.isArray(body)) {
-      return sendJson(response, 400, { error: 'Login information is invalid.' }, { secure: config.cookieSecure });
+    const validRes = validate(body, Schemas.login);
+    if (!validRes.valid) {
+      return sendJson(response, 400, { error: 'Login information is invalid.', details: validRes.errors }, { secure: config.cookieSecure });
     }
     const username = normalizeUsername(body.username);
     const ipKey = `ip:${requestIp(request)}`;
@@ -116,6 +118,8 @@ export function mountAuthRoutes(router) {
     const { request, response, session, database, config, sendJson, readJson, buildIdentity, audit } = ctx;
     if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
     const body = await readJson(request, config.maxBodyBytes);
+    const validRes = validate(body, Schemas.authContext);
+    if (!validRes.valid) return sendJson(response, 400, { error: validRes.error, details: validRes.errors }, { secure: config.cookieSecure });
     try {
       const chosen = setSessionContext(database, session.tokenHash, session.user_id, body?.role, body?.wardCode || '');
       const refreshed = { ...session, active_role: chosen.role, active_ward_code: chosen.wardCode, active_ward_name: chosen.wardName };
@@ -136,9 +140,11 @@ export function mountAuthRoutes(router) {
     if (config.demoMode) return sendJson(response, 404, { error: 'Passwords are disabled in this demo.' }, { secure: config.cookieSecure });
     if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
     const body = await readJson(request, config.maxBodyBytes);
-    const currentPassword = String(body?.currentPassword || '');
-    const newPassword = String(body?.newPassword || '');
-    const confirmation = String(body?.confirmation || '');
+    const validRes = validate(body, Schemas.changePassword);
+    if (!validRes.valid) return sendJson(response, 400, { error: validRes.error, details: validRes.errors }, { secure: config.cookieSecure });
+    const currentPassword = String(body.currentPassword);
+    const newPassword = String(body.newPassword);
+    const confirmation = String(body.confirmation);
     if (newPassword !== confirmation) return sendJson(response, 400, { error: 'New passwords do not match.' }, { secure: config.cookieSecure });
     try { validatePassword(newPassword); }
     catch (error) { return sendJson(response, 400, { error: error.message }, { secure: config.cookieSecure }); }

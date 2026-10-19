@@ -21,6 +21,7 @@ import { normalizePmrsId, preparePmrsMedicineImport, applyPmrsMedicineImport } f
 import { admissionApprovalFor, listPendingAdmissionApprovals } from '../admission-approvals.mjs';
 import { completePatientMessages } from '../messages.mjs';
 import { assertEncounterWrite } from '../encounter-access.mjs';
+import { validate, Schemas } from '../validation.mjs';
 
 export function mountClinicalRoutes(router) {
   // 1. GET /api/symptoms
@@ -39,8 +40,11 @@ export function mountClinicalRoutes(router) {
     const role = sessionRole(session);
     const canCreate = SYMPTOM_CREATE_ROLES.has(role);
     if (!canCreate) return sendJson(response, 403, { error: 'A clinical or management role is required to add symptoms.' }, { secure: config.cookieSecure });
+    const body = await readJson(request, 8192);
+    const validSymptom = validate(body, Schemas.symptom);
+    if (!validSymptom.valid) return sendJson(response, 400, { error: validSymptom.error, details: validSymptom.errors }, { secure: config.cookieSecure });
     try {
-      const result = addCustomSymptom(database, await readJson(request, 8192), session.user_id);
+      const result = addCustomSymptom(database, validSymptom.data, session.user_id);
       if (result.created) audit(database, request, 'SYMPTOM_CREATED', { userId: session.user_id, subjectUsername: session.username, details: { symptomId: result.item.id, nameKh: result.item.nameKh, nameEn: result.item.nameEn, activeRole: role } });
       return sendJson(response, result.created ? 201 : 200, result, { secure: config.cookieSecure });
     } catch (error) {

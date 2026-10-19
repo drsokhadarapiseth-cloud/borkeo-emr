@@ -23,6 +23,7 @@ import { recentPatientTransfers } from '../patient-transfers.mjs';
 import { listPendingAdmissionApprovals } from '../admission-approvals.mjs';
 import { validateUsername, validatePassword, hashPassword } from '../password.mjs';
 import { disabledDemoPasswordHash } from '../demo-accounts.mjs';
+import { validate, Schemas } from '../validation.mjs';
 
 export function mountAdminRoutes(router) {
   // 1. Health Facility (Single handler or sub-routes for facility)
@@ -257,8 +258,10 @@ export function mountAdminRoutes(router) {
       return sendJson(response, 403, { error: 'Administrator access is required.' }, { secure: config.cookieSecure });
     }
     const body = await readJson(request, 10_000);
+    const validRole = validate(body, Schemas.customRole);
+    if (!validRole.valid) return sendJson(response, 400, { error: validRole.error, details: validRole.errors }, { secure: config.cookieSecure });
     try {
-      const role = createCustomRole(database, body || {});
+      const role = createCustomRole(database, validRole.data);
       audit(database, request, 'ROLE_CREATED', { userId: session.user_id, details: role });
       return sendJson(response, 201, {
         role,
@@ -277,8 +280,10 @@ export function mountAdminRoutes(router) {
       return sendJson(response, 403, { error: 'Administrator access is required.' }, { secure: config.cookieSecure });
     }
     const body = await readJson(request, 10_000);
+    const validWard = validate(body, Schemas.customWard);
+    if (!validWard.valid) return sendJson(response, 400, { error: validWard.error, details: validWard.errors }, { secure: config.cookieSecure });
     try {
-      const ward = createCustomWard(database, body || {});
+      const ward = createCustomWard(database, validWard.data);
       audit(database, request, 'WARD_CREATED', { userId: session.user_id, details: ward });
       return sendJson(response, 201, {
         ward,

@@ -1,5 +1,6 @@
 import { safeTokenEqual } from './password.mjs';
 import { sessionRole } from './access.mjs';
+import { assertValid, validate, v } from './validation.mjs';
 
 function defaultSameOrigin(request, config) {
   if (!request.headers.origin) return true;
@@ -95,13 +96,16 @@ export class Router {
       if (route.options.parseJson && ['POST', 'PUT', 'PATCH'].includes(method) && readJson) {
         try {
           body = await readJson(request, route.options.maxBodyBytes || config.maxBodyBytes);
+          if (route.options.schema) {
+            body = assertValid(body, route.options.schema);
+          }
         } catch (err) {
-          sendJson(response, err.status || 400, { error: err.message }, { secure: config.cookieSecure });
+          sendJson(response, err.status || 400, { error: err.message, details: err.details }, { secure: config.cookieSecure });
           return true;
         }
       }
 
-      const routeCtx = { ...ctx, match, routeParams: match, body };
+      const routeCtx = { ...ctx, match, routeParams: match, body, assertValid, validate, v };
       try {
         const res = await route.handler(routeCtx);
         if (res !== false) {
@@ -109,7 +113,7 @@ export class Router {
         }
       } catch (err) {
         if (!response.writableEnded) {
-          sendJson(response, err.status || 500, { error: err.message || 'Internal server error' }, { secure: config.cookieSecure });
+          sendJson(response, err.status || 500, { error: err.message || 'Internal server error', details: err.details }, { secure: config.cookieSecure });
         }
         return true;
       }
