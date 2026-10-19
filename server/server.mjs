@@ -27,6 +27,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadConfig, projectRoot } from './config.mjs';
 import { CLINICAL_FORM_TYPES, openDatabase } from './database.mjs';
+import { Router } from './router.mjs';
+import { mountAuthRoutes } from './routes/auth.mjs';
 import {
   hashPassword, normalizeUsername, randomToken, safeTokenEqual, tokenHash, validatePassword, validateUsername, verifyPassword,
 } from './password.mjs';
@@ -1803,6 +1805,9 @@ export function createEmrServer(configOverrides = {}) {
   if (config.autoDatabase) createDailyBackup(database, config.databasePath);
   database.deleteExpiredSessions(Date.now());
 
+  const router = new Router('emr');
+  mountAuthRoutes(router);
+
   const server = http.createServer(async (request, response) => {
     try {
       const url = new URL(request.url ?? '/', config.appOrigin);
@@ -1816,6 +1821,15 @@ export function createEmrServer(configOverrides = {}) {
           return redirect(response, '/login?passwordChange=1', { secure: config.cookieSecure });
         }
       }
+      const ctx = {
+        request, response, url, pathname, session, database, config,
+        sendJson, readJson, readBinary, audit, sameOrigin, safeTokenEqual,
+        sessionRole, sessionWard, requireContext, redirect, sendFile,
+        listUsers, buildIdentity, requestIp, genericLoginFailure,
+        serializeSessionCookie, clearSessionCookie,
+      };
+      if (await router.handle(ctx)) return;
+
       if (pathname === '/api/hef/lookup') {
         if(!session)return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
         if(!HEF_LOOKUP_ROLES.has(sessionRole(session)))return sendJson(response,403,{error:'Registration access required.'},{secure:config.cookieSecure});
@@ -1929,17 +1943,6 @@ export function createEmrServer(configOverrides = {}) {
           return sendJson(response,200,{branding},{secure:config.cookieSecure});
         }catch(error){return sendJson(response,400,{error:error.message},{secure:config.cookieSecure});}
       }
-      if (request.method === 'GET' && pathname === '/api/auth/config') {
-        const accounts = config.demoMode
-          ? listUsers(database).filter(u => u.isActive).map(u => ({
-              username: u.username,
-              displayName: u.displayName,
-              roles: u.roles || [u.role],
-              wards: u.wards || [],
-            }))
-          : [];
-        return sendJson(response, 200, { demoMode: config.demoMode, accounts }, { secure: config.cookieSecure });
-      }
       if (request.method === 'GET' && pathname === '/login') {
         if (session) {
           const identity = buildIdentity(database, session);
@@ -1976,198 +1979,6 @@ export function createEmrServer(configOverrides = {}) {
         const facility = getFacility(database);
         const od = facility?.data?.operationalDistrict || { province: '16', districts: ['1601', '1603', '1607'] };
         return sendJson(response, 200, od, { secure: config.cookieSecure });
-      }
-      if (request.method === 'GET' && pathname === '/api/auth/me') {
-        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-        const identity = buildIdentity(database, session);
-        return sendJson(response, 200, { user: identity, csrfToken: session.csrf_token, demoMode: config.demoMode }, { secure: config.cookieSecure });
-      }
-      if (request.method === 'POST' && pathname === '/api/auth/login') {
-        if (!sameOrigin(request, config)) {
-          return sendJson(response, 403, { error: 'Request origin was rejected.' }, { secure: config.cookieSecure });
-        }
-        const body = await readJson(request, config.maxBodyBytes);
-        if (!body || typeof body !== 'object' || Array.isArray(body)) {
-          return sendJson(response, 400, { error: 'Login information is invalid.' }, { secure: config.cookieSecure });
-        }
-        const username = normalizeUsername(body.username);
-        const ipKey = `ip:${requestIp(request)}`;
-        const userKey = `user:${username}`;
-        const now = Date.now();
-        const limits = [
-          database.loginLimitStatus(ipKey, now, config.loginWindowMs),
-          database.loginLimitStatus(userKey, now, config.loginWindowMs),
-        ];
-        const blocked = limits.find(limit => limit.blocked);
-        if (blocked) return genericLoginFailure(response, config, Math.ceil(blocked.retryAfterMs / 1000));
-
-        const user = database.findUser(username);
-        const valid = config.demoMode
-          ? user?.is_active === 1
-          : await verifyPassword(String(body.password ?? ''), user?.password_hash ?? dummyPasswordHash);
-        if (!user || !valid || user.is_active !== 1) {
-          database.recordLoginFailure(ipKey, now, config.loginWindowMs, config.loginMaxAttempts);
-          database.recordLoginFailure(userKey, now, config.loginWindowMs, config.loginMaxAttempts);
-          audit(database, request, 'LOGIN_FAILED', { subjectUsername: username });
-          return genericLoginFailure(response, config, 0);
-        }
-
-        if (!config.demoMode && user.totp_enabled === 1 && ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'].includes(user.role)) {
-          if (!body.totpCode) {
-            return sendJson(response, 200, {
-              totpRequired: true,
-              username: user.username,
-              message: 'Two-factor authentication code required.'
-            }, { secure: config.cookieSecure });
-          }
-          if (!verifyTotpCode(body.totpCode, user.totp_secret)) {
-            database.recordLoginFailure(ipKey, now, config.loginWindowMs, config.loginMaxAttempts);
-            database.recordLoginFailure(userKey, now, config.loginWindowMs, config.loginMaxAttempts);
-            audit(database, request, 'LOGIN_FAILED_INVALID_TOTP', { subjectUsername: username });
-            return genericLoginFailure(response, config, 0);
-          }
-        }
-
-        database.clearLoginLimit(ipKey);
-        database.clearLoginLimit(userKey);
-        const rawToken = randomToken();
-        const csrfToken = randomToken();
-        const hash = tokenHash(rawToken);
-        database.createSession({
-          tokenHash: hash,
-          userId: user.id,
-          csrfToken,
-          createdAt: now,
-          expiresAt: now + config.sessionTtlMs,
-        });
-        const automatic = defaultContext(getUserAccess(database, user.id));
-        if (automatic) setSessionContext(database, hash, user.id, automatic.role, automatic.wardCode);
-        database.markLogin(user.id, now);
-        const context = readSessionContext(database, hash);
-        const identity = buildIdentity(database, {
-          user_id: user.id, username: user.username, display_name: user.display_name,
-          ...context,
-        });
-        audit(database, request, 'LOGIN_SUCCEEDED', {
-          userId: user.id, subjectUsername: user.username,
-          details: { automaticContext: automatic || null, demoMode: config.demoMode },
-        });
-        response.setHeader('Set-Cookie', serializeSessionCookie(
-          rawToken, config.sessionTtlMs / 1000, config.cookieSecure,
-        ));
-        return sendJson(response, 200, {
-          user: identity,
-          needsContext: identity.needsContext,
-          mustChangePassword: Boolean(user.must_change_password)
-        }, { secure: config.cookieSecure });
-      }
-      if (request.method === 'POST' && pathname === '/api/auth/context') {
-        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-        if (!sameOrigin(request, config) || !safeTokenEqual(request.headers['x-csrf-token'], session.csrf_token)) {
-          return sendJson(response, 403, { error: 'Security token is invalid.' }, { secure: config.cookieSecure });
-        }
-        const body = await readJson(request, config.maxBodyBytes);
-        try {
-          const chosen = setSessionContext(database, session.tokenHash, session.user_id, body?.role, body?.wardCode || '');
-          const refreshed = { ...session, active_role: chosen.role, active_ward_code: chosen.wardCode, active_ward_name: chosen.wardName };
-          const identity = buildIdentity(database, refreshed);
-          audit(database, request, 'WORK_CONTEXT_CHANGED', {
-            userId: session.user_id, subjectUsername: session.username,
-            details: { role: chosen.role, wardCode: chosen.wardCode },
-          });
-          return sendJson(response, 200, { user: identity }, { secure: config.cookieSecure });
-        } catch (error) {
-          return sendJson(response, 400, { error: error.message }, { secure: config.cookieSecure });
-        }
-      }
-      if (request.method === 'POST' && pathname === '/api/auth/change-password') {
-        if (config.demoMode) return sendJson(response, 404, { error: 'Passwords are disabled in this demo.' }, { secure: config.cookieSecure });
-        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-        if (!sameOrigin(request, config) || !safeTokenEqual(request.headers['x-csrf-token'], session.csrf_token)) {
-          return sendJson(response, 403, { error: 'Security token is invalid.' }, { secure: config.cookieSecure });
-        }
-        const body = await readJson(request, config.maxBodyBytes);
-        const currentPassword = String(body?.currentPassword || '');
-        const newPassword = String(body?.newPassword || '');
-        const confirmation = String(body?.confirmation || '');
-        if (newPassword !== confirmation) return sendJson(response, 400, { error: 'New passwords do not match.' }, { secure: config.cookieSecure });
-        try { validatePassword(newPassword); }
-        catch (error) { return sendJson(response, 400, { error: error.message }, { secure: config.cookieSecure }); }
-        const user = database.findUser(session.username);
-        if (!user || !(await verifyPassword(currentPassword, user.password_hash))) {
-          return sendJson(response, 400, { error: 'Current password is incorrect.' }, { secure: config.cookieSecure });
-        }
-        const now = Date.now();
-        database.sqlite.prepare('UPDATE users SET password_hash=?, must_change_password=0, updated_at=? WHERE id=?')
-          .run(await hashPassword(newPassword), now, session.user_id);
-        database.sqlite.prepare('DELETE FROM sessions WHERE user_id=?').run(session.user_id);
-        audit(database, request, 'PASSWORD_CHANGED', { userId: session.user_id, subjectUsername: session.username });
-        response.setHeader('Set-Cookie', clearSessionCookie(config.cookieSecure));
-        return sendJson(response, 200, { ok: true, reauthenticate: true }, { secure: config.cookieSecure });
-      }
-      if (request.method === 'GET' && pathname === '/api/auth/2fa/setup') {
-        if (config.demoMode) return sendJson(response, 404, { error: 'Two-factor authentication is not available in demo mode.' }, { secure: config.cookieSecure });
-        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-        const role = sessionRole(session);
-        if (!['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'].includes(role)) {
-          return sendJson(response, 403, { error: 'Two-factor authentication is only available for Administrator and Director accounts.' }, { secure: config.cookieSecure });
-        }
-        const secret = generateTotpSecret();
-        const uri = generateTotpUri(session.username, secret);
-        return sendJson(response, 200, { secret, uri }, { secure: config.cookieSecure });
-      }
-      if (request.method === 'POST' && pathname === '/api/auth/2fa/enable') {
-        if (config.demoMode) return sendJson(response, 404, { error: 'Two-factor authentication is not available in demo mode.' }, { secure: config.cookieSecure });
-        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-        const role = sessionRole(session);
-        if (!['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'].includes(role)) {
-          return sendJson(response, 403, { error: 'Two-factor authentication is only available for Administrator and Director accounts.' }, { secure: config.cookieSecure });
-        }
-        if (!sameOrigin(request, config) || !safeTokenEqual(request.headers['x-csrf-token'], session.csrf_token)) {
-          return sendJson(response, 403, { error: 'Security token is invalid.' }, { secure: config.cookieSecure });
-        }
-        const body = await readJson(request, config.maxBodyBytes);
-        const secret = String(body?.secret || '').trim();
-        const code = String(body?.code || '').trim();
-        if (!secret || !code) {
-          return sendJson(response, 400, { error: 'Secret and verification code are required.' }, { secure: config.cookieSecure });
-        }
-        if (!verifyTotpCode(code, secret)) {
-          return sendJson(response, 400, { error: 'Verification code is invalid or expired.' }, { secure: config.cookieSecure });
-        }
-        database.setUserTotp(session.user_id, secret, 1);
-        audit(database, request, 'TOTP_ENABLED', { userId: session.user_id, subjectUsername: session.username });
-        return sendJson(response, 200, { ok: true, enabled: true }, { secure: config.cookieSecure });
-      }
-      if (request.method === 'POST' && pathname === '/api/auth/2fa/disable') {
-        if (config.demoMode) return sendJson(response, 404, { error: 'Two-factor authentication is not available in demo mode.' }, { secure: config.cookieSecure });
-        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-        if (!sameOrigin(request, config) || !safeTokenEqual(request.headers['x-csrf-token'], session.csrf_token)) {
-          return sendJson(response, 403, { error: 'Security token is invalid.' }, { secure: config.cookieSecure });
-        }
-        const body = await readJson(request, config.maxBodyBytes);
-        const password = String(body?.password || '');
-        const user = database.findUser(session.username);
-        if (!user || !(await verifyPassword(password, user.password_hash))) {
-          return sendJson(response, 400, { error: 'Current password is incorrect.' }, { secure: config.cookieSecure });
-        }
-        database.setUserTotp(session.user_id, null, 0);
-        audit(database, request, 'TOTP_DISABLED', { userId: session.user_id, subjectUsername: session.username });
-        return sendJson(response, 200, { ok: true, enabled: false }, { secure: config.cookieSecure });
-      }
-      if (request.method === 'POST' && pathname === '/api/auth/logout') {
-        if (!session) {
-          response.setHeader('Set-Cookie', clearSessionCookie(config.cookieSecure));
-          return sendJson(response, 200, { ok: true }, { secure: config.cookieSecure });
-        }
-        if (!sameOrigin(request, config) ||
-            !safeTokenEqual(request.headers['x-csrf-token'], session.csrf_token)) {
-          return sendJson(response, 403, { error: 'Security token is invalid.' }, { secure: config.cookieSecure });
-        }
-        database.deleteSession(session.tokenHash);
-        audit(database, request, 'LOGOUT', { userId: session.user_id, subjectUsername: session.username });
-        response.setHeader('Set-Cookie', clearSessionCookie(config.cookieSecure));
-        return sendJson(response, 200, { ok: true }, { secure: config.cookieSecure });
       }
       if (request.method === 'GET' && pathname === '/api/admin/audit') {
         if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
