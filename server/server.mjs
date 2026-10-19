@@ -3,7 +3,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v38.6 - Electronic Medical Record System
+// Borkeo EMR v38.7 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -44,6 +44,7 @@ import {
   applySecurityHeaders, clearSessionCookie, parseCookies,
   serializeSessionCookie, SESSION_COOKIE,
 } from './security.mjs';
+import { Logger, defaultLogger } from './logger.mjs';
 import {
   ROLES, WARDS, buildIdentity, canAccessPatient, defaultContext, ensureAccessSchema, getUserAccess,
   listUsers, roleCanPage, roleRequiresWard, roleWardAllowed, sessionRole, sessionWard, patientWorkWard,
@@ -667,6 +668,7 @@ function audit(database, request, action, values = {}) {
       activeWard = context?.active_ward_code || '';
     }
   } catch {}
+  const details = { ...(values.details || {}), activeRole, activeWard };
   database.audit({
     id: crypto.randomUUID(),
     userId: values.userId,
@@ -674,8 +676,15 @@ function audit(database, request, action, values = {}) {
     action,
     ipAddress: requestIp(request),
     userAgent: String(request.headers['user-agent'] ?? '').slice(0, 500),
-    details: { ...(values.details || {}), activeRole, activeWard },
+    details,
     occurredAt: Date.now(),
+  });
+  defaultLogger.info(`Audit: ${action}`, {
+    action,
+    userId: values.userId,
+    subjectUsername: values.subjectUsername,
+    ip: requestIp(request),
+    details,
   });
 }
 
@@ -1868,6 +1877,9 @@ export function createEmrServer(configOverrides = {}) {
   // system:ipdDischargeSummary
 
   const server = http.createServer(async (request, response) => {
+    const requestId = crypto.randomUUID();
+    response.setHeader('X-Request-ID', requestId);
+    const reqLogger = defaultLogger.child({ requestId });
     try {
       const url = new URL(request.url ?? '/', config.appOrigin);
       const pathname = decodeURIComponent(url.pathname);
@@ -1882,6 +1894,7 @@ export function createEmrServer(configOverrides = {}) {
       }
       const ctx = {
         request, response, url, pathname, session, database, config,
+        requestId, logger: reqLogger,
         sendJson, sendBuffer, readJson, readBinary, audit, sameOrigin, safeTokenEqual,
         sessionRole, sessionWard, requireContext, redirect, sendFile,
         listUsers, buildIdentity, requestIp, genericLoginFailure,
@@ -2021,7 +2034,11 @@ export function createEmrServer(configOverrides = {}) {
       return sendJson(response, 404, { error: 'Not found.' }, { secure: config.cookieSecure });
     } catch (error) {
       const status = Number.isInteger(error.status) ? error.status : 500;
-      if (status === 500) console.error(error);
+      if (status >= 500) {
+        reqLogger.error(`Unhandled error on ${request.method} ${pathname}: ${error.message}`, { error, status });
+      } else if (status >= 400) {
+        reqLogger.warn(`Client error on ${request.method} ${pathname}: ${error.message}`, { status });
+      }
       return sendJson(response, status, {
         error: status === 500 ? 'The server could not complete the request.' : error.message,
       }, { secure: config.cookieSecure });
@@ -2055,7 +2072,7 @@ export async function startServer() {
     application.server.listen(application.config.port, application.config.host, resolve);
   });
   const modeLabel = application.config.demoMode ? 'DEMO (username-only)' : 'PRODUCTION (password required)';
-  console.log(`Borkeo EMR v38.3 [${modeLabel}] listening on http://${application.config.host}:${application.config.port}`);
+  console.log(`Borkeo EMR v${APP_VERSION} [${modeLabel}] listening on http://${application.config.host}:${application.config.port}`);
   if (application.config.host === '0.0.0.0') {
     try {
       const nets = os.networkInterfaces();
@@ -2097,3 +2114,6 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(currentFil
     process.exit(1);
   });
 }
+
+export { Logger, defaultLogger };
+
