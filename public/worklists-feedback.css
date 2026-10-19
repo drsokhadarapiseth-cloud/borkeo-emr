@@ -1,0 +1,296 @@
+/**
+ * Borkeo EMR - Worklists, Forms & Feedback (Phase 7)
+ * Aligned with WCAG 2.2 AA & IEC 62366-1.
+ * - Worklist status chips & sticky headers.
+ * - Form validation messages, required-field markers & clear sections.
+ * - Autosave-state indicator (saving / saved / error).
+ * - Modal & toast replacements for alert() / confirm().
+ */
+
+/* ==========================================================================
+   1. Worklist Sticky Headers & Layout
+   ========================================================================== */
+.queue-table thead th,
+.triage-table thead th,
+.pharmacy-table thead th,
+.patient-table thead th,
+.invoice-table thead th,
+.workspace-list-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+  background: var(--color-surface, #ffffff) !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* ==========================================================================
+   2. Worklist Status Chips (Color + Icon + Text)
+   ========================================================================== */
+.emr-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.emr-status-chip svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* Waiting / Pending */
+.emr-chip-waiting,
+.queue-status.WAITING,
+.receipt-state.pending {
+  background: #fffbeb !important;
+  color: #b45309 !important;
+  border: 1px solid #fde68a !important;
+}
+
+/* Active / In Consultation */
+.emr-chip-active,
+.queue-status.IN_CONSULTATION {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+/* Completed / Dispensed / Received */
+.emr-chip-done,
+.receipt-state.received {
+  background: #f0fdf4 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+}
+
+/* Critical / Blocked / Error */
+.emr-chip-danger,
+.receipt-state.blocked {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fecaca !important;
+}
+
+/* Neutral / Transferred */
+.emr-chip-neutral,
+.transfer-ipd-done {
+  background: #f8fafc !important;
+  color: #475569 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+/* ==========================================================================
+   3. Autosave-State Indicator
+   ========================================================================== */
+.emr-autosave-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.emr-autosave-badge .autosave-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* State: Saving */
+.emr-autosave-badge.saving {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+.emr-autosave-badge.saving .autosave-dot {
+  background: #2563eb;
+  animation: autosavePulse 1.2s infinite ease-in-out;
+}
+
+/* State: Saved */
+.emr-autosave-badge.saved {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+.emr-autosave-badge.saved .autosave-dot {
+  background: #16a34a;
+}
+
+/* State: Error */
+.emr-autosave-badge.error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+.emr-autosave-badge.error .autosave-dot {
+  background: #dc2626;
+}
+
+@keyframes autosavePulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* ==========================================================================
+   4. Form Sections, Required Markers & Validation Messages
+   ========================================================================== */
+.emr-form-section {
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-md, 8px);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.emr-form-section-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary-dark, #0369a1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.emr-required-marker {
+  color: #dc2626;
+  font-weight: 800;
+  margin-left: 3px;
+}
+
+.emr-field-error {
+  border-color: #dc2626 !important;
+  background-color: #fffaf0 !important;
+}
+
+.emr-validation-msg {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #dc2626;
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   5. Accessible Modal Dialog Replacements for alert() / confirm()
+   ========================================================================== */
+.emr-dialog-overlay,
+.emr-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: dialogFadeIn 0.15s ease-out;
+}
+
+.emr-dialog-card,
+.emr-modal-container {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.08);
+  max-width: 480px;
+  width: 100%;
+  padding: 22px;
+  border: 1px solid #e2e8f0;
+  animation: dialogScaleUp 0.15s ease-out;
+}
+
+.emr-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.emr-dialog-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.emr-dialog-icon.danger { color: #dc2626; }
+.emr-dialog-icon.info { color: #0284c7; }
+.emr-dialog-icon.warning { color: #d97706; }
+
+.emr-dialog-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.emr-dialog-body {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #334155;
+  margin-bottom: 20px;
+  white-space: pre-wrap;
+}
+
+.emr-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.emr-dialog-actions button {
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.emr-dialog-btn-cancel {
+  background: #f1f5f9;
+  color: #334155;
+  border-color: #cbd5e1 !important;
+}
+.emr-dialog-btn-cancel:hover {
+  background: #e2e8f0;
+}
+
+.emr-dialog-btn-confirm {
+  background: #0284c7;
+  color: #ffffff;
+}
+.emr-dialog-btn-confirm:hover {
+  background: #0369a1;
+}
+
+.emr-dialog-btn-danger {
+  background: #dc2626;
+  color: #ffffff;
+}
+.emr-dialog-btn-danger:hover {
+  background: #b91c1c;
+}
+
+@keyframes dialogFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialogScaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
