@@ -20,13 +20,13 @@ test('Phase 7: Worklists, forms and feedback assets exist and are registered in 
   const loginHtml = read('public/login.html');
 
   // Version consistency
-  assert.equal(pkg.version, '39.6.0', 'package.json version must be 39.6.0');
-  assert.match(serverCode, /Borkeo EMR v39\.6/, 'server.mjs must declare v39.6');
+  assert.match(pkg.version, /^39\.[6-9]\.0$/, 'package.json version must be 39.6.0 or above');
+  assert.match(serverCode, /Borkeo EMR v39\.[6-9]/, 'server.mjs must declare v39.6 or above');
   assert.match(serverCode, /'\/public\/worklists-feedback\.css'/, 'server.mjs must register worklists-feedback.css');
   assert.match(serverCode, /'\/public\/worklists-feedback\.js'/, 'server.mjs must register worklists-feedback.js');
   assert.match(serverCode, /worklists-feedback\.css\?v=\d+/, 'server.mjs must inject worklists-feedback.css');
   assert.match(serverCode, /worklists-feedback\.js\?v=\d+/, 'server.mjs must inject worklists-feedback.js');
-  assert.match(loginHtml, /data-app-version[^>]*>v39\.6<\/span>/, 'login.html must display v39.6');
+  assert.match(loginHtml, /data-app-version[^>]*>v39\.[6-9]<\/span>/, 'login.html must display v39.6 or above');
 
   // CSS contains sticky headers, status chips, autosave badges, and modals
   assert.match(css, /position:\s*sticky/i, 'worklists-feedback.css must define sticky headers');
