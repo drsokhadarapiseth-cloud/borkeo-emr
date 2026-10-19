@@ -13,7 +13,7 @@ function addColumnIfMissing(sqlite, table, column, definition) {
   const columns=sqlite.prepare(`PRAGMA table_info(${table})`).all();
   if (!columns.some(item=>item.name===column)) sqlite.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
 }
-function approvalFor(database,ward,date) {
+export function approvalFor(database,ward,date) {
   return database.sqlite.prepare('SELECT * FROM ward_medicine_approvals WHERE ward_code=? AND report_date=?').get(ward,date);
 }
 export function medicineDocumentFingerprint(report){return crypto.createHash('sha256').update(JSON.stringify({date:report.date,wardCode:report.wardCode,patients:report.patients,matrix:report.matrix})).digest('hex');}
