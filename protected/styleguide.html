@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="km" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1200, user-scalable=yes">
+  <title>មគ្គុទ្ទេសក៍រចនាប័ទ្ម (Styleguide) — Borkeo EMR</title>
+  <link rel="stylesheet" href="/public/design-system.css?v=3910">
+  <link rel="stylesheet" href="/public/components.css?v=3910">
+  <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+  <script src="/public/components.js?v=3910" defer></script>
+  <script src="/public/styleguide.js?v=3910" defer></script>
+</head>
+<body>
+  <div class="page-shell" style="padding: 24px; max-width: 1280px; margin: 0 auto;">
+    
+    <!-- Top Header -->
+    <header class="card" style="margin-bottom: 24px;">
+      <div class="card-header" style="background: linear-gradient(135deg, var(--surface-card), var(--surface-app));">
+        <div>
+          <span class="badge badge-info" style="margin-bottom: 8px;">រដ្ឋបាល · ADMIN ONLY</span>
+          <h1 class="card-title" style="font-size: var(--font-size-2xl);">មគ្គុទ្ទេសក៍រចនាប័ទ្ម និងបណ្ណាល័យសមាសភាគ (Styleguide)</h1>
+          <p style="margin: 4px 0 0 0; color: var(--text-secondary); font-size: var(--font-size-sm);">
+            ប្រព័ន្ធរចនាប័ទ្មស្ដង់ដារ Borkeo EMR v39.1 ស្របតាម WCAG 2.2 AA និង IEC 62366-1 Usability
+          </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <label for="styleguide-theme-select" style="font-weight: 600; font-size: var(--font-size-sm);">ស្បែក (Theme):</label>
+          <select id="styleguide-theme-select" class="select" style="min-height: 38px; width: 160px;">
+            <option value="light">☀️ ភ្លឺ (Light)</option>
+            <option value="dark">🌙 ងងឹត (Dark)</option>
+            <option value="high-contrast">👁️ កម្រិតច្បាស់ខ្ពស់</option>
+          </select>
+          <a href="/home" class="btn btn-secondary btn-sm">
+            <svg class="icon"><use href="/public/icons.svg#icon-arrow-left"></use></svg>
+            <span>ត្រឡប់ទៅទំព័រដើម</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- 1. Color Palette & SOAP Clinical Colors -->
+    <section class="card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <h2>១. ពណ៌ និងគ្រួសារពណ៌ SOAP គ្លីនិក (Colors & SOAP Families)</h2>
+      </div>
+      <div class="card-body">
+        <h3 style="margin-top: 0; font-size: var(--font-size-base);">ពណ៌វេជ្ជសាស្ត្រ SOAP (Doctor's Note Families)</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px;">
+          <!-- S -->
+          <div style="border-left: 6px solid var(--soap-s-stripe); background: var(--soap-s-bg); border-radius: var(--radius-md); padding: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span class="badge badge-soap-s">S</span>
+              <strong style="color: var(--soap-s-text);">ពាក្យបណ្តឹង និងប្រវត្តិ</strong>
+            </div>
+            <p style="margin: 0; font-size: var(--font-size-xs); color: var(--soap-s-text);">Subjective (Blue family, contrast 9.52:1)</p>
+          </div>
+          <!-- O -->
+          <div style="border-left: 6px solid var(--soap-o-stripe); background: var(--soap-o-bg); border-radius: var(--radius-md); padding: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span class="badge badge-soap-o">O</span>
+              <strong style="color: var(--soap-o-text);">ការពិនិត្យ និងលទ្ធផល</strong>
+            </div>
+            <p style="margin: 0; font-size: var(--font-size-xs); color: var(--soap-o-text);">Objective (Green family, contrast 8.70:1)</p>
+          </div>
+          <!-- A -->
+          <div style="border-left: 6px solid var(--soap-a-stripe); background: var(--soap-a-bg); border-radius: var(--radius-md); padding: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span class="badge badge-soap-a">A</span>
+              <strong style="color: var(--soap-a-text);">ការវាយតម្លៃ និងរោគវិនិច្ឆ័យ</strong>
+            </div>
+            <p style="margin: 0; font-size: var(--font-size-xs); color: var(--soap-a-text);">Assessment (Amber family, contrast 8.75:1)</p>
+          </div>
+          <!-- P -->
+          <div style="border-left: 6px solid var(--soap-p-stripe); background: var(--soap-p-bg); border-radius: var(--radius-md); padding: 16px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span class="badge badge-soap-p">P</span>
+              <strong style="color: var(--soap-p-text);">ផែនការព្យាបាល</strong>
+            </div>
+            <p style="margin: 0; font-size: var(--font-size-xs); color: var(--soap-p-text);">Plan (Purple family, contrast 13.97:1)</p>
+          </div>
+        </div>
+
+        <h3 style="font-size: var(--font-size-base);">ពណ៌ស្ថានភាពស្ដង់ដារ (Semantic Status)</h3>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <span class="badge badge-success">
+            <svg class="icon"><use href="/public/icons.svg#icon-check"></use></svg>
+            <span>ជោគជ័យ / រួចរាល់ (Success)</span>
+          </span>
+          <span class="badge badge-danger">
+            <svg class="icon"><use href="/public/icons.svg#icon-alert-circle"></use></svg>
+            <span>គ្រោះថ្នាក់ / អាឡែកស៊ី (Danger)</span>
+          </span>
+          <span class="badge badge-warning">
+            <svg class="icon"><use href="/public/icons.svg#icon-alert-triangle"></use></svg>
+            <span>រង់ចាំពិនិត្យ (Warning)</span>
+          </span>
+          <span class="badge badge-info">
+            <svg class="icon"><use href="/public/icons.svg#icon-info"></use></svg>
+            <span>ព័ត៌មានបន្ថែម (Info)</span>
+          </span>
+          <span class="badge badge-neutral">
+            <span>ធម្មតា (Neutral)</span>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Buttons & Actions -->
+    <section class="card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <h2>២. ប៊ូតុង និងសកម្មភាព (Buttons & Interactive Actions)</h2>
+      </div>
+      <div class="card-body">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <!-- Variants -->
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-primary">
+              <svg class="icon"><use href="/public/icons.svg#icon-check"></use></svg>
+              <span>រក្សាទុក (Primary)</span>
+            </button>
+            <button type="button" class="btn btn-secondary">
+              <svg class="icon"><use href="/public/icons.svg#icon-edit"></use></svg>
+              <span>កែប្រែ (Secondary)</span>
+            </button>
+            <button type="button" class="btn btn-success">
+              <svg class="icon"><use href="/public/icons.svg#icon-check-circle"></use></svg>
+              <span>អនុម័ត (Success)</span>
+            </button>
+            <button type="button" class="btn btn-danger">
+              <svg class="icon"><use href="/public/icons.svg#icon-trash"></use></svg>
+              <span>លុបចោល (Danger)</span>
+            </button>
+            <button type="button" class="btn btn-ghost">
+              <svg class="icon"><use href="/public/icons.svg#icon-refresh"></use></svg>
+              <span>ផ្ទុកឡើងវិញ (Ghost)</span>
+            </button>
+          </div>
+
+          <!-- Sizes -->
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-primary btn-sm">ប៊ូតុងតូច (Small)</button>
+            <button type="button" class="btn btn-primary btn-md">ប៊ូតុងមធ្យម (Medium)</button>
+            <button type="button" class="btn btn-primary btn-lg">ប៊ូតុងធំ (Large)</button>
+          </div>
+
+          <!-- States -->
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-primary" disabled>មិនអាចចុចបាន (Disabled)</button>
+            <button type="button" class="btn btn-primary btn-loading">កំពុងដំណើរការ...</button>
+            <button type="button" class="btn btn-secondary btn-loading">កំពុងទាញយក...</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Form Controls & Inputs -->
+    <section class="card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <h2>៣. ទម្រង់បញ្ចូលទិន្នន័យ (Inputs & Form Controls)</h2>
+      </div>
+      <div class="card-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+          <!-- Standard Input -->
+          <div class="form-group">
+            <label class="form-label" for="demo-input-name">
+              <span>ឈ្មោះអ្នកជំងឺ (Patient Name)</span>
+              <span class="form-required-star">*</span>
+            </label>
+            <input id="demo-input-name" class="input" type="text" placeholder="ឧ. ចាន់ កុសល" value="ចាន់ កុសល">
+            <span class="form-hint">បញ្ចូលនាមខ្លួន និងនាមត្រកូលរបស់អ្នកជំងឺ</span>
+          </div>
+
+          <!-- Valid Input -->
+          <div class="form-group">
+            <label class="form-label" for="demo-input-phone">លេខទូរស័ព្ទ (Phone Number)</label>
+            <input id="demo-input-phone" class="input is-valid" type="tel" value="012888999">
+            <span class="form-hint" style="color: var(--color-success-text);">✓ ទម្រង់លេខទូរស័ព្ទត្រឹមត្រូវ</span>
+          </div>
+
+          <!-- Invalid Input -->
+          <div class="form-group">
+            <label class="form-label" for="demo-input-icd">កូដ ICD-10</label>
+            <input id="demo-input-icd" class="input is-invalid" type="text" value="INVALID_CODE" aria-invalid="true">
+            <span class="form-error">
+              <svg class="icon"><use href="/public/icons.svg#icon-alert-circle"></use></svg>
+              <span>រកមិនឃើញកូដ ICD-10 នេះនៅក្នុងប្រព័ន្ធទេ។</span>
+            </span>
+          </div>
+
+          <!-- Select -->
+          <div class="form-group">
+            <label class="form-label" for="demo-select-ward">ផ្នែកសម្រាកព្យាបាល (Ward)</label>
+            <select id="demo-select-ward" class="select">
+              <option value="medicine">ផ្នែកជំងឺទូទៅ (Medicine)</option>
+              <option value="surgery">ផ្នែកវះកាត់ (Surgery)</option>
+              <option value="pediatric">ផ្នែកជំងឺកុមារ (Pediatric)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Checkboxes, Radios, Toggles -->
+        <div style="display: flex; gap: 24px; align-items: center; margin-top: 16px; flex-wrap: wrap;">
+          <label class="checkbox-label">
+            <input type="checkbox" class="checkbox" checked>
+            <span>មានប័ណ្ណមូលនិធិសមធម៌ (HEF)</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" class="radio" name="demo-gender" checked>
+            <span>ប្រុស (Male)</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" class="radio" name="demo-gender">
+            <span>ស្រី (Female)</span>
+          </label>
+          <label class="toggle-switch">
+            <input type="checkbox" checked>
+            <span class="toggle-track"></span>
+            <span style="font-size: var(--font-size-sm); font-weight: 600;">ទទួលសេវាសង្គ្រោះបន្ទាន់</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Tables with Sticky Header & Tabular Numbers -->
+    <section class="card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <h2>៤. តារាងទិន្នន័យវេជ្ជសាស្ត្រ (Tables & Tabular Numbers)</h2>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="table table-zebra table-hover table-sortable">
+            <thead>
+              <tr>
+                <th>លេខកូដករណី</th>
+                <th>ឈ្មោះអ្នកជំងឺ</th>
+                <th>អាយុ/ភេទ</th>
+                <th>ផ្នែក</th>
+                <th>សញ្ញាសំខាន់ (BP / T°)</th>
+                <th style="text-align: right;">ថ្លៃសេវា (KHR)</th>
+                <th>ស្ថានភាព</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tabular-numbers">#CASE-2026-081</td>
+                <td><strong>សុខ វាសនា</strong></td>
+                <td>34 ឆ្នាំ / ប្រុស</td>
+                <td>ជំងឺទូទៅ</td>
+                <td class="tabular-numbers">120/80 mmHg · 37.0°C</td>
+                <td class="tabular-numbers" style="text-align: right; font-weight: 700;">20,000 ៛</td>
+                <td><span class="badge badge-success">បានពិនិត្យរួច</span></td>
+              </tr>
+              <tr>
+                <td class="tabular-numbers">#CASE-2026-082</td>
+                <td><strong>កែវ ធីតា</strong></td>
+                <td>28 ឆ្នាំ / ស្រី</td>
+                <td>ពិគ្រោះក្រៅ (OPD)</td>
+                <td class="tabular-numbers">135/88 mmHg · 38.6°C</td>
+                <td class="tabular-numbers" style="text-align: right; font-weight: 700;">15,000 ៛</td>
+                <td><span class="badge badge-warning">រង់ចាំលទ្ធផលតេស្ត</span></td>
+              </tr>
+              <tr>
+                <td class="tabular-numbers">#CASE-2026-083</td>
+                <td><strong>ជា វណ្ណា</strong></td>
+                <td>62 ឆ្នាំ / ប្រុស</td>
+                <td>សង្គ្រោះបន្ទាន់</td>
+                <td class="tabular-numbers">160/100 mmHg · 39.2°C</td>
+                <td class="tabular-numbers" style="text-align: right; font-weight: 700;">0 ៛ (HEF)</td>
+                <td><span class="badge badge-danger">អាទិភាពបន្ទាន់</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Navigation: Tabs, Breadcrumbs, Pagination -->
+    <section class="card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <h2>៥. របារបញ្ជា និងរុករក (Tabs, Breadcrumbs & Pagination)</h2>
+      </div>
+      <div class="card-body">
+        <!-- Breadcrumbs -->
+        <ul class="breadcrumbs" aria-label="Breadcrumb">
+          <li class="breadcrumb-item"><a href="/home">ទំព័រដើម</a></li>
+          <li class="breadcrumb-separator">/</li>
+          <li class="breadcrumb-item"><a href="/departments">ផ្នែកទាំងអស់</a></li>
+          <li class="breadcrumb-separator">/</li>
+          <li class="breadcrumb-item active" aria-current="page">ផ្នែកជំងឺទូទៅ (Medicine)</li>
+        </ul>
+
+        <!-- Tabs -->
+        <nav class="tabs-nav" aria-label="Clinical Tabs">
+          <button type="button" class="tab-btn active" aria-selected="true">
+            <svg class="icon"><use href="/public/icons.svg#icon-clipboard"></use></svg>
+            <span>សង្ខេបអ្នកជំងឺ</span>
+          </button>
+          <button type="button" class="tab-btn" aria-selected="false">
+            <svg class="icon"><use href="/public/icons.svg#icon-activity"></use></svg>
+            <span>សញ្ញាសំខាន់ (Vitals)</span>
+          </button>
+          <button type="button" class="tab-btn" aria-selected="false">
+            <svg class="icon"><use href="/public/icons.svg#icon-pill"></use></svg>
+            <span>ឱសថ និងវេជ្ជបញ្ជា</span>
+          </button>
+          <button type="button" class="tab-btn" aria-selected="false">
+            <svg class="icon"><use href="/public/icons.svg#icon-file-text"></use></svg>
+            <span>កំណត់ត្រាវេជ្ជសាស្ត្រ</span>
+          </button>
+        </nav>
+
+        <!-- Pagination -->
+        <nav class="pagination" aria-label="Pagination">
+          <button type="button" class="page-btn" disabled aria-label="ទំព័រមុន">
+            <svg class="icon"><use href="/public/icons.svg#icon-chevron-left"></use></svg>
+          </button>
+          <button type="button" class="page-btn active" aria-current="page">1</button>
+          <button type="button" class="page-btn">2</button>
+          <button type="button" class="page-btn">3</button>
+          <button type="button" class="page-btn" aria-label="ទំព័របន្ទាប់">
+            <svg class="icon"><use href="/public/icons.svg#icon-chevron-right"></use></svg>
+          </button>
+        </nav>
+      </div>
+    </section>
+
+    <!-- 6. Interactive Overlays: Modals, Drawers, Toasts & Tooltips -->
+    <section class="card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <h2>៦. ផ្ទាំងលោត និងសេចក្តីជូនដំណឹង (Modals, Drawers & Toasts)</h2>
+      </div>
+      <div class="card-body">
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
+          <button id="demo-modal-trigger" type="button" class="btn btn-secondary">
+            <svg class="icon"><use href="/public/icons.svg#icon-external-link"></use></svg>
+            <span>បង្ហាញផ្ទាំង Modal</span>
+          </button>
+          <button id="demo-drawer-trigger" type="button" class="btn btn-secondary">
+            <svg class="icon"><use href="/public/icons.svg#icon-sliders"></use></svg>
+            <span>បើក Drawer ចំហៀង</span>
+          </button>
+          <button id="toast-success-btn" type="button" class="btn btn-success btn-sm">Toast ជោគជ័យ</button>
+          <button id="toast-danger-btn" type="button" class="btn btn-danger btn-sm">Toast កំហុស</button>
+          <button id="toast-warning-btn" type="button" class="btn btn-secondary btn-sm" style="border-color: var(--color-warning-border);">Toast បម្រាម</button>
+          <button id="toast-info-btn" type="button" class="btn btn-secondary btn-sm" style="border-color: var(--color-info-border);">Toast ព័ត៌មាន</button>
+          <button type="button" class="btn btn-ghost" data-tooltip="នេះជា Tooltip ពន្យល់បន្ថែមតាមបទដ្ឋាន WCAG">
+            <svg class="icon"><use href="/public/icons.svg#icon-info"></use></svg>
+            <span>Tooltip Demo (ដាក់ Mouse លើ)</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Skeletons & Empty States -->
+    <section class="card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <h2>៧. ស្ថានភាពទទេ និងគ្រោងផ្ទុកទិន្នន័យ (Empty State & Skeletons)</h2>
+      </div>
+      <div class="card-body">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <!-- Empty State -->
+          <div class="empty-state" style="border: 1px dashed var(--border-default); border-radius: var(--radius-lg);">
+            <svg class="empty-state-icon"><use href="/public/icons.svg#icon-folder"></use></svg>
+            <h3 class="empty-state-title">មិនមានទិន្នន័យអ្នកជំងឺ</h3>
+            <p class="empty-state-desc">បច្ចុប្បន្នមិនទាន់មានអ្នកជំងឺរង់ចាំក្នុងជួរនេះទេ។ សូមចុចខាងក្រោមដើម្បីចុះឈ្មោះថ្មី។</p>
+            <button type="button" class="btn btn-primary btn-sm">ចុះឈ្មោះអ្នកជំងឺថ្មី</button>
+          </div>
+
+          <!-- Skeletons -->
+          <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <div class="skeleton skeleton-avatar"></div>
+              <div style="flex: 1;">
+                <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                <div class="skeleton skeleton-text" style="width: 40%;"></div>
+              </div>
+            </div>
+            <div class="skeleton skeleton-card" style="height: 64px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Local SVG Icons Gallery -->
+    <section class="card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <h2>៨. បណ្ណាល័យរូបតំណាងក្នុងស្រុក (Local SVG Icons Gallery — public/icons.svg)</h2>
+      </div>
+      <div class="card-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;">
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-user"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">user</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-stethoscope"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">stethoscope</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-pill"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">pill</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-syringe"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">syringe</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-heart-pulse"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">heart-pulse</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-bed"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">bed</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-hospital"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">hospital</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-clipboard"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">clipboard</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-file-text"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">file-text</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-search"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">search</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-bell"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">bell</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-calendar"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">calendar</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-print"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">print</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-copy"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">copy</span>
+          </div>
+          <div class="card" style="padding: 12px; align-items: center; gap: 6px; text-align: center;">
+            <svg class="icon icon-lg"><use href="/public/icons.svg#icon-lock"></use></svg>
+            <span style="font-size: 11px; color: var(--text-muted);">lock</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Interactive Sample Modal -->
+  <div id="demo-sample-modal" class="modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-sample-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-sample-title" style="margin: 0; font-size: var(--font-size-lg);">ផ្ទាំងគំរូ Modal បញ្ជាក់ (Sample Confirmation)</h3>
+        <button type="button" class="btn btn-ghost btn-sm btn-icon" data-modal-close aria-label="បិទ">
+          <svg class="icon"><use href="/public/icons.svg#icon-x"></use></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-top: 0;">នេះជាផ្ទាំងគំរូ Modal ដែលអាចគ្រប់គ្រងតាមរយៈ keyboard (ចុច <kbd>Esc</kbd> ដើម្បីបិទ) និងចុចលើផ្ទៃខាងក្រោយដើម្បីបិទ។</p>
+        <div class="form-group">
+          <label class="form-label" for="modal-input">កំណត់ចំណាំបន្ថែម៖</label>
+          <input id="modal-input" class="input" type="text" placeholder="វាយចំណាំ...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>បោះបង់</button>
+        <button type="button" class="btn btn-primary" data-modal-close>យល់ព្រម</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Sample Drawer -->
+  <aside id="demo-sample-drawer" class="drawer drawer-right" aria-label="ផ្ទាំងចំហៀង">
+    <div style="padding: 20px; display: flex; flex-direction: column; height: 100%;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; margin-bottom: 16px;">
+        <h3 style="margin: 0;">ផ្ទាំងកំណត់ Drawer</h3>
+        <button type="button" class="btn btn-ghost btn-sm btn-icon" data-drawer-close aria-label="បិទ">
+          <svg class="icon"><use href="/public/icons.svg#icon-x"></use></svg>
+        </button>
+      </div>
+      <div style="flex: 1;">
+        <p style="font-size: var(--font-size-sm); color: var(--text-secondary);">នេះជា Drawer ចំហៀងដែលនឹងត្រូវប្រើសម្រាប់បញ្ជីរុករកលើទូរស័ព្ទដៃ និងផ្ទាំងតម្រងកម្រិតខ្ពស់។</p>
+      </div>
+      <div>
+        <button type="button" class="btn btn-secondary" style="width: 100%;" data-drawer-close>បិទផ្ទាំង</button>
+      </div>
+    </div>
+  </aside>
+
+</body>
+</html>

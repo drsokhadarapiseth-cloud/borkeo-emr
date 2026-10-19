@@ -3,7 +3,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v39.0 - Electronic Medical Record System
+// Borkeo EMR v39.1 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -124,6 +124,10 @@ const publicFiles = new Map([
   ['/public/login.css', ['login.css', 'text/css; charset=utf-8']],
   ['/public/login.js', ['login.js', 'text/javascript; charset=utf-8']],
   ['/public/design-system.css', ['design-system.css', 'text/css; charset=utf-8']],
+  ['/public/icons.svg', ['icons.svg', 'image/svg+xml']],
+  ['/public/components.css', ['components.css', 'text/css; charset=utf-8']],
+  ['/public/components.js', ['components.js', 'text/javascript; charset=utf-8']],
+  ['/public/styleguide.js', ['styleguide.js', 'text/javascript; charset=utf-8']],
   ['/public/interface-theme.css',['interface-theme.css','text/css; charset=utf-8']],
   ['/public/interface-theme.js',['interface-theme.js','text/javascript; charset=utf-8']],
   ['/public/emr-session.css', ['emr-session.css', 'text/css; charset=utf-8']],
@@ -238,6 +242,7 @@ const APP_VERSION = (() => {
 const protectedPages = new Map([
   ['/admin/health-facility',['health-facility.html',false]],
   ['/admin/interface',['interface-theme.html',false]],
+  ['/styleguide', ['styleguide.html', false]],
   ['/home', ['home.html', false]],
   ['/emr', ['EMR.html', true]],
   ['/print-preview', ['print-preview.html', true]],
@@ -432,7 +437,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   html = html.replace(/(<span\b[^>]*\bdata-app-version\b[^>]*>)[^<]*(<\/span>)/g, (_, open, close) => `${open}v${APP_VERSION}${close}`);
   html = html.replace(/Borkeo EMR v\d+\.\d+/g, `Borkeo EMR v${APP_VERSION}`);
   html = html.replace(/<head\b[^>]*>/i, head => head + '<style>.emr-language-switch, [data-emr-language], #langBtn, .lang-btn, body #emr-site-banner .portal-account-actions .emr-language-switch, #emr-session-control .portal-account-actions .emr-language-switch, .portal-account-actions .emr-language-switch { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; max-width: 0 !important; max-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; position: absolute !important; left: -9999px !important; clip: rect(0,0,0,0) !important; }</style><script src="/public/emr-language-lock.js?v=3760"></script><link rel="stylesheet" href="/public/emr-required-fields.css?v=3770"><script src="/public/emr-required-fields.js?v=3770"></script>');
-  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3900"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><script src="/public/interface-theme.js?v=1970" defer></script></head>');
+  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3910"><link rel="stylesheet" href="/public/components.css?v=3910"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><script src="/public/components.js?v=3910" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=3800" defer></script></head>');
   html = html.replace('</head>', `<meta name="borkeo-version" content="${APP_VERSION}"></head>`);

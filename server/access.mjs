@@ -468,7 +468,7 @@ function dataHasAssignedRoom(row) {
 
 export function roleCanPage(role, pathname) {
   role = String(role || '').toUpperCase();
-  if (['/admin/organization','/admin/interface','/admin/health-facility'].includes(pathname)) return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
+  if (['/admin/organization','/admin/interface','/admin/health-facility','/styleguide'].includes(pathname)) return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
   if (['ADMIN','VICE_DIRECTOR'].includes(role) || role === 'DIRECTOR') return true;
   if (pathname === '/requests') return ['REGISTRATION','TRIAGE','DOCTOR','NURSE','MIDWIFE','CHIEF_WARD','WARD_HEAD','PHARMACY','LAB','IMAGING','CLERK','ACCOUNTANT'].includes(role);
   if (pathname === '/record-viewer') return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
