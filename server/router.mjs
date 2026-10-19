@@ -101,7 +101,7 @@ export class Router {
         }
       }
 
-      const routeCtx = { ...ctx, match, body };
+      const routeCtx = { ...ctx, match, routeParams: match, body };
       try {
         const res = await route.handler(routeCtx);
         if (res !== false) {
