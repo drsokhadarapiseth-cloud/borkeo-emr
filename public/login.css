@@ -185,6 +185,30 @@ form > label {
   outline: none !important;
   box-shadow: none !important;
 }
+.field select {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 0;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent;
+  color: #102433;
+  font: inherit;
+  font-size: 14.5px;
+  cursor: pointer;
+}
+.field select:focus,
+.field select:focus-visible {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.field select option {
+  background: #ffffff;
+  color: #0f172a;
+  padding: 8px 12px;
+}
 .field input:-webkit-autofill,
 .field input:-webkit-autofill:hover,
 .field input:-webkit-autofill:focus,

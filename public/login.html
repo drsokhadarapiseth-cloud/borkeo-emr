@@ -46,11 +46,20 @@
           </div>
 
           <form id="login-form" novalidate>
+            <label for="quick-role-select">ជ្រើសរើសគណនីបុគ្គលិក</label>
+            <div class="field">
+              <span aria-hidden="true" class="field-icon">👥</span>
+              <select id="quick-role-select" aria-label="ជ្រើសរើសគណនីបុគ្គលិក">
+                <option value="">-- ចុចទីនេះដើម្បីជ្រើសរើសគណនី --</option>
+              </select>
+            </div>
+
             <label for="username">ឈ្មោះអ្នកប្រើប្រាស់</label>
             <div class="field">
               <span aria-hidden="true" class="field-icon">👤</span>
               <input id="username" name="username" type="text" autocomplete="username"
-                minlength="3" maxlength="64" required autofocus>
+                minlength="3" maxlength="64" required autofocus list="user-accounts">
+              <datalist id="user-accounts"></datalist>
             </div>
 
             <div id="login-password-group" hidden>
