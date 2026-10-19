@@ -31,6 +31,7 @@ import { Router } from './router.mjs';
 import { mountAuthRoutes } from './routes/auth.mjs';
 import { mountAdminRoutes } from './routes/admin.mjs';
 import { mountQueueRoutes } from './routes/queue.mjs';
+import { mountMessagesRoutes } from './routes/messages.mjs';
 import {
   hashPassword, normalizeUsername, randomToken, safeTokenEqual, tokenHash, validatePassword, validateUsername, verifyPassword,
 } from './password.mjs';
@@ -1812,6 +1813,7 @@ export function createEmrServer(configOverrides = {}) {
   mountAuthRoutes(router);
   mountAdminRoutes(router);
   mountQueueRoutes(router);
+  mountMessagesRoutes(router);
   // Queue board endpoints: /api/queue/tts (translate_tts), /api/queue/display (activeCalls)
   // pathname === '/api/queue/skip'
   // if (!['ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(role) && !(role==='DOCTOR' && sessionWard(session)==='opd'))
@@ -1840,6 +1842,7 @@ export function createEmrServer(configOverrides = {}) {
         opdConsultationPaymentConfirmed, patientClinicalClosed, clinicalPatientKey,
         patientRecordResponse, canAccessPatient, messagingVisibility,
         paymentStatusForPatient, encounterAccess,
+        messagingRoleAllowed, destinationExists, safeAttachmentName,
       };
       if (await router.handle(ctx)) return;
 
@@ -2060,127 +2063,6 @@ export function createEmrServer(configOverrides = {}) {
         if(!session||!MANAGEMENT.includes(sessionRole(session)))return sendJson(response,403,{error:'Management access required.'},{secure:config.cookieSecure});
         if(!sameOrigin(request,config)||!safeTokenEqual(request.headers['x-csrf-token'],session.csrf_token))return sendJson(response,403,{error:'Security token is invalid.'},{secure:config.cookieSecure});
         const body=await readJson(request,10000);database.sqlite.exec('BEGIN IMMEDIATE');try{const report=rejectWardMedicineReport(database,body.date,body.ward,session.user_id,body.note,body.revision,body.fingerprint);createStaffMessage(database,{senderUserId:session.user_id,senderRole:sessionRole(session),destinationType:'WARD',destinationCode:body.ward,subject:'បណ្ណស្នើរសុំឱសថត្រូវកែតម្រូវ',body:body.note});audit(database,request,'MEDICINE_REQUEST_REJECTED',{userId:session.user_id,details:{ward:body.ward,date:body.date}});database.sqlite.exec('COMMIT');return sendJson(response,200,{report},{secure:config.cookieSecure})}catch(e){database.sqlite.exec('ROLLBACK');return sendJson(response,400,{error:e.message},{secure:config.cookieSecure})}
-      }
-      const replyMatch=/^\/api\/messages\/([0-9a-f-]+)\/reply$/.exec(pathname);
-      if(request.method==='POST'&&replyMatch){
-        if(!session)return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        if(!sameOrigin(request,config)||!safeTokenEqual(request.headers['x-csrf-token'],session.csrf_token))return sendJson(response,403,{error:'Security token is invalid.'},{secure:config.cookieSecure});
-        const original=getStaffMessage(database,replyMatch[1],session.user_id);if(!original||!canViewStaffMessage(original,messagingVisibility(session)))return sendJson(response,404,{error:'Message not found.'},{secure:config.cookieSecure});
-        const body=await readJson(request,10000);if(!String(body.body||'').trim())return sendJson(response,400,{error:'Reply text is required.'},{secure:config.cookieSecure});const type=original.senderWardCode?'WARD':MANAGEMENT.includes(original.senderRole)?'ADMIN':original.senderRole;
-        if(!destinationExists(type,original.senderWardCode||''))return sendJson(response,400,{error:'This message has no reply destination.'},{secure:config.cookieSecure});
-        try{const message=createStaffMessage(database,{senderUserId:session.user_id,senderRole:sessionRole(session),senderWardCode:sessionWard(session),destinationType:type,destinationCode:original.senderWardCode||'',patientKey:original.patientKey,subject:'ឆ្លើយតប៖ '+String(original.subject||'').slice(0,140),body:String(body.body||'').trim()});audit(database,request,'WARD_MESSAGE_REPLY',{userId:session.user_id,details:{originalId:original.id,messageId:message.id}});return sendJson(response,201,{message},{secure:config.cookieSecure})}catch(e){return sendJson(response,400,{error:e.message},{secure:config.cookieSecure})}
-      }
-      if (request.method === 'GET' && pathname === '/api/messages/destinations') {
-        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-        const role = requireContext(session);
-        if (!messagingRoleAllowed(role)) return sendJson(response, 403, { error: 'Messaging is not available for this role.' }, { secure: config.cookieSecure });
-        const destinations = [
-          { type:'ADMIN', code:'admin', nameKh:'អ្នកគ្រប់គ្រងប្រព័ន្ធ', nameEn:'Administrator' },
-          { type:'DIRECTOR', code:'director', nameKh:'នាយកមន្ទីរពេទ្យ', nameEn:'Director' },
-          ...WARDS.map(ward => ({ type:'WARD', code:ward.code, nameKh:ward.nameKh, nameEn:ward.nameEn })),
-          { type:'PHARMACY', code:'pharmacy', nameKh:'ឱសថស្ថាន', nameEn:'Pharmacy' },
-          { type:'LAB', code:'lab', nameKh:'មន្ទីរពិសោធន៍', nameEn:'Laboratory' },
-          { type:'IMAGING', code:'imaging', nameKh:'រូបភាពវេជ្ជសាស្ត្រ', nameEn:'Imaging' },
-        ];
-        return sendJson(response, 200, { destinations }, { secure: config.cookieSecure });
-      }
-      if (request.method === 'GET' && pathname === '/api/messages') {
-        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-        const role = requireContext(session);
-        if (!messagingRoleAllowed(role)) return sendJson(response, 403, { error: 'Messaging is not available for this role.' }, { secure: config.cookieSecure });
-        const box = ['sent','direct'].includes(url.searchParams.get('box')) ? url.searchParams.get('box') : 'inbox';
-        const limit = Number(url.searchParams.get('limit') || 30);
-        const messages = listStaffMessages(database, messagingVisibility(session), { box, limit, state: url.searchParams.get('state') });
-        return sendJson(response, 200, { messages, pendingCount:pendingStaffMessageCount(database,messagingVisibility(session)) }, { secure: config.cookieSecure });
-      }
-      if (request.method === 'POST' && pathname === '/api/messages') {
-        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-        const role = requireContext(session);
-        if (!messagingRoleAllowed(role)) return sendJson(response, 403, { error: 'Messaging is not available for this role.' }, { secure: config.cookieSecure });
-        if (!sameOrigin(request, config) || !safeTokenEqual(request.headers['x-csrf-token'], session.csrf_token)) {
-          return sendJson(response, 403, { error: 'Security token is invalid.' }, { secure: config.cookieSecure });
-        }
-        const body = await readJson(request, config.maxClinicalBodyBytes);
-        if (!destinationExists(body?.destinationType, body?.destinationCode)) return sendJson(response, 400, { error:'Message destination is invalid.' }, { secure: config.cookieSecure });
-        try {
-          const message = createStaffMessage(database, {
-            senderUserId: session.user_id, senderRole: role, senderWardCode: sessionWard(session),
-            destinationType: body?.destinationType, destinationCode: body?.destinationCode,
-            subject: body?.subject, body: body?.body, patientKey: body?.patientKey,
-          });
-          audit(database, request, 'STAFF_MESSAGE_SENT', { userId:session.user_id, subjectUsername:session.username, details:{ messageId:message.id, destinationType:message.destinationType, destinationCode:message.destinationCode, patientKey:message.patientKey } });
-          return sendJson(response, 201, { message }, { secure: config.cookieSecure });
-        } catch (error) {
-          return sendJson(response, 400, { error:error.message }, { secure: config.cookieSecure });
-        }
-      }
-      const pharmacyMessageMatch = /^\/api\/messages\/([0-9a-f-]+)\/prescription$/.exec(pathname);
-      if (request.method === 'GET' && pharmacyMessageMatch) {
-        if (!session) return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        requireContext(session);
-        const message=getStaffMessage(database,pharmacyMessageMatch[1],session.user_id);
-        if (!message || !canViewStaffMessage(message,messagingVisibility(session))) return sendJson(response,404,{error:'Prescription not found.'},{secure:config.cookieSecure});
-        const prescription=prescriptionForMessage(database,message.id);
-        if (!prescription) return sendJson(response,404,{error:'Prescription not found.'},{secure:config.cookieSecure});
-        return sendJson(response,200,{prescription},{secure:config.cookieSecure});
-      }
-      const messageCompleteMatch = /^\/api\/messages\/([0-9a-f-]+)\/complete$/.exec(pathname);
-      if (request.method === 'POST' && messageCompleteMatch) {
-        if (!session) return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
-        const role=requireContext(session);
-        if (!messagingRoleAllowed(role)) return sendJson(response,403,{error:'Messaging is not available for this role.'},{secure:config.cookieSecure});
-        if (!sameOrigin(request,config) || !safeTokenEqual(request.headers['x-csrf-token'],session.csrf_token)) return sendJson(response,403,{error:'Security token is invalid.'},{secure:config.cookieSecure});
-        const completion=completeStaffMessage(database,messageCompleteMatch[1],messagingVisibility(session));
-        if (!completion) return sendJson(response,404,{error:'Message is outside your recipient group.'},{secure:config.cookieSecure});
-        audit(database,request,'STAFF_MESSAGE_COMPLETED',{userId:session.user_id,details:{messageId:messageCompleteMatch[1],role,ward:sessionWard(session)}});
-        return sendJson(response,200,{completion},{secure:config.cookieSecure});
-      }
-      const messageReadMatch = /^\/api\/messages\/([0-9a-f-]+)\/read$/.exec(pathname);
-      if (request.method === 'POST' && messageReadMatch) {
-        if (!session) return sendJson(response, 401, { error:'Authentication required.' }, { secure:config.cookieSecure });
-        const role = requireContext(session);
-        if (!messagingRoleAllowed(role)) return sendJson(response, 403, { error:'Messaging is not available for this role.' }, { secure:config.cookieSecure });
-        if (!sameOrigin(request, config) || !safeTokenEqual(request.headers['x-csrf-token'], session.csrf_token)) return sendJson(response, 403, { error:'Security token is invalid.' }, { secure:config.cookieSecure });
-        const message = getStaffMessage(database, messageReadMatch[1], session.user_id);
-        if (!message || !canViewStaffMessage(message, messagingVisibility(session))) return sendJson(response, 404, { error:'Message not found.' }, { secure:config.cookieSecure });
-        const readAt = markStaffMessageRead(database, message.id, session.user_id);
-        return sendJson(response, 200, { readAt }, { secure:config.cookieSecure });
-      }
-      const messageAttachmentUpload = /^\/api\/messages\/([0-9a-f-]+)\/attachments$/.exec(pathname);
-      if (request.method === 'POST' && messageAttachmentUpload) {
-        if (!session) return sendJson(response, 401, { error:'Authentication required.' }, { secure:config.cookieSecure });
-        const role = requireContext(session);
-        if (!messagingRoleAllowed(role)) return sendJson(response, 403, { error:'Messaging is not available for this role.' }, { secure:config.cookieSecure });
-        if (!sameOrigin(request, config) || !safeTokenEqual(request.headers['x-csrf-token'], session.csrf_token)) return sendJson(response, 403, { error:'Security token is invalid.' }, { secure:config.cookieSecure });
-        const message = getStaffMessage(database, messageAttachmentUpload[1], session.user_id);
-        if (!message || message.senderUserId !== session.user_id) return sendJson(response, 403, { error:'Only the sender can attach files to this message.' }, { secure:config.cookieSecure });
-        const contentType = String(request.headers['content-type'] || '').split(';')[0].trim().toLowerCase();
-        const extensionByType = {
-          'application/pdf':'.pdf','image/jpeg':'.jpg','image/png':'.png','text/plain':'.txt',
-          'application/msword':'.doc','application/vnd.openxmlformats-officedocument.wordprocessingml.document':'.docx',
-        };
-        const extension = extensionByType[contentType];
-        if (!extension) return sendJson(response, 415, { error:'Allowed attachments: PDF, JPG, PNG, TXT, DOC and DOCX.' }, { secure:config.cookieSecure });
-        const bytes = await readBinary(request, 12 * 1024 * 1024);
-        if (!bytes.length) return sendJson(response, 400, { error:'Attachment is empty.' }, { secure:config.cookieSecure });
-        const uploadRoot = path.join(path.dirname(config.databasePath), 'uploads', 'messages', message.id);
-        fs.mkdirSync(uploadRoot, { recursive:true });
-        const storagePath = path.join(uploadRoot, `${crypto.randomUUID()}${extension}`);
-        fs.writeFileSync(storagePath, bytes, { flag:'wx' });
-        const attachment = addStaffMessageAttachment(database, message.id, { filename:safeAttachmentName(request.headers['x-file-name']), contentType, storagePath, userId:session.user_id });
-        audit(database, request, 'STAFF_MESSAGE_ATTACHMENT_ADDED', { userId:session.user_id, subjectUsername:session.username, details:{ messageId:message.id, attachmentId:attachment.id } });
-        return sendJson(response, 201, { attachment }, { secure:config.cookieSecure });
-      }
-      const messageAttachmentGet = /^\/api\/messages\/attachments\/([0-9a-f-]+)$/.exec(pathname);
-      if (request.method === 'GET' && messageAttachmentGet) {
-        if (!session) return redirect(response, '/login', { secure:config.cookieSecure });
-        const role = requireContext(session);
-        if (!messagingRoleAllowed(role)) return sendJson(response, 403, { error:'Messaging is not available for this role.' }, { secure:config.cookieSecure });
-        const attachment = getStaffMessageAttachment(database, messageAttachmentGet[1]);
-        if (!attachment) return sendJson(response, 404, { error:'Attachment not found.' }, { secure:config.cookieSecure });
-        const message = getStaffMessage(database, attachment.message_id, session.user_id);
-        if (!canViewStaffMessage(message, messagingVisibility(session))) return sendJson(response, 403, { error:'You cannot view this attachment.' }, { secure:config.cookieSecure });
-        return sendFile(response, attachment.storage_path, attachment.content_type, { secure:config.cookieSecure }, false);
       }
       if(['/api/finance/payment-settings','/api/finance/payer-tariffs','/api/finance/concessions'].includes(pathname)||/^\/api\/finance\/concessions\/[0-9a-f-]+\/review$/.test(pathname)){
         if(!session)return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
