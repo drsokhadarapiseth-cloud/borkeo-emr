@@ -375,11 +375,12 @@ export function buildIdentity(database, session) {
     activeWard: contextValid && activeWard ? activeWard : null,
     needsContext: !contextValid,
     contexts,
+    mustChangePassword: Boolean(session.must_change_password),
   };
 }
 
 export function listUsers(database) {
-  return database.sqlite.prepare(`SELECT id, username, display_name, is_active, created_at, updated_at, last_login_at
+  return database.sqlite.prepare(`SELECT id, username, display_name, is_active, created_at, updated_at, last_login_at, must_change_password, totp_enabled
     FROM users ORDER BY display_name COLLATE NOCASE, username COLLATE NOCASE`).all().map(row => {
       const access = getUserAccess(database, row.id);
       return {
@@ -387,6 +388,8 @@ export function listUsers(database) {
         username: row.username,
         displayName: row.display_name,
         isActive: row.is_active === 1,
+        mustChangePassword: row.must_change_password === 1,
+        totpEnabled: row.totp_enabled === 1,
         roles: access.roles,
         wards: access.wards,
         imagingSubtypes: access.imagingSubtypes,

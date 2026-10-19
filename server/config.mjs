@@ -34,12 +34,19 @@ function positiveInteger(value, fallback, name) {
 
 export function loadConfig(overrides = {}) {
   loadDotEnv(path.join(projectRoot, '.env'));
-  // The downloadable demo starts with username-only sign-in. It never reads
-  // the persistent patient database or binds to a network-facing address.
-  const demoMode = overrides.demoMode !== false;
+  const emrMode = String(overrides.emrMode ?? process.env.EMR_MODE ?? '').toLowerCase();
+  const nodeEnv = overrides.nodeEnv ?? process.env.NODE_ENV ?? (emrMode === 'production' ? 'production' : 'development');
+  const isProduction = emrMode === 'production' || nodeEnv === 'production';
+
+  // Demo mode is opt-in in production (EMR_MODE=demo). For backward-compatibility in tests,
+  // in-memory databases default to demo mode unless demoMode is explicitly false or in production.
+  const demoMode = overrides.demoMode !== undefined
+    ? Boolean(overrides.demoMode)
+    : (isProduction ? false : (emrMode === 'demo' || overrides.databasePath === ':memory:'));
+
   const port = overrides.port ?? positiveInteger(process.env.PORT, 3001, 'PORT');
-  const host = overrides.host ?? (demoMode ? '127.0.0.1' : process.env.HOST ?? '127.0.0.1');
-  const appOrigin = overrides.appOrigin ?? (demoMode ? `http://localhost:${port}` : process.env.APP_ORIGIN ?? `http://localhost:${port}`);
+  const host = overrides.host ?? (process.env.HOST || '127.0.0.1');
+  const appOrigin = overrides.appOrigin ?? (process.env.APP_ORIGIN ?? `http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`);
   const originUrl = new URL(appOrigin);
   if (!['http:', 'https:'].includes(originUrl.protocol) || originUrl.pathname !== '/') {
     throw new Error('APP_ORIGIN must contain only an http(s) origin, without a path.');
@@ -63,11 +70,11 @@ export function loadConfig(overrides = {}) {
     : autoDatabase
       ? path.join(os.homedir(), 'Borkeo_EMR_Data', 'emr.sqlite')
       : path.resolve(projectRoot, databaseSetting);
-  const cookieSecure = overrides.cookieSecure ?? (demoMode ? false : process.env.COOKIE_SECURE === 'true');
-  if (demoMode && (overrides.nodeEnv ?? process.env.NODE_ENV) === 'production') {
+  const cookieSecure = overrides.cookieSecure ?? (isProduction ? true : (demoMode ? false : process.env.COOKIE_SECURE === 'true'));
+  if (demoMode && isProduction) {
     throw new Error('The username-only demo is for local testing, not production.');
   }
-  if ((overrides.nodeEnv ?? process.env.NODE_ENV) === 'production' && !cookieSecure) {
+  if (isProduction && !cookieSecure) {
     throw new Error('COOKIE_SECURE must be true in production.');
   }
 

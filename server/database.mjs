@@ -29,6 +29,9 @@ export function openDatabase(databasePath) {
       password_hash TEXT NOT NULL,
       role TEXT NOT NULL CHECK (role IN (${USER_ROLES.map(role => `'${role}'`).join(',')})),
       is_active INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0,1)),
+      must_change_password INTEGER NOT NULL DEFAULT 0 CHECK (must_change_password IN (0,1)),
+      totp_secret TEXT,
+      totp_enabled INTEGER NOT NULL DEFAULT 0 CHECK (totp_enabled IN (0,1)),
       created_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL,
       last_login_at INTEGER
@@ -116,17 +119,27 @@ export function openDatabase(databasePath) {
     ) STRICT;
   `);
 
+  const ensureColumn = (table, column, definition) => {
+    const cols = sqlite.prepare(`PRAGMA table_info(${table})`).all();
+    if (!cols.some(c => c.name === column)) {
+      sqlite.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+    }
+  };
+  ensureColumn('users', 'must_change_password', 'INTEGER NOT NULL DEFAULT 0');
+  ensureColumn('users', 'totp_secret', 'TEXT');
+  ensureColumn('users', 'totp_enabled', 'INTEGER NOT NULL DEFAULT 0');
+
   const statements = {
     insertUser: sqlite.prepare(`INSERT INTO users
-      (id, username, display_name, password_hash, role, is_active, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, 1, ?, ?)`),
+      (id, username, display_name, password_hash, role, is_active, must_change_password, totp_secret, totp_enabled, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?)`),
     findUser: sqlite.prepare('SELECT * FROM users WHERE username = ?'),
     updateLastLogin: sqlite.prepare('UPDATE users SET last_login_at = ?, updated_at = ? WHERE id = ?'),
     insertSession: sqlite.prepare(`INSERT INTO sessions
       (token_hash, user_id, csrf_token, created_at, expires_at, last_seen_at)
       VALUES (?, ?, ?, ?, ?, ?)`),
     findSession: sqlite.prepare(`SELECT s.token_hash, s.csrf_token, s.expires_at, s.last_seen_at,
-      u.id AS user_id, u.username, u.display_name, u.role, u.is_active
+      u.id AS user_id, u.username, u.display_name, u.role, u.is_active, u.must_change_password
       FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ?`),
     touchSession: sqlite.prepare('UPDATE sessions SET last_seen_at = ? WHERE token_hash = ?'),
     deleteSession: sqlite.prepare('DELETE FROM sessions WHERE token_hash = ?'),
@@ -262,8 +275,17 @@ export function openDatabase(databasePath) {
     createUser(user) {
       statements.insertUser.run(
         user.id, user.username, user.displayName, user.passwordHash, storageRole(user.role),
+        user.mustChangePassword ? 1 : 0, user.totpSecret ?? null, user.totpEnabled ? 1 : 0,
         user.createdAt, user.createdAt,
       );
+    },
+    setUserMustChangePassword(userId, mustChange) {
+      sqlite.prepare('UPDATE users SET must_change_password = ?, updated_at = ? WHERE id = ?')
+        .run(mustChange ? 1 : 0, Date.now(), userId);
+    },
+    setUserTotp(userId, secret, enabled) {
+      sqlite.prepare('UPDATE users SET totp_secret = ?, totp_enabled = ?, updated_at = ? WHERE id = ?')
+        .run(secret, enabled ? 1 : 0, Date.now(), userId);
     },
     findUser(username) { return statements.findUser.get(username) ?? null; },
     markLogin(userId, now) { statements.updateLastLogin.run(now, now, userId); },

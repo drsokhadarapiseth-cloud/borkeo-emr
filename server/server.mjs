@@ -3,7 +3,8 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v38.0 - Electronic Medical Record System
+// Borkeo EMR v38.1 - Electronic Medical Record System
+import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
 import {PATIENT_PHOTO_FIELDS, validPatientPhoto} from './patient-photo.mjs';
@@ -421,7 +422,8 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=3800" defer></script></head>');
   html = html.replace('</head>', `<meta name="borkeo-version" content="${APP_VERSION}"></head>`);
   if (!html.includes('/public/emr-language.js')) {
-    const languageAssets = '<link rel="stylesheet" href="/public/emr-language.css?v=3800"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=3800" defer></script>';
+    const langVersion = String(APP_VERSION).replace('.', '') + '0';
+    const languageAssets = `<link rel="stylesheet" href="/public/emr-language.css?v=${langVersion}"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=${langVersion}" defer></script>`;
     html = html.replace('</head>', `${languageAssets}</head>`);
   }
   html = html.replace(/(\/public\/[^"'\s<>]+\?v=[^"'\s<>]+)/g, asset => `${asset}&build=${APP_VERSION}`);
@@ -1806,6 +1808,14 @@ export function createEmrServer(configOverrides = {}) {
       const url = new URL(request.url ?? '/', config.appOrigin);
       const pathname = decodeURIComponent(url.pathname);
       const session = sessionFor(request, database);
+      if (session && session.must_change_password === 1 && !['/api/auth/change-password', '/api/auth/logout', '/api/auth/me', '/api/auth/context'].includes(pathname)) {
+        if (pathname.startsWith('/api/')) {
+          return sendJson(response, 403, { error: 'Password change is required before accessing the system.', mustChangePassword: true }, { secure: config.cookieSecure });
+        }
+        if (pathname !== '/login' && !publicFiles.has(pathname)) {
+          return redirect(response, '/login?passwordChange=1', { secure: config.cookieSecure });
+        }
+      }
       if (pathname === '/api/hef/lookup') {
         if(!session)return sendJson(response,401,{error:'Authentication required.'},{secure:config.cookieSecure});
         if(!HEF_LOOKUP_ROLES.has(sessionRole(session)))return sendJson(response,403,{error:'Registration access required.'},{secure:config.cookieSecure});
@@ -2002,6 +2012,22 @@ export function createEmrServer(configOverrides = {}) {
           return genericLoginFailure(response, config, 0);
         }
 
+        if (!config.demoMode && user.totp_enabled === 1 && ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'].includes(user.role)) {
+          if (!body.totpCode) {
+            return sendJson(response, 200, {
+              totpRequired: true,
+              username: user.username,
+              message: 'Two-factor authentication code required.'
+            }, { secure: config.cookieSecure });
+          }
+          if (!verifyTotpCode(body.totpCode, user.totp_secret)) {
+            database.recordLoginFailure(ipKey, now, config.loginWindowMs, config.loginMaxAttempts);
+            database.recordLoginFailure(userKey, now, config.loginWindowMs, config.loginMaxAttempts);
+            audit(database, request, 'LOGIN_FAILED_INVALID_TOTP', { subjectUsername: username });
+            return genericLoginFailure(response, config, 0);
+          }
+        }
+
         database.clearLoginLimit(ipKey);
         database.clearLoginLimit(userKey);
         const rawToken = randomToken();
@@ -2029,7 +2055,11 @@ export function createEmrServer(configOverrides = {}) {
         response.setHeader('Set-Cookie', serializeSessionCookie(
           rawToken, config.sessionTtlMs / 1000, config.cookieSecure,
         ));
-        return sendJson(response, 200, { user: identity, needsContext: identity.needsContext }, { secure: config.cookieSecure });
+        return sendJson(response, 200, {
+          user: identity,
+          needsContext: identity.needsContext,
+          mustChangePassword: Boolean(user.must_change_password)
+        }, { secure: config.cookieSecure });
       }
       if (request.method === 'POST' && pathname === '/api/auth/context') {
         if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
@@ -2068,12 +2098,62 @@ export function createEmrServer(configOverrides = {}) {
           return sendJson(response, 400, { error: 'Current password is incorrect.' }, { secure: config.cookieSecure });
         }
         const now = Date.now();
-        database.sqlite.prepare('UPDATE users SET password_hash=?, updated_at=? WHERE id=?')
+        database.sqlite.prepare('UPDATE users SET password_hash=?, must_change_password=0, updated_at=? WHERE id=?')
           .run(await hashPassword(newPassword), now, session.user_id);
         database.sqlite.prepare('DELETE FROM sessions WHERE user_id=?').run(session.user_id);
         audit(database, request, 'PASSWORD_CHANGED', { userId: session.user_id, subjectUsername: session.username });
         response.setHeader('Set-Cookie', clearSessionCookie(config.cookieSecure));
         return sendJson(response, 200, { ok: true, reauthenticate: true }, { secure: config.cookieSecure });
+      }
+      if (request.method === 'GET' && pathname === '/api/auth/2fa/setup') {
+        if (config.demoMode) return sendJson(response, 404, { error: 'Two-factor authentication is not available in demo mode.' }, { secure: config.cookieSecure });
+        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
+        const role = sessionRole(session);
+        if (!['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'].includes(role)) {
+          return sendJson(response, 403, { error: 'Two-factor authentication is only available for Administrator and Director accounts.' }, { secure: config.cookieSecure });
+        }
+        const secret = generateTotpSecret();
+        const uri = generateTotpUri(session.username, secret);
+        return sendJson(response, 200, { secret, uri }, { secure: config.cookieSecure });
+      }
+      if (request.method === 'POST' && pathname === '/api/auth/2fa/enable') {
+        if (config.demoMode) return sendJson(response, 404, { error: 'Two-factor authentication is not available in demo mode.' }, { secure: config.cookieSecure });
+        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
+        const role = sessionRole(session);
+        if (!['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'].includes(role)) {
+          return sendJson(response, 403, { error: 'Two-factor authentication is only available for Administrator and Director accounts.' }, { secure: config.cookieSecure });
+        }
+        if (!sameOrigin(request, config) || !safeTokenEqual(request.headers['x-csrf-token'], session.csrf_token)) {
+          return sendJson(response, 403, { error: 'Security token is invalid.' }, { secure: config.cookieSecure });
+        }
+        const body = await readJson(request, config.maxBodyBytes);
+        const secret = String(body?.secret || '').trim();
+        const code = String(body?.code || '').trim();
+        if (!secret || !code) {
+          return sendJson(response, 400, { error: 'Secret and verification code are required.' }, { secure: config.cookieSecure });
+        }
+        if (!verifyTotpCode(code, secret)) {
+          return sendJson(response, 400, { error: 'Verification code is invalid or expired.' }, { secure: config.cookieSecure });
+        }
+        database.setUserTotp(session.user_id, secret, 1);
+        audit(database, request, 'TOTP_ENABLED', { userId: session.user_id, subjectUsername: session.username });
+        return sendJson(response, 200, { ok: true, enabled: true }, { secure: config.cookieSecure });
+      }
+      if (request.method === 'POST' && pathname === '/api/auth/2fa/disable') {
+        if (config.demoMode) return sendJson(response, 404, { error: 'Two-factor authentication is not available in demo mode.' }, { secure: config.cookieSecure });
+        if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
+        if (!sameOrigin(request, config) || !safeTokenEqual(request.headers['x-csrf-token'], session.csrf_token)) {
+          return sendJson(response, 403, { error: 'Security token is invalid.' }, { secure: config.cookieSecure });
+        }
+        const body = await readJson(request, config.maxBodyBytes);
+        const password = String(body?.password || '');
+        const user = database.findUser(session.username);
+        if (!user || !(await verifyPassword(password, user.password_hash))) {
+          return sendJson(response, 400, { error: 'Current password is incorrect.' }, { secure: config.cookieSecure });
+        }
+        database.setUserTotp(session.user_id, null, 0);
+        audit(database, request, 'TOTP_DISABLED', { userId: session.user_id, subjectUsername: session.username });
+        return sendJson(response, 200, { ok: true, enabled: false }, { secure: config.cookieSecure });
       }
       if (request.method === 'POST' && pathname === '/api/auth/logout') {
         if (!session) {
@@ -2220,9 +2300,12 @@ export function createEmrServer(configOverrides = {}) {
         if (!roles.length) return sendJson(response, 400, { error: 'Select at least one role.' }, { secure: config.cookieSecure });
         const now = Date.now();
         const id = crypto.randomUUID();
+        const mustChangePassword = config.demoMode ? false : true;
         try {
           database.createUser({ id, username, displayName, role: String(roles[0]).toUpperCase(),
-            passwordHash: config.demoMode ? disabledDemoPasswordHash() : await hashPassword(password), createdAt: now });
+            passwordHash: config.demoMode ? disabledDemoPasswordHash() : await hashPassword(password),
+            mustChangePassword,
+            createdAt: now });
           setUserAccess(database, id, roles, wards, now, imagingSubtypes);
         } catch (error) {
           database.sqlite.prepare('DELETE FROM users WHERE id=?').run(id);
@@ -2263,7 +2346,7 @@ export function createEmrServer(configOverrides = {}) {
         const user = database.sqlite.prepare('SELECT id,username FROM users WHERE id=?').get(adminResetMatch[1]);
         if (!user) return sendJson(response, 404, { error: 'User not found.' }, { secure: config.cookieSecure });
         const now = Date.now();
-        database.sqlite.prepare('UPDATE users SET password_hash=?, updated_at=? WHERE id=?').run(await hashPassword(password), now, user.id);
+        database.sqlite.prepare('UPDATE users SET password_hash=?, must_change_password=1, updated_at=? WHERE id=?').run(await hashPassword(password), now, user.id);
         database.sqlite.prepare('DELETE FROM sessions WHERE user_id=?').run(user.id);
         audit(database, request, 'PASSWORD_RESET_BY_ADMIN', { userId: session.user_id, subjectUsername: user.username });
         return sendJson(response, 200, { ok: true }, { secure: config.cookieSecure });
@@ -5207,23 +5290,30 @@ export function createEmrServer(configOverrides = {}) {
 }
 
 export async function startServer() {
-  // This downloadable executable runs as a local demo with LAN/mobile support.
-  const application = createEmrServer({ demoMode: true, host: process.env.HOST ?? '0.0.0.0' });
+  const emrMode = (process.env.EMR_MODE || '').toLowerCase();
+  const demoMode = emrMode === 'demo';
+  const host = process.env.HOST || '127.0.0.1';
+  const application = createEmrServer({ demoMode, host });
   await new Promise((resolve, reject) => {
     application.server.once('error', reject);
     application.server.listen(application.config.port, application.config.host, resolve);
   });
-  console.log(`Borkeo EMR login is running at ${application.config.appOrigin}`);
-  try {
-    const nets = os.networkInterfaces();
-    for (const name of Object.keys(nets)) {
-      for (const net of nets[name] || []) {
-        if (net.family === 'IPv4' && !net.internal && !net.address.startsWith('169.254')) {
-          console.log(`Mobile / Phone access (Same Wi-Fi): http://${net.address}:${application.config.port}`);
+  const modeLabel = application.config.demoMode ? 'DEMO (username-only)' : 'PRODUCTION (password required)';
+  console.log(`Borkeo EMR v38.1 [${modeLabel}] listening on http://${application.config.host}:${application.config.port}`);
+  if (application.config.host === '0.0.0.0') {
+    try {
+      const nets = os.networkInterfaces();
+      for (const name of Object.keys(nets)) {
+        for (const net of nets[name] || []) {
+          if (net.family === 'IPv4' && !net.internal && !net.address.startsWith('169.254')) {
+            console.log(`Mobile / Phone access (Same Wi-Fi): http://${net.address}:${application.config.port}`);
+          }
         }
       }
-    }
-  } catch {}
+    } catch {}
+  } else {
+    console.log(`Listening on local loopback address ${application.config.host} only (not exposed to network).`);
+  }
   if (application.config.demoMode) {
     console.log(`DEMO: username-only accounts, localhost only. Demo data: ${application.config.databasePath}`);
     console.log('Demo usernames: admin, registration, triage, doctor_medicine, pharmacy.');
