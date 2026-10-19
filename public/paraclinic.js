@@ -1455,8 +1455,12 @@
     return [...groups].map(([category, rows]) => `<section class="ward-result-group"><h3>${esc(categoryLabel(category))}</h3>${rows.map(({labTest,...result}) => {
       const short = shortTestName(labTest) || result.name || result.code;
       const full = labTest?.name && short !== labTest.name ? `<small>${esc(labTest.name)}</small>` : '';
+      const flag = result.flag;
+      const flagText = flag === 'LOW' ? '▼ Low' : flag === 'HIGH' ? '▲ High' : flag === 'CRITICAL_LOW' ? '⚠️▼ Crit Low' : flag === 'CRITICAL_HIGH' ? '⚠️▲ Crit High' : '';
+      const flagBadge = flagText ? `<span class="lab-flag-badge flag-${esc(flag.toLowerCase())}">${esc(flagText)}</span>` : '';
       return `<div class="result-item">
         <strong>${esc(short)}${full}</strong><span class="result-value ${result.flag ? 'abnormal-result' : ''}">${esc(result.value ?? '')} ${esc(result.unit || '')}</span>
+        ${flagBadge}
         <span>${result.referenceLow !== null && result.referenceLow !== undefined ? `${esc(result.referenceLow)}–${esc(result.referenceHigh ?? '')}` : ''}</span>
         </div>`;
     }).join('')}</section>`).join('');

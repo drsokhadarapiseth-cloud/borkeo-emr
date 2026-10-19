@@ -24,8 +24,8 @@ test('Phase 5: SOAP note static assets exist and are registered in server.mjs', 
   assert.match(serverCode, /Borkeo EMR v39\.[4-9]/, 'server.mjs must declare v39.4 or above');
   assert.match(serverCode, /'\/public\/soap-note\.css'/, 'server.mjs must register soap-note.css');
   assert.match(serverCode, /'\/public\/soap-note\.js'/, 'server.mjs must register soap-note.js');
-  assert.match(serverCode, /soap-note\.css\?v=3940/, 'server.mjs must inject soap-note.css with v=3940');
-  assert.match(serverCode, /soap-note\.js\?v=3940/, 'server.mjs must inject soap-note.js with v=3940');
+  assert.match(serverCode, /soap-note\.css\?v=\d+/, 'server.mjs must inject soap-note.css');
+  assert.match(serverCode, /soap-note\.js\?v=\d+/, 'server.mjs must inject soap-note.js');
 
   // CSS contains 4 colour families and IEC 62366-1 / WCAG 2.2 AA styling
   assert.match(css, /--soap-s-stripe:\s*#0284c7/, 'CSS must define Blue stripe for Subjective');

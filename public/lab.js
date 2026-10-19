@@ -82,7 +82,14 @@
   function categoryLabel(category) { return category || 'Other'; }
 
   function flagLabel(flag) {
-    return '';
+    if (window.EmrLabDisplay) return window.EmrLabDisplay.flagLabel(flag);
+    switch (flag) {
+      case 'LOW': return '▼ Low';
+      case 'HIGH': return '▲ High';
+      case 'CRITICAL_LOW': return '⚠️▼ Crit Low';
+      case 'CRITICAL_HIGH': return '⚠️▲ Crit High';
+      default: return '';
+    }
   }
 
   function groupByCategory(rows) {
@@ -337,7 +344,7 @@
         const low = item.resultType === 'TEXT' ? null : fromBase(item.referenceLow,unit,item);
         const high = item.resultType === 'TEXT' ? null : fromBase(item.referenceHigh,unit,item);
         const flag = released ? result.flag || '' : localFlag(result.value,unit,item);
-        const flagText = '';
+        const flagText = flagLabel(flag);
         const reference = item.resultType === 'TEXT' ? 'Qualitative result' : referenceText(low, high, unit, item);
         output.push(`<tr data-print-code="${esc(row.code)}"><td><span class="lab-print-test-name">${esc(item.name || row.code)}</span><small>${esc(row.code)}</small></td><td class="lab-print-result ${flag ? 'abnormal-result' : ''}">${esc(result.value ?? '')}</td><td class="lab-print-flag ${esc(flag)}">${flagText}</td><td>${esc(unit)}</td><td>${esc(reference)}${item.resultType === 'TEXT' ? '' : `<small>Critical: ${esc(criticalText(item, unit))}</small>`}</td></tr>`);
       }

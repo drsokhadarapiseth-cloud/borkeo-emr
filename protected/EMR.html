@@ -21829,14 +21829,31 @@ aHRtbD4K
             }).join('');
             var khmer = currentLang === 'khmer';
 
+            var letterhead = window.EmrLetterhead ? window.EmrLetterhead.renderLetterhead({
+                lang: currentLang === 'khmer' ? 'km' : 'en',
+                title: khmer ? 'ការពិនិត្យតាមដាន និងការព្យាបាលប្រចាំថ្ងៃ' : 'Daily Monitoring and Treatment'
+            }) : `<div class="mon-print-title">${khmer ? 'ការពិនិត្យតាមដាន និងការព្យាបាលប្រចាំថ្ងៃ' : 'Daily Monitoring and Treatment'}</div>`;
+
+            var patientGrid = window.EmrLetterhead ? window.EmrLetterhead.renderPatientGrid({
+                lang: currentLang === 'khmer' ? 'km' : 'en',
+                caseId: document.getElementById('dash_id') ? document.getElementById('dash_id').innerText : '',
+                department: document.getElementById('dash_dept') ? document.getElementById('dash_dept').innerText : 'IPD',
+                fullName: patientName,
+                age: patientAge,
+                sex: patientSex,
+                diagnosis: document.getElementById('dash_diag') ? document.getElementById('dash_diag').innerText : '—'
+            }) : `
+                <div class="mon-print-patient">
+                    <div><strong>${khmer ? 'ឈ្មោះ៖' : 'Name:'}</strong> ${escapeMonitoringPrint(patientName)}</div>
+                    <div><strong>${khmer ? 'អាយុ៖' : 'Age:'}</strong> ${escapeMonitoringPrint(patientAge)}</div>
+                    <div><strong>${khmer ? 'ភេទ៖' : 'Sex:'}</strong> ${escapeMonitoringPrint(patientSex)}</div>
+                </div>
+            `;
+
             layout.innerHTML = `
                 <div class="mon-print-sheet">
-                    <div class="mon-print-title">${khmer ? 'ការពិនិត្យតាមដាន និងការព្យាបាលប្រចាំថ្ងៃ' : 'Daily Monitoring and Treatment'}</div>
-                    <div class="mon-print-patient">
-                        <div><strong>${khmer ? 'ឈ្មោះ៖' : 'Name:'}</strong> ${escapeMonitoringPrint(patientName)}</div>
-                        <div><strong>${khmer ? 'អាយុ៖' : 'Age:'}</strong> ${escapeMonitoringPrint(patientAge)}</div>
-                        <div><strong>${khmer ? 'ភេទ៖' : 'Sex:'}</strong> ${escapeMonitoringPrint(patientSex)}</div>
-                    </div>
+                    ${letterhead}
+                    ${patientGrid}
                     <table class="mon-print-table">
                         <colgroup>
                             <col style="width: 25%;">

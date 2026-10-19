@@ -173,13 +173,31 @@
     dashboard.id = 'emr-summary-dashboard-panel';
     dashboard.className = 'emr-summary-dashboard';
 
-    // 1. Latest Vitals
-    const vitals = data['system:dailyMonitoringRecords'] ? (function () {
-      try {
-        const records = JSON.parse(data['system:dailyMonitoringRecords']);
-        return records[records.length - 1] || {};
-      } catch { return {}; }
-    })() : {};
+    // 1. Latest Vitals & Trend Series
+    let allRecords = [];
+    try {
+      if (data['system:dailyMonitoringRecords']) {
+        allRecords = JSON.parse(data['system:dailyMonitoringRecords']);
+        if (!Array.isArray(allRecords)) allRecords = [];
+      }
+    } catch {}
+    const vitals = allRecords[allRecords.length - 1] || {};
+
+    const tempSeries = allRecords.map(r => parseFloat(r.temp)).filter(n => !isNaN(n));
+    const bpSysSeries = allRecords.map(r => parseFloat(r.bp_sys)).filter(n => !isNaN(n));
+    const pulseSeries = allRecords.map(r => parseFloat(r.pulse)).filter(n => !isNaN(n));
+    const respSeries = allRecords.map(r => parseFloat(r.resp)).filter(n => !isNaN(n));
+    const spo2Series = allRecords.map(r => parseFloat(r.spo2)).filter(n => !isNaN(n));
+
+    const tempSpark = window.EmrVitalsChart?.renderSparkline(tempSeries, {
+      stroke: parseFloat(vitals.temp) >= 38 ? '#ea580c' : '#0284c7'
+    }) || '';
+    const bpSpark = window.EmrVitalsChart?.renderSparkline(bpSysSeries, { stroke: '#7c3aed' }) || '';
+    const pulseSpark = window.EmrVitalsChart?.renderSparkline(pulseSeries, { stroke: '#0284c7' }) || '';
+    const respSpark = window.EmrVitalsChart?.renderSparkline(respSeries, { stroke: '#0d9488' }) || '';
+    const spo2Spark = window.EmrVitalsChart?.renderSparkline(spo2Series, {
+      stroke: parseFloat(vitals.spo2) < 95 && vitals.spo2 ? '#dc2626' : '#16a34a'
+    }) || '';
 
     const temp = vitals.temp || data['scope:triage:id:web_triage_temp'] || '';
     const bp = (vitals.bp_sys && vitals.bp_dia) ? `${vitals.bp_sys}/${vitals.bp_dia}` :
@@ -217,36 +235,51 @@
               <div class="emr-vital-pill ${parseFloat(temp) >= 38 ? 'abnormal' : ''}">
                 <span class="emr-vital-label">កម្តៅ (Temp)</span>
                 <div class="emr-vital-value-wrap">
-                  <span class="emr-vital-value">${escapeHtml(temp || '—')}</span>
-                  <span class="emr-vital-unit">°C</span>
+                  <div>
+                    <span class="emr-vital-value">${escapeHtml(temp || '—')}</span>
+                    <span class="emr-vital-unit">°C</span>
+                  </div>
+                  ${tempSpark}
                 </div>
               </div>
               <div class="emr-vital-pill">
                 <span class="emr-vital-label">សម្ពាធឈាម (BP)</span>
                 <div class="emr-vital-value-wrap">
-                  <span class="emr-vital-value">${escapeHtml(bp || '—')}</span>
-                  <span class="emr-vital-unit">mmHg</span>
+                  <div>
+                    <span class="emr-vital-value">${escapeHtml(bp || '—')}</span>
+                    <span class="emr-vital-unit">mmHg</span>
+                  </div>
+                  ${bpSpark}
                 </div>
               </div>
               <div class="emr-vital-pill">
                 <span class="emr-vital-label">ជីពចរ (Pulse)</span>
                 <div class="emr-vital-value-wrap">
-                  <span class="emr-vital-value">${escapeHtml(pulse || '—')}</span>
-                  <span class="emr-vital-unit">bpm</span>
+                  <div>
+                    <span class="emr-vital-value">${escapeHtml(pulse || '—')}</span>
+                    <span class="emr-vital-unit">bpm</span>
+                  </div>
+                  ${pulseSpark}
                 </div>
               </div>
               <div class="emr-vital-pill">
                 <span class="emr-vital-label">ដង្ហើម (Resp)</span>
                 <div class="emr-vital-value-wrap">
-                  <span class="emr-vital-value">${escapeHtml(resp || '—')}</span>
-                  <span class="emr-vital-unit">/min</span>
+                  <div>
+                    <span class="emr-vital-value">${escapeHtml(resp || '—')}</span>
+                    <span class="emr-vital-unit">/min</span>
+                  </div>
+                  ${respSpark}
                 </div>
               </div>
               <div class="emr-vital-pill ${parseFloat(spo2) < 95 && spo2 ? 'abnormal' : ''}">
                 <span class="emr-vital-label">អុកស៊ីសែន (SpO2)</span>
                 <div class="emr-vital-value-wrap">
-                  <span class="emr-vital-value">${escapeHtml(spo2 || '—')}</span>
-                  <span class="emr-vital-unit">%</span>
+                  <div>
+                    <span class="emr-vital-value">${escapeHtml(spo2 || '—')}</span>
+                    <span class="emr-vital-unit">%</span>
+                  </div>
+                  ${spo2Spark}
                 </div>
               </div>
             </div>
@@ -382,6 +415,18 @@
       // Keep legacy EMR workflow intact
       if (tabName === 'vitals') {
         window.switchPage?.(2); // Page 2 is Triage / Vitals
+        const p2 = document.getElementById('page2');
+        if (p2 && allRecords.length >= 2) {
+          let trendPanel = document.getElementById('emr-vitals-trends-container');
+          if (!trendPanel) {
+            trendPanel = document.createElement('div');
+            trendPanel.id = 'emr-vitals-trends-container';
+            trendPanel.className = 'no-print';
+            trendPanel.style.marginBottom = '16px';
+            p2.prepend(trendPanel);
+          }
+          trendPanel.innerHTML = window.EmrVitalsChart?.renderVitalsTrendPanel(allRecords) || '';
+        }
       } else if (tabName === 'notes') {
         window.switchPage?.(3); // Page 3 is Clinical / Notes
       } else if (tabName === 'orders') {

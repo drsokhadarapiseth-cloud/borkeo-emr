@@ -71,13 +71,14 @@
   tr{break-inside:avoid}
 }
 
-/* Abnormality is conveyed by the result colour, without Low/High labels. */
+/* Phase 6: Lab results with reference range, abnormal/critical flags (colour + icon + text, never colour alone) */
 .result-table input.abnormal-result,.lab-print-result.abnormal-result {color:#c62828!important;-webkit-text-fill-color:#c62828!important;opacity:1!important;text-decoration:none!important}
-.result-table td[data-flag],.result-table th:nth-child(5) {display:none}
-.lab-print-flag,.lab-print-results th:nth-child(3) {display:none}
-.lab-print-results th:nth-child(1) {width:45%}
-.lab-print-results th:nth-child(2) {width:20%}
-.lab-print-results th:nth-child(4) {width:15%}
+.result-table td[data-flag],.result-table th:nth-child(5) {display:table-cell!important}
+.lab-print-flag,.lab-print-results th:nth-child(3) {display:table-cell!important}
+.lab-print-results th:nth-child(1) {width:40%}
+.lab-print-results th:nth-child(2) {width:16%}
+.lab-print-results th:nth-child(3) {width:12%}
+.lab-print-results th:nth-child(4) {width:12%}
 .lab-print-results th:nth-child(5) {width:20%}
 
 /* v18.6: English medical labels with original patient text support. */
