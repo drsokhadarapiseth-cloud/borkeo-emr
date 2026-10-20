@@ -83,7 +83,7 @@ async function main() {
   if (password) {
     validatePassword(password);
   } else {
-    password = await hiddenInput('New password (12–128 characters): ');
+    password = await hiddenInput('New password (4–128 characters): ');
     validatePassword(password);
     const confirmation = await hiddenInput('Confirm password: ');
     if (password !== confirmation) throw new Error('Passwords do not match.');

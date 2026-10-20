@@ -7,9 +7,9 @@
   <link rel="preload" href="/public/fonts/Battambang-Regular.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="/public/design-system.css?v=3970">
   <link rel="stylesheet" href="/public/components.css?v=3970">
-  <link rel="stylesheet" href="/public/login.css?v=2050">
+  <link rel="stylesheet" href="/public/login.css?v=3990">
   <script src="/public/components.js?v=3970" defer></script>
-  <script src="/public/organization-branding.js?v=1560" defer></script><script src="/public/login.js" defer></script>
+  <script src="/public/organization-branding.js?v=1560" defer></script><script src="/public/login.js?v=3990" defer></script>
   <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
 </head>
 <body>
@@ -34,7 +34,7 @@
         </div>
         <div class="header-meta">
           <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
-          <span class="login-build-version" data-app-version data-language-exclude>v39.8</span>
+          <span class="login-build-version" data-app-version data-language-exclude>v40.0</span>
         </div>
       </header>
 
@@ -67,7 +67,7 @@
               <div class="field">
                 <span aria-hidden="true" class="field-icon">🔒</span>
                 <input id="password" name="password" type="password" autocomplete="current-password"
-                  minlength="12" maxlength="128">
+                  minlength="4" maxlength="128">
                 <button id="toggle-password" class="reveal" type="button" aria-label="បង្ហាញពាក្យសម្ងាត់">បង្ហាញ</button>
               </div>
             </div>
@@ -75,11 +75,40 @@
             <div id="login-status" class="status" role="alert" aria-live="polite" hidden></div>
             <button id="login-button" class="submit" type="submit" disabled>ចូលប្រើប្រាស់ប្រព័ន្ធ</button>
           </form>
+
+          <form id="password-change-form" novalidate hidden aria-labelledby="password-change-title">
+            <h2 id="password-change-title">ប្តូរពាក្យសម្ងាត់</h2>
+            <p class="help">គណនី <strong id="password-change-user"></strong> ត្រូវប្តូរពាក្យសម្ងាត់មុនពេលចូលប្រើប្រព័ន្ធ។</p>
+
+            <div id="password-change-current-group">
+              <label for="password-change-current">ពាក្យសម្ងាត់បច្ចុប្បន្ន</label>
+              <div class="field">
+                <span aria-hidden="true" class="field-icon">🔒</span>
+                <input id="password-change-current" name="current" type="password" autocomplete="current-password" maxlength="128">
+              </div>
+            </div>
+
+            <label for="password-change-next">ពាក្យសម្ងាត់ថ្មី</label>
+            <div class="field">
+              <span aria-hidden="true" class="field-icon">🔑</span>
+              <input id="password-change-next" name="next" type="password" autocomplete="new-password" required minlength="4" maxlength="128">
+            </div>
+
+            <label for="password-change-confirm">បញ្ជាក់ពាក្យសម្ងាត់ថ្មី</label>
+            <div class="field">
+              <span aria-hidden="true" class="field-icon">🔑</span>
+              <input id="password-change-confirm" name="confirm" type="password" autocomplete="new-password" required minlength="4" maxlength="128">
+            </div>
+
+            <div id="password-change-status" class="status" role="alert" aria-live="polite" hidden></div>
+            <button id="password-change-button" class="submit" type="submit">រក្សាទុកពាក្យសម្ងាត់ថ្មី</button>
+            <button id="password-change-cancel" class="link-button" type="button">ចាកចេញ</button>
+          </form>
         </section>
 
         <aside class="info-panel" aria-label="ព័ត៌មានប្រព័ន្ធ">
           <div class="info-card accent">
-            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v39.8</span></h3>
+            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v40.0</span></h3>
             <p>គណនីសាកល្បងចូលបានដោយគ្មានពាក្យសម្ងាត់។ ប្រើតែទិន្នន័យសាកល្បងប៉ុណ្ណោះ។</p>
           </div>
           <div class="info-card">

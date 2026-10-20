@@ -9,7 +9,19 @@ const submitButton = document.getElementById('login-button');
 const toggleButton = document.getElementById('toggle-password');
 const quickRoleSelect = document.getElementById('quick-role-select');
 const userAccountsList = document.getElementById('user-accounts');
+const changeForm = document.getElementById('password-change-form');
+const changeUser = document.getElementById('password-change-user');
+const changeCurrentGroup = document.getElementById('password-change-current-group');
+const changeCurrent = document.getElementById('password-change-current');
+const changeNext = document.getElementById('password-change-next');
+const changeConfirm = document.getElementById('password-change-confirm');
+const changeStatus = document.getElementById('password-change-status');
+const changeButton = document.getElementById('password-change-button');
+const changeCancel = document.getElementById('password-change-cancel');
+const MIN_PASSWORD_LENGTH = 4;
 let demoMode = null;
+// Accounts that must change their password stay on this page (v39.9).
+let changeAccount = null;
 
 const DEFAULT_ACCOUNTS = [
   { username: 'admin', displayName: 'អ្នកគ្រប់គ្រងសាកល្បង' },
@@ -60,7 +72,7 @@ if (quickRoleSelect) {
   quickRoleSelect.addEventListener('change', () => {
     if (quickRoleSelect.value) {
       username.value = quickRoleSelect.value;
-      if (password) password.value = '111111111111';
+      if (password) password.value = '1234';
       submitButton.disabled = false;
     }
   });
@@ -83,6 +95,96 @@ function landingPath(user) {
   if (role === 'REGISTRATION') return '/emr?view=register';
   return '/home';
 }
+
+function setChangeStatus(message) {
+  changeStatus.textContent = message || '';
+  changeStatus.hidden = !message;
+}
+
+function showPasswordChange(user, currentPassword) {
+  changeAccount = { username: user?.username || username.value, currentPassword: currentPassword || '' };
+  changeUser.textContent = changeAccount.username;
+  changeCurrentGroup.hidden = Boolean(changeAccount.currentPassword);
+  changeCurrent.required = !changeAccount.currentPassword;
+  form.hidden = true;
+  document.querySelector('.section-intro').hidden = true;
+  changeForm.hidden = false;
+  setChangeStatus('');
+  (changeAccount.currentPassword ? changeNext : changeCurrent).focus();
+}
+
+function changeErrorMessage(message) {
+  const text = String(message || '');
+  if (/incorrect/i.test(text)) return 'ពាក្យសម្ងាត់បច្ចុប្បន្នមិនត្រឹមត្រូវទេ។';
+  if (/match/i.test(text)) return 'ពាក្យសម្ងាត់ថ្មីទាំងពីរមិនដូចគ្នាទេ។';
+  if (/character|length|least/i.test(text)) return `ពាក្យសម្ងាត់ថ្មីត្រូវមានយ៉ាងតិច ${MIN_PASSWORD_LENGTH} តួអក្សរ។`;
+  if (text === 'Failed to fetch') return 'មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។';
+  return 'មិនអាចប្តូរពាក្យសម្ងាត់បានទេ។ សូមព្យាយាមម្តងទៀត។';
+}
+
+changeForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  setChangeStatus('');
+  const current = changeAccount?.currentPassword || changeCurrent.value;
+  const next = changeNext.value;
+  if (!current) { setChangeStatus('សូមបញ្ចូលពាក្យសម្ងាត់បច្ចុប្បន្ន។'); changeCurrent.focus(); return; }
+  if (next.length < MIN_PASSWORD_LENGTH) { setChangeStatus(changeErrorMessage('length')); changeNext.focus(); return; }
+  if (next !== changeConfirm.value) { setChangeStatus(changeErrorMessage('match')); changeConfirm.focus(); return; }
+  if (next === current) { setChangeStatus('ពាក្យសម្ងាត់ថ្មីត្រូវខុសពីពាក្យសម្ងាត់បច្ចុប្បន្ន។'); changeNext.focus(); return; }
+  changeButton.disabled = true;
+  changeButton.textContent = 'កំពុងរក្សាទុក…';
+  try {
+    const me = await fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' });
+    const meResult = await me.json().catch(() => ({}));
+    if (!me.ok) throw new Error('session');
+    const response = await fetch('/api/auth/change-password', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': meResult.csrfToken || '' },
+      body: JSON.stringify({ currentPassword: current, newPassword: next, confirmation: changeConfirm.value }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || '');
+    // The server signs the account out after a change; sign straight back in.
+    const login = await fetch('/api/auth/login', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: changeAccount.username, password: next }),
+    });
+    const loginResult = await login.json().catch(() => ({}));
+    changeForm.reset();
+    changeAccount = null;
+    if (!login.ok) { window.location.replace('/login'); return; }
+    window.sessionStorage.removeItem('borkeo-counter-number');
+    window.location.replace(loginResult.needsContext ? '/context' : landingPath(loginResult.user));
+  } catch (error) {
+    if (error.message === 'session') { window.location.replace('/login'); return; }
+    setChangeStatus(changeErrorMessage(error.message));
+    if (/incorrect/i.test(error.message) && changeAccount) {
+      changeAccount.currentPassword = '';
+      changeCurrentGroup.hidden = false;
+      changeCurrent.required = true;
+      changeCurrent.focus();
+    }
+  } finally {
+    changeButton.disabled = false;
+    changeButton.textContent = 'រក្សាទុកពាក្យសម្ងាត់ថ្មី';
+  }
+});
+
+changeCancel.addEventListener('click', async () => {
+  try {
+    const me = await fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' });
+    const meResult = await me.json().catch(() => ({}));
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'X-CSRF-Token': meResult.csrfToken || '' },
+    });
+  } catch {}
+  window.location.replace('/login');
+});
 
 toggleButton.addEventListener('click', () => {
   const revealing = password.type === 'password';
@@ -109,6 +211,11 @@ form.addEventListener('submit', async event => {
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(result.error || 'មិនអាចចូលប្រព័ន្ធបានទេ។');
+    if (result.mustChangePassword) {
+      showPasswordChange(result.user, password.value);
+      password.value = '';
+      return;
+    }
     password.value = '';
     window.sessionStorage.removeItem('borkeo-counter-number');
     window.location.replace(result.needsContext ? '/context' : landingPath(result.user));
@@ -139,5 +246,6 @@ fetch('/api/auth/config', { cache: 'no-store' }).then(async response => {
 fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' }).then(async response => {
   if (!response.ok) return;
   const result = await response.json();
+  if (result.user?.mustChangePassword) { showPasswordChange(result.user, ''); return; }
   window.location.replace(result.user?.needsContext ? '/context' : landingPath(result.user));
 }).catch(() => {});

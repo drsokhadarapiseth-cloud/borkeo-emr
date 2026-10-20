@@ -17,9 +17,14 @@ export function validateUsername(username) {
   return normalized;
 }
 
+// v40.0: the hospital chose short passwords (staff default 1234).
+export const MIN_PASSWORD_LENGTH = 4;
+export const MAX_PASSWORD_LENGTH = 128;
+export const DEFAULT_STAFF_PASSWORD = '1234';
+
 export function validatePassword(password) {
-  if (typeof password !== 'string' || password.length < 12 || password.length > 128) {
-    throw new Error('Password must contain 12–128 characters.');
+  if (typeof password !== 'string' || password.length < MIN_PASSWORD_LENGTH || password.length > MAX_PASSWORD_LENGTH) {
+    throw new Error(`Password must contain ${MIN_PASSWORD_LENGTH}–${MAX_PASSWORD_LENGTH} characters.`);
   }
   return password;
 }

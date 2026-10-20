@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { WARDS, setUserAccess } from './access.mjs';
 import { setESignature } from './esign.mjs';
 
-export const DEFAULT_WARD_PASSWORD = '111111111111';
+export const DEFAULT_WARD_PASSWORD = '1234';
 
 function sharedPasswordHash() {
   const N = 32768;

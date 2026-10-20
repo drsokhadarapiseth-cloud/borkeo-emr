@@ -10,9 +10,10 @@ const urls = [
   'http://127.0.0.1:3000',
   'http://localhost:3001',
   'http://127.0.0.1:3001',
-  'http://192.168.1.4:3000'
+  'http://192.168.1.4:3000',
+  'http://192.168.1.6:3000'
 ];
-const defaultPass = '111111111111';
+const defaultPass = '1234';
 
 const rows = ['name,url,username,password'];
 for (const u of users) {

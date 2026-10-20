@@ -45,7 +45,7 @@ test('different staff pages serve the identical banner script and stylesheet for
   await new Promise(r=>app.server.listen(0,'127.0.0.1',r));const origin=`http://127.0.0.1:${app.server.address().port}`;
   const response=await fetch(origin+'/api/auth/login',{method:'POST',headers:{Origin:app.config.appOrigin,'Content-Type':'application/json'},body:JSON.stringify({username:'admin'})}),Cookie=response.headers.get('set-cookie').split(';')[0];
    for(const url of ['/home','/emr','/patient-list','/billing','/lab','/imaging','/departments']){
-   const r=await fetch(origin+url,{headers:{Cookie}});assert.equal(r.status,200,url);const html=await r.text();assert.match(html,/\/public\/emr-session\.js\?v=[^" ]+&build=[23][0-9]\./);assert.match(html,/\/public\/emr-session\.css\?v=[^" ]+&build=[23][0-9]\./);
+   const r=await fetch(origin+url,{headers:{Cookie}});assert.equal(r.status,200,url);const html=await r.text();assert.match(html,/\/public\/emr-session\.js\?v=[^" ]+&build=[2-9][0-9]\./);assert.match(html,/\/public\/emr-session\.css\?v=[^" ]+&build=[2-9][0-9]\./);
    }
  }finally{await new Promise(r=>app.server.close(r));app.database.close()}
 });

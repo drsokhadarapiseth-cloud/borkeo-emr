@@ -1,5 +1,18 @@
 # Borkeo EMR Changelog
 
+## v40.0.0 (Short staff passwords: minimum 4 characters, hospital default 1234)
+- Hospital decision: passwords need 4–128 characters (was 12–128). One rule in `server/password.mjs` (`MIN_PASSWORD_LENGTH`, `DEFAULT_STAFF_PASSWORD = '1234'`), the change-password schema, and every password box (sign-in, change-password screen, account menu, admin User accounts, console scripts).
+- New default ward accounts start with `1234` (was `111111111111`); the sign-in account picker fills `1234`; the browser-import CSV generator uses `1234` and the current Wi-Fi address.
+- New `npm run set-all-passwords` (`scripts/set-all-passwords.mjs`): refuses while the EMR is running, writes a full backup (`<data folder>/backups/emr-before-1234-<date-time>.sqlite`), then sets every account to `1234`, clears "must change password", signs everyone out and records `PASSWORD_SET_TO_HOSPITAL_DEFAULT` in the audit log. Patient records are not touched.
+- Unchanged: sign-in lockout after repeated failures, two-factor codes for admin/director when enabled, admin password reset still asks the person to choose a new password.
+- Security note: with 1234 for every account, anyone on the same Wi-Fi can sign in as any staff member. Use Wi-Fi mode only on a staff-only network.
+- Tests: 824/824 (3 new in `tests/v400-short-passwords.test.mjs`; version checks in six older tests widened to accept v40.x).
+
+## v39.9.0 (Fix "page isn't redirecting properly" for accounts that must change their password)
+- Fixed: an account marked "must change password" (new accounts and admin resets) was sent between `/login?passwordChange=1` and its work page forever; Firefox showed "The page isn't redirecting properly" (Chrome: "too many redirects"). `/login` now stays on the sign-in page for such accounts.
+- The sign-in page shows a Khmer "ប្តូរពាក្យសម្ងាត់" form (new password, confirm; current password only when not just typed). After saving, the person is signed in again with the new password and goes to their work page. "ចាកចេញ" signs out. Password rule unchanged (12–128 characters).
+- Tests: 821/821 (2 new in `tests/v399-password-change-loop.test.mjs`; version test updated 39.8 → 39.9). Checked end-to-end in headless Firefox on a disposable database.
+
 ## v39.8.0 (Side navigation redesign, SOAP English titles, phone access)
 - Professional side navigation: collapsed 68px icon rail that expands to 264px over the page on hover or keyboard focus (200ms collapse delay, no content reflow), optional per-user pin, drawer with backdrop and Esc on phones/tablets/touch screens, tooltips while collapsed, prefers-reduced-motion support, never printed.
 - Grouped sections (Patient care, Clinical services, Pharmacy and stock, Finance, Administration), one consistent inline-SVG icon set (`public/icons.svg`), hospital brand at the top, user/role/ward, language and sign-out at the bottom, pending counters on the icons.

@@ -1,0 +1,58 @@
+BORKEO EMR v40.0.0 - COMBINED UPDATE NOTE (includes v39.9.0)
+Base: v39.8.0 (commit cf476e2). Clinical, pharmacy, laboratory and financial
+logic and permissions were not changed. Patient records are not touched.
+
+WHAT CHANGED
+1. (v39.9) Fixed Firefox "The page isn't redirecting properly"
+   (Chrome: "too many redirects"). Accounts marked "must change password"
+   were sent between the sign-in page and their work page forever. Now they
+   see a Khmer "ប្តូរពាក្យសម្ងាត់" screen, save a new password and go straight
+   to their work page.
+2. (v40.0) Short passwords, as requested by the hospital:
+   - Passwords need at least 4 characters (was 12).
+   - Hospital default password for every account: 1234.
+   - New default ward accounts start with 1234; the sign-in account picker
+     fills 1234.
+   - New command "npm run set-all-passwords": backs up the database first,
+     then sets EVERY account to 1234 and switches off "must change password".
+   - Kept: lockout after too many wrong tries; 2-factor codes for admin and
+     director if switched on.
+   WARNING: with 1234 everywhere, anyone on the same Wi-Fi can sign in as
+   admin or a doctor. Use Wi-Fi mode only on a staff-only network.
+3. Version 40.0.0 (package.json, login page, server).
+
+FILES
+  New:     scripts/set-all-passwords.mjs,
+           tests/v399-password-change-loop.test.mjs,
+           tests/v400-short-passwords.test.mjs
+  Changed: server/password.mjs, server/validation.mjs,
+           server/default-ward-users.mjs, server/server.mjs,
+           public/login.html, public/login.js, public/login.css,
+           public/emr-session.js, public/admin-users.js,
+           protected/admin-users.html, scripts/reset-password.mjs,
+           scripts/create-user.mjs, scripts/generate-passwords-csv.mjs,
+           package.json, CHANGELOG.md
+  Tests updated (version checks only): accessibility-quality-smoke (exact
+           version 40.0), app-shell-and-navigation, clinical-data-display,
+           patient-banner-and-chart, soap-notes, worklists-forms-feedback
+           ("39.x or above" now also accepts 40.x), v193-banner-counter
+           (build number may start with 4).
+
+TESTS
+  npm test -> 824 passed, 0 failed (819 before + 5 new).
+  The set-all-passwords command was tested on a temporary database:
+  backup made first, all accounts open with 1234, no other table changed,
+  and it refuses to run while the EMR is running.
+
+INSTALL (one step at a time)
+  Step 1. Stop the running EMR window (Ctrl+C).
+  Step 2. Open PowerShell and run:
+            cd D:\EMR\Borkeo_EMR_v38
+            npm run set-all-passwords
+          It prints "Backup written: ..." and
+          "Password set to the hospital default for N account(s)."
+  Step 3. Start the EMR again: double-click Start-Borkeo-WiFi.bat.
+  Step 4. In each browser press Ctrl+F5 once on the sign-in page, then sign in
+          with your username and 1234.
+  Undo (if ever needed): stop the EMR and copy the backup file from
+  C:\Users\Local-admin\Borkeo_EMR_Data\backups\ back over emr.sqlite.

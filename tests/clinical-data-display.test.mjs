@@ -20,13 +20,13 @@ test('Phase 6: Clinical data display assets exist and are registered in server.m
   const loginHtml = read('public/login.html');
 
   // Version consistency
-  assert.match(pkg.version, /^39\.[5-9]\.0$/, 'package.json version must be 39.5.0 or above');
-  assert.match(serverCode, /Borkeo EMR v39\.[5-9]/, 'server.mjs must declare v39.5 or above');
+  assert.match(pkg.version, /^(?:39\.[5-9]|4[0-9]\.[0-9])\.0$/, 'package.json version must be 39.5.0 or above');
+  assert.match(serverCode, /Borkeo EMR v(?:39\.[5-9]|4[0-9]\.[0-9])/, 'server.mjs must declare v39.5 or above');
   assert.match(serverCode, /'\/public\/clinical-data\.css'/, 'server.mjs must register clinical-data.css');
   assert.match(serverCode, /'\/public\/clinical-data\.js'/, 'server.mjs must register clinical-data.js');
   assert.match(serverCode, /clinical-data\.css\?v=\d+/, 'server.mjs must inject clinical-data.css');
   assert.match(serverCode, /clinical-data\.js\?v=\d+/, 'server.mjs must inject clinical-data.js');
-  assert.match(loginHtml, /data-app-version[^>]*>v39\.[5-9]<\/span>/, 'login.html must display v39.5 or above');
+  assert.match(loginHtml, /data-app-version[^>]*>v(?:39\.[5-9]|4[0-9]\.[0-9])<\/span>/, 'login.html must display v39.5 or above');
 
   // CSS contains tabular-nums, lab flag badge styles, sparklines, and print letterhead
   assert.match(css, /tabular-nums/, 'clinical-data.css must define tabular-nums formatting');

@@ -77,9 +77,9 @@
       <form class="session-password-dialog">
         <header><strong>ប្តូរពាក្យសម្ងាត់</strong><button type="button" data-close>×</button></header>
         <p>${escapeHtml(user.displayName)} · @${escapeHtml(user.username)}</p>
-        <label>ពាក្យសម្ងាត់បច្ចុប្បន្ន<input type="password" name="current" autocomplete="current-password" required minlength="12" maxlength="128"></label>
-        <label>ពាក្យសម្ងាត់ថ្មី<input type="password" name="next" autocomplete="new-password" required minlength="12" maxlength="128"></label>
-        <label>បញ្ជាក់ពាក្យសម្ងាត់ថ្មី<input type="password" name="confirm" autocomplete="new-password" required minlength="12" maxlength="128"></label>
+        <label>ពាក្យសម្ងាត់បច្ចុប្បន្ន<input type="password" name="current" autocomplete="current-password" required minlength="4" maxlength="128"></label>
+        <label>ពាក្យសម្ងាត់ថ្មី<input type="password" name="next" autocomplete="new-password" required minlength="4" maxlength="128"></label>
+        <label>បញ្ជាក់ពាក្យសម្ងាត់ថ្មី<input type="password" name="confirm" autocomplete="new-password" required minlength="4" maxlength="128"></label>
         <div class="session-password-status" role="alert"></div>
         <button class="session-password-save" type="submit">ប្តូរពាក្យសម្ងាត់</button>
       </form>`;

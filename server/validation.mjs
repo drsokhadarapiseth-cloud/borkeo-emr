@@ -251,8 +251,8 @@ export const Schemas = {
 
   changePassword: v.object({
     currentPassword: v.string({ min: 1, max: 256 }),
-    newPassword: v.string({ min: 12, max: 256 }),
-    confirmation: v.string({ min: 12, max: 256 }),
+    newPassword: v.string({ min: 4, max: 256 }),
+    confirmation: v.string({ min: 4, max: 256 }),
   }),
 
   authContext: v.object({
