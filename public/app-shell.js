@@ -74,177 +74,160 @@
     '/pmrs-import': 'នាំចូលទិន្នន័យ PMRS2'
   };
 
-  function getRoleNavGroups(role, wardCode) {
-    const isOpdDoctor = role === 'DOCTOR' && wardCode === 'opd';
+  const NAV = window.EmrNavConfig || null;
 
-    if (role === 'REGISTRATION') {
-      return [
-        {
-          title: 'ការងារចម្បង',
-          items: [
-            { href: '/emr', label: 'ចុះឈ្មោះអ្នកជំងឺ', icon: 'icon-user', shortcut: 'Alt+1' },
-            { href: '/patient-list', label: 'បញ្ជីអ្នកជំងឺ', icon: 'icon-users', shortcut: 'Alt+2' },
-            { href: '/patient-list?view=appointments', label: 'អ្នកជំងឺណាត់ជួប', icon: 'icon-calendar', shortcut: 'Alt+3' }
-          ]
-        }
-      ];
+  const UI = {
+    kh: {
+      mainNav: 'ការរុករកចម្បង', menu: 'ម៉ឺនុយ', openMenu: 'បើកម៉ឺនុយរុករក', closeMenu: 'បិទម៉ឺនុយរុករក',
+      pin: 'ខ្ទាស់ម៉ឺនុយឱ្យបើកជានិច្ច', unpin: 'ឈប់ខ្ទាស់ម៉ឺនុយ', account: 'គណនីអ្នកប្រើប្រាស់',
+      switchContext: 'ប្តូរតួនាទី ឬផ្នែក', changePassword: 'ប្តូរពាក្យសម្ងាត់', shortcuts: 'ផ្លូវកាត់ក្ដារចុច (?)',
+      logout: 'ចាកចេញពីប្រព័ន្ធ', language: 'ភាសាប្រព័ន្ធ', languageName: 'ភាសាខ្មែរ', search: 'ស្វែងរក',
+      switching: 'កំពុងប្តូរតួនាទី…', switchFailed: 'មិនអាចប្តូរតួនាទី ឬផ្នែកបានទេ។',
+      switched: 'បានប្តូរទៅ', reloadHint: 'ផ្ទុកទំព័រឡើងវិញ ដើម្បីបង្ហាញទិន្នន័យសម្រាប់តួនាទីថ្មី។', reload: 'ផ្ទុកឡើងវិញ', dismiss: 'បិទ',
+      noItems: 'មិនមានទំព័រសម្រាប់តួនាទីនេះទេ'
+    },
+    en: {
+      mainNav: 'Main navigation', menu: 'Menu', openMenu: 'Open navigation menu', closeMenu: 'Close navigation menu',
+      pin: 'Keep menu expanded', unpin: 'Unpin menu', account: 'User account',
+      switchContext: 'Switch role or ward', changePassword: 'Change password', shortcuts: 'Keyboard shortcuts (?)',
+      logout: 'Sign out', language: 'Interface language', languageName: 'English', search: 'Search',
+      switching: 'Switching role…', switchFailed: 'Could not switch role or ward.',
+      switched: 'Switched to', reloadHint: 'Reload the page to show data for the new role.', reload: 'Reload', dismiss: 'Close',
+      noItems: 'No pages for this role'
     }
+  };
 
-    if (role === 'TRIAGE') {
-      return [
-        {
-          title: 'ការងារចម្បង',
-          items: [
-            { href: '/triage', label: 'បញ្ជីរង់ចាំទ្រីយ៉ា', icon: 'icon-activity', shortcut: 'Alt+1' },
-            { href: '/queue-display?service=TRIAGE', label: 'បើកផ្ទាំងលេខរៀង', icon: 'icon-calendar', shortcut: 'Alt+2' },
-            { href: '/patient-list', label: 'បញ្ជីអ្នកជំងឺ', icon: 'icon-users', shortcut: 'Alt+3' }
-          ]
-        }
-      ];
+  function lang() {
+    try { return window.getBorkeoLanguage?.() === 'en' ? 'en' : 'kh'; } catch { return 'kh'; }
+  }
+
+  function t(key) {
+    return (UI[lang()] || UI.kh)[key] ?? UI.kh[key];
+  }
+
+  // Sidebar preferences are a per-browser convenience; storage may be blocked.
+  const storage = {
+    get(key) { try { return window.localStorage.getItem(key); } catch { return null; } },
+    set(key, value) { try { window.localStorage.setItem(key, value); } catch {} }
+  };
+
+  function roleLabel(role) {
+    return lang() === 'en' ? String(role || '').replace(/_/g, ' ') : (ROLE_LABELS[role] || role || '');
+  }
+
+  function wardLabel(user, code) {
+    if (!code) return '';
+    const ward = (user.wards || []).find(item => item.code === code) || (user.activeWard?.code === code ? user.activeWard : null);
+    return (lang() === 'en' ? ward?.nameEn : ward?.nameKh) || WARD_LABELS[code] || ward?.name || code;
+  }
+
+  function contextLabel(user, role, wardCode) {
+    const ward = wardLabel(user, wardCode);
+    return ward ? `${roleLabel(role)} · ${ward}` : roleLabel(role);
+  }
+
+  function initialsFor(user) {
+    const name = String(user.displayName || user.username || 'U').trim();
+    const words = name.split(/\s+/).filter(Boolean);
+    if (/^[A-Za-z]/.test(name)) return words.slice(0, 2).map(word => word[0]).join('').toUpperCase();
+    // Khmer: one whole grapheme so subscripts and vowel signs stay attached.
+    try {
+      const first = new Intl.Segmenter('km', { granularity: 'grapheme' }).segment(name)[Symbol.iterator]().next().value;
+      return first ? first.segment : name.slice(0, 1);
+    } catch {
+      return name.slice(0, 1);
     }
+  }
 
-    if (['NURSE', 'MIDWIFE'].includes(role)) {
-      return [
-        {
-          title: 'ការងារគិលានុបដ្ឋាក',
-          items: [
-            { href: '/departments', label: 'គ្រប់គ្រងផ្នែក និងគ្រែ', icon: 'icon-bed', shortcut: 'Alt+1' },
-            { href: '/ward-medicines', label: 'បញ្ជីឱសថប្រចាំថ្ងៃ', icon: 'icon-pill', shortcut: 'Alt+2' },
-            { href: '/patient-list', label: 'បញ្ជីអ្នកជំងឺ', icon: 'icon-users', shortcut: 'Alt+3' }
-          ]
-        }
-      ];
-    }
+  function navGroupsFor(user, settings) {
+    return NAV ? NAV.visibleGroups(user, settings?.[user.activeRole]) : [];
+  }
 
-    if (role === 'DOCTOR') {
-      if (isOpdDoctor) {
-        return [
-          {
-            title: 'ពិគ្រោះជំងឺក្រៅ (OPD)',
-            items: [
-              { href: '/opd-queue', label: 'បញ្ជីរង់ចាំ OPD', icon: 'icon-stethoscope', shortcut: 'Alt+1' },
-              { href: '/queue-display?service=OPD', label: 'បើកផ្ទាំងលេខរៀង', icon: 'icon-calendar', shortcut: 'Alt+2' },
-              { href: '/patient-list', label: 'បញ្ជីអ្នកជំងឺ', icon: 'icon-users', shortcut: 'Alt+3' }
-            ]
-          },
-          {
-            title: 'សេវាបន្ថែម',
-            items: [
-              { href: '/lab', label: 'មន្ទីរពិសោធន៍', icon: 'icon-syringe' },
-              { href: '/imaging', label: 'រូបភាពវេជ្ជសាស្ត្រ', icon: 'icon-hospital' }
-            ]
-          }
-        ];
-      }
-      return [
-        {
-          title: 'ការងារព្យាបាល (IPD)',
-          items: [
-            { href: '/departments', label: 'គ្រប់គ្រងផ្នែក និងគ្រែ', icon: 'icon-bed', shortcut: 'Alt+1' },
-            { href: '/emr', label: 'កំណត់ត្រាវេជ្ជសាស្ត្រ', icon: 'icon-clipboard', shortcut: 'Alt+2' },
-            { href: '/patient-list', label: 'បញ្ជីអ្នកជំងឺ', icon: 'icon-users', shortcut: 'Alt+3' },
-            { href: '/ward-medicines', label: 'បញ្ជីឱសថប្រចាំថ្ងៃ', icon: 'icon-pill', shortcut: 'Alt+4' }
-          ]
-        },
-        {
-          title: 'សេវា និងផ្ទេរ',
-          items: [
-            { href: '/ipd-transfer', label: 'ផ្ទេរ និងចេញអ្នកជំងឺ', icon: 'icon-arrow-right', shortcut: 'Alt+5' },
-            { href: '/lab', label: 'មន្ទីរពិសោធន៍', icon: 'icon-syringe' },
-            { href: '/imaging', label: 'រូបភាពវេជ្ជសាស្ត្រ', icon: 'icon-hospital' },
-            { href: '/home', label: 'របាយការណ៍', icon: 'icon-chart', shortcut: 'Alt+6' }
-          ]
-        }
-      ];
-    }
+  function navHtml(groups) {
+    const en = lang() === 'en';
+    const items = groups.flatMap(group => group.items);
+    const activeId = NAV ? NAV.activeItemId(items, window.location.pathname, window.location.search) : null;
+    if (!groups.length) return `<p class="emr-sidebar-empty">${escapeHtml(t('noItems'))}</p>`;
+    return groups.map(group => `
+      <div class="emr-sidebar-section" role="group" aria-labelledby="emr-nav-group-${escapeHtml(group.id)}">
+        <div class="emr-sidebar-section-title" id="emr-nav-group-${escapeHtml(group.id)}"><span>${escapeHtml(en ? group.labelEn : group.label)}</span></div>
+        <ul class="emr-sidebar-list">
+          ${group.items.map(item => {
+            const label = en ? item.labelEn : item.label;
+            const active = item.id === activeId;
+            return `<li><a href="${escapeHtml(item.href)}" class="emr-sidebar-item${active ? ' is-active' : ''}" data-nav-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(label)}" data-tooltip="${escapeHtml(label)}"${active ? ' aria-current="page"' : ''}>
+              <svg class="emr-sidebar-icon" aria-hidden="true" focusable="false"><use href="/public/icons.svg#${escapeHtml(item.icon)}"></use></svg>
+              <span class="emr-sidebar-label">${escapeHtml(label)}</span>
+            </a></li>`;
+          }).join('')}
+        </ul>
+      </div>
+    `).join('');
+  }
 
-    if (role === 'LAB') {
-      return [
-        {
-          title: 'ការងារមន្ទីរពិសោធន៍',
-          items: [
-            { href: '/lab', label: 'បញ្ជីវិភាគ និងលទ្ធផល', icon: 'icon-syringe', shortcut: 'Alt+1' },
-            { href: '/stock', label: 'សម្ភារៈ និងឧបករណ៍', icon: 'icon-clipboard', shortcut: 'Alt+2' },
-            { href: '/patient-list', label: 'បញ្ជីអ្នកជំងឺ', icon: 'icon-users', shortcut: 'Alt+3' }
-          ]
-        }
-      ];
-    }
-
-    if (role === 'IMAGING') {
-      return [
-        {
-          title: 'ការងាររូបភាពវេជ្ជសាស្ត្រ',
-          items: [
-            { href: '/imaging', label: 'បញ្ជីរូបភាពវេជ្ជសាស្ត្រ', icon: 'icon-hospital', shortcut: 'Alt+1' },
-            { href: '/stock', label: 'សម្ភារៈ និងហ្វីល', icon: 'icon-clipboard', shortcut: 'Alt+2' },
-            { href: '/patient-list', label: 'បញ្ជីអ្នកជំងឺ', icon: 'icon-users', shortcut: 'Alt+3' }
-          ]
-        }
-      ];
-    }
-
-    if (role === 'PHARMACY') {
-      return [
-        {
-          title: 'ការងារឱសថស្ថាន',
-          items: [
-            { href: '/pharmacy/opd', label: 'ចែកឱសថ OPD', icon: 'icon-pill', shortcut: 'Alt+1' },
-            { href: '/ward-medicines', label: 'បញ្ជីឱសថប្រចាំថ្ងៃ', icon: 'icon-clipboard', shortcut: 'Alt+2' },
-            { href: '/pharmacy/medicines', label: 'បញ្ជីឱសថ', icon: 'icon-file-text', shortcut: 'Alt+3' },
-            { href: '/stock', label: 'ឃ្លាំងឱសថ', icon: 'icon-hospital', shortcut: 'Alt+4' },
-            { href: '/pharmacy/display', label: 'បើកផ្ទាំងលេខរៀង', icon: 'icon-calendar' }
-          ]
-        }
-      ];
-    }
-
-    if (['CLERK', 'ACCOUNTANT'].includes(role)) {
-      return [
-        {
-          title: 'ការងារហិរញ្ញវត្ថុ និងបេឡា',
-          items: [
-            { href: '/billing', label: 'បេឡា និងវិក្កយបត្រ', icon: 'icon-dollar', shortcut: 'Alt+1' },
-            { href: '/expenses', label: 'កត់ត្រាចំណាយ', icon: 'icon-file-text', shortcut: 'Alt+2' },
-            { href: '/patient-list', label: 'បញ្ជីអ្នកជំងឺ', icon: 'icon-users', shortcut: 'Alt+3' }
-          ]
-        }
-      ];
-    }
-
-    // ADMIN, DIRECTOR, VICE_DIRECTOR
-    return [
-      {
-        title: 'ទិដ្ឋភាពទូទៅ និងរបាយការណ៍',
-        items: [
-          { href: '/home', label: 'របាយការណ៍ទូទៅ', icon: 'icon-home', shortcut: 'Alt+1' },
-          { href: '/finance', label: 'លំហូរសាច់ប្រាក់', icon: 'icon-chart', shortcut: 'Alt+2' },
-          { href: '/patient-list', label: 'បញ្ជីអ្នកជំងឺ', icon: 'icon-users', shortcut: 'Alt+3' },
-          { href: '/departments', label: 'គ្រប់គ្រងផ្នែក និងគ្រែ', icon: 'icon-bed', shortcut: 'Alt+4' }
-        ]
-      },
-      {
-        title: 'សេវា និងការពិនិត្យ',
-        items: [
-          { href: '/billing', label: 'បេឡា', icon: 'icon-dollar' },
-          { href: '/expenses', label: 'ចំណាយ', icon: 'icon-file-text' },
-          { href: '/pharmacy/opd', label: 'ឱសថស្ថាន', icon: 'icon-pill' },
-          { href: '/lab', label: 'មន្ទីរពិសោធន៍', icon: 'icon-syringe' },
-          { href: '/imaging', label: 'រូបភាពវេជ្ជសាស្ត្រ', icon: 'icon-hospital' },
-          { href: '/requests', label: 'សំណើសុំ និងសវនកម្ម', icon: 'icon-clipboard', shortcut: 'Alt+5' }
-        ]
-      },
-      {
-        title: 'ការគ្រប់គ្រងប្រព័ន្ធ',
-        items: [
-          { href: '/admin/users', label: 'គ្រប់គ្រងគណនី', icon: 'icon-lock', shortcut: 'Alt+6' },
-          { href: '/admin/organization', label: 'ឈ្មោះ និងស្លាកសញ្ញា', icon: 'icon-building' },
-          { href: '/admin/health-facility', label: 'ព័ត៌មានមូលដ្ឋាន', icon: 'icon-hospital' },
-          { href: '/admin/interface', label: 'រចនាគេហទំព័រ', icon: 'icon-palette' },
-          { href: '/styleguide', label: 'Styleguide សមាសភាគ', icon: 'icon-sliders' }
-        ]
-      }
-    ];
+  function footerHtml(user) {
+    const name = user.displayName || user.username || '';
+    const current = contextLabel(user, user.activeRole, user.activeWard?.code || '');
+    const contexts = user.contexts || [];
+    // A short list switches in place; very long lists (e.g. admin with every
+    // ward) use the full /context page.
+    const contextItems = contexts.length > 8 ? `
+      <a href="/context" class="emr-dropdown-item" role="menuitem">
+        <svg aria-hidden="true"><use href="/public/icons.svg#icon-refresh"></use></svg>
+        <span>${escapeHtml(t('switchContext'))}…</span>
+      </a>
+      <div class="emr-dropdown-divider" role="separator"></div>` : contexts.length > 1 ? `
+      <div class="emr-dropdown-group-label" aria-hidden="true">${escapeHtml(t('switchContext'))}</div>
+      ${contexts.map(context => {
+        const active = context.role === user.activeRole && (context.wardCode || '') === (user.activeWard?.code || '');
+        return `<button type="button" class="emr-dropdown-item emr-context-option${active ? ' is-current' : ''}" role="menuitemradio" aria-checked="${active}" data-role="${escapeHtml(context.role)}" data-ward="${escapeHtml(context.wardCode || '')}">
+          <svg aria-hidden="true"><use href="/public/icons.svg#${active ? 'icon-check' : 'icon-refresh'}"></use></svg>
+          <span>${escapeHtml(contextLabel(user, context.role, context.wardCode || ''))}</span>
+        </button>`;
+      }).join('')}
+      <div class="emr-dropdown-divider" role="separator"></div>` : '';
+    return `
+      <div class="emr-user-menu-wrap">
+        <div class="emr-user-dropdown" id="emr-user-dropdown" role="menu" aria-label="${escapeHtml(t('account'))}">
+          <div class="emr-dropdown-header">
+            <div class="emr-dropdown-user">${escapeHtml(name)}</div>
+            <div class="emr-dropdown-sub">@${escapeHtml(user.username || '')} · ${escapeHtml(current)}</div>
+          </div>
+          ${contextItems}
+          <button type="button" class="emr-dropdown-item" id="emr-dropdown-change-pw" role="menuitem">
+            <svg aria-hidden="true"><use href="/public/icons.svg#icon-lock"></use></svg>
+            <span>${escapeHtml(t('changePassword'))}</span>
+          </button>
+          <button type="button" class="emr-dropdown-item" id="emr-dropdown-shortcuts-btn" role="menuitem">
+            <svg aria-hidden="true"><use href="/public/icons.svg#icon-help-circle"></use></svg>
+            <span>${escapeHtml(t('shortcuts'))}</span>
+          </button>
+          <div class="emr-dropdown-divider" role="separator"></div>
+          <button type="button" class="emr-dropdown-item danger" id="emr-dropdown-logout" role="menuitem">
+            <svg aria-hidden="true"><use href="/public/icons.svg#icon-log-out"></use></svg>
+            <span>${escapeHtml(t('logout'))}</span>
+          </button>
+        </div>
+        <button type="button" class="emr-user-trigger" id="emr-user-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="emr-user-dropdown" aria-label="${escapeHtml(`${t('account')}: ${name}, ${current}`)}" data-tooltip="${escapeHtml(`${name} · ${current}`)}">
+          <span class="emr-user-avatar" aria-hidden="true">${escapeHtml(initialsFor(user))}</span>
+          <span class="emr-user-info">
+            <span class="emr-user-name">${escapeHtml(name)}</span>
+            <span class="emr-user-role-badge">${escapeHtml(current)}</span>
+          </span>
+          <svg class="emr-user-chevron" aria-hidden="true"><use href="/public/icons.svg#icon-chevron-up"></use></svg>
+        </button>
+      </div>
+      <div class="emr-sidebar-footer-row">
+        <span class="emr-lang-pill" title="${escapeHtml(t('language'))}">
+          <svg aria-hidden="true"><use href="/public/icons.svg#icon-globe"></use></svg>
+          <span>${escapeHtml(t('languageName'))}</span>
+        </span>
+        <button type="button" class="emr-sidebar-logout" id="emr-sidebar-logout" aria-label="${escapeHtml(t('logout'))}" data-tooltip="${escapeHtml(t('logout'))}">
+          <svg aria-hidden="true"><use href="/public/icons.svg#icon-log-out"></use></svg>
+          <span class="emr-sidebar-label">${escapeHtml(t('logout'))}</span>
+        </button>
+      </div>
+    `;
   }
 
   function getBreadcrumbs() {
@@ -279,7 +262,13 @@
     return [];
   }
 
+  let shellMounting = false;
+
   async function mountAppShell() {
+    // The session event and the timed fallback can both fire; mount once.
+    if (shellMounting || document.getElementById('emr-topbar')) return;
+    shellMounting = true;
+
     // Obtain session
     let session = window.emrSession;
     if (!session || !session.user) {
@@ -291,21 +280,30 @@
           window.emrSession = session;
         }
       } catch {
+        shellMounting = false;
         return;
       }
     }
 
-    if (!session || !session.user) return;
+    if (!session || !session.user) {
+      shellMounting = false;
+      return;
+    }
+
+    // Admin "Interface -> navigation" hide/order settings (never adds items).
+    let navSettings = null;
+    try {
+      const res = await fetch('/api/navigation-settings', { credentials: 'same-origin', cache: 'no-store' });
+      if (res.ok) navSettings = (await res.json()).settings || null;
+    } catch {}
+
     const user = session.user;
     const role = user.activeRole || '';
     const wardCode = user.activeWard?.code || '';
-    const wardName = user.activeWard?.name || WARD_LABELS[wardCode] || wardCode || '';
-    const roleKh = ROLE_LABELS[role] || role;
+    const wardName = wardLabel(user, wardCode);
 
     // Apply body shell class
     document.body.classList.add('has-emr-shell');
-    const isCollapsed = window.localStorage.getItem('borkeo_sidebar_collapsed') === '1';
-    if (isCollapsed) document.body.classList.add('sidebar-collapsed');
 
     // 1. Skip-to-content accessibility link
     if (!document.querySelector('.skip-to-content')) {
@@ -327,7 +325,7 @@
 
     // 2. Breadcrumbs
     const breadcrumbItems = getBreadcrumbs();
-    if (breadcrumbItems.length > 1 && mainContent) {
+    if (breadcrumbItems.length > 1 && mainContent && !mainContent.querySelector(':scope > .emr-breadcrumbs-container')) {
       const bcContainer = document.createElement('div');
       bcContainer.className = 'emr-breadcrumbs-container';
       bcContainer.innerHTML = `
@@ -352,8 +350,8 @@
 
     const hasContextSwitch = (user.contexts || []).length > 1;
     const wardChipHtml = wardName ? `
-      <a href="${hasContextSwitch ? '/context' : '#'}" class="emr-ward-chip" title="${hasContextSwitch ? 'ចុចដើម្បីប្តូរផ្នែក' : 'ផ្នែកបច្ចុប្បន្ន'}">
-        <svg class="emr-icon"><use href="/public/icons.svg#icon-hospital"></use></svg>
+      <a href="${hasContextSwitch ? '/context' : '#'}" class="emr-ward-chip" id="emr-ward-chip" title="${hasContextSwitch ? 'ចុចដើម្បីប្តូរផ្នែក' : 'ផ្នែកបច្ចុប្បន្ន'}">
+        <svg class="emr-icon" aria-hidden="true"><use href="/public/icons.svg#icon-hospital"></use></svg>
         <span>${escapeHtml(wardName)}</span>
       </a>
     ` : '';
@@ -372,18 +370,15 @@
       `;
     }
 
-    const userInitials = (user.displayName || user.username || 'U').trim().slice(0, 2);
-
     topbar.innerHTML = `
       <div class="emr-topbar-left">
-        <button type="button" class="emr-sidebar-toggle-btn" id="emr-sidebar-toggle-btn" aria-label="បិទ/បើក ម៉ឺនុយរុករក">
-          <svg><use href="/public/icons.svg#icon-menu"></use></svg>
+        <button type="button" class="emr-sidebar-toggle-btn" id="emr-sidebar-toggle-btn" aria-label="${escapeHtml(t('openMenu'))}" aria-controls="emr-sidebar" aria-expanded="false">
+          <svg aria-hidden="true"><use href="/public/icons.svg#icon-menu"></use></svg>
         </button>
         <a href="/home" class="emr-topbar-brand">
-          <img src="/public/logo-hospital.jpg" alt="Logo" class="emr-topbar-logo" onerror="this.style.display='none'">
+          <img src="/public/logo-hospital.jpg" alt="" class="emr-topbar-logo">
           <div class="emr-topbar-title-wrap">
             <span class="emr-topbar-title">មន្ទីរពេទ្យបង្អែក បរកែវ</span>
-            <span class="emr-topbar-subtitle">Borkeo Referral Hospital</span>
           </div>
         </a>
         ${wardChipHtml}
@@ -391,7 +386,7 @@
 
       <div class="emr-topbar-center">
         <button type="button" class="emr-topbar-search-trigger" id="emr-global-search-trigger" aria-label="ស្វែងរកអ្នកជំងឺ (Ctrl+K)">
-          <svg><use href="/public/icons.svg#icon-search"></use></svg>
+          <svg aria-hidden="true"><use href="/public/icons.svg#icon-search"></use></svg>
           <span class="emr-topbar-search-text">ស្វែងរកអ្នកជំងឺ (ឈ្មោះ, លេខកូដ, ទូរស័ព្ទ)...</span>
           <kbd class="emr-search-kbd">Ctrl K</kbd>
         </button>
@@ -405,125 +400,91 @@
         </div>
 
         <button type="button" class="emr-topbar-btn" id="emr-topbar-notif-btn" aria-label="សារ និងការជូនដំណឹង" title="សារ និងការជូនដំណឹង">
-          <svg><use href="/public/icons.svg#icon-bell"></use></svg>
+          <svg aria-hidden="true"><use href="/public/icons.svg#icon-bell"></use></svg>
           <span class="emr-topbar-badge" id="emr-topbar-notif-badge" hidden>0</span>
         </button>
-
-        <span class="emr-lang-pill" title="ភាសាប្រព័ន្ធ">ភាសាខ្មែរ</span>
-
-        <div class="emr-user-menu-wrap">
-          <button type="button" class="emr-user-trigger" id="emr-user-trigger" aria-haspopup="true" aria-expanded="false">
-            <div class="emr-user-avatar">${escapeHtml(userInitials)}</div>
-            <div class="emr-user-info">
-              <span class="emr-user-name">${escapeHtml(user.displayName || user.username)}</span>
-              <span class="emr-user-role-badge">${escapeHtml(roleKh)}</span>
-            </div>
-            <svg style="width: 14px; height: 14px; color: var(--text-muted);"><use href="/public/icons.svg#icon-chevron-down"></use></svg>
-          </button>
-
-          <div class="emr-user-dropdown" id="emr-user-dropdown" role="menu">
-            <div class="emr-dropdown-header">
-              <div class="emr-dropdown-user">${escapeHtml(user.displayName)}</div>
-              <div class="emr-dropdown-sub">@${escapeHtml(user.username)} · ${escapeHtml(roleKh)}</div>
-            </div>
-            ${hasContextSwitch ? `
-              <a href="/context" class="emr-dropdown-item" role="menuitem">
-                <svg><use href="/public/icons.svg#icon-refresh"></use></svg>
-                <span>ប្តូរតួនាទី / ផ្នែក</span>
-              </a>
-            ` : ''}
-            <button type="button" class="emr-dropdown-item" id="emr-dropdown-change-pw" role="menuitem">
-              <svg><use href="/public/icons.svg#icon-lock"></use></svg>
-              <span>ប្តូរពាក្យសម្ងាត់</span>
-            </button>
-            <button type="button" class="emr-dropdown-item" id="emr-dropdown-shortcuts-btn" role="menuitem">
-              <svg><use href="/public/icons.svg#icon-help-circle"></use></svg>
-              <span>ផ្លូវកាត់ក្ដារចុច (?)</span>
-            </button>
-            <div class="emr-dropdown-divider"></div>
-            <button type="button" class="emr-dropdown-item danger" id="emr-dropdown-logout" role="menuitem">
-              <svg><use href="/public/icons.svg#icon-x-circle"></use></svg>
-              <span>ចាកចេញពីប្រព័ន្ធ</span>
-            </button>
-          </div>
-        </div>
       </div>
     `;
 
     document.body.prepend(topbar);
 
-    // 4. Left Sidebar Navigation
-    const navGroups = getRoleNavGroups(role, wardCode);
+    // 4. Left Sidebar Navigation (one shared component; rules in nav-config.js)
+    let navGroups = navGroupsFor(user, navSettings);
     const sidebar = document.createElement('aside');
     sidebar.className = 'emr-sidebar no-print';
     sidebar.id = 'emr-sidebar';
-    sidebar.setAttribute('aria-label', 'ការរុករកចម្បង');
-
-    const currentPath = window.location.pathname;
-    const currentQuery = window.location.search;
-
-    const navHtml = navGroups.map(group => `
-      <div class="emr-sidebar-section">
-        <div class="emr-sidebar-section-title">${escapeHtml(group.title)}</div>
-        ${group.items.map(item => {
-          let isActive = false;
-          if (item.href.includes('?')) {
-            isActive = (currentPath + currentQuery) === item.href;
-          } else {
-            isActive = currentPath === item.href && !currentQuery.includes('view=');
-          }
-          return `
-            <a href="${escapeHtml(item.href)}" class="emr-sidebar-item ${isActive ? 'is-active' : ''}" data-tooltip="${escapeHtml(item.label)}" ${isActive ? 'aria-current="page"' : ''}>
-              <svg class="emr-sidebar-icon"><use href="/public/icons.svg#${item.icon}"></use></svg>
-              <span class="emr-sidebar-label">${escapeHtml(item.label)}</span>
-              ${item.shortcut ? `<span class="emr-sidebar-shortcut">${item.shortcut}</span>` : ''}
-            </a>
-          `;
-        }).join('')}
-      </div>
-    `).join('');
+    sidebar.dataset.state = 'collapsed';
+    sidebar.setAttribute('aria-label', t('mainNav'));
+    // Labels are rendered in the active language here; keep the page
+    // translator from rewriting them a second time.
+    sidebar.setAttribute('data-language-exclude', '');
 
     sidebar.innerHTML = `
-      <nav class="emr-sidebar-nav">
-        ${navHtml}
-      </nav>
-      <div class="emr-sidebar-footer">
-        <button type="button" class="emr-sidebar-collapse-btn" id="emr-sidebar-collapse-btn" title="បង្រួម / ពង្រីក ម៉ឺនុយ">
-          <svg><use href="/public/icons.svg#icon-panel-left"></use></svg>
-          <span>បង្រួមរបាររុករក</span>
+      <div class="emr-sidebar-brand">
+        <a href="${escapeHtml(navGroups[0]?.items[0]?.href || '/home')}" class="emr-sidebar-brand-link">
+          <img src="/public/logo-hospital.jpg" alt="" class="emr-sidebar-logo">
+          <span class="emr-sidebar-brand-text">
+            <span class="emr-sidebar-brand-name">មន្ទីរពេទ្យបង្អែក បរកែវ</span>
+            <span class="emr-sidebar-brand-sub">Borkeo EMR</span>
+          </span>
+        </a>
+        <button type="button" class="emr-sidebar-pin-btn" id="emr-sidebar-pin-btn" aria-pressed="false" aria-label="${escapeHtml(t('pin'))}" title="${escapeHtml(t('pin'))}">
+          <svg aria-hidden="true"><use href="/public/icons.svg#icon-pin"></use></svg>
         </button>
-        <div class="emr-sidebar-version">Borkeo EMR v39.2.0</div>
+      </div>
+      <nav class="emr-sidebar-nav" id="emr-sidebar-nav" aria-label="${escapeHtml(t('mainNav'))}">
+        ${navHtml(navGroups)}
+      </nav>
+      <div class="emr-sidebar-footer" id="emr-sidebar-footer">
+        ${footerHtml(user)}
       </div>
     `;
 
     topbar.insertAdjacentElement('afterend', sidebar);
 
-    // 5. Mobile Bottom Navigation Bar
+    for (const logo of document.querySelectorAll('.emr-topbar-logo, .emr-sidebar-logo')) {
+      logo.addEventListener('error', () => { logo.hidden = true; }, { once: true });
+    }
+
+    const sidebarBackdrop = document.createElement('div');
+    sidebarBackdrop.className = 'emr-sidebar-backdrop no-print';
+    sidebarBackdrop.id = 'emr-sidebar-backdrop';
+    sidebarBackdrop.hidden = true;
+    sidebar.insertAdjacentElement('afterend', sidebarBackdrop);
+
+    const sidebarTooltip = document.createElement('div');
+    sidebarTooltip.className = 'emr-sidebar-tooltip no-print';
+    sidebarTooltip.id = 'emr-sidebar-tooltip';
+    sidebarTooltip.setAttribute('role', 'tooltip');
+    sidebarTooltip.hidden = true;
+    document.body.append(sidebarTooltip);
+
+    // 5. Mobile Bottom Navigation (narrow screens): first two menu pages.
     const mobileNav = document.createElement('nav');
     mobileNav.className = 'emr-mobile-nav no-print';
-    mobileNav.setAttribute('aria-label', 'ម៉ឺនុយចល័ត');
-    mobileNav.innerHTML = `
-      <a href="/home" class="emr-mobile-nav-item ${currentPath === '/home' ? 'is-active' : ''}">
-        <svg><use href="/public/icons.svg#icon-home"></use></svg>
-        <span>ទំព័រដើម</span>
-      </a>
-      <a href="/patient-list" class="emr-mobile-nav-item ${currentPath === '/patient-list' ? 'is-active' : ''}">
-        <svg><use href="/public/icons.svg#icon-users"></use></svg>
-        <span>អ្នកជំងឺ</span>
-      </a>
-      <a href="${role === 'DOCTOR' ? (wardCode === 'opd' ? '/opd-queue' : '/departments') : (['NURSE','MIDWIFE'].includes(role) ? '/departments' : '/home')}" class="emr-mobile-nav-item">
-        <svg><use href="/public/icons.svg#icon-stethoscope"></use></svg>
-        <span>ព្យាបាល</span>
-      </a>
-      <button type="button" class="emr-mobile-nav-item" id="emr-mobile-search-btn">
-        <svg><use href="/public/icons.svg#icon-search"></use></svg>
-        <span>ស្វែងរក</span>
-      </button>
-      <button type="button" class="emr-mobile-nav-item" id="emr-mobile-menu-btn">
-        <svg><use href="/public/icons.svg#icon-menu"></use></svg>
-        <span>ម៉ឺនុយ</span>
-      </button>
-    `;
+    mobileNav.setAttribute('aria-label', 'ម៉ឺនុយទូរស័ព្ទ');
+    const renderMobileNav = () => {
+      const items = navGroups.flatMap(group => group.items).slice(0, 2);
+      const activeId = NAV ? NAV.activeItemId(items, window.location.pathname, window.location.search) : null;
+      const en = lang() === 'en';
+      mobileNav.innerHTML = `
+        ${items.map(item => `
+          <a href="${escapeHtml(item.href)}" class="emr-mobile-nav-item ${item.id === activeId ? 'is-active' : ''}"${item.id === activeId ? ' aria-current="page"' : ''}>
+            <svg aria-hidden="true"><use href="/public/icons.svg#${escapeHtml(item.icon)}"></use></svg>
+            <span>${escapeHtml(en ? item.labelEn : item.label)}</span>
+          </a>
+        `).join('')}
+        <button type="button" class="emr-mobile-nav-item" id="emr-mobile-search-btn">
+          <svg aria-hidden="true"><use href="/public/icons.svg#icon-search"></use></svg>
+          <span>${escapeHtml(t('search'))}</span>
+        </button>
+        <button type="button" class="emr-mobile-nav-item" id="emr-mobile-menu-btn" aria-controls="emr-sidebar" aria-expanded="false">
+          <svg aria-hidden="true"><use href="/public/icons.svg#icon-menu"></use></svg>
+          <span>${escapeHtml(t('menu'))}</span>
+        </button>
+      `;
+    };
+    renderMobileNav();
     document.body.append(mobileNav);
 
     // 6. Global Command Palette Dialog (Ctrl+K)
@@ -592,32 +553,167 @@
     // EVENT HANDLERS & BEHAVIORS
     // =========================================================================
 
-    // Sidebar Collapse
-    const toggleCollapse = () => {
-      document.body.classList.toggle('sidebar-collapsed');
-      const isNowCollapsed = document.body.classList.contains('sidebar-collapsed');
-      window.localStorage.setItem('borkeo_sidebar_collapsed', isNowCollapsed ? '1' : '0');
+    // Sidebar: collapsed icon rail that expands over the content on hover or
+    // keyboard focus, a pin that keeps it open, and a drawer on touch/narrow.
+    const drawerQuery = window.matchMedia('(max-width: 768px), (hover: none)');
+    const pinKey = `borkeo_sidebar_pinned:${user.id || user.username || ''}`;
+    const sidebarToggleBtn = document.getElementById('emr-sidebar-toggle-btn');
+    const pinBtn = document.getElementById('emr-sidebar-pin-btn');
+    const COLLAPSE_DELAY_MS = 200;
+    let pinned = storage.get(pinKey) === '1';
+    let collapseTimer = null;
+    let dragging = false;
+    let printing = false;
+
+    const isDrawerMode = () => drawerQuery.matches;
+    const modalOpen = () => Boolean(document.querySelector(
+      'dialog[open], .emr-command-palette-backdrop.is-open, .emr-shortcuts-backdrop.is-open, [aria-modal="true"].open, [aria-modal="true"].is-open'
+    ));
+
+    const hideTooltip = () => { sidebarTooltip.hidden = true; };
+    const showTooltip = (target) => {
+      if (isDrawerMode() || sidebar.classList.contains('is-expanded')) return;
+      const text = target.dataset.tooltip;
+      if (!text) return;
+      const rect = target.getBoundingClientRect();
+      sidebarTooltip.textContent = text;
+      sidebarTooltip.style.top = `${Math.round(rect.top + rect.height / 2)}px`;
+      sidebarTooltip.style.left = `${Math.round(rect.right + 10)}px`;
+      sidebarTooltip.hidden = false;
     };
 
-    document.getElementById('emr-sidebar-collapse-btn')?.addEventListener('click', toggleCollapse);
-    document.getElementById('emr-sidebar-toggle-btn')?.addEventListener('click', () => {
-      if (window.innerWidth <= 768) {
-        document.body.classList.toggle('mobile-sidebar-open');
-      } else {
-        toggleCollapse();
+    const setExpanded = (wanted) => {
+      const expanded = !isDrawerMode() && (pinned || wanted);
+      sidebar.classList.toggle('is-expanded', expanded);
+      sidebar.dataset.state = expanded ? 'expanded' : 'collapsed';
+      if (expanded) hideTooltip();
+      else closeUserMenu();
+    };
+
+    const applyPinned = () => {
+      document.body.classList.toggle('sidebar-pinned', pinned && !isDrawerMode());
+      pinBtn.setAttribute('aria-pressed', String(pinned));
+      pinBtn.setAttribute('aria-label', pinned ? t('unpin') : t('pin'));
+      pinBtn.title = pinned ? t('unpin') : t('pin');
+      setExpanded(false);
+    };
+
+    const scheduleCollapse = () => {
+      clearTimeout(collapseTimer);
+      collapseTimer = setTimeout(() => {
+        // Keyboard users keep it open while focus is inside.
+        if (sidebar.querySelector(':focus-visible') || sidebar.matches(':hover')) return;
+        setExpanded(false);
+      }, COLLAPSE_DELAY_MS);
+    };
+
+    sidebar.addEventListener('pointerenter', (e) => {
+      if (isDrawerMode() || e.pointerType === 'touch') return;
+      clearTimeout(collapseTimer);
+      if (dragging || printing || e.buttons || modalOpen()) return;
+      setExpanded(true);
+    });
+    sidebar.addEventListener('pointerleave', () => {
+      if (!isDrawerMode()) scheduleCollapse();
+    });
+    sidebar.addEventListener('focusin', () => {
+      if (isDrawerMode() || printing || modalOpen()) return;
+      if (!sidebar.querySelector(':focus-visible')) return;
+      clearTimeout(collapseTimer);
+      setExpanded(true);
+    });
+    sidebar.addEventListener('focusout', (e) => {
+      if (isDrawerMode() || sidebar.contains(e.relatedTarget)) return;
+      scheduleCollapse();
+    });
+
+    sidebar.addEventListener('pointerover', (e) => {
+      const target = e.target.closest('[data-tooltip]');
+      if (target && sidebar.contains(target)) showTooltip(target);
+    });
+    sidebar.addEventListener('pointerout', (e) => {
+      if (e.target.closest('[data-tooltip]')) hideTooltip();
+    });
+    sidebar.addEventListener('focusin', (e) => {
+      const target = e.target.closest('[data-tooltip]');
+      if (target) showTooltip(target);
+    });
+    sidebar.addEventListener('focusout', hideTooltip);
+
+    document.addEventListener('dragstart', () => { dragging = true; setExpanded(false); }, true);
+    document.addEventListener('dragend', () => { dragging = false; }, true);
+    document.addEventListener('drop', () => { dragging = false; }, true);
+    window.addEventListener('beforeprint', () => { printing = true; setExpanded(false); closeDrawer(); });
+    window.addEventListener('afterprint', () => { printing = false; });
+
+    pinBtn.addEventListener('click', () => {
+      pinned = !pinned;
+      storage.set(pinKey, pinned ? '1' : '0');
+      applyPinned();
+      if (!pinned && sidebar.matches(':hover')) setExpanded(true);
+    });
+
+    // Drawer (phones, tablets and other touch screens)
+    const setDrawerButtons = (open) => {
+      for (const button of [sidebarToggleBtn, document.getElementById('emr-mobile-menu-btn')]) {
+        if (!button) continue;
+        button.setAttribute('aria-expanded', String(open));
+        if (button === sidebarToggleBtn) button.setAttribute('aria-label', open ? t('closeMenu') : t('openMenu'));
       }
+    };
+    const openDrawer = () => {
+      if (printing) return;
+      document.body.classList.add('mobile-sidebar-open');
+      sidebarBackdrop.hidden = false;
+      setDrawerButtons(true);
+      (sidebar.querySelector('.emr-sidebar-item.is-active') || sidebar.querySelector('.emr-sidebar-item'))?.focus({ preventScroll: true });
+    };
+    function closeDrawer(returnFocus = false) {
+      if (!document.body.classList.contains('mobile-sidebar-open')) return;
+      document.body.classList.remove('mobile-sidebar-open');
+      sidebarBackdrop.hidden = true;
+      setDrawerButtons(false);
+      if (returnFocus) sidebarToggleBtn?.focus({ preventScroll: true });
+    }
+    const toggleDrawer = () => {
+      if (document.body.classList.contains('mobile-sidebar-open')) closeDrawer(true);
+      else openDrawer();
+    };
+
+    sidebarToggleBtn?.addEventListener('click', () => {
+      if (isDrawerMode()) toggleDrawer();
+      else pinBtn.click();
+    });
+    mobileNav.addEventListener('click', (e) => {
+      if (e.target.closest('#emr-mobile-menu-btn')) toggleDrawer();
+    });
+    sidebarBackdrop.addEventListener('click', () => closeDrawer(true));
+    drawerQuery.addEventListener('change', () => {
+      closeDrawer();
+      applyPinned();
     });
 
-    document.getElementById('emr-mobile-menu-btn')?.addEventListener('click', () => {
-      document.body.classList.toggle('mobile-sidebar-open');
+    // Close the drawer when a link is chosen
+    sidebar.addEventListener('click', (e) => {
+      if (e.target.closest('a.emr-sidebar-item')) closeDrawer();
     });
 
-    // Close mobile sidebar when clicking on a link
-    sidebar.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        document.body.classList.remove('mobile-sidebar-open');
-      });
-    });
+    // Phones render pages in the 1200px desktop viewport (v22.4). Scale only
+    // the shell (topbar and drawer) back to finger size; content keeps
+    // pinch-zoom.
+    const applyPhoneScale = () => {
+      const screenWidth = window.screen?.width || window.innerWidth;
+      const scale = Math.min(3.2, window.innerWidth / screenWidth);
+      const phone = isDrawerMode() && scale >= 1.5;
+      document.body.classList.toggle('emr-phone-desktop-mode', phone);
+      if (phone) document.documentElement.style.setProperty('--emr-shell-zoom', scale.toFixed(2));
+      else document.documentElement.style.removeProperty('--emr-shell-zoom');
+    };
+    window.addEventListener('resize', applyPhoneScale);
+    drawerQuery.addEventListener('change', applyPhoneScale);
+    applyPhoneScale();
+
+    applyPinned();
 
     // Counter Selector Sync
     const topbarCounter = document.getElementById('emr-topbar-counter-sel');
@@ -636,29 +732,35 @@
       });
     }
 
-    // User Dropdown
-    const userTrigger = document.getElementById('emr-user-trigger');
-    const userDropdown = document.getElementById('emr-user-dropdown');
+    // User menu (sidebar footer). Rendered again after a role/ward switch, so
+    // all handlers are delegated from the sidebar.
+    function closeUserMenu(returnFocus = false) {
+      const dropdown = document.getElementById('emr-user-dropdown');
+      const trigger = document.getElementById('emr-user-trigger');
+      if (!dropdown?.classList.contains('is-open')) return;
+      dropdown.classList.remove('is-open');
+      trigger?.setAttribute('aria-expanded', 'false');
+      if (returnFocus) trigger?.focus({ preventScroll: true });
+    }
+
+    function openUserMenu() {
+      const dropdown = document.getElementById('emr-user-dropdown');
+      const trigger = document.getElementById('emr-user-trigger');
+      if (!dropdown) return;
+      setExpanded(true);
+      dropdown.classList.add('is-open');
+      trigger?.setAttribute('aria-expanded', 'true');
+      dropdown.querySelector('[role^="menuitem"]')?.focus({ preventScroll: true });
+    }
 
     const toggleUserMenu = (open) => {
-      const isOpen = open !== undefined ? open : !userDropdown.classList.contains('is-open');
-      userDropdown.classList.toggle('is-open', isOpen);
-      userTrigger.setAttribute('aria-expanded', String(isOpen));
+      const dropdown = document.getElementById('emr-user-dropdown');
+      const isOpen = open !== undefined ? open : !dropdown?.classList.contains('is-open');
+      if (isOpen) openUserMenu();
+      else closeUserMenu();
     };
 
-    userTrigger?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleUserMenu();
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!userDropdown.contains(e.target) && !userTrigger.contains(e.target)) {
-        toggleUserMenu(false);
-      }
-    });
-
-    // Logout Action
-    document.getElementById('emr-dropdown-logout')?.addEventListener('click', async () => {
+    const logout = async () => {
       try {
         await fetch('/api/auth/logout', {
           method: 'POST',
@@ -669,21 +771,136 @@
         window.sessionStorage.removeItem('borkeo-counter-number');
         window.location.replace('/login');
       }
-    });
+    };
 
-    // Change Password Action
-    document.getElementById('emr-dropdown-change-pw')?.addEventListener('click', () => {
+    const changePassword = () => {
       toggleUserMenu(false);
       const existingBtn = document.querySelector('.session-password-save, .portal-account-actions button');
       if (existingBtn) {
         // Trigger existing password modal if available
-        const pwBtn = [...document.querySelectorAll('button')].find(b => b.textContent.includes('ប្តូរពាក្យសម្ងាត់'));
-        if (pwBtn && pwBtn !== document.getElementById('emr-dropdown-change-pw')) {
+        const pwBtn = [...document.querySelectorAll('button')].find(b => b.textContent.includes('ប្តូរពាក្យសម្ងាត់') && !b.closest('#emr-sidebar'));
+        if (pwBtn) {
           pwBtn.click();
           return;
         }
       }
       alert('សូមទំនាក់ទំនងអ្នកគ្រប់គ្រងប្រព័ន្ធដើម្បីប្តូរពាក្យសម្ងាត់');
+    };
+
+    const renderShellForUser = () => {
+      navGroups = navGroupsFor(session.user, navSettings);
+      document.getElementById('emr-sidebar-nav').innerHTML = navHtml(navGroups);
+      document.getElementById('emr-sidebar-footer').innerHTML = footerHtml(session.user);
+      const brandLink = sidebar.querySelector('.emr-sidebar-brand-link');
+      if (brandLink) brandLink.href = navGroups[0]?.items[0]?.href || '/home';
+      const chipText = document.querySelector('#emr-ward-chip span');
+      if (chipText) chipText.textContent = wardLabel(session.user, session.user.activeWard?.code || '');
+      renderMobileNav();
+      // request-badges.js adds counters to /requests and /ward-medicines links.
+      window.dispatchEvent(new CustomEvent('emr-requests-changed'));
+    };
+
+    let contextNotice = null;
+    const showContextNotice = (text, withReload) => {
+      contextNotice?.remove();
+      contextNotice = document.createElement('div');
+      contextNotice.className = 'emr-context-notice no-print';
+      contextNotice.setAttribute('role', 'status');
+      contextNotice.innerHTML = `
+        <span>${escapeHtml(text)}</span>
+        ${withReload ? `<button type="button" data-context-reload>${escapeHtml(t('reload'))}</button>` : ''}
+        <button type="button" data-context-dismiss aria-label="${escapeHtml(t('dismiss'))}">×</button>
+      `;
+      contextNotice.querySelector('[data-context-reload]')?.addEventListener('click', () => window.location.reload());
+      contextNotice.querySelector('[data-context-dismiss]').addEventListener('click', () => contextNotice.remove());
+      document.body.append(contextNotice);
+    };
+
+    // Switch role/ward in place: the menu updates without a page reload.
+    // The server then decides whether the current page is still open to the
+    // new context; if not, go to the first page of the new menu.
+    const switchContext = async (nextRole, nextWard) => {
+      closeUserMenu();
+      showContextNotice(t('switching'), false);
+      try {
+        const res = await fetch('/api/auth/context', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': session.csrfToken },
+          body: JSON.stringify({ role: nextRole, wardCode: nextWard })
+        });
+        const result = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(result.error || t('switchFailed'));
+        const me = await fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' });
+        if (me.ok) {
+          const data = await me.json();
+          session.user = data.user;
+          if (data.csrfToken) session.csrfToken = data.csrfToken;
+        } else if (result.user) {
+          session.user = { ...session.user, ...result.user };
+        }
+        window.emrSession = session;
+        renderShellForUser();
+        window.dispatchEvent(new CustomEvent('emr-context-changed', { detail: { user: session.user } }));
+
+        if (window.location.pathname === '/context') {
+          window.location.assign(navGroups[0]?.items[0]?.href || '/home');
+          return;
+        }
+        const check = await fetch(window.location.pathname + window.location.search, { credentials: 'same-origin', cache: 'no-store' });
+        if (!check.ok || check.redirected) {
+          window.location.assign(check.ok ? check.url : (navGroups[0]?.items[0]?.href || '/context'));
+          return;
+        }
+        const label = contextLabel(session.user, session.user.activeRole, session.user.activeWard?.code || '');
+        showContextNotice(`${t('switched')} ${label}។ ${t('reloadHint')}`, true);
+      } catch (error) {
+        showContextNotice(error.message || t('switchFailed'), false);
+      }
+    };
+
+    sidebar.addEventListener('click', (e) => {
+      const target = e.target.closest('button');
+      if (!target || !sidebar.contains(target)) return;
+      if (target.id === 'emr-user-trigger') {
+        e.stopPropagation();
+        toggleUserMenu();
+      } else if (target.id === 'emr-dropdown-logout' || target.id === 'emr-sidebar-logout') {
+        void logout();
+      } else if (target.id === 'emr-dropdown-change-pw') {
+        changePassword();
+      } else if (target.id === 'emr-dropdown-shortcuts-btn') {
+        toggleUserMenu(false);
+        openShortcuts();
+      } else if (target.classList.contains('emr-context-option')) {
+        if (target.getAttribute('aria-checked') === 'true') closeUserMenu(true);
+        else void switchContext(target.dataset.role, target.dataset.ward || '');
+      }
+    });
+
+    // Arrow keys move through the open user menu.
+    sidebar.addEventListener('keydown', (e) => {
+      const dropdown = document.getElementById('emr-user-dropdown');
+      if (!dropdown?.classList.contains('is-open') || !['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
+      const items = [...dropdown.querySelectorAll('[role^="menuitem"]')];
+      if (!items.length) return;
+      e.preventDefault();
+      const index = items.indexOf(document.activeElement);
+      const next = e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1
+        : e.key === 'ArrowDown' ? (index + 1) % items.length : (index - 1 + items.length) % items.length;
+      items[next].focus();
+    });
+
+    document.addEventListener('click', (e) => {
+      const wrap = sidebar.querySelector('.emr-user-menu-wrap');
+      if (wrap && !wrap.contains(e.target)) closeUserMenu();
+    });
+
+    window.addEventListener('borkeo-language-change', () => {
+      sidebar.setAttribute('aria-label', t('mainNav'));
+      document.getElementById('emr-sidebar-nav')?.setAttribute('aria-label', t('mainNav'));
+      renderShellForUser();
+      applyPinned();
     });
 
     // Notification Bell Sync
@@ -744,7 +961,9 @@
     };
 
     document.getElementById('emr-global-search-trigger')?.addEventListener('click', openPalette);
-    document.getElementById('emr-mobile-search-btn')?.addEventListener('click', openPalette);
+    mobileNav.addEventListener('click', (e) => {
+      if (e.target.closest('#emr-mobile-search-btn')) openPalette();
+    });
     document.getElementById('emr-palette-close')?.addEventListener('click', closePalette);
 
     paletteBackdrop.addEventListener('click', (e) => {
@@ -850,10 +1069,6 @@
     const openShortcuts = () => shortcutsBackdrop.classList.add('is-open');
     const closeShortcuts = () => shortcutsBackdrop.classList.remove('is-open');
 
-    document.getElementById('emr-dropdown-shortcuts-btn')?.addEventListener('click', () => {
-      toggleUserMenu(false);
-      openShortcuts();
-    });
     document.getElementById('emr-shortcuts-close')?.addEventListener('click', closeShortcuts);
     shortcutsBackdrop.addEventListener('click', (e) => {
       if (e.target === shortcutsBackdrop) closeShortcuts();
@@ -882,8 +1097,11 @@
           closeShortcuts();
           return;
         }
-        toggleUserMenu(false);
-        document.body.classList.remove('mobile-sidebar-open');
+        if (document.getElementById('emr-user-dropdown')?.classList.contains('is-open')) {
+          closeUserMenu(true);
+          return;
+        }
+        closeDrawer(true);
         return;
       }
 

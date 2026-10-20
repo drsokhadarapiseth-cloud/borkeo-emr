@@ -4,6 +4,8 @@ This document records the official Khmer and English clinical titles, section hi
 
 ## 1. Primary Section Titles & Hints
 
+> **v39.8.0 change (ordered by the hospital):** the four section titles are always the English clinical terms **Subjective, Objective, Assessment, Plan** with the letters S, O, A, P, in Khmer mode, EN mode and print. They carry `data-language-exclude` and are no longer in the translation dictionaries. This is an explicit exception to the Khmer-only rule. The hints below still follow the interface language. The Khmer titles in the table are kept for reference only.
+
 | Section | Color Token | Khmer Title (Default) | Khmer Hint | English Mode (EN) | English Hint |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **S** | `--color-soap-s-stripe` (Blue) | **ពាក្យបណ្តឹង និងប្រវត្តិ** | អ្វីដែលអ្នកជំងឺរាយការណ៍ (រោគសញ្ញា ប្រវត្តិជំងឺ) | **Subjective** | Patient-reported complaints, symptoms, interval history |

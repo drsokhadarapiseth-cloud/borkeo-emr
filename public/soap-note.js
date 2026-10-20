@@ -6,15 +6,20 @@
 (function (global) {
   'use strict';
 
+  // Section titles are always these English clinical terms (S, O, A, P), in
+  // Khmer and EN interface modes and in print; they are never translated.
+  // Only the hints below follow the interface language.
+  var SOAP_TITLES = { s: 'Subjective', o: 'Objective', a: 'Assessment', p: 'Plan' };
+
+  function soapTitleHtml(sec) {
+    return '<span class="emr-soap-card-title" data-language-exclude>' + SOAP_TITLES[sec] + ' (' + sec.toUpperCase() + ')</span>';
+  }
+
   var I18N = {
     khmer: {
-      sTitle: 'ពាក្យបណ្តឹង និងប្រវត្តិ',
       sHint: 'អ្វីដែលអ្នកជំងឺរាយការណ៍ (រោគសញ្ញា ប្រវត្តិជំងឺ)',
-      oTitle: 'ការពិនិត្យ និងលទ្ធផល',
       oHint: 'សញ្ញាជីវិត ការពិនិត្យរាងកាយ និងលទ្ធផលវិភាគ',
-      aTitle: 'ការវាយតម្លៃ និងរោគវិនិច្ឆ័យ',
       aHint: 'រោគវិនិច្ឆ័យចម្បង លេខកូដ ICD-10 និងការវាយតម្លៃ',
-      pTitle: 'ផែនការព្យាបាល',
       pHint: 'ឱសថព្យាបាល ការបញ្ជាបន្ថែម និងការណែនាំ',
       pullResults: 'ទាញលទ្ធផលចុងក្រោយ',
       copyPrev: 'ចម្លងពីកំណត់ត្រាមុន',
@@ -30,13 +35,9 @@
       copiedSuccess: 'បានចម្លងពីកំណត់ត្រាមុនរួចរាល់'
     },
     english: {
-      sTitle: 'Subjective',
       sHint: 'Patient-reported complaints, symptoms, interval history',
-      oTitle: 'Objective',
       oHint: 'Vital signs, physical examination, diagnostic results',
-      aTitle: 'Assessment',
       aHint: 'Working diagnosis, ICD-10 code, clinical impression',
-      pTitle: 'Plan',
       pHint: 'Treatment orders, medications, follow-up plan',
       pullResults: 'Pull Latest Results',
       copyPrev: 'Copy From Previous Note',
@@ -388,22 +389,22 @@
 
     return '<div class="emr-soap-card-grid">' +
       '<div class="emr-soap-card-sec sec-s">' +
-        '<div class="emr-soap-card-sec-head color-s"><i class="fa-solid fa-circle-info"></i> ' + t('sTitle') + ' (S)</div>' +
+        '<div class="emr-soap-card-sec-head color-s"><i class="fa-solid fa-circle-info"></i> ' + soapTitleHtml('s') + '</div>' +
         '<div class="emr-soap-card-text">' + sContent + '</div>' +
         (sContent.length > 90 ? '<button type="button" class="emr-soap-toggle-more no-print" onclick="EmrSoapNote.toggleCardText(this)">' + t('showMore') + '</button>' : '') +
       '</div>' +
       '<div class="emr-soap-card-sec sec-o">' +
-        '<div class="emr-soap-card-sec-head color-o"><i class="fa-solid fa-stethoscope"></i> ' + t('oTitle') + ' (O)</div>' +
+        '<div class="emr-soap-card-sec-head color-o"><i class="fa-solid fa-stethoscope"></i> ' + soapTitleHtml('o') + '</div>' +
         '<div class="emr-soap-card-text">' + oContent + '</div>' +
         (oContent.length > 90 ? '<button type="button" class="emr-soap-toggle-more no-print" onclick="EmrSoapNote.toggleCardText(this)">' + t('showMore') + '</button>' : '') +
       '</div>' +
       '<div class="emr-soap-card-sec sec-a">' +
-        '<div class="emr-soap-card-sec-head color-a"><i class="fa-solid fa-clipboard-check"></i> ' + t('aTitle') + ' (A)' + icd10Badge + '</div>' +
+        '<div class="emr-soap-card-sec-head color-a"><i class="fa-solid fa-clipboard-check"></i> ' + soapTitleHtml('a') + '' + icd10Badge + '</div>' +
         '<div class="emr-soap-card-text">' + aContent + '</div>' +
         (aContent.length > 90 ? '<button type="button" class="emr-soap-toggle-more no-print" onclick="EmrSoapNote.toggleCardText(this)">' + t('showMore') + '</button>' : '') +
       '</div>' +
       '<div class="emr-soap-card-sec sec-p">' +
-        '<div class="emr-soap-card-sec-head color-p"><i class="fa-solid fa-prescription"></i> ' + t('pTitle') + ' (P)</div>' +
+        '<div class="emr-soap-card-sec-head color-p"><i class="fa-solid fa-prescription"></i> ' + soapTitleHtml('p') + '</div>' +
         '<div class="emr-soap-card-text">' + pContent + '</div>' +
         (pContent.length > 90 ? '<button type="button" class="emr-soap-toggle-more no-print" onclick="EmrSoapNote.toggleCardText(this)">' + t('showMore') + '</button>' : '') +
       '</div>' +
@@ -425,12 +426,6 @@
   }
 
   function refreshLanguageLabels() {
-    var titles = {
-      s: t('sTitle'),
-      o: t('oTitle'),
-      a: t('aTitle'),
-      p: t('pTitle')
-    };
     var hints = {
       s: t('sHint'),
       o: t('oHint'),
@@ -442,7 +437,8 @@
       var titleEl = document.querySelector('.emr-soap-box.section-' + sec + ' .emr-soap-title');
       if (titleEl) {
         var req = (sec === 's' || sec === 'a') ? ' <span style="color:red;">*</span>' : '';
-        titleEl.innerHTML = titles[sec] + req;
+        titleEl.setAttribute('data-language-exclude', '');
+        titleEl.innerHTML = SOAP_TITLES[sec] + req;
       }
       var hintEl = document.querySelector('.emr-soap-box.section-' + sec + ' .emr-soap-hint');
       if (hintEl) hintEl.textContent = hints[sec];
@@ -501,7 +497,8 @@
     copyFromPreviousNote: copyFromPreviousNote,
     toggleCardText: toggleCardText,
     toggleBoxCollapse: toggleBoxCollapse,
-    refreshLanguageLabels: refreshLanguageLabels
+    refreshLanguageLabels: refreshLanguageLabels,
+    titles: Object.freeze(Object.assign({}, SOAP_TITLES))
   };
 
   global.addEventListener('borkeo-language-change', refreshLanguageLabels);

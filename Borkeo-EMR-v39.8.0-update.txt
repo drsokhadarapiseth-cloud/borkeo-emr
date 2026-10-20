@@ -1,0 +1,54 @@
+BORKEO EMR v39.8.0 - COMBINED UPDATE NOTE
+Base: v39.7.0 (commit a70104c). Patient data, permissions and clinical, pharmacy,
+laboratory and financial logic were not changed.
+
+WHAT CHANGED
+1. Side navigation redesign
+   - Collapsed icon rail (68px). It expands to 264px OVER the page on mouse hover
+     or keyboard Tab, and collapses 200ms after the mouse or focus leaves.
+   - Pin button keeps it open; the choice is remembered per user.
+   - Phones/tablets/touch screens: menu button opens a drawer with a dark
+     backdrop; tap the backdrop or press Esc to close.
+   - Sections: Patient care, Clinical services, Pharmacy and stock, Finance,
+     Administration. One icon set. Hospital logo/name at the top. User,
+     role/ward, language and sign-out at the bottom.
+   - Never printed. Reduced-motion setting respected.
+2. Only the buttons each role needs (one map: public/nav-config.js; table in
+   docs/nav-roles.md). Removed buttons that led to "denied" or missing pages.
+   Requests remains management-only (earlier decision v23.9 / v24.7).
+   Role/ward can be switched from the user menu at the bottom of the sidebar;
+   the menu updates without reloading the page.
+3. SOAP note titles are always: Subjective, Objective, Assessment, Plan
+   (S, O, A, P) in Khmer mode, EN mode and print. Hints stay Khmer.
+4. Phones on the same Wi-Fi: Start-Borkeo-WiFi.bat (or npm run start:wifi).
+5. Version 39.8.0 (package.json, login page, server).
+
+FILES
+  New:     public/nav-config.js, scripts/start-wifi.mjs,
+           scripts/capture-nav-screenshots.mjs, Start-Borkeo-WiFi.bat,
+           tests/v398-side-navigation.test.mjs, docs/nav-findings.md,
+           docs/nav-roles.md, docs/ui-screenshots/before-*.png and after-*.png
+  Changed: public/app-shell.js, public/app-shell.css, public/icons.svg,
+           public/soap-note.js, protected/EMR.html (SOAP titles only),
+           server/server.mjs (nav-config injection, os import, version),
+           package.json, public/login.html, README.md, CHANGELOG.md,
+           docs/soap-khmer-text.md, tests/accessibility-quality-smoke.test.mjs,
+           tests/soap-notes.test.mjs
+
+TESTS
+  npm test -> 819 passed, 0 failed (812 before + 7 new).
+  Updated tests:
+   - accessibility-quality-smoke: version 39.7 -> 39.8.
+   - soap-notes: the check "titles must be Khmer" now checks the four English
+     titles (your order) and still checks that the four Khmer hints exist.
+
+INSTALL (one step at a time)
+  Step 1. Stop the running EMR window (Ctrl+C).
+  Step 2. The files are already updated in this folder. Run:  npm test
+          It should finish with "fail 0".
+  Step 3. Start as usual (npm start), or for phones double-click
+          Start-Borkeo-WiFi.bat.
+  Step 4. Phone: join the same Wi-Fi and open the "Mobile / Phone access"
+          address shown in the window. If it does not open, run the printed
+          netsh command once in an Administrator PowerShell.
+  Step 5. In the browser press Ctrl+F5 once to load the new menu.

@@ -12735,9 +12735,9 @@
                 <div class="emr-soap-box section-s">
                     <div class="emr-soap-header">
                         <div class="emr-soap-header-left">
-                            <div class="emr-soap-badge">S</div>
+                            <div class="emr-soap-badge" data-language-exclude>S</div>
                             <div class="emr-soap-title-wrap">
-                                <span class="emr-soap-title">ពាក្យបណ្តឹង និងប្រវត្តិ <span style="color:red;">*</span></span>
+                                <span class="emr-soap-title" data-language-exclude>Subjective <span style="color:red;">*</span></span>
                                 <span class="emr-soap-hint">អ្វីដែលអ្នកជំងឺរាយការណ៍ (រោគសញ្ញា ប្រវត្តិជំងឺ)</span>
                             </div>
                         </div>
@@ -12762,9 +12762,9 @@
                 <div class="emr-soap-box section-o">
                     <div class="emr-soap-header">
                         <div class="emr-soap-header-left">
-                            <div class="emr-soap-badge">O</div>
+                            <div class="emr-soap-badge" data-language-exclude>O</div>
                             <div class="emr-soap-title-wrap">
-                                <span class="emr-soap-title">ការពិនិត្យ និងលទ្ធផល</span>
+                                <span class="emr-soap-title" data-language-exclude>Objective</span>
                                 <span class="emr-soap-hint">សញ្ញាជីវិត ការពិនិត្យរាងកាយ និងលទ្ធផលវិភាគ</span>
                             </div>
                         </div>
@@ -12794,9 +12794,9 @@
                 <div class="emr-soap-box section-a">
                     <div class="emr-soap-header">
                         <div class="emr-soap-header-left">
-                            <div class="emr-soap-badge">A</div>
+                            <div class="emr-soap-badge" data-language-exclude>A</div>
                             <div class="emr-soap-title-wrap">
-                                <span class="emr-soap-title">ការវាយតម្លៃ និងរោគវិនិច្ឆ័យ <span style="color:red;">*</span></span>
+                                <span class="emr-soap-title" data-language-exclude>Assessment <span style="color:red;">*</span></span>
                                 <span class="emr-soap-hint">រោគវិនិច្ឆ័យចម្បង លេខកូដ ICD-10 និងការវាយតម្លៃ</span>
                             </div>
                         </div>
@@ -12833,9 +12833,9 @@
                 <div class="emr-soap-box section-p">
                     <div class="emr-soap-header">
                         <div class="emr-soap-header-left">
-                            <div class="emr-soap-badge">P</div>
+                            <div class="emr-soap-badge" data-language-exclude>P</div>
                             <div class="emr-soap-title-wrap">
-                                <span class="emr-soap-title">ផែនការព្យាបាល</span>
+                                <span class="emr-soap-title" data-language-exclude>Plan</span>
                                 <span class="emr-soap-hint">ឱសថព្យាបាល ការបញ្ជាបន្ថែម និងការណែនាំ</span>
                             </div>
                         </div>
@@ -21778,10 +21778,10 @@ aHRtbD4K
             var soapContent = '';
             if (data.soap && (data.soap.s || data.soap.o || data.soap.a || data.soap.p)) {
                 soapContent = `
-                    <div style="margin-bottom:4px;"><strong>S:</strong> ${escapeMonitoringPrint(data.soap.s || '-')}</div>
-                    <div style="margin-bottom:4px;"><strong>O:</strong> ${escapeMonitoringPrint(data.soap.o || '-')}</div>
-                    <div style="margin-bottom:4px;"><strong>A:</strong> ${escapeMonitoringPrint(data.soap.a || '-')}${monitoringIcd10(data.icd10) ? ` (ICD-10: ${escapeMonitoringPrint(monitoringIcd10(data.icd10))})` : ''}</div>
-                    <div><strong>P:</strong> ${escapeMonitoringPrint(data.soap.p || '-')}</div>
+                    <div style="margin-bottom:4px;"><strong data-language-exclude>S · Subjective:</strong> ${escapeMonitoringPrint(data.soap.s || '-')}</div>
+                    <div style="margin-bottom:4px;"><strong data-language-exclude>O · Objective:</strong> ${escapeMonitoringPrint(data.soap.o || '-')}</div>
+                    <div style="margin-bottom:4px;"><strong data-language-exclude>A · Assessment:</strong> ${escapeMonitoringPrint(data.soap.a || '-')}${monitoringIcd10(data.icd10) ? ` (ICD-10: ${escapeMonitoringPrint(monitoringIcd10(data.icd10))})` : ''}</div>
+                    <div><strong data-language-exclude>P · Plan:</strong> ${escapeMonitoringPrint(data.soap.p || '-')}</div>
                 `;
             } else {
                 soapContent = `

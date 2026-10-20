@@ -77,11 +77,13 @@ test('Phase 5: Khmer-only default presentation in SOAP UI and documentation', ()
   const js = read('public/soap-note.js');
   const emrHtml = read('protected/EMR.html');
 
-  // Official Khmer clinical titles
-  assert.match(js, /ពាក្យបណ្តឹង និងប្រវត្តិ/, 'S title must be ពាក្យបណ្តឹង និងប្រវត្តិ');
-  assert.match(js, /ការពិនិត្យ និងលទ្ធផល/, 'O title must be ការពិនិត្យ និងលទ្ធផល');
-  assert.match(js, /ការវាយតម្លៃ និងរោគវិនិច្ឆ័យ/, 'A title must be ការវាយតម្លៃ និងរោគវិនិច្ឆ័យ');
-  assert.match(js, /ផែនការព្យាបាល/, 'P title must be ផែនការព្យាបាល');
+  // v39.8: section titles are always English (hospital order); the Khmer
+  // default now applies to the hints, which still follow the interface language.
+  assert.match(js, /var SOAP_TITLES = \{ s: 'Subjective', o: 'Objective', a: 'Assessment', p: 'Plan' \};/, 'Titles must be fixed English clinical terms');
+  assert.match(js, /អ្វីដែលអ្នកជំងឺរាយការណ៍ \(រោគសញ្ញា ប្រវត្តិជំងឺ\)/, 'S hint stays Khmer by default');
+  assert.match(js, /សញ្ញាជីវិត ការពិនិត្យរាងកាយ និងលទ្ធផលវិភាគ/, 'O hint stays Khmer by default');
+  assert.match(js, /រោគវិនិច្ឆ័យចម្បង លេខកូដ ICD-10 និងការវាយតម្លៃ/, 'A hint stays Khmer by default');
+  assert.match(js, /ឱសថព្យាបាល ការបញ្ជាបន្ថែម និងការណែនាំ/, 'P hint stays Khmer by default');
   assert.match(js, /ចំណាំចាស់/, 'Legacy badge text must be ចំណាំចាស់');
 
   // No bilingual slash text in SOAP headings

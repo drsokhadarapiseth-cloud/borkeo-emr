@@ -1,5 +1,14 @@
 # Borkeo EMR Changelog
 
+## v39.8.0 (Side navigation redesign, SOAP English titles, phone access)
+- Professional side navigation: collapsed 68px icon rail that expands to 264px over the page on hover or keyboard focus (200ms collapse delay, no content reflow), optional per-user pin, drawer with backdrop and Esc on phones/tablets/touch screens, tooltips while collapsed, prefers-reduced-motion support, never printed.
+- Grouped sections (Patient care, Clinical services, Pharmacy and stock, Finance, Administration), one consistent inline-SVG icon set (`public/icons.svg`), hospital brand at the top, user/role/ward, language and sign-out at the bottom, pending counters on the icons.
+- One central navigation map `public/nav-config.js` based on the real server permissions; role/ward switch from the sidebar updates the menu without a page reload. Fixed links that led to 403/404 pages (IPD transfer for IPD doctors, Lab/Imaging for doctors, `/stock`, Expenses for cashiers, admin menu for chief ward/ward head). Requests stays management-only.
+- SOAP section titles are always Subjective, Objective, Assessment, Plan (with S/O/A/P) in Khmer mode, EN mode and print; excluded from translation. Hints stay Khmer by default.
+- Phones: `npm run start:wifi` / `Start-Borkeo-WiFi.bat` serve the password-protected EMR on the local Wi-Fi (plain http) and print the phone address; the topbar and drawer scale to finger size on phones in desktop viewport mode.
+- Fixed: shell mounted twice (duplicate breadcrumb), topbar icons invisible under the global button theme, missing `os` import that hid the phone address, inline `onerror` on the logo.
+- Tests: 819/819 (7 new in `tests/v398-side-navigation.test.mjs`). Screenshots in `docs/ui-screenshots/` (before-*/after-*).
+
 ## v38.3 (Phase 3: Repository Cleanup)
 - Repository cleanup: archived superseded update scripts, patches, and scratch files to `../Borkeo_EMR_archive/`.
 - Restructured `README.md` with quickstart instructions for running, testing, and deploying.

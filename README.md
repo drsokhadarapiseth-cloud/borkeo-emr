@@ -24,6 +24,12 @@ Borkeo EMR is an Electronic Medical Record system tailored for Cambodian provinc
   NODE_ENV=production HOST=127.0.0.1 PORT=3000 node server/server.mjs
   ```
 
+### Phones and tablets on the same Wi-Fi
+- Double-click `Start-Borkeo-WiFi.bat`, or run `npm run start:wifi`.
+- The window prints `Mobile / Phone access (Same Wi-Fi): http://192.168.x.x:PORT`. Open that address on the phone and sign in with the normal password.
+- If the phone cannot connect, allow the port once in Windows Firewall (the command is printed in the window).
+- Plain http: use only a trusted hospital Wi-Fi. Production mode (`NODE_ENV=production`) requires https and is refused by this launcher.
+
 ### 2. Running Tests
 The project features a comprehensive regression test suite:
 ```bash
