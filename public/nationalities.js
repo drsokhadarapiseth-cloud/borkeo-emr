@@ -611,6 +611,8 @@
     }
 
     syncButtonFromSelect() {
+      // init() fills the options before the button exists; it syncs again at the end.
+      if (!this.btn) return;
       const selOpt = this.selectElem.selectedIndex >= 0 ? this.selectElem.options[this.selectElem.selectedIndex] : null;
       const textSpan = this.btn.querySelector('.btn-text');
       const english = isEnglish();

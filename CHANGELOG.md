@@ -1,5 +1,46 @@
 # Borkeo EMR Changelog
 
+## v40.5.0 (Check of the v40.1–v40.4 ward editing update)
+- Fixed: `/public/nationalities.js` and `/public/nationalities.css` were never served (404), so the nationality picker in the record did not load. Both are now registered.
+- Fixed: once loaded, the nationality picker crashed on every record ("Cannot read properties of undefined (reading 'querySelector')") because it updated its button before creating it. It now waits for the button.
+- Fixed: the address data (`data/gazetteer`) was looked up from the folder the server was started in. Started from any other folder, every record save failed with error 500 "Gazetteer provinces.json not found". It is now found from the program folder.
+- Checked in headless Edge on a test copy: the ward doctor (medical record) and ward nurse (nursing documents) open their own patient ready to edit, every field can be typed in, and saving succeeds.
+- Tests: new `tests/v405-nationalities-and-gazetteer.test.mjs`.
+
+## v40.4.0 (Patient photo in ward bed popup dialog)
+- When clicking on an occupied bed in the ward map (`/departments`), the patient details dialog (`openBedModal`) and bed transfer dialog (`openBedTransferDialog`) now prominently display the patient's photo (`.bed-patient-avatar`) next to their identity information.
+- If the patient has a registered photo (`patient.photo`), it is displayed with clear dimensions (92×92px) and a subtle frame so medical and nursing staff can clearly recognize the patient.
+- If no photo has been registered yet, an accessible, neutral avatar placeholder with the Khmer title «គ្មានរូបថត» is shown.
+- Full responsive styling ensures clear appearance across desktop, tablet, and mobile screens.
+- Tests: 828/828 (1 new in `tests/v404-ward-bed-patient-photo.test.mjs`; version consistency verified across `package.json`, `server/server.mjs`, `public/login.html`).
+
+
+
+## v40.3.0 (Instant ward editing for nurses and doctors without manual unlock)
+- In the ward management view (`/departments`), selecting "ដំណើរការថែទាំ" (Nursing Documents), "កំណត់ត្រាវេជ្ជសាស្ត្រ" (Medical Record), or "ការតាមដានប្រចាំថ្ងៃ" (Daily Follow-up) automatically launches the encounter editor in edit mode (`edit=1`).
+- `public/emr-encounter-editor.js` automatically enables direct editing (`isDirectEditAllowed()`) for nurses and midwives on nursing care sheets, and for doctors on medical records and daily progress sheets, removing the need to click "កែប្រែព័ត៌មាន" first.
+- View-only access remains preserved when explicit `mode=view` is supplied.
+- Tests: 827/827 (1 new in `tests/v403-ward-direct-editing.test.mjs`; version consistency verified across `package.json`, `server/server.mjs`, `public/login.html`).
+
+
+## v40.2.0 (Instant triage editing without manual unlock)
+- When clicking "បំពេញទ្រីយ៉ា" (Enter Triage) from the triage queue or opening triage view as triage staff, the triage assessment form opens directly in edit mode (`editing = true`).
+- Triage staff can enter vital signs, triage categories, and ward transfer immediately without clicking "កែប្រែព័ត៌មាន" / "កែតម្រូវ" first.
+- Completed triage records remain view-only via "មើលទ្រីយ៉ា" with `mode=view`.
+- Tests: 826/826 (1 new in `tests/v402-triage-direct-editing.test.mjs`; version consistency verified across `package.json`, `server/server.mjs`, `public/login.html`).
+
+## v40.1.0 (Role-based chart tabs visibility in patient banner)
+- Chart tabs (`public/patient-banner.js`) are filtered by active staff role so staff only see the tabs needed for their duties.
+  - Management (Admin, Director, Vice Director): all 7 tabs (`សង្ខេប`, `សញ្ញាជីវិត`, `បញ្ជា`, `លទ្ធផល`, `ឱសថ`, `កំណត់ត្រា`, `បេឡា`).
+  - Clinical (Doctor, Ward Head, Chief Ward): clinical tabs (`សង្ខេប`, `សញ្ញាជីវិត`, `បញ្ជា`, `លទ្ធផល`, `ឱសថ`, `កំណត់ត្រា`), excluding billing (`បេឡា`).
+  - Nursing (Nurse, Midwife): clinical tabs (`សង្ខេប`, `សញ្ញាជីវិត`, `បញ្ជា`, `លទ្ធផល`, `ឱសថ`, `កំណត់ត្រា`), excluding billing (`បេឡា`).
+  - Triage & Registration: `សង្ខេប` and `សញ្ញាជីវិត`.
+  - Billing / Cashier (Clerk, Accountant): `សង្ខេប` and `បេឡា`.
+  - Pharmacy: `សង្ខេប` and `ឱសថ`.
+  - Paraclinic (Lab, Imaging): `សង្ខេប`, `បញ្ជា`, and `លទ្ធផល`.
+- Default active tab falls back to the first allowed tab if the previously selected tab is not permitted for the user's role.
+- Tests: 825/825 (1 new in `tests/v401-chart-tabs-by-role.test.mjs`; version consistency verified across `package.json`, `server/server.mjs`, `public/login.html`).
+
 ## v40.0.0 (Short staff passwords: minimum 4 characters, hospital default 1234)
 - Hospital decision: passwords need 4–128 characters (was 12–128). One rule in `server/password.mjs` (`MIN_PASSWORD_LENGTH`, `DEFAULT_STAFF_PASSWORD = '1234'`), the change-password schema, and every password box (sign-in, change-password screen, account menu, admin User accounts, console scripts).
 - New default ward accounts start with `1234` (was `111111111111`); the sign-in account picker fills `1234`; the browser-import CSV generator uses `1234` and the current Wi-Fi address.

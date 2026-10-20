@@ -2,8 +2,11 @@
 // Provides in-memory gazetteer lookups, code padding, and hierarchy validation.
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const projectRoot = path.resolve('.');
+// Resolve from this file, not the working folder, so saving a record still
+// finds the address data when the server is started from another folder.
+const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const gazetteerDir = path.join(projectRoot, 'data', 'gazetteer');
 
 let cachedProvinces = null;

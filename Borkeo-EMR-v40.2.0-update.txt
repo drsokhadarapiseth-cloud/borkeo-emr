@@ -1,0 +1,30 @@
+BORKEO EMR v40.2.0 - COMBINED UPDATE NOTE
+Base: v40.1.0. Clinical, pharmacy, laboratory and financial logic were preserved. Patient records are not touched.
+
+WHAT CHANGED
+1. (v40.2.0) Instant Triage Editing:
+   - When clicking "បំពេញទ្រីយ៉ា" (Enter Triage) in the triage queue, or opening triage (`view=triage` or `TRIAGE` role), the triage form enters edit mode immediately without locking the inputs.
+   - Staff can directly type vital signs (temp, BP, pulse, resp, SpO2), select triage priority signs, and submit the patient record without clicking "កែប្រែព័ត៌មាន" / "កែតម្រូវ" first.
+   - Completed triage entries remain safely read-only via "មើលទ្រីយ៉ា" (mode=view).
+2. (v40.1.0) Role-based Chart Tabs in Patient Banner:
+   - Chart tabs filtered by staff role (Clinical staff no longer see Cashier / បេឡា).
+3. Version 40.2.0 (package.json, login.html, server.mjs).
+
+FILES
+  New:     tests/v402-triage-direct-editing.test.mjs,
+           Borkeo-EMR-v40.2.0-update.txt
+  Changed: public/emr-encounter-editor.js,
+           public/triage.js,
+           public/login.html,
+           server/server.mjs,
+           package.json,
+           CHANGELOG.md,
+           tests/accessibility-quality-smoke.test.mjs
+
+TESTS
+  npm test -> 826 passed, 0 failed (825 before + 1 new).
+
+INSTALL (one step at a time)
+  Step 1. Stop the running EMR if active (Ctrl+C in terminal window).
+  Step 2. Start the EMR again: double-click Start-Borkeo-WiFi.bat or run `npm start`.
+  Step 3. In the browser, press Ctrl+F5 on the EMR page to reload the updated scripts.

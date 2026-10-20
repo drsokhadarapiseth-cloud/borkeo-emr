@@ -13,12 +13,12 @@
   }
   function rowHtml(p,i,done){
     const action=done
-      ? `<a class="triage-open triage-readonly" href="/emr?patient=${encodeURIComponent(p.patientKey)}&view=triage">មើលទ្រីយ៉ា</a>`
-      : `<a class="triage-open" data-queue-number="${esc(p.queueNumber||i+1)}" href="/emr?patient=${encodeURIComponent(p.patientKey)}&view=triage">បំពេញទ្រីយ៉ា</a>`;
+      ? `<a class="triage-open triage-readonly" href="/emr?patient=${encodeURIComponent(p.patientKey)}&view=triage&mode=view">មើលទ្រីយ៉ា</a>`
+      : `<a class="triage-open" data-queue-number="${esc(p.queueNumber||i+1)}" href="/emr?patient=${encodeURIComponent(p.patientKey)}&view=triage&edit=1">បំពេញទ្រីយ៉ា</a>`;
     return `<tr><td>${esc(p.queueNumber||i+1)}</td><td>${esc(when(p.registeredAt||p.createdAt||p.skippedAt))}</td><td class="patient-cell"><strong>${esc(p.fullName||'—')}</strong></td><td>${esc(p.healthId||p.caseNumber||'—')}</td><td>${esc(normalizeSexKh(p.sex))}</td><td>${esc(p.age||'—')}</td><td>${action}</td></tr>`;
   }
   function skippedRow(p){
-    return `<tr><td>${esc(p.queueNumber)}</td><td>${esc(when(p.skippedAt))}</td><td class="patient-cell"><strong>${esc(p.fullName||'—')}</strong></td><td>${esc(p.healthId||p.caseNumber||'—')}</td><td>${esc(normalizeSexKh(p.sex))}</td><td>${esc(p.age||'—')}</td><td><a class="triage-open" data-queue-number="${esc(p.queueNumber)}" href="/emr?patient=${encodeURIComponent(p.patientKey)}&view=triage">បំពេញទ្រីយ៉ា</a></td></tr>`;
+    return `<tr><td>${esc(p.queueNumber)}</td><td>${esc(when(p.skippedAt))}</td><td class="patient-cell"><strong>${esc(p.fullName||'—')}</strong></td><td>${esc(p.healthId||p.caseNumber||'—')}</td><td>${esc(normalizeSexKh(p.sex))}</td><td>${esc(p.age||'—')}</td><td><a class="triage-open" data-queue-number="${esc(p.queueNumber)}" href="/emr?patient=${encodeURIComponent(p.patientKey)}&view=triage&edit=1">បំពេញទ្រីយ៉ា</a></td></tr>`;
   }
   function render(){
     const a=filterRows(waiting), c=filterRows(skipped);

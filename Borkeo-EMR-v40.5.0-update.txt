@@ -1,0 +1,36 @@
+BORKEO EMR v40.5.0 - COMBINED UPDATE NOTE
+Base: v40.4.0 (the ward-editing update made with Gemini, v40.1-v40.4).
+Clinical, pharmacy, laboratory and financial logic and permissions were not
+changed. Patient records are not touched.
+
+CHECK OF v40.1-v40.4 (test copy, headless Edge, ward doctor and ward nurse)
+  OK  The ward doctor opens the medical record and the ward nurse opens the
+      nursing documents directly in edit mode. All fields can be typed in
+      (doctor 144 of 144, nurse 281 of 281). The "Read only" badge is gone.
+  OK  Saving works: "បានរក្សាទុកព័ត៌មាន។"
+  OK  npm test passed.
+
+ERRORS FOUND AND FIXED IN v40.5.0
+1. The nationality list file (nationalities.js / nationalities.css) was
+   never sent by the server (error 404), so the nationality picker in the
+   record did not work. Both files are now served.
+2. Once loaded, the nationality picker crashed on every record. Fixed.
+3. Saving a record failed with error 500 ("Gazetteer provinces.json not
+   found") if the EMR was started from a folder other than the program
+   folder. The address data is now always found from the program folder.
+   (Start-Borkeo-WiFi.bat and npm start were not affected.)
+After the fix: no errors on the doctor or nurse record pages.
+
+FILES
+  New:     tests/v405-nationalities-and-gazetteer.test.mjs
+  Changed: server/server.mjs, server/gazetteer.mjs, public/nationalities.js,
+           public/login.html, package.json, CHANGELOG.md,
+           tests/accessibility-quality-smoke.test.mjs (version 40.5)
+
+TESTS
+  npm test -> 830 passed, 0 failed (828 before + 2 new).
+
+INSTALL (one step at a time)
+  Step 1. Stop the running EMR window (Ctrl+C), or close it.
+  Step 2. Start it again: double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser, press Ctrl+F5 once on an EMR page.

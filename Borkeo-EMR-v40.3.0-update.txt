@@ -1,0 +1,33 @@
+BORKEO EMR v40.3.0 - COMBINED UPDATE NOTE
+Base: v40.2.0. Clinical, pharmacy, laboratory and financial logic were preserved. Patient records are not touched.
+
+WHAT CHANGED
+1. (v40.3.0) Instant Ward Editing for Nurses and Doctors:
+   - When a nurse clicks on an occupied bed in `/departments` and chooses "ដំណើរការថែទាំ" (Nursing Documents), the nursing care sheet opens directly in edit mode (`edit=1`) without requiring the nurse to click "កែប្រែព័ត៌មាន".
+   - When a doctor clicks on an occupied bed in `/departments` and chooses "កំណត់ត្រាវេជ្ជសាស្ត្រ" (Medical Record) or "ការតាមដានប្រចាំថ្ងៃ" (Daily Follow-up), the medical record/daily sheet opens directly in edit mode (`edit=1`).
+   - `public/emr-encounter-editor.js` automatically enables direct editing (`isDirectEditAllowed()`) for nurses and midwives on nursing views, and doctors on medical/daily views, unless an explicit read-only link (`mode=view`) is opened.
+2. (v40.2.0) Instant Triage Editing:
+   - Triage queue "បំពេញទ្រីយ៉ា" opens in edit mode directly.
+3. (v40.1.0) Role-based Chart Tabs in Patient Banner:
+   - Chart tabs filtered by staff role.
+4. Version 40.3.0 (package.json, login.html, server.mjs).
+
+FILES
+  New:     tests/v403-ward-direct-editing.test.mjs,
+           Borkeo-EMR-v40.3.0-update.txt
+  Changed: public/departments.js,
+           public/emr-encounter-editor.js,
+           public/login.html,
+           server/server.mjs,
+           package.json,
+           CHANGELOG.md,
+           tests/v402-triage-direct-editing.test.mjs,
+           tests/accessibility-quality-smoke.test.mjs
+
+TESTS
+  npm test -> 827 passed, 0 failed (826 before + 1 new).
+
+INSTALL (one step at a time)
+  Step 1. Stop the running EMR if active (Ctrl+C in terminal window).
+  Step 2. Start the EMR again: double-click Start-Borkeo-WiFi.bat or run `npm start`.
+  Step 3. In the browser, press Ctrl+F5 on the EMR page to reload the updated scripts.

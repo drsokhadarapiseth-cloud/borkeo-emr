@@ -341,47 +341,55 @@
     return dashboard;
   }
 
-  // Setup the 7 Chart Tabs on EMR.html
+  const TAB_DEFINITIONS = [
+    { id: 'summary', icon: 'icon-home', label: 'សង្ខេប', html: '<span>សង្ខេប</span>' },
+    { id: 'vitals', icon: 'icon-activity', label: 'សញ្ញាជីវិត', html: '<span>សញ្ញាជីវិត</span>' },
+    { id: 'orders', icon: 'icon-clipboard', label: 'បញ្ជា', html: '<span>បញ្ជា</span>' },
+    { id: 'results', icon: 'icon-file-text', label: 'លទ្ធផល', html: '<span>លទ្ធផល</span>' },
+    { id: 'meds', icon: 'icon-pill', label: 'ឱសថ', html: '<span>ឱសថ</span>' },
+    { id: 'notes', icon: 'icon-edit', label: 'កំណត់ត្រា', html: '<span>កំណត់ត្រា</span>' },
+    { id: 'billing', icon: 'icon-dollar', label: 'បេឡា', html: '<span>បេឡា</span>' }
+  ];
+
+  function getAllowedTabsForRole(role) {
+    const r = String(role || '').toUpperCase();
+    if (['ADMIN', 'DIRECTOR', 'VICE_DIRECTOR'].includes(r)) {
+      return ['summary', 'vitals', 'orders', 'results', 'meds', 'notes', 'billing'];
+    }
+    if (['DOCTOR', 'WARD_HEAD', 'CHIEF_WARD'].includes(r)) {
+      return ['summary', 'vitals', 'orders', 'results', 'meds', 'notes'];
+    }
+    if (['NURSE', 'MIDWIFE'].includes(r)) {
+      return ['summary', 'vitals', 'orders', 'results', 'meds', 'notes'];
+    }
+    if (r === 'TRIAGE' || r === 'REGISTRATION') {
+      return ['summary', 'vitals'];
+    }
+    if (['CLERK', 'ACCOUNTANT'].includes(r)) {
+      return ['summary', 'billing'];
+    }
+    if (r === 'PHARMACY') {
+      return ['summary', 'meds'];
+    }
+    if (['LAB', 'IMAGING'].includes(r)) {
+      return ['summary', 'orders', 'results'];
+    }
+    return ['summary', 'vitals', 'orders', 'results', 'meds', 'notes'];
+  }
+  window.getAllowedTabsForRole = getAllowedTabsForRole;
+
+  // Setup the Chart Tabs on EMR.html filtered by active user role
   function setupChartTabs(patient) {
     if (window.location.pathname !== '/emr') return;
+
+    const currentRole = String(window.emrSession?.user?.activeRole || window.userRole || '').toUpperCase();
+    const allowed = getAllowedTabsForRole(currentRole);
 
     let tabsContainer = document.getElementById('emr-chart-tabs-wrapper');
     if (!tabsContainer) {
       tabsContainer = document.createElement('div');
       tabsContainer.id = 'emr-chart-tabs-wrapper';
       tabsContainer.className = 'emr-chart-tabs-wrap no-print';
-      tabsContainer.innerHTML = `
-        <nav class="emr-chart-tabs" role="tablist" aria-label="ផ្ទាំងឯកសារអ្នកជំងឺ">
-          <button type="button" class="emr-chart-tab is-active" role="tab" data-chart-tab="summary" aria-selected="true">
-            <svg><use href="/public/icons.svg#icon-home"></use></svg>
-            <span>សង្ខេប</span>
-          </button>
-          <button type="button" class="emr-chart-tab" role="tab" data-chart-tab="vitals" aria-selected="false">
-            <svg><use href="/public/icons.svg#icon-activity"></use></svg>
-            <span>សញ្ញាជីវិត</span>
-          </button>
-          <button type="button" class="emr-chart-tab" role="tab" data-chart-tab="orders" aria-selected="false">
-            <svg><use href="/public/icons.svg#icon-clipboard"></use></svg>
-            <span>បញ្ជា</span>
-          </button>
-          <button type="button" class="emr-chart-tab" role="tab" data-chart-tab="results" aria-selected="false">
-            <svg><use href="/public/icons.svg#icon-file-text"></use></svg>
-            <span>លទ្ធផល</span>
-          </button>
-          <button type="button" class="emr-chart-tab" role="tab" data-chart-tab="meds" aria-selected="false">
-            <svg><use href="/public/icons.svg#icon-pill"></use></svg>
-            <span>ឱសថ</span>
-          </button>
-          <button type="button" class="emr-chart-tab" role="tab" data-chart-tab="notes" aria-selected="false">
-            <svg><use href="/public/icons.svg#icon-edit"></use></svg>
-            <span>កំណត់ត្រា</span>
-          </button>
-          <button type="button" class="emr-chart-tab" role="tab" data-chart-tab="billing" aria-selected="false">
-            <svg><use href="/public/icons.svg#icon-dollar"></use></svg>
-            <span>បេឡា</span>
-          </button>
-        </nav>
-      `;
 
       const banner = document.getElementById('emr-persistent-patient-banner');
       if (banner) {
@@ -392,6 +400,20 @@
       }
     }
 
+    const currentTab = tabsContainer.querySelector('.emr-chart-tab.is-active')?.dataset.chartTab || 'summary';
+    const activeTabId = allowed.includes(currentTab) ? currentTab : (allowed[0] || 'summary');
+
+    tabsContainer.innerHTML = `
+      <nav class="emr-chart-tabs" role="tablist" aria-label="ផ្ទាំងឯកសារអ្នកជំងឺ">
+        ${TAB_DEFINITIONS.filter(t => allowed.includes(t.id)).map(t => `
+          <button type="button" class="emr-chart-tab ${t.id === activeTabId ? 'is-active' : ''}" role="tab" data-chart-tab="${t.id}" aria-selected="${t.id === activeTabId ? 'true' : 'false'}">
+            <svg><use href="/public/icons.svg#${t.icon}"></use></svg>
+            <span>${t.label}</span>
+          </button>
+        `).join('')}
+      </nav>
+    `;
+
     // Mount or update Summary Dashboard
     const oldDash = document.getElementById('emr-summary-dashboard-panel');
     const newDash = createSummaryDashboard(patient);
@@ -401,8 +423,11 @@
     }
 
     // Handle Tab Click and Panel Switching
-    const tabs = tabsContainer.querySelectorAll('.emr-chart-tab');
     function activateTab(tabName) {
+      if (!allowed.includes(tabName)) {
+        tabName = allowed[0] || 'summary';
+      }
+      const tabs = tabsContainer.querySelectorAll('.emr-chart-tab');
       tabs.forEach(tab => {
         const isTarget = tab.dataset.chartTab === tabName;
         tab.classList.toggle('is-active', isTarget);
@@ -434,10 +459,24 @@
         if (ordSection) {
           ordSection.scrollIntoView({ behavior: 'smooth' });
         }
+      } else if (tabName === 'results') {
+        const resSection = document.getElementById('paraclinic_results_panel') || document.getElementById('lab_results_panel') || document.getElementById('paraclinic-orders-section');
+        if (resSection) {
+          resSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else if (tabName === 'meds') {
+        const medSection = document.getElementById('ipd-medications-panel') || document.getElementById('medication_history_table') || document.querySelector('.med-table');
+        if (medSection) {
+          medSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else if (tabName === 'billing') {
+        if (patient?.patientKey && ['CLERK', 'ACCOUNTANT', 'ADMIN', 'DIRECTOR', 'VICE_DIRECTOR'].includes(currentRole)) {
+          window.location.assign(`/billing?patient=${encodeURIComponent(patient.patientKey)}`);
+        }
       }
     }
 
-    tabs.forEach(tab => {
+    tabsContainer.querySelectorAll('.emr-chart-tab').forEach(tab => {
       tab.addEventListener('click', () => {
         activateTab(tab.dataset.chartTab);
       });
@@ -451,6 +490,13 @@
       activateTab('vitals');
     }
   }
+  window.setupChartTabs = setupChartTabs;
+
+  window.addEventListener('emr-session-ready', () => {
+    if (activePatient) {
+      setupChartTabs(activePatient);
+    }
+  });
 
   // Hook into EMR events
   document.addEventListener('emr:patient-loaded', event => {

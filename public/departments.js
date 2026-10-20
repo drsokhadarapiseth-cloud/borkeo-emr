@@ -216,6 +216,15 @@
     </div>`;
   }
 
+  function patientAvatarHtml(patient, name) {
+    const photo = patient?.photo || patient?.data?.['system:patientPhoto'] || patient?.data?.['scope:registration:id:web_patient_photo'] || patient?.data?.['scope:registration:id:patient_photo'] || '';
+    if (photo) {
+      return `<div class="bed-patient-avatar"><img src="${escapeHtml(photo)}" alt="${escapeHtml(name)}" class="bed-patient-avatar-img"></div>`;
+    }
+    return `<div class="bed-patient-avatar bed-patient-avatar-empty" title="${escapeHtml(language === 'kh' ? 'គ្មានរូបថត' : 'No photo')}"><svg viewBox="0 0 24 24" width="42" height="42" fill="currentColor" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>`;
+  }
+
+
   function filteredDepartments() {
     const visible = selectedWard ? departments.filter(department => department.code === selectedWard) : departments;
     if (!activeWorkWard) return visible;
@@ -572,25 +581,28 @@
           </div>
         </header>
 
-        <section class="bed-transfer-patient-card">
-          <div class="bed-transfer-meta-row">
-            <div class="meta-item">
-              <span class="meta-label">${escapeHtml(language === 'kh' ? 'អ្នកជំងឺ' : 'Patient')}</span>
-              <strong class="meta-value patient-highlight">${escapeHtml(pName)}</strong>
+        <section class="bed-transfer-patient-card has-patient-avatar">
+          ${patientAvatarHtml(patient, pName)}
+          <div class="bed-transfer-patient-details">
+            <div class="bed-transfer-meta-row">
+              <div class="meta-item">
+                <span class="meta-label">${escapeHtml(language === 'kh' ? 'អ្នកជំងឺ' : 'Patient')}</span>
+                <strong class="meta-value patient-highlight">${escapeHtml(pName)}</strong>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">${escapeHtml(language === 'kh' ? 'ភេទ / អាយុ' : 'Sex / Age')}</span>
+                <span class="meta-value">${escapeHtml(patient?.sex || '—')} / ${escapeHtml(patient?.age || '—')}</span>
+              </div>
             </div>
-            <div class="meta-item">
-              <span class="meta-label">${escapeHtml(language === 'kh' ? 'ភេទ / អាយុ' : 'Sex / Age')}</span>
-              <span class="meta-value">${escapeHtml(patient?.sex || '—')} / ${escapeHtml(patient?.age || '—')}</span>
-            </div>
-          </div>
-          <div class="bed-transfer-meta-row">
-            <div class="meta-item">
-              <span class="meta-label">${escapeHtml(text('currentLocation'))}</span>
-              <span class="meta-value current-loc">${escapeHtml(currentRoomName)} — ${language === 'kh' ? 'គ្រែ' : 'Bed'} <b>${escapeHtml(currentBed.label)}</b></span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">${escapeHtml(language === 'kh' ? 'រោគវិនិច្ឆ័យ' : 'Diagnosis')}</span>
-              <span class="meta-value">${escapeHtml(patient?.diagnosisIcd10 || patient?.diagnosis || '—')}</span>
+            <div class="bed-transfer-meta-row">
+              <div class="meta-item">
+                <span class="meta-label">${escapeHtml(text('currentLocation'))}</span>
+                <span class="meta-value current-loc">${escapeHtml(currentRoomName)} — ${language === 'kh' ? 'គ្រែ' : 'Bed'} <b>${escapeHtml(currentBed.label)}</b></span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">${escapeHtml(language === 'kh' ? 'រោគវិនិច្ឆ័យ' : 'Diagnosis')}</span>
+                <span class="meta-value">${escapeHtml(patient?.diagnosisIcd10 || patient?.diagnosis || '—')}</span>
+              </div>
             </div>
           </div>
         </section>
@@ -738,6 +750,9 @@
     parameters.set('bed', item.bed.id);
     parameters.set('bedLabel', item.bed.label || '');
     parameters.set('care', bedCareRoute(item));
+    if (['nursing', 'medical', 'daily'].includes(view)) {
+      parameters.set('edit', '1');
+    }
     return `/emr?${parameters.toString()}`;
   }
 
@@ -773,35 +788,38 @@
             </div>
           </header>
 
-          <section class="bed-transfer-patient-card">
-            <div class="bed-transfer-meta-row">
-              <div class="meta-item">
-                <span class="meta-label">${escapeHtml(language === 'kh' ? 'អ្នកជំងឺ' : 'Patient')}</span>
-                <strong class="meta-value patient-highlight">${escapeHtml(pName)}</strong>
+          <section class="bed-transfer-patient-card has-patient-avatar">
+            ${patientAvatarHtml(patient, pName)}
+            <div class="bed-transfer-patient-details">
+              <div class="bed-transfer-meta-row">
+                <div class="meta-item">
+                  <span class="meta-label">${escapeHtml(language === 'kh' ? 'អ្នកជំងឺ' : 'Patient')}</span>
+                  <strong class="meta-value patient-highlight">${escapeHtml(pName)}</strong>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">${escapeHtml(language === 'kh' ? 'ភេទ / អាយុ' : 'Sex / Age')}</span>
+                  <span class="meta-value">${escapeHtml(patient.sex || '—')} / ${escapeHtml(patient.age || '—')}</span>
+                </div>
               </div>
-              <div class="meta-item">
-                <span class="meta-label">${escapeHtml(language === 'kh' ? 'ភេទ / អាយុ' : 'Sex / Age')}</span>
-                <span class="meta-value">${escapeHtml(patient.sex || '—')} / ${escapeHtml(patient.age || '—')}</span>
+              <div class="bed-transfer-meta-row">
+                <div class="meta-item">
+                  <span class="meta-label">${escapeHtml(language === 'kh' ? 'អាសយដ្ឋាន' : 'Address')}</span>
+                  <span class="meta-value">${escapeHtml(address)}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">${escapeHtml(language === 'kh' ? 'រោគវិនិច្ឆ័យ' : 'Diagnosis')}</span>
+                  <span class="meta-value">${escapeHtml(diagnosis)}</span>
+                </div>
               </div>
-            </div>
-            <div class="bed-transfer-meta-row">
-              <div class="meta-item">
-                <span class="meta-label">${escapeHtml(language === 'kh' ? 'អាសយដ្ឋាន' : 'Address')}</span>
-                <span class="meta-value">${escapeHtml(address)}</span>
-              </div>
-              <div class="meta-item">
-                <span class="meta-label">${escapeHtml(language === 'kh' ? 'រោគវិនិច្ឆ័យ' : 'Diagnosis')}</span>
-                <span class="meta-value">${escapeHtml(diagnosis)}</span>
-              </div>
-            </div>
-            <div class="bed-transfer-meta-row">
-              <div class="meta-item">
-                <span class="meta-label">${escapeHtml(language === 'kh' ? 'ចូលសម្រាក' : 'Entry Date')}</span>
-                <span class="meta-value">${escapeHtml(patient.entryDate || '—')}</span>
-              </div>
-              <div class="meta-item">
-                <span class="meta-label">${escapeHtml(language === 'kh' ? 'ស្ថានភាពបង់ប្រាក់' : 'Payment Status')}</span>
-                <span class="meta-value"><b class="payment-short payment-${escapeHtml(patient.paymentStatus?.code || 'NOT_PAID')}">${escapeHtml(paymentShort(patient.paymentStatus))}</b></span>
+              <div class="bed-transfer-meta-row">
+                <div class="meta-item">
+                  <span class="meta-label">${escapeHtml(language === 'kh' ? 'ចូលសម្រាក' : 'Entry Date')}</span>
+                  <span class="meta-value">${escapeHtml(patient.entryDate || '—')}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">${escapeHtml(language === 'kh' ? 'ស្ថានភាពបង់ប្រាក់' : 'Payment Status')}</span>
+                  <span class="meta-value"><b class="payment-short payment-${escapeHtml(patient.paymentStatus?.code || 'NOT_PAID')}">${escapeHtml(paymentShort(patient.paymentStatus))}</b></span>
+                </div>
               </div>
             </div>
           </section>

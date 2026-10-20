@@ -4,8 +4,7 @@
   const query = new URLSearchParams(location.search);
   const report = query.get('recordPage');
   const existing = Boolean(query.get('patient')) && !query.get('newVisitFrom');
-  let editing = !existing, access = null, root = null, bar = null, pending = false;
-  let requestedEdit = query.get('mode') === 'edit' || query.get('edit') === '1';
+  const explicitView = query.get('mode') === 'view';
   const disabled = new WeakMap();
   const role = () => window.emrSession?.user?.activeRole || '';
   const manager = () => ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role());
@@ -16,6 +15,18 @@
     if(access?.view==='medical' && ['daily','discharge'].includes(query.get('view')))return query.get('view');
     return access?.view || query.get('view') || (role() === 'REGISTRATION' ? 'register' : role() === 'TRIAGE' ? 'triage' : ['NURSE','MIDWIFE'].includes(role()) ? 'nursing' : window.emrSession?.user?.activeWard?.code === 'opd' ? 'opd' : 'medical');
   }
+  function isDirectEditAllowed() {
+    if (explicitView || report) return false;
+    if (query.get('edit') === '1' || query.get('mode') === 'edit') return true;
+    const v = view(), r = role();
+    if (v === 'triage' || r === 'TRIAGE') return true;
+    if (v === 'nursing' && (['NURSE', 'MIDWIFE', 'WARD_HEAD', 'CHIEF_WARD'].includes(r) || manager())) return true;
+    if ((v === 'medical' || v === 'daily') && (['DOCTOR', 'WARD_HEAD', 'CHIEF_WARD'].includes(r) || manager())) return true;
+    return !existing;
+  }
+  let access = null, root = null, bar = null, pending = false;
+  let requestedEdit = query.get('mode') === 'edit' || query.get('edit') === '1' || isDirectEditAllowed();
+  let editing = isDirectEditAllowed();
   function isAction(button) {
     if (/^(បោះពុម្ព|មើល|print\b|preview\b)/i.test((button.innerText||'').trim())) return false;
     return /រក្សាទុក|បញ្ជូន|ផ្ញើ|អនុម័ត|បញ្ចេញ|លុប|save|submit|transfer|discharge|delete|administer/i.test([button.textContent,button.id,button.className,button.getAttribute('onclick')].join(' '));
@@ -69,7 +80,7 @@
     const response=await fetch('/api/encounter-access?'+new URLSearchParams({patientKey:patient.patientKey,scope:scopeFor(view())}),{cache:'no-store',credentials:'same-origin'});
     const result=await response.json();if(!response.ok)throw Error(result.error||'មិនអាចផ្ទៀងផ្ទាត់សិទ្ធិបានទេ។');
     access=result.access;
-    if(requestedEdit && access.canEdit && !report){editing=true;requestedEdit=false;}
+    if((requestedEdit || isDirectEditAllowed()) && access.canEdit && !report){editing=true;requestedEdit=false;}
     if(!access.canEdit){editing=false;if(access.message)message(access.message);}
     apply();return access;
   }
@@ -123,8 +134,16 @@
   },true);
   window.addEventListener('submit',event=>{if(report||!editing){event.preventDefault();event.stopImmediatePropagation()}},true);
   window.addEventListener('beforeinput',event=>{if(report||!editing){event.preventDefault();event.stopImmediatePropagation()}},true);
-  document.addEventListener('emr:patient-loaded',()=>{access=window.getLoadedEmrPatient?.()?.recordAccess||null;editing=false;refresh().catch(error=>message(error.message));schedule()});
-  document.addEventListener('emr:patient-saved',()=>{editing=false;refresh().catch(error=>message(error.message))});
+  document.addEventListener('emr:patient-loaded',()=>{
+    access=window.getLoadedEmrPatient?.()?.recordAccess||null;
+    editing=Boolean(isDirectEditAllowed() && (access?.canEdit !== false) && !report);
+    refresh().catch(error=>message(error.message));
+    schedule();
+  });
+  document.addEventListener('emr:patient-saved',()=>{
+    editing=Boolean(isDirectEditAllowed() && (access?.canEdit !== false) && !report);
+    refresh().catch(error=>message(error.message));
+  });
   window.addEventListener('emr-session-ready',schedule);
   window.addEventListener('focus',()=>{if(existing)refresh().catch(error=>message(error.message))});
   document.addEventListener('DOMContentLoaded',()=>{new MutationObserver(records=>{if(records.some(record=>record.addedNodes.length))schedule()}).observe(document.body,{childList:true,subtree:true});schedule()},{once:true});
