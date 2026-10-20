@@ -10,3 +10,6 @@ node_modules/
 
 # Backup files
 *.bak
+
+# Staff login export (generate with scripts/generate-passwords-csv.mjs; never commit)
+borkeo-emr-passwords.csv
