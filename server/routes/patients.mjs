@@ -16,6 +16,8 @@ import { ensureAdmissionMovement, recordBedAssignment, recordMovement } from '..
 import { patientBill } from '../finance.mjs';
 import { queueCashierPayment } from '../invoice-edits.mjs';
 import { encounterAccess, assertEncounterWrite, consumeCorrection, RECORD_MANAGEMENT } from '../encounter-access.mjs';
+import { allergyAlert, patientRef } from '../clinical-summary.mjs';
+import { logFromContext } from '../record-access.mjs';
 
 const caseTypeFromData = dataValue => {
   const hasNew = dataValue?.['scope:registration:id:emr_pmrs_case_new'] === true || dataValue?.['scope:registration:id:emr_pmrs_case_new'] === 'true';
@@ -125,10 +127,17 @@ export function mountPatientsRoutes(router) {
     const includePayment = url.searchParams.get('includePayment') === '1';
     const dispensedKeys = new Set(database.sqlite.prepare(`SELECT DISTINCT patient_key FROM pharmacy_prescriptions WHERE dispensed_at IS NOT NULL`).all().map(r => r.patient_key));
     const role = requireContext(session);
+    // v41.0: allergy summary for the ward map bed popup (one query for all patients).
+    const allergiesByRef = new Map();
+    for (const allergy of database.sqlite.prepare('SELECT * FROM patient_allergies WHERE removed_at IS NULL ORDER BY created_at').all()) {
+      if (!allergiesByRef.has(allergy.patient_ref)) allergiesByRef.set(allergy.patient_ref, []);
+      allergiesByRef.get(allergy.patient_ref).push({ allergyType: allergy.allergy_type, substance: allergy.substance, severity: allergy.severity });
+    }
     return sendJson(response, 200, {
       patients: database.listPatientSummaries({ omitPhotos: url.searchParams.get('omitPhotos') === '1' }).map(row => {
         const data = row._parsedData ?? (row._parsedData = parseStoredJson(row.record_json));
         const patient = patientRecordResponse(row, false, data);
+        patient.allergyAlert = allergyAlert(allergiesByRef.get(patientRef(row)) || [], data);
         patient.queueNumber = Number(row.queue_num_1 || row.queue_num_2 || 0) || null;
         patient.triageStatus = row.triage_status || '';
         patient.admissionStatus = row.admission_status || '';
@@ -166,6 +175,8 @@ export function mountPatientsRoutes(router) {
       patientView.recordAccess = encounterAccess(database, session, patient);
     }
     if (patientView && role === 'TRIAGE' && patientView.data) patientView.data = patientDataVisibleForRole(patientView.data, role);
+    // v41.7: record view log (repeated openings within two minutes count once).
+    if (patient) logFromContext(ctx, patient, 'open', url.searchParams.get('readOnly') === '1' ? 'record (view)' : 'record');
     return sendJson(response, 200, {
       patient: patientView,
       opdQueue: patient?.service_mode === 'opd' ? getOpdQueueEntry(database, patientKey) : null
@@ -199,6 +210,7 @@ export function mountPatientsRoutes(router) {
     if (!['ADMIN', 'VICE_DIRECTOR'].includes(role) && !canAccessPatient(database, session, current)) {
       return sendJson(response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
     }
+    logFromContext(ctx, current, 'open', 'patient history'); // v41.7 record view log
     let rows;
     if (current.health_id) {
       rows = database.sqlite.prepare(`SELECT * FROM patient_records WHERE health_id=? ORDER BY CASE WHEN entry_date='' THEN 1 ELSE 0 END, entry_date DESC, created_at DESC`).all(current.health_id);
@@ -357,7 +369,7 @@ export function mountPatientsRoutes(router) {
       if (!existingPatient && knownId && caseTypeFromData(submittedData) === 'new') return sendJson(response, 409, { error: 'This Patient ID already exists. Add a new Old Case record from the Patient ID in the patient list.' }, { secure: config.cookieSecure });
       if (body.transferToTriage && existingData['system:triageStatus'] === 'COMPLETED') return sendJson(response, 409, { error: 'Start a new visit from Patient ID; do not overwrite a completed visit.' }, { secure: config.cookieSecure });
       const selectedCaseType = caseTypeFromData(submittedData) || String(existingData['system:caseType'] || '').toLowerCase();
-      if (!['new', 'old'].includes(selectedCaseType)) return sendJson(response, 400, { error: 'Select New Case or Old Case during registration before continuing.' }, { secure: config.cookieSecure });
+      if ((activeRoleBeforeSave === 'REGISTRATION' || body.editorScope === 'registration' || body.transferToTriage) && !['new', 'old'].includes(selectedCaseType)) return sendJson(response, 400, { error: 'Select New Case or Old Case during registration before continuing.' }, { secure: config.cookieSecure });
     }
     if (activeRoleBeforeSave === 'TRIAGE' && !caseTypeFromData(existingData) && !['new', 'old'].includes(String(existingData['system:caseType'] || '').toLowerCase())) {
       return sendJson(response, 400, { error: 'Registration is incomplete. Select New Case or Old Case in Registration first.' }, { secure: config.cookieSecure });
@@ -719,6 +731,7 @@ export function mountPatientsRoutes(router) {
           else if (rawCode.includes('med')) prefix = 'MED';
           else if (rawCode.includes('ped')) prefix = 'PED';
           else if (rawCode.includes('tb')) prefix = 'TB';
+          else if (rawCode.includes('infectious')) prefix = 'MED';
           else if (rawCode.includes('art')) prefix = 'ART';
           const now = new Date(savedAt);
           const pad = (n, l = 2) => String(n).padStart(l, '0');
@@ -763,7 +776,7 @@ export function mountPatientsRoutes(router) {
       if (update.action === 'assign') {
         const prefixMap = {
           emergency: 'EMG', surgery: 'SURG', gynecology: 'GYN', obstetric: 'MAT',
-          maternity: 'MAT', pediatric: 'PED', pediatrics: 'PED', tb: 'TB',
+          maternity: 'MAT', pediatric: 'PED', pediatrics: 'PED', tb: 'TB', infectious: 'MED',
           icu: 'ICU', medicine: 'MED', medical: 'MED', opd: 'OPD'
         };
         const deptCode = String(update.departmentCode || update.roomCode || '').toLowerCase();
@@ -784,7 +797,7 @@ export function mountPatientsRoutes(router) {
         const serviceCodeMap = {
           emergency: 'RH-EMG', surgery: 'RH-IPDSurg', gynecology: 'RH-IPDGen',
           obstetric: 'RH-Del', maternity: 'RH-Del', pediatric: 'RH-IPDGen',
-          pediatrics: 'RH-IPDGen', tb: 'RH-TB1', icu: 'RH-EMG', medicine: 'RH-IPDGen',
+          pediatrics: 'RH-IPDGen', tb: 'RH-TB1', infectious: 'RH-IPDGen', icu: 'RH-EMG', medicine: 'RH-IPDGen',
           medical: 'RH-IPDGen', opd: 'RH-OPDSpec'
         };
         if (serviceCodeMap[deptCode]) {

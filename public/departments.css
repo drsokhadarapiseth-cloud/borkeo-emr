@@ -326,3 +326,22 @@ button, select, input { font: inherit; }
   font-size: 14px;
 }
 
+
+/* v41.0: drug-allergy box in the bed popup (red; the title text also says it). */
+.bed-allergy-alert {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border: 2px solid #b91c1c;
+  border-left-width: 6px;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #7f1d1d;
+}
+.bed-allergy-alert .bed-allergy-title { display: block; font-size: 15px; margin-bottom: 4px; }
+.bed-allergy-alert ul { margin: 0; padding-left: 18px; }
+.bed-allergy-alert p { margin: 4px 0 0; }
+.bed-allergy-unknown { margin: 0 0 12px; padding: 6px 10px; border: 1px dashed #b45309; border-radius: 8px; color: #78350f; background: #fffbeb; font-size: 13px; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .bed-allergy-alert { background: #450a0a; color: #fecaca; border-color: #f87171; }
+  :root:not([data-theme="light"]) .bed-allergy-unknown { background: #451a03; color: #fde68a; }
+}

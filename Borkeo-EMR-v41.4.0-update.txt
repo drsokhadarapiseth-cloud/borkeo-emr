@@ -1,0 +1,52 @@
+BORKEO EMR v41.4.0 - COMBINED UPDATE NOTE
+Medical record restructure, PHASE 8: newborn record and postnatal care.
+Base: v41.3.0 (Phase 7). Clinical, pharmacy, laboratory and financial logic
+was not changed. Patient records are not touched. The ANC form, delivery
+form and labour chart are not changed.
+
+WHAT CHANGED
+1. Newborn record (on the mother's record):
+   - Apgar score at 1, 5 and 10 minutes, birth weight, length, head
+     circumference, resuscitation, immediate newborn care (6 ticks),
+     vitamin K, birth vaccines (BCG, hepatitis B birth dose), the baby's
+     own case number when registered, notes.
+   - Twins or triplets: choose the number of babies; each baby gets its
+     own section.
+   - Midwife and doctor e-signatures; print button.
+2. Linked to the delivery form:
+   - A new "Newborn record" button next to the delivery form's print
+     button.
+   - A new newborn record is filled from the delivery form (time of
+     birth, number of babies, baby 1 alive or stillborn, sex, weight).
+     The midwife checks and saves.
+3. Postnatal care record for the mother (one per day): blood pressure,
+   pulse, temperature, uterus, lochia, wound, breasts and breastfeeding,
+   danger signs, family planning, iron / folic acid / vitamin A, a baby
+   check line, next visit.
+4. Both are in the same window as the consents (button at the top of the
+   records). They appear only for women.
+5. Version 41.4.0.
+
+YOUR KHMER DRAFT TO APPROVE
+  docs\phase8-newborn-drafts.md has draft Khmer for 45 new labels (same as
+  Phase 7). Edit it, save, and tell me "approved".
+
+PLEASE CONFIRM (docs\clinical-review.md)
+  The newborn care ticks, the birth vaccines, and the postnatal fields.
+
+STILL OPEN
+  The midwife delivery form timing problem (found in Phase 5). If the
+  delivery form did not load in a session, the newborn record simply
+  starts empty.
+
+TESTS
+  npm test -> 884 passed, 0 failed.  npm run check:khmer -> passed.
+  Tested in the browser with a fake mother: delivery form -> newborn
+  record prefilled (twins), Apgar, vaccines, save, midwife signature,
+  print, reopen, postnatal record; a male patient does not see these
+  forms. All record field positions are unchanged.
+
+INSTALL
+  Step 1. Close the EMR window.
+  Step 2. Double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser press Ctrl+F5 once on an EMR page.

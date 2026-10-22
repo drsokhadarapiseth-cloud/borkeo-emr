@@ -1,0 +1,44 @@
+BORKEO EMR v41.7.0 - COMBINED UPDATE NOTE
+Medical record restructure, PHASE 10 (last phase): record view log and
+scanned documents.
+Base: v41.6.0. Clinical, pharmacy, laboratory and financial logic was not
+changed. Patient records are not touched; two new tables are added.
+
+WHAT CHANGED
+1. Record view log:
+   - The EMR now keeps a list of every time a patient record is opened,
+     printed or exported, and every time a scanned document is opened:
+     who, role, ward, date and time, what, and the computer's IP address.
+   - Opening the same record again within 2 minutes is one entry.
+   - New page in the sidebar (Admin, Director, Vice director only):
+     "Record view log". Search by patient, staff, action and dates.
+2. Scanned documents:
+   - New button next to the forms button in the OPD, IPD and nursing
+     records: attach a PDF, JPG or PNG (up to 10 MB) with a title and kind
+     (referral letter, lab result, imaging report, signed consent,
+     identity document, other).
+   - The EMR checks the real file type; a renamed file is refused.
+   - Files are kept in the folder data\uploads\patients. BACK UP THIS
+     FOLDER together with the database.
+   - Doctors, nurses, midwives, ward chiefs, Registration and management
+     can attach. "Remove" needs a reason; the file is kept and the entry
+     shows as removed.
+   - Attaching, opening and removing are written in the audit log.
+3. Version 41.7.0.
+
+NEW TEXT TO TRANSLATE
+  30 more texts (yellow box) in docs\translations-needed.csv. The button
+  "ភ្ជាប់ឯកសារស្កេន" and the page title "កំណត់ត្រាអ្នកបើកមើលឯកសារ"
+  use your approved Khmer.
+
+TESTS
+  npm test -> 893 passed, 0 failed.  npm run check:khmer -> passed.
+  Tested in the browser with fake patients: open record -> logged; attach
+  a PNG, open it, remove it with a reason; print -> logged; the log page
+  for Admin with a filter; a doctor cannot open the log page. All record
+  field positions are unchanged.
+
+INSTALL
+  Step 1. Close the EMR window.
+  Step 2. Double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser press Ctrl+F5 once on an EMR page.

@@ -1,0 +1,55 @@
+BORKEO EMR v41.2.0 - COMBINED UPDATE NOTE
+Medical record restructure, PHASE 6: medication administration record and
+prescribing warnings.
+Base: v41.1.0 (Phase 5). Pharmacy, laboratory and financial logic was not
+changed. Patient records are not touched; four new tables are added.
+
+IMPORTANT - BUG FIXED (it is in the version you are running now)
+  In the nursing medicine chart, the tick "medicine given" was NOT saved.
+  It disappeared when the record was opened again. Now every dose is saved.
+
+WHAT CHANGED
+1. Medication Administration Record (nurses and midwives):
+   - Click a dose in the nursing medicine chart. A form opens:
+     Given / Held / Refused, time, reason or note, and your signature.
+   - Held or Refused needs a reason.
+   - The chart shows the result in the dose box. The full list is under
+     the chart and prints with the nursing form.
+   - A mistake is corrected with "Correct": the old entry stays, crossed
+     out, with the reason. Nothing is deleted.
+   - It uses the doctor's existing treatment orders (admission
+     prescription and daily notes).
+2. Prescribing warnings (doctors), when a medicine is typed in the
+   admission, daily note or OPD prescription:
+   - Allergy warning (from the allergy record of Phase 4).
+   - Duplicate warning (same medicine twice in the prescription).
+   - Interaction and maximum dose warnings, from two tables that are
+     EMPTY until you fill them.
+   To continue, write the override reason (it is saved and audited), or
+   press "Do not prescribe".
+3. New admin page in the menu (administration): drug safety tables, for
+   interactions and maximum doses. Only an administrator can change them.
+4. Version 41.2.0.
+
+NEW TEXT TO TRANSLATE
+  33 more texts (now 71 in total) in docs\translations-needed.csv.
+
+PLEASE CONFIRM (docs\clinical-review.md)
+  How allergies are matched (by name, not by drug class), the duplicate
+  rule, and who records doses. Fill the interaction / maximum dose tables
+  only with a list approved by a doctor.
+
+STILL OPEN (from Phase 5)
+  The midwife delivery form timing problem is not fixed yet.
+
+TESTS
+  npm test -> 879 passed, 0 failed.  npm run check:khmer -> passed.
+  Tested in the browser with fake patients: given, held (reason
+  required), correction, reopening the record, allergy / duplicate /
+  interaction / maximum dose warnings, override reason saved, admin
+  tables. All record field positions are unchanged.
+
+INSTALL
+  Step 1. Close the EMR window.
+  Step 2. Double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser press Ctrl+F5 once on an EMR page.

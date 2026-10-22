@@ -140,6 +140,55 @@
     // pages). Keep all ancestor classes/IDs for the original scoped styles.
     for (const report of [...root.children]) {
       const ipd = report.id === 'sub_ipd' ? report : report.querySelector('#sub_ipd');
+      const soap = ipd?.querySelector('#ipd_soap_record');
+      if (soap) {
+        // v40.7: the IPD record is in S/O/A/P boxes. Keep the same two-page
+        // balance as before: page 1 has S and O up to the respiratory
+        // examination; page 2 has the rest of O, then A and P and the footer.
+        const box = letter => soap.querySelector(`[data-soap-record-box="${letter}"]`);
+        const clone = node => node.cloneNode(true);
+        const oBox = box('o'), oBody = oBox?.querySelector('.emr-soap-body');
+        const oChildren = oBody ? [...oBody.childNodes] : [];
+        const examination = oChildren.find(node => node.nodeType === 1 && node.querySelector('[data-key="ipd_sec7"]'));
+        if (examination && box('s') && box('a') && box('p')) {
+          const examBody = examination.lastElementChild;
+          const examNodes = [...examBody.childNodes];
+          const examSplit = examNodes.indexOf(examBody.children[6]);
+          const examPart = index => {
+            if (examSplit <= 0) return index ? null : clone(examination);
+            const half = clone(examination);
+            half.lastElementChild.classList.add('emr-ipd-exam-body');
+            half.lastElementChild.replaceChildren(...(index ? examNodes.slice(examSplit) : examNodes.slice(0, examSplit)).map(clone));
+            return half;
+          };
+          const examAt = oChildren.indexOf(examination);
+          const oPart = index => {
+            const part = clone(oBox);
+            part.querySelector('.emr-soap-body').replaceChildren(...(index
+              ? [examPart(1), ...oChildren.slice(examAt + 1).map(clone)]
+              : [...oChildren.slice(0, examAt).map(clone), examPart(0)]).filter(Boolean));
+            return part;
+          };
+          const soapPage = boxes => { const shell = soap.cloneNode(false); shell.append(...boxes); return shell; };
+          const children = [...ipd.childNodes];
+          const soapAt = children.indexOf(soap);
+          const title = ipd.querySelector('[data-key="ipd_title"]');
+          const pages = [
+            [...children.slice(0, soapAt).map(clone), soapPage([clone(box('s')), oPart(0)])],
+            [title && clone(title), soapPage([oPart(1), clone(box('a')), clone(box('p'))]), ...children.slice(soapAt + 1).map(clone)].filter(Boolean),
+          ];
+          for (const [index, nodes] of pages.entries()) {
+            const copy = report.cloneNode(true);
+            const form = copy.id === 'sub_ipd' ? copy : copy.querySelector('#sub_ipd');
+            form.replaceChildren(...nodes);
+            form.classList.add('emr-ipd-print-page');
+            form.querySelector('#daily_monitoring_feed')?.remove();
+            form.querySelector('[data-key="ipd_title"]')?.append(doc.createTextNode(` · ${index+1}/2`));
+            reports.push({content:copy,orientation});
+          }
+          continue;
+        }
+      }
       if (ipd) {
         // Balance history and examination across two A4 pages in the isolated
         // print copy. The editable web form is never divided or changed.
@@ -329,6 +378,7 @@
 
 
   window.printEmrReport = async ({selectors,classes=[],sectionClasses=[],title=document.title,sourceDocument=document,orientation='portrait',separatePages=true}) => {
+    window.logRecordAccess?.('print', title); // v41.7 record view log
     if(activePrint && !activePrint.invoked) return activePrint.ready;
     // A new click after closing the browser preview can start another report,
     // even in browsers which do not dispatch afterprint consistently.

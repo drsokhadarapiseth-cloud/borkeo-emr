@@ -236,7 +236,7 @@
    ========================================================================== */
 .emr-chart-tabs-wrap {
   position: sticky;
-  top: calc(var(--emr-topbar-height, 60px) + 76px);
+  top: calc(var(--emr-topbar-height, 60px) + var(--emr-banner-live-height, 76px));
   z-index: 940;
   background: var(--bg-surface, #ffffff);
   border-bottom: 1px solid var(--border-default, #cbd5e1);
@@ -499,5 +499,253 @@
   .emr-chart-tabs-wrap,
   .emr-summary-dashboard {
     display: none !important;
+  }
+}
+
+/* ==========================================================================
+   6. v41.0 Clinical row (resuscitation status, risk flags, active problems,
+      current medications), allergy states and the details panel
+   ========================================================================== */
+.emr-patient-banner {
+  flex-wrap: wrap;
+}
+
+.emr-banner-badge-button {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 999px;
+}
+
+.emr-banner-badge-button:focus-visible,
+.emr-banner-details-button:focus-visible {
+  outline: 3px solid var(--color-primary-500, #0ea5e9);
+  outline-offset: 2px;
+}
+
+.emr-banner-badge.allergy-unknown {
+  background: #fffbeb;
+  color: #78350f;
+  border: 1px dashed #b45309;
+}
+
+.emr-banner-clinical {
+  flex: 1 1 100%;
+  display: flex;
+  align-items: stretch;
+  gap: 8px 18px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle, #e2e8f0);
+}
+
+.emr-banner-clinical-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  max-width: 100%;
+  flex: 1 1 160px;
+}
+
+.emr-banner-clinical-item .emr-banner-field-value {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emr-banner-clinical-item.is-dnr .emr-banner-field-value,
+.emr-banner-clinical-item.has-flags .emr-banner-field-value {
+  color: var(--color-danger-700, #b91c1c);
+  font-weight: 800;
+}
+
+.emr-banner-details-button {
+  align-self: center;
+  box-sizing: border-box;
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 !important;
+  border-radius: 8px;
+  border: 1px solid var(--border-default, #cbd5e1);
+  background: var(--bg-canvas, #f8fafc);
+  color: var(--text-secondary, #475569);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.emr-banner-details-button svg.emr-banner-details-icon {
+  display: block;
+  flex: none;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.15s ease;
+}
+
+.emr-banner-details-button[aria-expanded="true"] svg.emr-banner-details-icon {
+  transform: rotate(180deg);
+}
+
+.emr-banner-summary-panel {
+  flex: 1 1 100%;
+  max-height: 50vh;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px 20px;
+  padding: 10px 2px 4px;
+  border-top: 1px solid var(--border-subtle, #e2e8f0);
+}
+
+.emr-banner-summary-panel:focus {
+  outline: none;
+}
+
+.emr-banner-summary-panel h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+}
+
+.emr-banner-summary-panel section:first-child {
+  grid-column: 1 / -1;
+}
+
+.emr-banner-summary-panel ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.emr-banner-summary-panel p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.emr-banner-table-wrap {
+  overflow-x: auto;
+}
+
+.emr-banner-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.emr-banner-table th,
+.emr-banner-table td {
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border-subtle, #e2e8f0);
+}
+
+.emr-banner-table th {
+  font-weight: 700;
+  color: var(--text-secondary, #475569);
+}
+
+.emr-banner-record-text {
+  margin-top: 6px !important;
+  padding: 6px 10px;
+  border-left: 4px solid var(--color-danger-500, #ef4444);
+  background: var(--color-danger-50, #fef2f2);
+  color: var(--color-danger-700, #b91c1c);
+}
+
+.emr-banner-record-text span {
+  font-weight: 700;
+}
+
+.emr-banner-code {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--bg-canvas, #f1f5f9);
+}
+
+.emr-banner-panel-empty {
+  color: var(--text-muted, #64748b);
+}
+
+.emr-banner-resus-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.emr-banner-resus-form select {
+  min-height: 34px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.emr-banner-small-button {
+  min-height: 34px;
+  padding: 4px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-primary-700, #0369a1);
+  background: var(--color-primary-700, #0369a1);
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.emr-banner-form-message {
+  font-size: 12px;
+  color: var(--color-danger-700, #b91c1c);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .emr-banner-badge.allergy-unknown {
+    background: #451a03;
+    color: #fde68a;
+  }
+  :root:not([data-theme="light"]) .emr-banner-record-text {
+    background: #450a0a;
+    color: #fecaca;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .emr-banner-clinical-item {
+    flex-basis: 45%;
+  }
+  .emr-banner-clinical-item .emr-banner-field-value {
+    white-space: normal;
+  }
+}
+
+@media print {
+  .emr-banner-details-button,
+  .emr-banner-summary-panel {
+    display: none !important;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .emr-banner-clinical,
+  .emr-banner-summary-panel {
+    flex: 0 0 auto;
+    width: 100%;
   }
 }

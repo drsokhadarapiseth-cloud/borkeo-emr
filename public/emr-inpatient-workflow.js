@@ -29,6 +29,9 @@
       dischargeWard: 'ផ្នែកបញ្ចេញ', admissionDiagnosis: 'រោគវិនិច្ឆ័យពេលចូល',
       admissionIcd10: 'កូដរោគវិនិច្ឆ័យពេលចូល ICD10', admissionAt: 'កាលបរិច្ឆេទ និងម៉ោងចូល',
       dischargeDiagnosis: 'រោគវិនិច្ឆ័យពេលចេញ', dischargeIcd10: 'កូដរោគវិនិច្ឆ័យពេលចេញ ICD10',
+      // v41.6 (approved Khmer, RULE 2)
+      patientInstructions: 'ការណែនាំសម្រាប់អ្នកជំងឺ', dischargeSummary: 'សេចក្តីសង្ខេបពេលចេញពីមន្ទីរពេទ្យ',
+      dischargeMedications: 'ឱសថពេលចេញពីមន្ទីរពេទ្យ', mainDiagnosis: 'រោគវិនិច្ឆ័យចម្បង', secondaryDiagnoses: 'រោគវិនិច្ឆ័យបន្ទាប់បន្សំ',
       dischargeAt: 'កាលបរិច្ឆេទ និងម៉ោងចេញ', outcome: 'លទ្ធផលការព្យាបាល',
       dischargeStatus: 'ស្ថានភាពបញ្ចេញ', followUp: 'កាលបរិច្ឆេទតាមដានបន្ទាប់', deceased: 'ស្លាប់',
       choose: 'សូមជ្រើសរើស', recovered: 'ជាសះស្បើយ', improved: 'ធូរស្រាល',
@@ -60,6 +63,8 @@
       admissionDiagnosis: 'Admission diagnosis', admissionIcd10: 'Admission diagnosis ICD10',
       admissionAt: 'Admission date and time', dischargeDiagnosis: 'Discharge diagnosis',
       dischargeIcd10: 'Discharge diagnosis ICD10', dischargeAt: 'Discharge date and time',
+      patientInstructions: 'Patient instructions', dischargeSummary: 'Printable discharge summary',
+      dischargeMedications: 'Discharge medications', mainDiagnosis: 'Main diagnosis', secondaryDiagnoses: 'Secondary diagnoses',
       outcome: 'Treatment outcome', dischargeStatus: 'Discharge status', followUp: 'Next follow-up date',
       deceased: 'Deceased', choose: 'Please select', recovered: 'Recovered', improved: 'Improved',
       unchanged: 'Not improved', referred: 'Referred', died: 'Died', ordered: 'Discharged by medical order',
@@ -328,6 +333,8 @@
           <label class="wide"><span data-iw-key="admissionDiagnosis"></span><textarea id="emr_discharge_admission_diagnosis" readonly></textarea></label>
           <label><span><span data-iw-key="dischargeAt"></span> *</span><input id="emr_discharge_datetime" type="datetime-local" required></label>
           <label><span data-iw-key="dischargeIcd10"></span><input id="emr_discharge_icd10" type="text"></label>
+          <!-- v41.6: main / secondary ICD-10 (emr-diagnoses.js, kind "discharge"); the field above holds the main code. -->
+          <div class="wide"><input type="hidden" id="emr_discharge_diagnoses" value="[]"><div class="emr-diagnosis-list" data-diagnosis-editor="discharge"></div></div>
           <label class="wide"><span><span data-iw-key="dischargeDiagnosis"></span> *</span><textarea id="emr_discharge_diagnosis" required></textarea></label>
           <label><span><span data-iw-key="outcome"></span> *</span><select id="emr_discharge_outcome" required>
             <option value="" data-iw-key="choose"></option><option value="recovered" data-iw-key="recovered"></option>
@@ -342,6 +349,7 @@
           </select></label>
           <label><span data-iw-key="followUp"></span><input id="emr_discharge_followup" type="date"></label>
           <label class="discharge-checkbox"><input id="emr_discharge_deceased" type="checkbox"><span data-iw-key="deceased"></span></label>
+          <label class="wide"><span data-iw-key="patientInstructions"></span><textarea id="emr_discharge_instructions" maxlength="4000"></textarea></label>
           <label data-referral-only hidden><span data-iw-key="referralDestination"></span><select id="emr_referral_destination_type">
             <option value="" data-iw-key="choose"></option><option value="PROVINCIAL_HOSPITAL" data-iw-key="provincialHospital"></option><option value="OTHER" data-iw-key="otherDestination"></option>
           </select></label>
@@ -364,6 +372,10 @@
         </section>
         <div class="discharge-actions no-print">
           <span id="emr-discharge-status" role="status" aria-live="polite"></span>
+          <!-- id without "discharge": printing stays possible in view mode (emr-encounter-editor.js isAction). -->
+          <button id="emr-summary-print-button" type="button" class="btn-blue" hidden>
+            <i class="fa-solid fa-print" aria-hidden="true"></i><span data-iw-key="dischargeSummary"></span>
+          </button>
           <button id="emr-save-discharge" type="button" class="btn-blue">
             <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i><span data-iw-key="saveDischarge"></span>
           </button>
@@ -374,7 +386,9 @@
     discharge.querySelector('#emr_discharge_outcome').addEventListener('change', updateReferralFields);
     discharge.querySelector('#emr_referral_destination_type').addEventListener('change', updateReferralFields);
     discharge.querySelector('#emr-discharge-add-rx').addEventListener('click', () => addDischargeMedicineRow());
+    discharge.querySelector('#emr-summary-print-button').addEventListener('click', printDischargeSummary);
     document.getElementById('page3')?.append(discharge);
+    window.mountEmrDiagnosisEditor?.('discharge', discharge.querySelector('[data-diagnosis-editor="discharge"]'));
     return discharge;
   }
 
@@ -558,12 +572,40 @@
     finally { button.disabled = false; }
   }
 
+  // v41.0: identity fields (name, age, sex, code...) come from the patient, but a
+  // saved typed value that differs is never overwritten: it is kept and the
+  // patient value is shown next to it. A value filled here earlier still follows
+  // the patient when it changes.
   function setAutofillTarget(target, nextValue) {
     if (!target) return;
     const normalized = nextValue || '';
+    const current = String(('value' in target ? target.value : target.textContent) || '').trim();
+    const ownFill = target.dataset.patientAutofillValue !== undefined && current === target.dataset.patientAutofillValue;
+    clearAutofillDifference(target);
+    if (current && !ownFill && current !== normalized.trim()) {
+      if (normalized.trim()) showAutofillDifference(target, normalized.trim());
+      return;
+    }
     if ('value' in target) target.value = normalized;
     else target.textContent = normalized;
     target.dataset.patientAutofilled = 'true';
+    target.dataset.patientAutofillValue = normalized.trim();
+  }
+
+  function clearAutofillDifference(target) {
+    target.classList.remove('nursing-banner-differs');
+    if (target.nextElementSibling?.hasAttribute('data-banner-differs')) target.nextElementSibling.remove();
+  }
+
+  function showAutofillDifference(target, patientValue) {
+    target.classList.add('nursing-banner-differs');
+    const note = document.createElement('span');
+    note.className = 'nursing-banner-differs-note no-print';
+    note.dataset.bannerDiffers = '';
+    const english = window.getBorkeoLanguage?.() === 'en';
+    note.innerHTML = english || !window.newTextHtml ? 'Banner:' : window.newTextHtml('nursing.bannerValue', 'Banner:');
+    note.append(` ${patientValue}`);
+    target.insertAdjacentElement('afterend', note);
   }
 
   function rowTargets(row) {
@@ -731,6 +773,11 @@
     setValue('emr_discharge_datetime', saved.dischargeAt || '', true);
     setValue('emr_discharge_diagnosis', saved.dischargeDiagnosis || '');
     setValue('emr_discharge_icd10', saved.dischargeIcd10 || '');
+    setValue('emr_discharge_instructions', saved.patientInstructions || '');
+    // Saved main / secondary list; a discharge saved before v41.6 keeps its single code as the main one.
+    window.restoreEmrDiagnoses?.('discharge', Array.isArray(saved.dischargeDiagnoses) ? saved.dischargeDiagnoses : '');
+    const summaryButton = document.getElementById('emr-summary-print-button');
+    if (summaryButton) summaryButton.hidden = !saved.dischargeAt;
     setValue('emr_discharge_outcome', saved.outcome || '');
     setValue('emr_discharge_status', saved.status || '');
     setValue('emr_discharge_followup', saved.followUpDate || '');
@@ -836,6 +883,8 @@
           admissionIcd10: value('emr_discharge_admission_icd10'),
           admissionAt: value('emr_discharge_admission_at'),
           dischargeDiagnosis, dischargeIcd10: value('emr_discharge_icd10'), dischargeAt,
+          dischargeDiagnoses: window.collectEmrDiagnoses?.('discharge') || [],
+          patientInstructions: value('emr_discharge_instructions'),
           outcome, status, followUpDate: value('emr_discharge_followup'),
           deceased: document.getElementById('emr_discharge_deceased')?.checked === true,
           referralDestinationType: value('emr_referral_destination_type'),
@@ -857,6 +906,43 @@
     }
   }
 
+  // v41.6: printable discharge summary, built only from the SAVED discharge
+  // (never from unsaved changes on the screen).
+  function printDischargeSummary() {
+    const patient = currentPatient || {};
+    const saved = patient.discharge || patient.data?.['system:discharge'] || {};
+    if (!saved.dischargeAt) return;
+    const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const lang = language() === 'english' ? 'en' : 'km';
+    const row = (key, val) => (val ? `<tr><th>${esc(text(key))}</th><td>${esc(val).replace(/\n/g, '<br>')}</td></tr>` : '');
+    const list = Array.isArray(saved.dischargeDiagnoses) && saved.dischargeDiagnoses.length ? saved.dischargeDiagnoses
+      : (saved.dischargeIcd10 ? [{ icd10: saved.dischargeIcd10, text: '', main: true }] : []);
+    const main = list.find((d) => d.main) || list[0];
+    const secondary = list.filter((d) => d !== main);
+    const option = (key) => (key ? text(key === 'against-advice' ? 'againstAdvice' : key) : '');
+    const meds = Array.isArray(saved.medications) ? saved.medications : [];
+    const letterhead = window.EmrLetterhead?.renderLetterhead({ lang, title: text('dischargeSummary') }) || `<h2>${esc(text('dischargeSummary'))}</h2>`;
+    const grid = window.EmrLetterhead?.renderPatientGrid({ lang, caseId: patient.caseNumber || patient.healthId || '', department: saved.department || '',
+      fullName: patient.fullName || '', sex: patient.sex || '', age: patient.age || '', diagnosis: saved.dischargeDiagnosis || '' }) || '';
+    let layout = document.getElementById('discharge-summary-print-layout');
+    if (!layout) { layout = document.createElement('div'); layout.id = 'discharge-summary-print-layout'; document.body.appendChild(layout); }
+    layout.innerHTML = `<div class="discharge-summary-sheet">${letterhead}${grid}
+      <table class="discharge-summary-table">
+        ${row('admissionAt', String(saved.admissionAt || '').replace('T', ' '))}${row('dischargeAt', String(saved.dischargeAt || '').replace('T', ' '))}
+        ${row('admissionDiagnosis', [saved.admissionIcd10, saved.admissionDiagnosis].filter(Boolean).join(' · '))}
+        ${row('mainDiagnosis', main ? [main.icd10, main.text].filter(Boolean).join(' · ') : '')}
+        ${row('secondaryDiagnoses', secondary.map((d) => [d.icd10, d.text].filter(Boolean).join(' · ')).join('\n'))}
+        ${row('dischargeDiagnosis', saved.dischargeDiagnosis)}
+        ${row('outcome', option(saved.outcome))}${row('dischargeStatus', option(saved.status))}
+        ${row('followUp', saved.followUpDate)}${row('patientInstructions', saved.patientInstructions)}
+      </table>
+      ${meds.length ? `<h4>${esc(text('dischargeMedications'))}</h4><table class="discharge-summary-table"><tbody>${meds.map((m) => `<tr><td>${esc(m.name)}</td><td>${esc([m.doseAmount, m.unit, m.route].filter(Boolean).join(' '))}</td><td>${esc([m.m, m.a, m.e, m.n].map((x) => x || '0').join('-'))}</td><td>${esc([m.d, m.total].filter(Boolean).join(' / '))}</td><td>${esc(m.note || '')}</td></tr>`).join('')}</tbody></table>` : ''}
+      <div class="discharge-summary-sign"><div></div><div class="discharge-summary-sign-line"></div></div>
+    </div>`;
+    return window.printEmrReport?.({ selectors: ['#discharge-summary-print-layout'], classes: ['print-discharge-summary'], title: text('dischargeSummary') });
+  }
+  window.printDischargeSummary = printDischargeSummary;
+
   function restoreDailyMonitoringRecords(records) {
     const feed = document.getElementById('daily_monitoring_feed');
     if (!feed || typeof originalSaveDailyMonitoring !== 'function') return;
@@ -873,7 +959,8 @@
       };
       Object.entries(fields).forEach(([id, fieldValue]) => setValue(id, fieldValue || ''));
       window.populateMonitoringTreatmentForm?.(record);
-      originalSaveDailyMonitoring();
+      // v40.9: rebuild the card from the saved note itself, unchanged.
+      originalSaveDailyMonitoring(record);
     });
     restoringDailyRecords = false;
     if (document.getElementById('mon_modal')?.classList.contains('daily-followup-entry-form')) {
@@ -896,8 +983,8 @@
     }
     if (typeof window.saveDailyMonitoring === 'function') {
       originalSaveDailyMonitoring = window.saveDailyMonitoring;
-      window.saveDailyMonitoring = function saveAndPersistDailyMonitoring() {
-        const result = originalSaveDailyMonitoring();
+      window.saveDailyMonitoring = function saveAndPersistDailyMonitoring(restoreRecord) {
+        const result = originalSaveDailyMonitoring(restoreRecord);
         if (result === false) return false;
         if (!restoringDailyRecords) {
           window.setTimeout(() => {

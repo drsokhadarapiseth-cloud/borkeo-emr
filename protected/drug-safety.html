@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="km">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Drug safety tables</title>
+<link rel="stylesheet" href="/public/emr-session.css?v=3700">
+<link rel="stylesheet" href="/public/responsive-layout.css?v=3045">
+<link rel="stylesheet" href="/public/drug-safety.css?v=4120">
+<script src="/public/emr-session.js?v=3700" defer></script>
+<script src="/public/drug-safety.js?v=4120" defer></script>
+</head>
+<body class="ds-page">
+<!-- v41.2: drug interaction and maximum-dose tables used by the prescribing warnings.
+     Empty until a doctor-approved list is entered (docs/clinical-review.md). -->
+<main class="ds-shell">
+  <div data-session-host></div>
+  <header class="ds-hero">
+    <h1 data-new-text="drugSafety.title">Drug safety tables</h1>
+    <p data-new-text="drugSafety.intro">Used for the prescribing warnings. Only an administrator can change them. Enter only lists approved by a doctor.</p>
+  </header>
+  <p id="ds-status" role="status" aria-live="polite"></p>
+  <section class="ds-panel" aria-labelledby="ds-interactions-title">
+    <h2 id="ds-interactions-title" data-new-text="drugSafety.interactions">Drug interactions</h2>
+    <div class="ds-table-wrap"><table class="ds-table" id="ds-interactions"></table></div>
+    <form class="ds-form" id="ds-interaction-form" hidden>
+      <label><span data-new-text="drugSafety.drugA">Medicine A</span><input name="drugA" required maxlength="200"></label>
+      <label><span data-new-text="drugSafety.drugB">Medicine B</span><input name="drugB" required maxlength="200"></label>
+      <label><span data-new-text="drugSafety.severity">Severity</span><input name="severity" maxlength="60"></label>
+      <label class="wide"><span data-new-text="drugSafety.note">Note</span><input name="note" maxlength="1000"></label>
+      <button type="submit" data-new-text="drugSafety.add">Add</button>
+    </form>
+  </section>
+  <section class="ds-panel" aria-labelledby="ds-max-title">
+    <h2 id="ds-max-title" data-new-text="drugSafety.maxDoses">Maximum doses</h2>
+    <div class="ds-table-wrap"><table class="ds-table" id="ds-max-doses"></table></div>
+    <form class="ds-form" id="ds-max-form" hidden>
+      <label><span data-new-text="drugSafety.drug">Medicine</span><input name="drug" required maxlength="200"></label>
+      <label><span data-new-text="drugSafety.maxPerDose">Maximum per dose</span><input name="maxPerDose" type="number" min="0" step="any"></label>
+      <label><span data-new-text="drugSafety.maxPerDay">Maximum per day</span><input name="maxPerDay" type="number" min="0" step="any"></label>
+      <label><span data-new-text="drugSafety.unit">Unit</span><input name="unit" maxlength="40"></label>
+      <label class="wide"><span data-new-text="drugSafety.note">Note</span><input name="note" maxlength="1000"></label>
+      <button type="submit" data-new-text="drugSafety.add">Add</button>
+    </form>
+  </section>
+</main>
+</body>
+</html>

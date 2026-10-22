@@ -3,6 +3,19 @@ import { DEFAULT_ROLE_LABELS } from './access.mjs';
 
 const MAX_SIGNATURE_DATA_URL = 140_000;
 
+// v42.1: a signature saved by the Superuser account names the user type it was
+// switched to: "Superuser · <Khmer role label>". Real staff names are unchanged.
+export function switchedSignerName(name, username, role) {
+  if (String(username || '').toLowerCase() !== 'superuser') return name;
+  const label = DEFAULT_ROLE_LABELS[String(role || '').toUpperCase()];
+  return label && name ? `${name} · ${label}` : name;
+}
+
+export function userSignerName(database, userId, name, role) {
+  const row = database.sqlite.prepare('SELECT username FROM users WHERE id=?').get(userId || '');
+  return switchedSignerName(name, row?.username, role);
+}
+
 function createCrcTable() {
   const cTable = new Uint32Array(256);
   for (let n = 0; n < 256; n++) {
@@ -227,7 +240,7 @@ export function signatureSnapshot(databaseOrUser, sessionOrSignedAt, maybeSigned
   const userId = user.user_id || user.id || '';
   const signature = (db && userId) ? getESignature(db, userId) : null;
   const rawSignerName = signature?.signerName || String(user.signer_name || user.signerName || user.display_name || user.displayName || user.username || '');
-  const signerName = rawSignerName;
+  const signerName = switchedSignerName(rawSignerName, user.username, role);
   const rawSignature = signature?.signatureDataUrl || user.signature_data_url || user.signatureDataUrl;
   const signatureDataUrl = rawSignature || defaultSimulatedSignatureDataUrl(signerName || user.username || '', role);
   return {

@@ -23,7 +23,9 @@ let demoMode = null;
 // Accounts that must change their password stay on this page (v39.9).
 let changeAccount = null;
 
+const INFECTIOUS_WARD_KH = 'ផ្នែកជំងឺឆ្លង';
 const DEFAULT_ACCOUNTS = [
+  { username: 'Superuser', displayName: 'Superuser (មុខងារទាំងអស់)' },
   { username: 'admin', displayName: 'អ្នកគ្រប់គ្រងសាកល្បង' },
   { username: 'doctor_opd', displayName: 'វេជ្ជបណ្ឌិត - ផ្នែកពិគ្រោះក្រៅ' },
   { username: 'doctor_medicine', displayName: 'វេជ្ជបណ្ឌិត - ផ្នែកជំងឺទូទៅ' },
@@ -34,6 +36,7 @@ const DEFAULT_ACCOUNTS = [
   { username: 'doctor_obstetric', displayName: 'វេជ្ជបណ្ឌិត - ផ្នែកសម្ភព' },
   { username: 'doctor_gynecology', displayName: 'វេជ្ជបណ្ឌិត - ផ្នែករោគស្ត្រី' },
   { username: 'doctor_tb', displayName: 'វេជ្ជបណ្ឌិត - ផ្នែកជំងឺរបេង' },
+  { username: 'doctor_infectious', displayName: `វេជ្ជបណ្ឌិត - ${INFECTIOUS_WARD_KH}` },
   { username: 'doctor_ncu', displayName: 'វេជ្ជបណ្ឌិត - ផ្នែកទារកទើបកើត' },
   { username: 'nurse_opd', displayName: 'គិលានុបដ្ឋាក - ផ្នែកពិគ្រោះក្រៅ' },
   { username: 'nurse_medicine', displayName: 'គិលានុបដ្ឋាក - ផ្នែកជំងឺទូទៅ' },
@@ -44,6 +47,7 @@ const DEFAULT_ACCOUNTS = [
   { username: 'nurse_obstetric', displayName: 'គិលានុបដ្ឋាក/ឆ្មប - ផ្នែកសម្ភព' },
   { username: 'nurse_gynecology', displayName: 'គិលានុបដ្ឋាក - ផ្នែករោគស្ត្រី' },
   { username: 'nurse_tb', displayName: 'គិលានុបដ្ឋាក - ផ្នែកជំងឺរបេង' },
+  { username: 'nurse_infectious', displayName: `${'គិលានុបដ្ឋាក'} - ${INFECTIOUS_WARD_KH}` },
   { username: 'nurse_ncu', displayName: 'គិលានុបដ្ឋាក - ផ្នែកទារកទើបកើត' },
   { username: 'triage', displayName: 'បុគ្គលិកតម្រៀបអ្នកជំងឺសាកល្បង' },
   { username: 'nurse_triage', displayName: 'គិលានុបដ្ឋាក - ផ្នែកទ្រីយ៉ា' },
@@ -58,7 +62,12 @@ const DEFAULT_ACCOUNTS = [
 ];
 
 function populateAccounts(accounts) {
-  const list = (accounts && accounts.length) ? accounts : DEFAULT_ACCOUNTS;
+  let list = (accounts && accounts.length) ? [...accounts] : DEFAULT_ACCOUNTS;
+  const superIdx = list.findIndex(a => String(a.username || '').toLowerCase() === 'superuser');
+  if (superIdx > 0) {
+    const [superItem] = list.splice(superIdx, 1);
+    list = [superItem, ...list];
+  }
   if (userAccountsList) {
     userAccountsList.innerHTML = list.map(a => `<option value="${a.username}">${a.displayName || a.username}</option>`).join('');
   }

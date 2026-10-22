@@ -1,0 +1,489 @@
+================================================================================
+Borkeo EMR Update Note: Version 42.0.0
+Superuser works as each staff role - side menu click fix - IPD transfer page fix
+================================================================================
+
+Date: 2026-10-21
+Previous Version: 41.9.0
+New Version: 42.0.0
+Patient data: not touched. No database change.
+
+--------------------------------------------------------------------------------
+1. WHAT WAS WRONG
+--------------------------------------------------------------------------------
+a) Clicking "Register" in the side menu went back to Home.
+   The side menu is collapsed until the mouse moves onto it. When it expanded,
+   the section headings grew by 28 px and pushed every item down, so the click
+   landed on the item above: Register opened Home, Triage opened Register.
+   This happened for every account, not only the Superuser.
+
+b) The Superuser used a separate "SUPERUSER" role that had to be added by hand
+   to every role check. Some were missed: the Triage queue and the OPD queue
+   were refused (error 403).
+
+c) The IPD transfer page (/ipd-transfer) did not work for anyone: its script
+   and stylesheet were never served (404).
+
+--------------------------------------------------------------------------------
+2. WHAT CHANGED
+--------------------------------------------------------------------------------
+a) Side menu: section headings keep the same height when the menu is collapsed
+   or expanded (the collapsed menu still shows a thin line). Items never move.
+
+b) Superuser becomes the staff role of the page that is opened:
+     Home                         -> Superuser (all-access overview)
+     Register, Appointments       -> Registration
+     Triage, Triage queue display -> Triage
+     OPD queue, IPD transfer      -> Doctor (OPD)
+     Paraclinic handoffs          -> Nurse (OPD)
+     Medical record, Wards        -> Doctor (patient's ward, or current ward,
+                                     or Medicine)
+     Nursing record               -> Nurse (Midwife in Obstetric)
+     Laboratory, Lab materials    -> Laboratory
+     Imaging, Films               -> Imaging
+     Pharmacy pages               -> Pharmacy
+     Billing                      -> Cashier
+     Expenses                     -> Accountant
+     Cash flow                    -> Director
+     Requests                     -> Admin (Director is kept)
+     Administration pages         -> Admin
+   If the current role already fits the page it is kept (for example Nurse on
+   Daily ward medicines, Accountant on Billing). The Patient list keeps the
+   current role. The role shown in the user menu is the role in use, and the
+   user menu can still switch role by hand.
+   Because the Superuser now holds the real role, every existing rule works
+   the same as for that staff member, and one person can take a patient
+   through every step and approve their own requests.
+   Every automatic switch is written to the audit log (WORK_CONTEXT_CHANGED,
+   automatic: true, with the page).
+
+c) /public/ipd-transfer.js and /public/ipd-transfer.css are now served.
+
+Checked in a test copy with synthetic patients only:
+  register -> triage to OPD -> cashier payment -> OPD queue -> OPD record ->
+  lab -> pharmacy; and register -> triage to Medicine ward -> wards and beds ->
+  medical record (doctor) -> nursing record (nurse) -> home.
+  Every side menu item was clicked in Microsoft Edge with the menu collapsed.
+  npm test: 903 of 903 pass. npm run check:khmer passes.
+
+--------------------------------------------------------------------------------
+3. FILES
+--------------------------------------------------------------------------------
+  public/app-shell.css      collapsed section headings keep their height
+  server/superuser.mjs      superuserPageContext(): page -> staff role and ward
+  server/server.mjs         switch role on page load; serve IPD transfer files;
+                            version comment v42.0
+  package.json              version 42.0.0
+  public/login.html         shows v42.0
+  CHANGELOG.md              v42.0.0 entry
+  tests/v420-superuser-page-roles.test.mjs   new tests
+  tests/accessibility-quality-smoke.test.mjs expects version 42.0.0
+
+--------------------------------------------------------------------------------
+4. INSTALLATION (one step at a time)
+--------------------------------------------------------------------------------
+The files are already updated in this folder. If you use this folder as is,
+only steps 1 to 3 are needed.
+
+Step 1: Close the EMR server window (or press Ctrl + C in it).
+Step 2: Double-click "Start-Borkeo-WiFi.bat".
+Step 3: In the browser press Ctrl + F5 once, log in as Superuser, and click
+        Register, then Triage, then OPD queue. The page and the role in the
+        user menu change each time.
+
+For Antigravity (only when applying to another copy of v41.9.0): apply the
+code change in section 5 exactly, then run "npm test".
+
+--------------------------------------------------------------------------------
+5. CODE CHANGE (unified diff against v41.9.0)
+--------------------------------------------------------------------------------
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index f748825..75dab7d 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,12 @@
+ # Borkeo EMR Changelog
+ 
++## v42.0.0 (Superuser works as each staff role; side menu click fix; IPD transfer page fix)
++- Side menu: clicking an item in the collapsed menu opened the item above it (Register opened Home, Triage opened Register). The section headings grew by 28 px when the menu expanded under the pointer and pushed every item down. Headings now keep the same height in both states (the collapsed menu still shows a thin divider), so items never move. Affects every account.
++- Superuser: opening a page now switches the Superuser to the staff role that owns it (Register = Registration, Triage = Triage, OPD queue = OPD doctor, Lab = Laboratory, Billing = Cashier, Expenses = Accountant, Cash flow = Director, Administration pages = Admin, Home = Superuser). Pages that need a ward use the patient's ward, or the current ward, or Medicine. A role that already fits the page is kept. Every existing role check, menu and save rule then works exactly as for that staff member, so one person can take a patient through every step (register, triage, cashier, OPD, lab, pharmacy, ward) and approve their own requests. Each automatic switch is audited (WORK_CONTEXT_CHANGED, automatic: true). Background requests never switch the role, so a manual switch from the user menu stays until the next page is opened.
++- Fixed for the Superuser: the Triage queue and the OPD queue were refused (403).
++- IPD transfer page (/ipd-transfer): its script and stylesheet were never served (404), so the page did not work for any OPD doctor. Both files are now served.
++- Tests: 903/903 (new tests/v420-superuser-page-roles.test.mjs; tests/accessibility-quality-smoke.test.mjs expects 42.0.0). npm run check:khmer passes.
++
+ ## v41.9.0 (Superuser Multi-Role Launch & Registration/Triage Execution Fix)
+ - Fix Superuser workspace launch: Superuser now possesses full capabilities to launch and operate as all hospital staff roles directly from the interface, without bouncing or redirecting back to `/home`.
+ - Registration operations: When launching Registration (`/emr?view=register`), Superuser operates with full Registration authority: demographics entry, new/old PMRS2 case selection, saving records, and dispatching to triage or inpatient departments.
+diff --git a/package.json b/package.json
+index 3bd973d..227ae5a 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "borkeo-emr",
+-  "version": "41.9.0",
++  "version": "42.0.0",
+   "private": true,
+   "type": "module",
+   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",
+diff --git a/public/app-shell.css b/public/app-shell.css
+index 7c9281e..1519f01 100644
+--- a/public/app-shell.css
++++ b/public/app-shell.css
+@@ -927,26 +927,26 @@ body.sidebar-pinned .emr-sidebar.is-expanded {
+     width: 36px;
+   }
+ 
+-  /* Section headings become a thin divider */
++  /* v42.0: section headings keep their full height and only show a thin
++     divider, so the items do not move when the rail expands under the
++     pointer (a click aimed at one item used to land on the item above). */
+   .emr-sidebar:not(.is-expanded) .emr-sidebar-section-title {
+-    height: 1px;
+-    margin: 9px 12px;
+-    padding: 0;
+-    background: var(--emr-nav-border);
+-  }
+-
+-  .emr-sidebar:not(.is-expanded) .emr-sidebar-section:first-child .emr-sidebar-section-title {
+-    background: transparent;
+-    margin: 3px 12px;
++    position: relative;
++    color: transparent;
+   }
+ 
+-  .emr-sidebar:not(.is-expanded) .emr-sidebar-section-title span {
++  .emr-sidebar:not(.is-expanded) .emr-sidebar-section-title::after {
++    content: '';
+     position: absolute;
+-    width: 1px;
++    left: 12px;
++    right: 12px;
++    top: 50%;
+     height: 1px;
+-    overflow: hidden;
+-    clip: rect(0 0 0 0);
+-    white-space: nowrap;
++    background: var(--emr-nav-border);
++  }
++
++  .emr-sidebar:not(.is-expanded) .emr-sidebar-section:first-child .emr-sidebar-section-title::after {
++    display: none;
+   }
+ 
+   /* Counters stay visible on the icon */
+diff --git a/public/login.html b/public/login.html
+index 0ddd8ff..4661611 100644
+--- a/public/login.html
++++ b/public/login.html
+@@ -34,7 +34,7 @@
+         </div>
+         <div class="header-meta">
+           <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
+-          <span class="login-build-version" data-app-version data-language-exclude>v41.9</span>
++          <span class="login-build-version" data-app-version data-language-exclude>v42.0</span>
+         </div>
+       </header>
+ 
+@@ -108,7 +108,7 @@
+ 
+         <aside class="info-panel" aria-label="ព័ត៌មានប្រព័ន្ធ">
+           <div class="info-card accent">
+-            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v41.9</span></h3>
++            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v42.0</span></h3>
+             <p>គណនីសាកល្បងចូលបានដោយគ្មានពាក្យសម្ងាត់។ ប្រើតែទិន្នន័យសាកល្បងប៉ុណ្ណោះ។</p>
+           </div>
+           <div class="info-card">
+diff --git a/server/server.mjs b/server/server.mjs
+index b87ba8c..e535e35 100644
+--- a/server/server.mjs
++++ b/server/server.mjs
+@@ -1,10 +1,10 @@
+-import { ensureSuperuser } from './superuser.mjs';
++import { ensureSuperuser, superuserPageContext } from './superuser.mjs';
+ import {createHefLookup,HEF_LOOKUP_ROLES} from './hef-lookup.mjs';
+ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
+ import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
+ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
+ import { createDiagnosisSearch } from './icd10.mjs';
+-// Borkeo EMR v41.9 - Electronic Medical Record System
++// Borkeo EMR v42.0 - Electronic Medical Record System
+ import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
+ import {validateAddressHierarchy} from './gazetteer.mjs';
+ import {validateCambodianPhone} from './cambodia-phone.mjs';
+@@ -60,7 +60,7 @@ import { startBackupScheduler, checkDatabaseIntegrity } from './backup.mjs';
+ import {
+   ROLES, WARDS, buildIdentity, canAccessPatient, defaultContext, ensureAccessSchema, getUserAccess,
+   listUsers, roleCanPage, roleRequiresWard, roleWardAllowed, sessionRole, sessionWard, patientWorkWard,
+-  setSessionContext, setUserAccess, updateUserProfile, validContexts, wardInfo, readSessionContext,
++  setSessionContext, isSuperuser, setUserAccess, updateUserProfile, validContexts, wardInfo, readSessionContext,
+   listAllRoles, allRoleLabels, listAllWards, createCustomRole, createCustomWard,
+   IMAGING_SUBTYPES, IMAGING_GROUPS, IMAGING_SUBTYPE_DETAILS, getUserImagingSubtypes, setUserImagingSubtypes,
+ } from './access.mjs';
+@@ -112,6 +112,8 @@ const pharmacySettledCodes=new Set(['INSURANCE','NGO','PAID','NSSF','HEF_EQUITY'
+ 
+ const publicFiles = new Map([
+   ['/public/escape-html.js', ['escape-html.js', 'text/javascript; charset=utf-8']],
++  ['/public/ipd-transfer.js', ['ipd-transfer.js', 'text/javascript; charset=utf-8']],
++  ['/public/ipd-transfer.css', ['ipd-transfer.css', 'text/css; charset=utf-8']],
+   ['/public/nationalities.js', ['nationalities.js', 'text/javascript; charset=utf-8']],
+   ['/public/nationalities.css', ['nationalities.css', 'text/css; charset=utf-8']],
+   ['/public/new-text.js', ['new-text.js', 'text/javascript; charset=utf-8']],
+@@ -2060,6 +2062,19 @@ export function createEmrServer(configOverrides = {}) {
+ 
+       if (request.method === 'GET' && protectedPages.has(pathname)) {
+         if (!session) return redirect(response, '/login', { secure: config.cookieSecure });
++        // v42.0: the Superuser becomes the staff role that owns the page being
++        // opened (only for real page loads, not for background fetches).
++        if (isSuperuser(session) && request.headers['sec-fetch-dest'] !== 'empty') {
++          const next = superuserPageContext(database, session, pathname, url.searchParams);
++          if (next) {
++            const chosen = setSessionContext(database, session.tokenHash, session.user_id, next.role, next.wardCode);
++            Object.assign(session, { active_role: chosen.role, active_ward_code: chosen.wardCode || null, active_ward_name: chosen.wardName || null });
++            audit(database, request, 'WORK_CONTEXT_CHANGED', {
++              userId: session.user_id, subjectUsername: session.username,
++              details: { role: chosen.role, wardCode: chosen.wardCode, automatic: true, page: pathname },
++            });
++          }
++        }
+         const identity = buildIdentity(database, session);
+         if (identity.needsContext && pathname !== '/context') {
+           return redirect(response, '/context', { secure: config.cookieSecure });
+diff --git a/server/superuser.mjs b/server/superuser.mjs
+index 1285b35..4fdccc1 100644
+--- a/server/superuser.mjs
++++ b/server/superuser.mjs
+@@ -1,6 +1,6 @@
+ import crypto from 'node:crypto';
+ import { USER_ROLES, openDatabase } from './database.mjs';
+-import { WARDS, setUserAccess, IMAGING_SUBTYPES } from './access.mjs';
++import { WARDS, setUserAccess, IMAGING_SUBTYPES, getUserAccess, roleRequiresWard, roleWardAllowed, patientWorkWard, sessionRole, sessionWard } from './access.mjs';
+ import { setESignature } from './esign.mjs';
+ 
+ export const SUPERUSER_USERNAME = 'Superuser';
+@@ -61,3 +61,102 @@ export function ensureSuperuser(database, now = Date.now()) {
+ 
+   return userId;
+ }
++
++// v42.0: the Superuser works as the staff role that owns each page. When a
++// page is opened and the current role does not fit it, the work context is
++// switched to the page's role (and ward) before the page is served, so all
++// existing role checks, menus and save rules work exactly as for that staff
++// member. Each rule is [role, ward]; ward is a ward code, '*' (any ward),
++// '!code' (any ward except code) or empty for roles without a ward. The
++// first rule that the account can use is the default.
++const MANAGEMENT_RULES = [['ADMIN'], ['DIRECTOR'], ['VICE_DIRECTOR']];
++const ADMIN_RULES = [['ADMIN']];
++const PAGE_RULES = new Map([
++  ['/home', [['SUPERUSER']]],
++  ['/triage', [['TRIAGE']]],
++  ['/opd-queue', [['DOCTOR', 'opd']]],
++  ['/ipd-transfer', [['DOCTOR', 'opd']]],
++  ['/opd-paraclinic-nurse', [['NURSE', 'opd']]],
++  ['/pmrs-import', [['DOCTOR', '*']]],
++  ['/departments', [['DOCTOR', '!opd'], ['NURSE', '!opd'], ['MIDWIFE', 'obstetric'], ['CHIEF_WARD', '*'], ['WARD_HEAD', '*']]],
++  ['/ward-medicines', [['NURSE', '!opd'], ['MIDWIFE', 'obstetric'], ['DOCTOR', '!opd'], ['CHIEF_WARD', '*'], ['WARD_HEAD', '*'], ['PHARMACY'], ['DIRECTOR']]],
++  ['/lab', [['LAB']]],
++  ['/lab/materials', [['LAB']]],
++  ['/imaging', [['IMAGING']]],
++  ['/imaging/films', [['IMAGING']]],
++  ['/pharmacy/opd', [['PHARMACY']]],
++  ['/pharmacy/display', [['PHARMACY']]],
++  ['/pharmacy/medicines', [['PHARMACY']]],
++  ['/billing', [['CLERK'], ['ACCOUNTANT']]],
++  ['/expenses', [['ACCOUNTANT']]],
++  ['/finance', [['DIRECTOR'], ['ADMIN'], ['VICE_DIRECTOR']]],
++  ['/requests', MANAGEMENT_RULES],
++  ['/record-viewer', MANAGEMENT_RULES],
++  ['/styleguide', ADMIN_RULES],
++]);
++
++function emrRules(database, params) {
++  const view = String(params.get('view') || '').toLowerCase();
++  if (view === 'register') return [['REGISTRATION']];
++  if (view === 'triage') return [['TRIAGE']];
++  if (view === 'opd' || view === 'opd-paraclinic') return [['DOCTOR', 'opd']];
++  const key = params.get('patient') || params.get('patientKey') || '';
++  const row = key ? database.findPatient(key) : null;
++  const ward = row ? String(patientWorkWard(row) || '').toLowerCase() : '';
++  // Without a view the server already routes each role to its own part of
++  // the record, so any role that can open it is kept.
++  const keep = view || !row ? [] : [['REGISTRATION'], ['TRIAGE'], ['SUPERUSER'], ...MANAGEMENT_RULES];
++  if (row && ward === 'opd') return [['DOCTOR', 'opd'], ['NURSE', 'opd'], ...keep];
++  const place = ward || '!opd';
++  const nursing = ward === 'obstetric' ? [['MIDWIFE', place]] : [['NURSE', place], ['MIDWIFE', place]];
++  if (view === 'nursing') return nursing;
++  return [['DOCTOR', place], ['CHIEF_WARD', place], ...nursing, ...keep];
++}
++
++function pageRules(database, pathname, params) {
++  if (pathname === '/emr') return emrRules(database, params);
++  if (pathname === '/patient-list') return params.get('view') === 'appointments' ? [['REGISTRATION']] : null;
++  if (pathname === '/queue-display') {
++    return String(params.get('service') || '').toUpperCase() === 'OPD' ? [['DOCTOR', 'opd']] : [['TRIAGE']];
++  }
++  if (pathname.startsWith('/admin/')) return ADMIN_RULES;
++  return PAGE_RULES.get(pathname) || null;
++}
++
++function wardFits(rule, ward) {
++  if (!rule) return !ward;
++  if (rule === '*') return Boolean(ward);
++  if (rule.startsWith('!')) return Boolean(ward) && ward !== rule.slice(1);
++  return ward === rule;
++}
++
++function usable(access, role, ward, database) {
++  if (!access.roles.includes(role)) return false;
++  if (!roleRequiresWard(role)) return !ward;
++  return access.wards.includes(ward) && roleWardAllowed(role, ward, database);
++}
++
++function defaultWard(access, role, rule, currentWard, database) {
++  if (!roleRequiresWard(role)) return '';
++  const fits = ward => wardFits(rule, ward) && usable(access, role, ward, database);
++  if (fits(currentWard)) return currentWard;
++  if (fits('medicine')) return 'medicine';
++  return access.wards.find(fits) || null;
++}
++
++// Returns the { role, wardCode } to switch to, or null when the current
++// context already fits the page (or the page has no owner role).
++export function superuserPageContext(database, session, pathname, params) {
++  const rules = pageRules(database, pathname, params);
++  if (!rules) return null;
++  const access = getUserAccess(database, session.user_id);
++  const role = sessionRole(session);
++  const ward = sessionWard(session);
++  if (rules.some(([ruleRole, rule]) => ruleRole === role && wardFits(rule, ward) && usable(access, role, ward, database))) return null;
++  for (const [ruleRole, rule] of rules) {
++    if (!access.roles.includes(ruleRole)) continue;
++    const wardCode = defaultWard(access, ruleRole, rule, ward, database);
++    if (wardCode !== null) return { role: ruleRole, wardCode };
++  }
++  return null;
++}
+diff --git a/tests/accessibility-quality-smoke.test.mjs b/tests/accessibility-quality-smoke.test.mjs
+index 6c6e21c..a6e2aca 100644
+--- a/tests/accessibility-quality-smoke.test.mjs
++++ b/tests/accessibility-quality-smoke.test.mjs
+@@ -17,11 +17,11 @@ test('Phase 8: Version consistency across package.json, server.mjs, and login.ht
+   const serverCode = read('server/server.mjs');
+   const loginHtml = read('public/login.html');
+ 
+-  assert.equal(pkg.version, '41.9.0', 'package.json version must be 41.9.0');
++  assert.equal(pkg.version, '42.0.0', 'package.json version must be 42.0.0');
+   assert.match(serverCode, /Borkeo EMR v(?:39\.[6-9]|4[0-9]\.[0-9])/, 'server.mjs must declare v39.6 or above');
+   assert.match(serverCode, /design-system\.css\?v=3970/, 'server.mjs must inject design-system.css with v=3970');
+   assert.match(serverCode, /worklists-feedback\.css\?v=3970/, 'server.mjs must inject worklists-feedback.css with v=3970');
+-  assert.match(loginHtml, /data-app-version[^>]*>v41\.9<\/span>/, 'login.html must display v41.9');
++  assert.match(loginHtml, /data-app-version[^>]*>v42\.0<\/span>/, 'login.html must display v42.0');
+ });
+ 
+ test('Phase 8: Complete presentation-layer suite of assets is present and registered', () => {
+diff --git a/tests/v420-superuser-page-roles.test.mjs b/tests/v420-superuser-page-roles.test.mjs
+new file mode 100644
+index 0000000..4f1934e
+--- /dev/null
++++ b/tests/v420-superuser-page-roles.test.mjs
+@@ -0,0 +1,98 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import { createEmrServer } from '../server/server.mjs';
++import { openDatabase } from '../server/database.mjs';
++import { ensureAccessSchema } from '../server/access.mjs';
++import { ensureSuperuser, superuserPageContext } from '../server/superuser.mjs';
++
++const read = file => fs.readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
++
++test('v42.0 Superuser page roles: each page names the staff role that owns it', () => {
++  const database = openDatabase(':memory:');
++  ensureAccessSchema(database);
++  const userId = ensureSuperuser(database);
++  const at = (pathname, query = '', role = 'SUPERUSER', ward = '') =>
++    superuserPageContext(database, { user_id: userId, active_role: role, active_ward_code: ward }, pathname, new URLSearchParams(query));
++
++  assert.deepEqual(at('/emr', 'view=register'), { role: 'REGISTRATION', wardCode: '' });
++  assert.deepEqual(at('/triage'), { role: 'TRIAGE', wardCode: '' });
++  assert.deepEqual(at('/opd-queue'), { role: 'DOCTOR', wardCode: 'opd' });
++  assert.deepEqual(at('/opd-paraclinic-nurse'), { role: 'NURSE', wardCode: 'opd' });
++  assert.deepEqual(at('/emr'), { role: 'DOCTOR', wardCode: 'medicine' });
++  assert.deepEqual(at('/lab'), { role: 'LAB', wardCode: '' });
++  assert.deepEqual(at('/imaging'), { role: 'IMAGING', wardCode: '' });
++  assert.deepEqual(at('/pharmacy/opd'), { role: 'PHARMACY', wardCode: '' });
++  assert.deepEqual(at('/billing'), { role: 'CLERK', wardCode: '' });
++  assert.deepEqual(at('/expenses'), { role: 'ACCOUNTANT', wardCode: '' });
++  assert.deepEqual(at('/finance'), { role: 'DIRECTOR', wardCode: '' });
++  assert.deepEqual(at('/admin/users', '', 'DIRECTOR'), { role: 'ADMIN', wardCode: '' });
++  assert.deepEqual(at('/home', '', 'TRIAGE'), { role: 'SUPERUSER', wardCode: '' });
++
++  // A context that already fits the page is kept.
++  assert.equal(at('/triage', '', 'TRIAGE'), null);
++  assert.equal(at('/departments', '', 'NURSE', 'surgery'), null);
++  assert.equal(at('/billing', '', 'ACCOUNTANT'), null);
++  assert.equal(at('/patient-list', '', 'LAB'), null);
++  assert.deepEqual(at('/departments', '', 'DOCTOR', 'opd'), { role: 'DOCTOR', wardCode: 'medicine' });
++  database.close();
++});
++
++test('v42.0 Superuser becomes the page role on page loads, not on background requests', async () => {
++  const port = 32420;
++  const baseUrl = `http://127.0.0.1:${port}`;
++  const app = createEmrServer({ demoMode: false, host: '127.0.0.1', port, appOrigin: baseUrl, databasePath: ':memory:', autoDatabase: false, nodeEnv: 'test' });
++  await new Promise((resolve, reject) => { app.server.once('error', reject); app.server.listen(port, '127.0.0.1', resolve); });
++  try {
++    const login = await fetch(`${baseUrl}/api/auth/login`, {
++      method: 'POST',
++      headers: { 'Content-Type': 'application/json', Origin: baseUrl },
++      body: JSON.stringify({ username: 'Superuser', password: '1234' }),
++    });
++    assert.equal(login.status, 200);
++    const cookie = login.headers.get('set-cookie').split(';', 1)[0];
++    const role = async () => {
++      const me = await (await fetch(`${baseUrl}/api/auth/me`, { headers: { Cookie: cookie } })).json();
++      return me.user.activeRole + (me.user.activeWard ? `@${me.user.activeWard.code}` : '');
++    };
++    const open = async (pathname, dest = 'document') => {
++      const response = await fetch(`${baseUrl}${pathname}`, { headers: { Cookie: cookie, 'Sec-Fetch-Dest': dest }, redirect: 'manual' });
++      if (dest === 'document') assert.equal(response.status, 200, pathname);
++      return response.status;
++    };
++
++    await open('/emr?view=register');
++    assert.equal(await role(), 'REGISTRATION');
++    await open('/triage');
++    assert.equal(await role(), 'TRIAGE');
++    const queue = await fetch(`${baseUrl}/api/triage/queue`, { headers: { Cookie: cookie } });
++    assert.equal(queue.status, 200, 'the triage queue loads for the Superuser');
++    await open('/opd-queue');
++    assert.equal(await role(), 'DOCTOR@opd');
++    await open('/billing');
++    assert.equal(await role(), 'CLERK');
++
++    // The menu checks the current page with fetch() after a manual switch;
++    // that background request must not undo the chosen role.
++    assert.equal(await open('/lab', 'empty'), 403);
++    assert.equal(await role(), 'CLERK');
++
++    await open('/home');
++    assert.equal(await role(), 'SUPERUSER');
++
++    const assets = await fetch(`${baseUrl}/public/ipd-transfer.js`, { headers: { Cookie: cookie } });
++    assert.equal(assets.status, 200, 'the IPD transfer page script is served');
++  } finally {
++    await new Promise(resolve => app.server.close(resolve));
++    app.database.close();
++  }
++});
++
++test('v42.0 side menu items do not move when the collapsed rail expands', () => {
++  const css = read('public/app-shell.css');
++  const rail = css.slice(css.indexOf('/* Collapsed rail'), css.indexOf('/* Tooltip for the collapsed rail */'));
++  const title = rail.match(/\.emr-sidebar:not\(\.is-expanded\) \.emr-sidebar-section-title \{([^}]*)\}/);
++  assert.ok(title, 'collapsed section heading rule exists');
++  assert.doesNotMatch(title[1], /height|margin|padding/, 'collapsed headings keep the expanded height');
++  assert.match(rail, /\.emr-sidebar-section-title::after/, 'collapsed headings draw a divider line');
++});
+================================================================================

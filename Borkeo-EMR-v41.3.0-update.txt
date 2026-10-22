@@ -1,0 +1,53 @@
+BORKEO EMR v41.3.0 - COMBINED UPDATE NOTE
+Medical record restructure, PHASE 7: consents, surgery, anaesthesia and
+transfusion forms.
+Base: v41.2.0 (Phase 6). Clinical, pharmacy, laboratory and financial logic
+was not changed. Patient records are not touched; two new tables are added.
+The existing treatment agreement (kech sanya) is unchanged.
+
+WHAT CHANGED
+1. A new button "Consents, surgery and transfusion" at the top of the OPD,
+   IPD and nursing records. It also works when the record is opened from a
+   ward bed. It opens a window with nine forms:
+   - Procedure consent, Anaesthesia consent, Blood transfusion consent,
+     Refusal of treatment form
+   - Pre-operative checklist (WHO list: Sign in, Time out, Sign out)
+   - Operative note, Anaesthesia record, Post-operative orders
+   - Blood transfusion record
+2. One form per date (your rule): the same date opens the same form; a new
+   date makes a new form. Every change is kept in the history.
+3. Signatures:
+   - Staff press "Sign with my e-signature" (doctor, surgeon,
+     anaesthetist, nurse, second checker).
+   - Patient or family: sign on the screen, or take a photo of the ink
+     thumbprint, or sign on the printed paper.
+   - The "Fingerprint scanner" button is ready but grey until you buy a
+     scanner. Show docs\fingerprint-scanner.md to the supplier.
+4. Every form has a PRINT button: letterhead, patient details, the form,
+   the consent text and the signature lines.
+5. Your Khmer consent texts, checklist and labels are used exactly as you
+   wrote them in docs\phase7-consent-drafts.md.
+6. Version 41.3.0.
+
+NEW TEXT TO TRANSLATE
+  19 small texts (buttons and messages) still in English with a yellow box,
+  in docs\translations-needed.csv (for example: Sign on screen, Thumbprint
+  photo, Close, Doctor).
+
+PLEASE CONFIRM (docs\clinical-review.md)
+  The WHO checklist items and the ASA class options.
+
+STILL OPEN
+  The midwife delivery form timing problem (found in Phase 5).
+
+TESTS
+  npm test -> 881 passed, 0 failed.  npm run check:khmer -> passed.
+  Tested in the browser with a fake surgery patient: consent with on-screen
+  signature and doctor e-signature, anaesthesia consent with thumbprint
+  photo, checklist, a second date, print, nurse transfusion record. All
+  record field positions are unchanged.
+
+INSTALL
+  Step 1. Close the EMR window.
+  Step 2. Double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser press Ctrl+F5 once on an EMR page.

@@ -34,11 +34,153 @@
     gynecology: 'ផ្នែករោគស្ត្រី',
     emergency: 'ផ្នែកសង្គ្រោះបន្ទាន់',
     tb: 'ផ្នែកជំងឺរបេង',
+    infectious: 'ផ្នែកជំងឺឆ្លង',
     dental: 'ផ្នែកធ្មេញ',
     mental: 'ផ្នែកសុខភាពផ្លូវចិត្ត'
   };
 
   let activePatient = null;
+
+  // ---- v41.0 clinical summary: structured allergies, active problem list and
+  // resuscitation status (/api/clinical-summary). The EMR page editors
+  // (public/clinical-summary.js) use the same state through window.EmrClinicalSummary.
+  const RECORD_DRUG_ALLERGY_CHECK = 'scope:medical:auto:82';
+  const RECORD_DRUG_ALLERGY_TEXT = 'scope:medical:auto:83';
+  // The banner's original "no allergy" words (kept as written), plus nil / NKA / NKDA.
+  function recordTextIsAllergy(allergyText) {
+    const hasAllergy = Boolean(allergyText && !/^(គ្មាន|no|none|neg|negative|-)$/i.test(allergyText.trim()));
+    return hasAllergy && !/^(nil|nka|nkda)$/i.test(allergyText.trim());
+  }
+  const english = () => window.getBorkeoLanguage?.() === 'en' || window.currentLang === 'english';
+  // Approved Khmer (docs/approved-new-khmer.json) or a highlighted English
+  // placeholder (public/new-text.js) for text that has no approved Khmer yet.
+  function label(key, en, kh) {
+    if (english()) return escapeHtml(en);
+    if (kh) return escapeHtml(kh);
+    return window.newTextHtml ? window.newTextHtml(key, en) : escapeHtml(en);
+  }
+  function plainLabel(key, en, kh) {
+    if (english()) return en;
+    return kh || (window.newText ? window.newText(key, en) : en);
+  }
+  const OPTION_LABELS = {
+    allergyType: { drug: 'Drug', food: 'Food', other: 'Other' },
+    severity: { mild: 'Mild', moderate: 'Moderate', severe: 'Severe', 'life-threatening': 'Life-threatening', unknown: 'Unknown' },
+    resuscitation: { full: 'Full resuscitation', dnr: 'Do not resuscitate (DNR)' }
+  };
+  const optionLabel = (group, code) => label(`clinical.${group}.${code}`, OPTION_LABELS[group]?.[code] || code);
+  const plainOptionLabel = (group, code) => plainLabel(`clinical.${group}.${code}`, OPTION_LABELS[group]?.[code] || code);
+
+  const summaryState = { patientKey: '', summary: null, loading: null };
+
+  function allergyState(patient) {
+    const data = patient?.data || {};
+    const freeText = String(data[RECORD_DRUG_ALLERGY_TEXT] || '').trim();
+    const ticked = data[RECORD_DRUG_ALLERGY_CHECK] === true;
+    const known = summaryState.patientKey && summaryState.patientKey === patient?.patientKey ? summaryState.summary : null;
+    const items = known?.allergies || patient?.allergyAlert?.items || [];
+    const freeTextIsNone = Boolean(freeText) && !recordTextIsAllergy(freeText);
+    const state = items.length || (freeText && !freeTextIsNone) || (ticked && !freeTextIsNone) ? 'allergy'
+      : freeTextIsNone ? 'none' : 'not-recorded';
+    return { state, items, freeText: freeTextIsNone ? '' : freeText, ticked };
+  }
+
+  // Same sources as the summary card: latest daily note, else admission or OPD prescription.
+  function currentMedications(data) {
+    try {
+      const records = JSON.parse(data['system:dailyMonitoringRecords'] || '[]');
+      const latest = Array.isArray(records) ? records[records.length - 1] : null;
+      if (Array.isArray(latest?.medications) && latest.medications.length) return latest.medications;
+      for (const key of ['system:initialIpdMedications', 'system:opdMedications']) {
+        const list = JSON.parse(data[key] || '[]');
+        if (Array.isArray(list) && list.length) return list;
+      }
+    } catch {}
+    return [];
+  }
+
+  // Risk flags shown only from what is already recorded (no clinical rules invented):
+  // a severe or life-threatening allergy, and a DNR status. See docs/clinical-review.md.
+  function riskFlags(summary) {
+    const flags = [];
+    (summary?.allergies || []).filter(a => a.severity === 'severe' || a.severity === 'life-threatening')
+      .forEach(a => flags.push(`${a.substance} (${plainOptionLabel('severity', a.severity)})`));
+    if (summary?.resuscitation?.status === 'dnr') flags.push(plainOptionLabel('resuscitation', 'dnr'));
+    return flags;
+  }
+
+  const currentRole = () => String(window.emrSession?.user?.activeRole || window.userRole || '').toUpperCase();
+  const canWriteSummary = () => currentRole() === 'DOCTOR';
+
+  async function loadClinicalSummary(patientKey) {
+    if (!patientKey) return null;
+    const request = fetch(`/api/clinical-summary?patientKey=${encodeURIComponent(patientKey)}`, { credentials: 'same-origin', cache: 'no-store' })
+      .then(response => (response.ok ? response.json() : null)).catch(() => null);
+    summaryState.loading = request;
+    const summary = await request;
+    if (summaryState.loading !== request) return summaryState.summary;
+    summaryState.patientKey = patientKey;
+    summaryState.summary = summary;
+    summaryChanged();
+    return summary;
+  }
+
+  // POST /api/clinical-summary/<path>; returns { ok, error }.
+  async function postClinicalSummary(path, body) {
+    const patientKey = summaryState.patientKey || activePatient?.patientKey;
+    try {
+      const response = await fetch(`/api/clinical-summary/${path}`, {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.emrSession?.csrfToken || '' },
+        body: JSON.stringify({ ...body, patientKey })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) return { ok: false, error: result.error || String(response.status) };
+      summaryState.patientKey = patientKey;
+      summaryState.summary = result;
+      summaryChanged();
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: error.message };
+    }
+  }
+
+  function summaryChanged() {
+    if (activePatient) renderPatientBanner(parsePatientData(activePatient));
+    document.dispatchEvent(new CustomEvent('emr:clinical-summary', { detail: { patientKey: summaryState.patientKey, summary: summaryState.summary } }));
+  }
+
+  // v41.7: record view log - the page reports printing (and exports) of the open
+  // patient record (/api/record-access-log). Opening is logged by the server.
+  let lastLogged = { key: '', at: 0 };
+  function currentPatientKey() {
+    const params = new URLSearchParams(window.location.search);
+    return activePatient?.patientKey || window.getLoadedEmrPatient?.()?.patientKey || params.get('patientKey') || params.get('patient') || '';
+  }
+  window.logRecordAccess = function logRecordAccess(action, detail = '') {
+    const patientKey = currentPatientKey();
+    if (!patientKey || !['print', 'export'].includes(action)) return;
+    const key = `${action}|${patientKey}|${detail}`;
+    if (lastLogged.key === key && Date.now() - lastLogged.at < 3000) return; // one click, one entry
+    lastLogged = { key, at: Date.now() };
+    fetch('/api/record-access-log', {
+      method: 'POST', credentials: 'same-origin', keepalive: true,
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': window.emrSession?.csrfToken || '' },
+      body: JSON.stringify({ patientKey, action, detail: String(detail || document.title || '').slice(0, 200) }),
+    }).catch(() => {});
+  };
+  // Printing with the browser's own print command (Ctrl P) is logged too.
+  window.addEventListener('beforeprint', () => window.logRecordAccess('print', document.title));
+
+  window.EmrClinicalSummary = {
+    get: () => (summaryState.summary ? { patientKey: summaryState.patientKey, summary: summaryState.summary } : null),
+    patient: () => activePatient,
+    refresh: () => loadClinicalSummary(activePatient?.patientKey),
+    post: postClinicalSummary,
+    canWrite: canWriteSummary,
+    allergyState: () => allergyState(activePatient),
+    label, plainLabel, optionLabel, plainOptionLabel, english, escapeHtml
+  };
 
   // Extract patient details from loaded object or existing DOM
   function parsePatientData(patient) {
@@ -63,11 +205,12 @@
     const paymentType = patient.paymentType || patient.paymentStatus?.type || data['system:paymentType'] || '';
     const payer = PAYER_LABELS[paymentType] || (paymentType ? { text: paymentType, class: 'payer-direct' } : null);
 
-    const allergyText = data['scope:medical:id:emr_pmrs_ipd_allergy'] ||
-      data['scope:medical:id:emr_pmrs_opd_allergy'] ||
-      patient.allergy || '';
-
-    const hasAllergy = Boolean(allergyText && !/^(គ្មាន|no|none|neg|negative|-)$/i.test(allergyText.trim()));
+    // v41.0: the drug allergy is read from the record's own fields (the old
+    // emr_pmrs_*_allergy keys never existed, so the banner always said "no
+    // allergy") and from the structured allergy record (/api/clinical-summary).
+    const allergy = allergyState(patient);
+    const allergyText = [allergy.items.map(item => item.substance).join(', '), allergy.freeText].filter(Boolean).join(' · ');
+    const hasAllergy = allergy.state === 'allergy';
 
     const serviceMode = patient.serviceMode || (wardCode === 'opd' ? 'opd' : 'ipd');
     const isDischarged = patient.admissionStatus === 'discharged' || Boolean(patient.dischargeDate);
@@ -84,6 +227,7 @@
       bedId: bedId ? `គ្រែ ${bedId}` : (serviceMode === 'opd' ? 'សេវាក្រៅ' : 'មិនទាន់មានគ្រែ'),
       payer,
       hasAllergy,
+      allergyState: allergy.state,
       allergyText: hasAllergy ? allergyText : '',
       serviceMode,
       isDischarged,
@@ -119,9 +263,14 @@
       ? `<img src="${escapeHtml(info.photo)}" alt="Patient Photo" class="emr-banner-avatar-img">`
       : `<div class="emr-banner-avatar-fallback"><svg><use href="/public/icons.svg#icon-user"></use></svg></div>`;
 
-    const allergyHtml = info.hasAllergy
-      ? `<span class="emr-banner-badge allergy-alert" title="${escapeHtml(info.allergyText)}"><svg><use href="/public/icons.svg#icon-alert-triangle"></use></svg> អាលែកហ្ស៊ី៖ ${escapeHtml(info.allergyText)}</span>`
-      : `<span class="emr-banner-badge allergy-none"><svg><use href="/public/icons.svg#icon-check"></use></svg> គ្មានប្រវត្តិអាលែកហ្ស៊ី</span>`;
+    // v41.0: three states. "Not recorded" is no longer shown as "no allergy".
+    const tickedOnly = info.hasAllergy && !info.allergyText;
+    const allergyBadge = info.hasAllergy
+      ? `<span class="emr-banner-badge allergy-alert" title="${escapeHtml(info.allergyText)}"><svg><use href="/public/icons.svg#icon-alert-triangle"></use></svg> អាលែកហ្ស៊ី៖ ${tickedOnly ? label('banner.allergy.tickedOnly', 'Drug allergy ticked in the record') : escapeHtml(info.allergyText)}</span>`
+      : info.allergyState === 'none'
+        ? `<span class="emr-banner-badge allergy-none"><svg><use href="/public/icons.svg#icon-check"></use></svg> គ្មានប្រវត្តិអាលែកហ្ស៊ី</span>`
+        : `<span class="emr-banner-badge allergy-unknown"><svg><use href="/public/icons.svg#icon-alert-triangle"></use></svg> ${label('banner.allergy.notRecorded', 'Allergy not recorded')}</span>`;
+    const allergyHtml = `<button type="button" class="emr-banner-badge-button" data-banner-details-toggle aria-expanded="${bannerDetailsOpen ? 'true' : 'false'}" aria-controls="emr-banner-summary-panel" aria-label="${escapeHtml(plainLabel('', 'Allergy alert', 'ប្រតិកម្មអាលែកហ្ស៊ី'))}">${allergyBadge}</button>`;
 
     const payerHtml = info.payer
       ? `<span class="emr-banner-badge ${info.payer.class}">${escapeHtml(info.payer.text)}</span>`
@@ -163,7 +312,118 @@
         ${payerHtml}
         ${statusBadge}
       </div>
+      ${clinicalRowHtml(info)}
     `;
+    banner.querySelectorAll('[data-banner-details-toggle]').forEach(button => button.addEventListener('click', toggleBannerDetails));
+    renderBannerDetails(banner, info);
+    // The chart tabs stick just under the banner, whatever its height (v41.0).
+    document.documentElement.style.setProperty('--emr-banner-live-height', `${Math.round(banner.getBoundingClientRect().height) || 76}px`);
+  }
+
+  // v41.6: Early Warning Score from public/early-warning.js (medical record page only).
+  let earlyWarning = null;
+  document.addEventListener('emr:early-warning', (event) => {
+    earlyWarning = event.detail || null;
+    if (activePatient) renderPatientBanner(parsePatientData(activePatient));
+  });
+
+  // ---- v41.0 clinical row (resuscitation status, risk flags, active problems,
+  // current medications) and the details panel opened from the banner.
+  let bannerDetailsOpen = false;
+
+  function summaryFor(info) {
+    const key = info?.raw?.patientKey;
+    return key && summaryState.patientKey === key ? summaryState.summary : null;
+  }
+
+  function clinicalRowHtml(info) {
+    const summary = summaryFor(info);
+    const dash = '—';
+    const resus = summary?.resuscitation?.status;
+    const flags = riskFlags(summary);
+    const problems = (summary?.problems || []).filter(p => p.status === 'active');
+    const meds = currentMedications(info.raw?.data || {});
+    const item = (cls, title, value, extra = '') => `<div class="emr-banner-clinical-item ${cls}"${extra}>
+        <span class="emr-banner-field-label">${title}</span>
+        <span class="emr-banner-field-value">${value}</span>
+      </div>`;
+    return `<div class="emr-banner-clinical" aria-label="${escapeHtml(plainLabel('', 'Patient Summary Banner', 'ផ្ទាំងសង្ខេបព័ត៌មានអ្នកជំងឺ'))}">
+      ${item(resus === 'dnr' ? 'is-dnr' : '', label('', 'Resuscitation status', 'ស្ថានភាពការសង្គ្រោះជីវិត'),
+        resus ? optionLabel('resuscitation', resus) : label('banner.notRecorded', 'Not recorded'), ' data-banner-resuscitation')}
+      ${item(flags.length ? 'has-flags' : '', label('', 'Risk flags', 'សញ្ញាហានិភ័យ'), flags.length ? escapeHtml(flags.join(' · ')) : dash, ' data-banner-risk-flags')}
+      ${earlyWarning ? item(`ews-${earlyWarning.level}`, label('', 'Early Warning Score', 'ពិន្ទុវាយតម្លៃកម្រិតសង្គ្រោះបន្ទាន់'), escapeHtml(earlyWarning.text), ' data-banner-ews') : ''}
+      ${item('', label('', 'Active problem list', 'បញ្ជីបញ្ហាសុខភាពកំពុងជួបប្រទះ'),
+        problems.length ? escapeHtml(problems.map(p => (p.icd10 ? `${p.problem} (${p.icd10})` : p.problem)).join(' · ')) : dash, ' data-banner-problems')}
+      ${item('', label('', 'Current medications', 'ឱសថដែលកំពុងប្រើ'),
+        meds.length ? `${meds.length} · ${escapeHtml(meds.map(m => m.name).filter(Boolean).join(', '))}` : dash, ' data-banner-medications')}
+      <button type="button" class="emr-banner-details-button" data-banner-details-toggle aria-expanded="${bannerDetailsOpen ? 'true' : 'false'}" aria-controls="emr-banner-summary-panel" aria-label="${escapeHtml(plainLabel('', 'Patient Summary Banner', 'ផ្ទាំងសង្ខេបព័ត៌មានអ្នកជំងឺ'))}">
+        <svg class="emr-banner-details-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"></path></svg>
+      </button>
+    </div>`;
+  }
+
+  function toggleBannerDetails() {
+    bannerDetailsOpen = !bannerDetailsOpen;
+    if (activePatient) renderPatientBanner(parsePatientData(activePatient));
+    if (bannerDetailsOpen) document.getElementById('emr-banner-summary-panel')?.focus({ preventScroll: true });
+  }
+
+  function renderBannerDetails(banner, info) {
+    const old = banner.querySelector('#emr-banner-summary-panel');
+    if (!bannerDetailsOpen) { old?.remove(); return; }
+    const summary = summaryFor(info);
+    const allergy = allergyState(info.raw);
+    const problems = summary?.problems || [];
+    const meds = currentMedications(info.raw?.data || {});
+    const empty = `<p class="emr-banner-panel-empty">—</p>`;
+    const date = value => (value ? escapeHtml(value) : '—');
+    const allergyRows = allergy.items.map(a => `<tr>
+        <td>${optionLabel('allergyType', a.allergyType)}</td><td><strong>${escapeHtml(a.substance)}</strong></td><td>${escapeHtml(a.reaction || '—')}</td>
+        <td>${a.severity ? optionLabel('severity', a.severity) : '—'}</td><td>${date(a.notedOn)}</td><td>${escapeHtml(a.recordedBy || '—')}</td></tr>`).join('');
+    const panel = document.createElement('div');
+    panel.id = 'emr-banner-summary-panel';
+    panel.className = 'emr-banner-summary-panel';
+    panel.tabIndex = -1;
+    panel.innerHTML = `
+      <section>
+        <h3>${label('', 'Structured allergy record', 'កំណត់ត្រាប្រតិកម្មអាលែកហ្ស៊ី')}</h3>
+        ${allergyRows ? `<div class="emr-banner-table-wrap"><table class="emr-banner-table">
+          <thead><tr><th>${label('clinical.allergy.type', 'Type')}</th><th>${label('', 'Substance', 'សារធាតុ')}</th><th>${label('', 'Reaction', 'ប្រតិកម្ម')}</th>
+          <th>${label('', 'Severity', 'កម្រិតធ្ងន់ធ្ងរ')}</th><th>${label('', 'Date', 'កាលបរិច្ឆេទ')}</th><th>${label('', 'Recorded by', 'អ្នកកត់ត្រា')}</th></tr></thead>
+          <tbody>${allergyRows}</tbody></table></div>` : ''}
+        ${allergy.freeText || allergy.ticked ? `<p class="emr-banner-record-text"><span>${label('clinical.allergy.recordText', 'Drug allergy written in the medical record')}</span> ${allergy.freeText ? escapeHtml(allergy.freeText) : label('banner.allergy.tickedOnly', 'Drug allergy ticked in the record')}</p>` : ''}
+        ${!allergyRows && !allergy.freeText && !allergy.ticked ? `<p class="emr-banner-panel-empty">${allergy.state === 'none' ? 'គ្មានប្រវត្តិអាលែកហ្ស៊ី' : label('banner.allergy.notRecorded', 'Allergy not recorded')}</p>` : ''}
+      </section>
+      <section>
+        <h3>${label('', 'Active problem list', 'បញ្ជីបញ្ហាសុខភាពកំពុងជួបប្រទះ')}</h3>
+        ${problems.filter(p => p.status === 'active').length ? `<ul>${problems.filter(p => p.status === 'active').map(p => `<li><strong>${escapeHtml(p.problem)}</strong>${p.icd10 ? ` <span class="emr-banner-code">${escapeHtml(p.icd10)}</span>` : ''}${p.notedOn ? ` · ${escapeHtml(p.notedOn)}` : ''}</li>`).join('')}</ul>` : empty}
+      </section>
+      <section>
+        <h3>${label('', 'Current medications', 'ឱសថដែលកំពុងប្រើ')}</h3>
+        ${meds.length ? `<ul>${meds.map(m => `<li><strong>${escapeHtml(m.name || '')}</strong> ${escapeHtml([m.doseAmount, m.unit].filter(Boolean).join(' '))}</li>`).join('')}</ul>` : empty}
+      </section>
+      <section data-banner-resuscitation-section>
+        <h3>${label('', 'Resuscitation status', 'ស្ថានភាពការសង្គ្រោះជីវិត')}</h3>
+        <p>${summary?.resuscitation ? `<strong>${optionLabel('resuscitation', summary.resuscitation.status)}</strong> · ${escapeHtml(summary.resuscitation.recordedBy || '')} · ${escapeHtml(new Date(summary.resuscitation.recordedAt).toLocaleString())}` : label('banner.notRecorded', 'Not recorded')}</p>
+        ${summary && canWriteSummary() ? `<div class="emr-banner-resus-form">
+          <select data-emr-transient data-banner-resus-select aria-label="${escapeHtml(plainLabel('', 'Resuscitation status', 'ស្ថានភាពការសង្គ្រោះជីវិត'))}">
+            ${(summary.options?.resuscitationStatuses || []).map(code => `<option value="${escapeHtml(code)}"${summary.resuscitation?.status === code ? ' selected' : ''}>${escapeHtml(plainOptionLabel('resuscitation', code))}</option>`).join('')}
+          </select>
+          <button type="button" class="emr-banner-small-button" data-banner-resus-save>${label('clinical.save', 'Save')}</button>
+          <span class="emr-banner-form-message" data-banner-resus-message role="status"></span>
+        </div>` : ''}
+      </section>`;
+    if (old) old.replaceWith(panel); else banner.appendChild(panel);
+    panel.querySelector('[data-banner-resus-save]')?.addEventListener('click', async event => {
+      const button = event.currentTarget;
+      button.disabled = true;
+      const result = await postClinicalSummary('resuscitation', { status: panel.querySelector('[data-banner-resus-select]').value });
+      if (!result.ok) {
+        button.disabled = false;
+        const message = panel.querySelector('[data-banner-resus-message]');
+        if (message) message.textContent = result.error;
+      }
+    });
   }
 
   // Build the patient summary dashboard card view
@@ -505,7 +765,20 @@
       const parsed = parsePatientData(activePatient);
       renderPatientBanner(parsed);
       setupChartTabs(activePatient);
+      loadClinicalSummary(activePatient.patientKey);
     }
+  });
+
+  // v41.0: a saved record may change the free-text drug allergy shown in the banner.
+  document.addEventListener('emr:patient-saved', event => {
+    const saved = event.detail?.patient;
+    if (!saved || (activePatient && saved.patientKey !== activePatient.patientKey)) return;
+    activePatient = saved;
+    renderPatientBanner(parsePatientData(activePatient));
+    if (summaryState.patientKey !== saved.patientKey) loadClinicalSummary(saved.patientKey);
+  });
+  window.addEventListener('borkeo-language-change', () => {
+    if (activePatient) renderPatientBanner(parsePatientData(activePatient));
   });
 
   // URL fallback / initial check on clinical screens
@@ -523,6 +796,7 @@
             const parsed = parsePatientData(activePatient);
             renderPatientBanner(parsed);
             setupChartTabs(activePatient);
+            loadClinicalSummary(activePatient.patientKey);
             return;
           }
         }

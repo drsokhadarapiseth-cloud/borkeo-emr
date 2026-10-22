@@ -1,9 +1,10 @@
+import { ensureSuperuser } from './superuser.mjs';
 import {createHefLookup,HEF_LOOKUP_ROLES} from './hef-lookup.mjs';
 import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v40.5 - Electronic Medical Record System
+// Borkeo EMR v42.2 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -38,6 +39,15 @@ import { mountParaclinicRoutes } from './routes/paraclinic.mjs';
 import { mountFinanceRoutes } from './routes/finance.mjs';
 import { mountPatientsRoutes } from './routes/patients.mjs';
 import { mountClinicalRoutes } from './routes/clinical.mjs';
+import { mountClinicalSummaryRoutes } from './routes/clinical-summary.mjs';
+import { mountMedicationSafetyRoutes } from './routes/medication-safety.mjs';
+import { mountPeriopFormRoutes } from './routes/periop-forms.mjs';
+import { mountRecordAccessRoutes } from './routes/record-access.mjs';
+import { ensureRecordAccessSchema } from './record-access.mjs';
+import { ensureCriticalEscalationSchema, escalateCriticalResults } from './critical-escalation.mjs';
+import { ensurePeriopSchema } from './periop-forms.mjs';
+import { ensureMedicationSafetySchema } from './medication-safety.mjs';
+import { ensureClinicalSummarySchema, clinicalOptions } from './clinical-summary.mjs';
 import {
   hashPassword, normalizeUsername, randomToken, safeTokenEqual, tokenHash, validatePassword, validateUsername, verifyPassword,
 } from './password.mjs';
@@ -102,8 +112,13 @@ const pharmacySettledCodes=new Set(['INSURANCE','NGO','PAID','NSSF','HEF_EQUITY'
 
 const publicFiles = new Map([
   ['/public/escape-html.js', ['escape-html.js', 'text/javascript; charset=utf-8']],
+  ['/public/ipd-transfer.js', ['ipd-transfer.js', 'text/javascript; charset=utf-8']],
+  ['/public/ipd-transfer.css', ['ipd-transfer.css', 'text/css; charset=utf-8']],
   ['/public/nationalities.js', ['nationalities.js', 'text/javascript; charset=utf-8']],
   ['/public/nationalities.css', ['nationalities.css', 'text/css; charset=utf-8']],
+  ['/public/new-text.js', ['new-text.js', 'text/javascript; charset=utf-8']],
+  ['/public/new-text-data.js', ['new-text-data.js', 'text/javascript; charset=utf-8']],
+  ['/public/new-text.css', ['new-text.css', 'text/css; charset=utf-8']],
   ['/public/health-facility.js',['health-facility.js','text/javascript; charset=utf-8']],
   ['/public/health-facility.css',['health-facility.css','text/css; charset=utf-8']],
   ['/public/hef-lookup.js', ['hef-lookup.js', 'text/javascript; charset=utf-8']],
@@ -135,6 +150,21 @@ const publicFiles = new Map([
   ['/public/nav-config.js', ['nav-config.js', 'text/javascript; charset=utf-8']],
   ['/public/patient-banner.css', ['patient-banner.css', 'text/css; charset=utf-8']],
   ['/public/patient-banner.js', ['patient-banner.js', 'text/javascript; charset=utf-8']],
+  ['/public/clinical-summary.css', ['clinical-summary.css', 'text/css; charset=utf-8']],
+  ['/public/clinical-summary.js', ['clinical-summary.js', 'text/javascript; charset=utf-8']],
+  ['/public/display-rules.css', ['display-rules.css', 'text/css; charset=utf-8']],
+  ['/public/display-rules.js', ['display-rules.js', 'text/javascript; charset=utf-8']],
+  ['/public/medication-safety.css', ['medication-safety.css', 'text/css; charset=utf-8']],
+  ['/public/medication-safety.js', ['medication-safety.js', 'text/javascript; charset=utf-8']],
+  ['/public/drug-safety.css', ['drug-safety.css', 'text/css; charset=utf-8']],
+  ['/public/drug-safety.js', ['drug-safety.js', 'text/javascript; charset=utf-8']],
+  ['/public/periop-forms.css', ['periop-forms.css', 'text/css; charset=utf-8']],
+  ['/public/periop-forms.js', ['periop-forms.js', 'text/javascript; charset=utf-8']],
+  ['/public/patient-documents.css', ['patient-documents.css', 'text/css; charset=utf-8']],
+  ['/public/patient-documents.js', ['patient-documents.js', 'text/javascript; charset=utf-8']],
+  ['/public/record-log.js', ['record-log.js', 'text/javascript; charset=utf-8']],
+  ['/public/fluid-balance.js', ['fluid-balance.js', 'text/javascript; charset=utf-8']],
+  ['/public/early-warning.js', ['early-warning.js', 'text/javascript; charset=utf-8']],
   ['/public/soap-note.css', ['soap-note.css', 'text/css; charset=utf-8']],
   ['/public/soap-note.js', ['soap-note.js', 'text/javascript; charset=utf-8']],
   ['/public/clinical-data.css', ['clinical-data.css', 'text/css; charset=utf-8']],
@@ -255,6 +285,8 @@ const APP_VERSION = (() => {
 })();
 const protectedPages = new Map([
   ['/admin/health-facility',['health-facility.html',false]],
+  ['/admin/drug-safety',['drug-safety.html',false]],
+  ['/admin/record-log',['record-log.html',false]],
   ['/admin/interface',['interface-theme.html',false]],
   ['/styleguide', ['styleguide.html', false]],
   ['/home', ['home.html', false]],
@@ -304,7 +336,7 @@ function landingPathForRole(role, wardCode = '') {
 }
 
 function messagingVisibility(session) {
-  return { userId: session.user_id, role: sessionRole(session), wardCode: sessionWard(session) };
+  return { userId: session.user_id, role: sessionRole(session), wardCode: sessionWard(session), username: session.username };
 }
 
 function messagingRoleAllowed(role) {
@@ -363,7 +395,7 @@ function admissionWardCode(update) {
   const department = String(update?.departmentCode || '').toLowerCase();
   if (room === 'medical') return 'medicine';
   if (room === 'surgical') return 'surgery';
-  if (['emergency','pediatric','gynecology','obstetric','tb','icu','ncu'].includes(room)) return room;
+  if (['emergency','pediatric','gynecology','obstetric','tb','infectious','icu','ncu'].includes(room)) return room;
   if (department === 'gyneco-obstetric') return room === 'obstetric' ? 'obstetric' : 'gynecology';
   return department;
 }
@@ -387,6 +419,7 @@ function notifyTriageReferral(database, session, patient) {
       gynecology: 'ផ្នែករោគស្ត្រី',
       emergency: 'ផ្នែកសង្គ្រោះបន្ទាន់',
       tb: 'ផ្នែកជំងឺរបេង',
+      infectious: 'ផ្នែកជំងឺឆ្លង',
       dental: 'ផ្នែកធ្មេញ',
       mental: 'ផ្នែកសុខភាពផ្លូវចិត្ត',
       opd: 'ផ្នែកពិគ្រោះក្រៅ'
@@ -451,10 +484,15 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   html = html.replace(/(<span\b[^>]*\bdata-app-version\b[^>]*>)[^<]*(<\/span>)/g, (_, open, close) => `${open}v${APP_VERSION}${close}`);
   html = html.replace(/Borkeo EMR v\d+\.\d+/g, `Borkeo EMR v${APP_VERSION}`);
   html = html.replace(/<head\b[^>]*>/i, head => head + '<style>.emr-language-switch, [data-emr-language], #langBtn, .lang-btn, body #emr-site-banner .portal-account-actions .emr-language-switch, #emr-session-control .portal-account-actions .emr-language-switch, .portal-account-actions .emr-language-switch { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; max-width: 0 !important; max-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; position: absolute !important; left: -9999px !important; clip: rect(0,0,0,0) !important; }</style><script src="/public/emr-language-lock.js?v=3760"></script><link rel="stylesheet" href="/public/emr-required-fields.css?v=3770"><script src="/public/emr-required-fields.js?v=3770"></script>');
-  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=3980"><link rel="stylesheet" href="/public/patient-banner.css?v=3970"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=3980" defer></script><script src="/public/app-shell.js?v=3980" defer></script><script src="/public/patient-banner.js?v=3970" defer></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
+  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=3980"><link rel="stylesheet" href="/public/patient-banner.css?v=4100"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=3980" defer></script><script src="/public/app-shell.js?v=3980" defer></script><script src="/public/patient-banner.js?v=4170" defer></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=3800" defer></script></head>');
+  // v41.0: structured allergy record, problem list and nursing demographics (medical record page only).
+  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/clinical-summary.css?v=4100"><script src="/public/clinical-summary.js?v=4100" defer></script><link rel="stylesheet" href="/public/display-rules.css?v=4110"><script src="/public/display-rules.js?v=4110" defer></script><link rel="stylesheet" href="/public/medication-safety.css?v=4120"><script src="/public/medication-safety.js?v=4120" defer></script><link rel="stylesheet" href="/public/periop-forms.css?v=4160"><script src="/public/periop-forms.js?v=4160" defer></script><script src="/public/fluid-balance.js?v=4160" defer></script><script src="/public/early-warning.js?v=4160" defer></script><link rel="stylesheet" href="/public/patient-documents.css?v=4170"><script src="/public/patient-documents.js?v=4170" defer></script></head>');
   html = html.replace('</head>', `<meta name="borkeo-version" content="${APP_VERSION}"></head>`);
+  // New text without approved Khmer is highlighted unless SHOW_UNTRANSLATED=0 (public/new-text.js).
+  const showUntranslated = globalThis.process?.env?.SHOW_UNTRANSLATED === '0' ? '0' : '1';
+  html = html.replace('</head>', `<meta name="borkeo-show-untranslated" content="${showUntranslated}"><link rel="stylesheet" href="/public/new-text.css?v=4060"><script src="/public/new-text-data.js?v=4060"></script><script src="/public/new-text.js?v=4060"></script></head>`);
   if (!html.includes('/public/emr-language.js')) {
     const langVersion = APP_VERSION.split('.').slice(0, 2).join('') + '0';
     const languageAssets = `<link rel="stylesheet" href="/public/emr-language.css?v=${langVersion}"><script src="/public/emr-language-data.js?v=1750" defer></script><script src="/public/emr-language.js?v=${langVersion}" defer></script>`;
@@ -1597,6 +1635,9 @@ function sanitizeAdmissionAction(value) {
     referralDestinationType: text('referralDestinationType', 40),
     referralDestinationName: text('referralDestinationName', 240),
     referralTransport: text('referralTransport', 40),
+    // v41.6: main / secondary ICD-10 list (main first) and patient instructions.
+    dischargeDiagnoses: dischargeDiagnosisList(value.dischargeDiagnoses),
+    patientInstructions: boundedMultilineText(value.patientInstructions, 4_000, 'patientInstructions'),
     ...(dischargeMedications ? { medications: dischargeMedications } : {}),
   } : null;
   if (discharge?.status === 'referred') {
@@ -1625,6 +1666,19 @@ function sanitizeAdmissionAction(value) {
     dischargeDate,
     discharge,
   };
+}
+
+// v41.6: discharge ICD-10 list from the main / secondary editor; one main, main first.
+function dischargeDiagnosisList(value) {
+  if (value === undefined || value === null) return [];
+  if (!Array.isArray(value) || value.length > 20) badRequest('Discharge diagnoses are invalid.');
+  const list = value.map((item, index) => {
+    const icd10 = boundedText(item?.icd10, 20, `Discharge diagnosis ${index + 1}`, true).toUpperCase();
+    if (!/^[A-Z][0-9]{2}(\.[0-9A-Z]{1,4})?$/.test(icd10)) badRequest(`Discharge diagnosis ${index + 1} is invalid.`);
+    return { icd10, text: boundedText(item?.text, 300, `Discharge diagnosis ${index + 1}`), main: item?.main === true };
+  });
+  const mainIndex = Math.max(0, list.findIndex((item) => item.main));
+  return list.length ? [list[mainIndex], ...list.filter((_, index) => index !== mainIndex)].map((item, index) => ({ ...item, main: index === 0 })) : [];
 }
 
 function releasePatientFromHospitalMap(database, patientKey, userId, savedAt) {
@@ -1816,6 +1870,7 @@ export function createEmrServer(configOverrides = {}) {
   ensureESignSchema(database);
   if (config.demoMode) ensureDemoAccounts(database);
   else ensureDefaultWardUsers(database);
+  ensureSuperuser(database);
   ensureParaclinicSchema(database);
   ensureFinanceSchema(database);
   ensureInvoiceEditSchema(database);
@@ -1830,6 +1885,11 @@ export function createEmrServer(configOverrides = {}) {
   ensureInterfaceThemeSchema(database);
   ensureNavigationSchema(database);
   ensureEditorHistorySchema(database);
+  ensureClinicalSummarySchema(database);
+  ensureMedicationSafetySchema(database);
+  ensurePeriopSchema(database);
+  ensureCriticalEscalationSchema(database);
+  ensureRecordAccessSchema(database);
   if (config.demoMode) {
     const existingCount = database.sqlite.prepare('SELECT COUNT(*) count FROM patient_records').get()?.count || 0;
     // Seed a new demo only; never reset existing patients when restarting.
@@ -1859,6 +1919,10 @@ export function createEmrServer(configOverrides = {}) {
   mountFinanceRoutes(router);
   mountPatientsRoutes(router);
   mountClinicalRoutes(router);
+  mountClinicalSummaryRoutes(router);
+  mountMedicationSafetyRoutes(router);
+  mountPeriopFormRoutes(router);
+  mountRecordAccessRoutes(router);
   // POST' && pathname === '/api/finance/complete-payment'
   // Paraclinic routes: sessionRole(session)==='LAB' 'active' /api/imaging-catalog
   // request.method === 'DELETE' && orderMatch
@@ -1922,7 +1986,7 @@ export function createEmrServer(configOverrides = {}) {
         requestId, logger: reqLogger,
         sendJson, sendBuffer, readJson, readBinary, audit, sameOrigin, safeTokenEqual,
         sessionRole, sessionWard, requireContext, redirect, sendFile,
-        listUsers, buildIdentity, requestIp, genericLoginFailure,
+        listUsers, buildIdentity, requestIp, genericLoginFailure, landingPathForRole,
         serializeSessionCookie, clearSessionCookie,
         parseStoredJson, boundedText,
         opdConsultationPaymentConfirmed, patientClinicalClosed, clinicalPatientKey,
@@ -2126,6 +2190,11 @@ export async function startServer() {
 
   const cleanup = setInterval(() => application.database.deleteExpiredSessions(Date.now()), 30 * 60_000);
   cleanup.unref();
+  // v41.6: unacknowledged critical results go to the ward doctors and ward head (every minute).
+  const escalation = setInterval(() => {
+    try { escalateCriticalResults(application.database, clinicalOptions().criticalEscalation); } catch (error) { console.error('Critical result escalation failed:', error.message); }
+  }, 60_000);
+  escalation.unref();
   const backupScheduler = startBackupScheduler(application.database, application.config);
   const stop = () => application.server.close(() => {
     backupScheduler.stop();

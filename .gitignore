@@ -13,3 +13,6 @@ node_modules/
 
 # Staff login export (generate with scripts/generate-passwords-csv.mjs; never commit)
 borkeo-emr-passwords.csv
+
+# Scanned patient documents (v41.7)
+data/uploads/

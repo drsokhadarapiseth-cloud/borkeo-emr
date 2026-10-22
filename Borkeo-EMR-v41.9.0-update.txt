@@ -1,0 +1,87 @@
+================================================================================
+Borkeo EMR Update Note: Version 41.9.0
+Superuser Multi-Role Launch & Registration / Triage Execution Fix
+================================================================================
+
+Date: 2026-10-21
+Previous Version: 41.8.0
+New Version: 41.9.0
+
+--------------------------------------------------------------------------------
+1. SUMMARY OF CHANGES
+--------------------------------------------------------------------------------
+This update fixes the issue where clicking "Register", "Triage", or other department
+actions while logged in as Superuser redirected or bounced back to the home page (/home).
+Superuser now has full native authority to launch and operate as each role:
+
+  a) Registration Role Operations:
+     - When clicking "Register" (/emr?view=register), Superuser directly opens
+       Page 1 (កត់ត្រាព័ត៌មានទូទៅ / General Registration) without redirection.
+     - Superuser is recognized in the registration scope to enter patient
+       demographics, select New/Old PMRS2 case type (ករណីថ្មី / ករណីចាស់), and
+       successfully save registration records.
+     - Saves are validated and dispatch seamlessly to Triage.
+
+  b) Triage Role Operations:
+     - When clicking "Triage" (/triage or /emr?view=triage), Superuser directly
+       opens the triage workspace / Page 2 (កត់ត្រាការពិនិត្យដំបូង).
+     - Superuser can record vital signs (temperature, pulse, BP, SpO2, respiratory
+       rate), triage priority/triage category, and dispatch patients to wards or OPD.
+
+  c) Clinical & Specialty Roles:
+     - Superuser has full write permissions across Outpatient consultation,
+       Inpatient SOAP, Nursing records, Daily progress notes, and Discharge forms.
+     - Direct access without redirect barriers to Billing (/billing), Finance
+       (/finance), Expenses (/expenses), and User Administration (/admin/users).
+
+  d) Seamless View Routing:
+     - Navigation to /emr with ?view=register automatically activates Page 1.
+     - Navigation to /emr with ?view=triage automatically activates Page 2.
+     - Navigation to clinical views automatically activates Page 3.
+     - Superuser can switch between all tabs (b1, b2, b3) freely without restriction.
+
+  e) Account & Security:
+     - ឈ្មោះគណនី (Username): Superuser
+     - ពាក្យសម្ងាត់ (Password): 1234
+     - Patient data and clinical records are fully preserved without any data loss.
+     - 100% Khmer interface compliance (npm run check:khmer passes).
+     - Full test suite passes.
+
+--------------------------------------------------------------------------------
+2. MODIFIED & CREATED FILES
+--------------------------------------------------------------------------------
+Modified Files:
+  - package.json (version 41.9.0)
+  - public/login.html (updated build version display to v41.9)
+  - server/server.mjs (updated version header to v41.9)
+  - public/emr-permissions.js (added SUPERUSER to roleMayOpenClinical, applyTopLevel, applyReadPermissions, wrapSwitchPage, and automatic tab routing)
+  - public/emr-patient-record.js (added SUPERUSER to registration scope and case type validation)
+  - public/billing.js (allowed SUPERUSER in role check)
+  - public/finance.js (allowed SUPERUSER in role check)
+  - public/expenses.js (allowed SUPERUSER in role check)
+  - public/admin-users.js (allowed SUPERUSER in role check)
+  - tests/accessibility-quality-smoke.test.mjs (updated version assertions to 41.9.0)
+  - tests/v418-superuser.test.mjs (added multi-role execution and route tests)
+  - CHANGELOG.md (documented v41.9.0 changes)
+
+--------------------------------------------------------------------------------
+3. STEP-BY-STEP INSTALLATION INSTRUCTIONS
+--------------------------------------------------------------------------------
+Follow these simple steps:
+
+Step 1: Restart the EMR application server
+  If running via command line:
+    Stop the existing process (Ctrl + C)
+    Run: npm start
+  Or double-click "Start-Borkeo-WiFi.bat".
+
+Step 2: Log in
+  Open browser to http://localhost:3000 (or LAN IP)
+  Username: Superuser
+  Password: 1234
+
+Step 3: Test Registration & Triage
+  - Click on "Register" -> enter patient details, select case type, and save.
+  - Click on "Triage" -> enter vitals and assign department.
+  - Verify there is no redirect back to the home page.
+================================================================================

@@ -122,6 +122,8 @@ export function getStaffMessage(database, id, viewerId = '') {
   return messageRow(database, row, viewerId);
 }
 
+// v42.1: every account, the Superuser included, sees and completes messages
+// for its active role and ward only (no aggregated inbox).
 export function messageRecipientGroup(visibility) {
   const role = String(visibility.role || '').toUpperCase();
   if (['ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(role)) return 'MANAGEMENT';

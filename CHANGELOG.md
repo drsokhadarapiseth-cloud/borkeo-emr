@@ -1,5 +1,140 @@
 # Borkeo EMR Changelog
 
+## v42.2.0 (Start-Borkeo-WiFi.bat no longer closes at once)
+- Start-Borkeo-WiFi.bat called npm without "call", so when the server could not start, the window closed before the error could be read. It now starts Node directly (Node is also found in C:\Program Files\nodejs when it is not on the PATH), and first checks the usual problems with a clear message: the EMR files are not next to the file (ZIP not extracted), Node.js is not installed, or port 3001 is already in use (the EMR is already running). On any error the window stays open.
+- Tests: 903/903 (tests/accessibility-quality-smoke.test.mjs expects 42.2.0). npm run check:khmer passes.
+
+## v42.1.0 (Superuser becomes a "switch user type" account; new Infectious diseases ward)
+- Superuser: the "all buttons" mode, the SUPERUSER active role and the v42.0 automatic role switch on page open are removed. The account now holds every real staff role (15) and every ward, and is always exactly one real user type at a time. While switched it is checked exactly like a real account of that type: the same side menu, pages, buttons, data, server refusals and message bell. isSuperuser() only identifies the account (switch button and audit); every permission bypass for the Superuser was removed from the server and the page scripts. Old sessions saved with the SUPERUSER role go to the picker.
+- After login the Superuser always starts on the user type picker (/context): pick the role, then the ward for roles that need one (Midwife = obstetric only; Nurse = not obstetric; Chief of ward and Ward head = not OPD; Doctor = any ward). The picker lists the 15 user types (VICE_DIRECTOR label added).
+- A "switch user type" button (ប្តូរប្រភេទអ្នកប្រើ) is in the top bar of every page for the Superuser account only; it opens a small window with the same role and ward selects. After a switch the account goes to the landing page of that user type. /api/auth/context now returns this landing page (landingPathForRole), used by both the picker and the window. The role never changes by itself. Every switch is audited (WORK_CONTEXT_CHANGED with switchedBy: 'Superuser'). Real staff do not see the button; their own role switch is unchanged.
+- Messages: the bell, the message list and "complete" follow the active role and ward (no aggregated inbox). A task completed while switched to Laboratory is completed for the Laboratory team.
+- Signatures saved while switched show "Superuser · <Khmer role label>". Real staff signatures are unchanged.
+- New ward: Infectious diseases (ផ្នែកជំងឺឆ្លង, code infectious, IPD). Triage already offered it, but the server did not know the ward, so a patient sent there belonged to no ward. It is now in the server ward list (messages, ward medicines, daily report, OPD to IPD transfer, default ward accounts doctor_infectious / nurse_infectious), the finance department list, the bed map (one room with four beds, the same layout as TB), the ward name lists, the encounter prefix (MED) and the service code (RH-IPDGen). Triage's "ward changed" check now knows the ward.
+- /context: after choosing a role, the landing page now comes from the server, the same as a real login (for example a Vice director goes to Billing, an OPD nurse to the paraclinic handoff list).
+- Tests: 903/903. tests/v420-superuser-page-roles.test.mjs replaced (picker after login, exact menus and landing pages for 14 user types compared with real accounts, Registration refusals, Medicine nurse refusal of a Surgery patient, bell and completion, Triage to Infectious diseases, signature label); tests/v418-superuser.test.mjs rewritten for the new account rules; tests/v155-opd-transfer-alerts.test.mjs expects 10 IPD wards; tests/v181-patient-directory.test.mjs no longer treats SUPERUSER as a role; tests/accessibility-quality-smoke.test.mjs expects 42.1.0. tests/v398-side-navigation.test.mjs is unchanged and passes. npm run check:khmer passes (one new approved label, applied with npm run translations:apply).
+
+## v42.0.0 (Superuser works as each staff role; side menu click fix; IPD transfer page fix)
+- Side menu: clicking an item in the collapsed menu opened the item above it (Register opened Home, Triage opened Register). The section headings grew by 28 px when the menu expanded under the pointer and pushed every item down. Headings now keep the same height in both states (the collapsed menu still shows a thin divider), so items never move. Affects every account.
+- Superuser: opening a page now switches the Superuser to the staff role that owns it (Register = Registration, Triage = Triage, OPD queue = OPD doctor, Lab = Laboratory, Billing = Cashier, Expenses = Accountant, Cash flow = Director, Administration pages = Admin, Home = Superuser). Pages that need a ward use the patient's ward, or the current ward, or Medicine. A role that already fits the page is kept. Every existing role check, menu and save rule then works exactly as for that staff member, so one person can take a patient through every step (register, triage, cashier, OPD, lab, pharmacy, ward) and approve their own requests. Each automatic switch is audited (WORK_CONTEXT_CHANGED, automatic: true). Background requests never switch the role, so a manual switch from the user menu stays until the next page is opened.
+- Fixed for the Superuser: the Triage queue and the OPD queue were refused (403).
+- IPD transfer page (/ipd-transfer): its script and stylesheet were never served (404), so the page did not work for any OPD doctor. Both files are now served.
+- Tests: 903/903 (new tests/v420-superuser-page-roles.test.mjs; tests/accessibility-quality-smoke.test.mjs expects 42.0.0). npm run check:khmer passes.
+
+## v41.9.0 (Superuser Multi-Role Launch & Registration/Triage Execution Fix)
+- Fix Superuser workspace launch: Superuser now possesses full capabilities to launch and operate as all hospital staff roles directly from the interface, without bouncing or redirecting back to `/home`.
+- Registration operations: When launching Registration (`/emr?view=register`), Superuser operates with full Registration authority: demographics entry, new/old PMRS2 case selection, saving records, and dispatching to triage or inpatient departments.
+- Triage operations: When launching Triage (`/triage` or `/emr?view=triage`), Superuser operates with full Triage authority: entering vital signs, determining triage severity levels, assigning beds/wards, and completing triage assessments.
+- Clinical & specialty operations: Unlocks all pages including Outpatient, Inpatient SOAP, Nursing charts, Billing, Finance, Expenses, and User Administration for the `SUPERUSER` role.
+- Navigation tab auto-selection: Opening `/emr` with specific view parameters (`?view=register`, `?view=triage`, or clinical views) automatically routes and activates the corresponding tab without manual page switching or restriction barriers.
+- Tests & Validation: Verified with end-to-end multi-role save and navigation tests in `tests/v418-superuser.test.mjs`. All 900 test assertions pass and `npm run check:khmer` passes without violation.
+
+## v41.8.0 (Universal Superuser Account & Full System Access)
+- Universal account: Single account `Superuser` (password `1234`) configured with access to all hospital functions from registration to director, without requiring role or ward switching.
+- Permissions and routing: `SUPERUSER` active role with `isSuperuser` identity flag, bypassing context selection and enabling all side navigation menu items across care, clinical, pharmacy, finance, and administrative departments.
+- Universal alert inbox: Aggregates staff messages, notifications, and alerts across all roles and departments so that all patient and department alerts display in the single Superuser notification bell and message list.
+- Cross-department operations: Authorized for registration, triage, OPD consultations and queue calling, IPD admissions/transfers/discharges, paraclinic ordering (Lab & Imaging), specimen processing, critical result acknowledgments, pharmacy dispensing, ward medicine report approvals, and financial operations (Cashier, Billing, Accounting, and Director financial reports).
+- Database compatibility: Backward-compatible account initialization via `ensureSuperuser` without overwriting existing patient records or schema constraints.
+- Tests: All tests pass including new `tests/v418-superuser.test.mjs`. `npm run check:khmer` passes.
+
+## v41.7.0 (Medical record restructure - Phase 10: record view log and scanned documents)
+- Record view log: every opening of a patient record (record page, patient history, PMRS2 review), every print (any print from the record page) and every export (PMRS2 transfer package), and every opening of a scanned document is kept: who, role, ward, when, what, IP address. Repeat openings of the same record by the same person within 2 minutes are one entry. Logging never blocks the record.
+- New page /admin/record-log (Admin, Director, Vice director only; sidebar item "Record view log"): filter by patient, staff, action and dates.
+- Scanned documents: a button next to the forms button in the OPD, IPD and nursing records opens the list. PDF, JPG or PNG up to 10 MB; the server checks the real file type (a renamed file is refused). Files are stored in data/uploads/patients (folder name is a hash, no patient name), never in the record; data/uploads/ is in .gitignore. Clinical staff and Registration can attach; removing needs a reason and keeps the file. Upload, view and removal are audited.
+- Saved record fields are unchanged (browser check: same 1514 keys before and after).
+- Tests: 893/893 (new `tests/v417-record-log-documents.test.mjs`; `tests/v410-clinical-summary-ui.test.mjs` expects the new banner script version). `npm run check:khmer` passes.
+
+## v41.6.0 (Medical record restructure - Phase 9: discharge, intake/output, early warning score, critical results)
+- Discharge form: main / secondary ICD-10 (the main code still fills the existing field), patient instructions, and a printable discharge summary built only from the saved discharge (letterhead, diagnoses, outcome, status, follow-up, discharge medications, instructions, signature line). All existing discharge fields and outcomes unchanged.
+- Intake and output: a Daily balance row (fluid in minus fluid out) in the nursing chart; calculated, never editable, never saved as a field.
+- Early Warning Score: NEWS2 (owner's choice) from the latest vital signs, in the IPD Objective box (with new oxygen and consciousness fields) and in the patient banner; adults 16+, not for pregnant women; incomplete scores are marked. Table in `server/clinical-options.json` for a doctor to check (docs/clinical-review.md).
+- Critical result escalation: a critical lab / imaging result not acknowledged within 30 minutes (owner's choice) is sent once to the ward doctors, ward chief and ward head inboxes. The existing acknowledgement is unchanged.
+- Tests: 890/890 (new `tests/v416-discharge-io-ews-escalation.test.mjs`; `tests/v407-ipd-soap-record.test.mjs` expects the EWS panel in O and lists its two new fields; `tests/v413-periop-forms.test.mjs` accepts any script version). `npm run check:khmer` passes.
+
+## v41.5.0 (Fix: nursing, midwife and delivery form fields depending on page-load speed)
+- FIXED: the nurse/midwife record fields were numbered from what was on the page at the moment of loading. On some loads (slow first load, or the chart drawn a moment later) the nurse assessment boxes (41), the nursing chart cells (416) or the ward billing panel (2) were counted differently, and every later nursing field - including the midwife and delivery forms - got another key. Values could open in the wrong field, chart and assessment entries were not saved on such loads, and a save could write values under a neighbouring key.
+- Now the chart cells are prepared first, locked boxes still count, and the billing panel and search box are never counted. Every load gives the same keys, equal to the normal numbering nurses used. Browser round trip: saved on a slow load, reopened on a fast load, same fields.
+- Tests: 887/887 (new `tests/v415-storage-key-timing.test.mjs`; `tests/v327-symptom-catalogue.test.mjs` sandbox gets `window` and `matches`/`closest`, the assertion is unchanged). `npm run check:khmer` passes.
+
+## v41.4.0 (Medical record restructure - Phase 8: newborn and postnatal care)
+- Newborn record (on the mother's record): Apgar 1/5/10 minutes, birth weight, length, head circumference, resuscitation, immediate newborn care checklist, vitamin K, birth vaccines (BCG, HepB birth dose), baby's case number; one section per baby (up to three); one form per date; midwife and doctor e-signatures; print.
+- Linked to the delivery form: a "Newborn record" button in the delivery form, and a new newborn record is prefilled from it (birth time, number of babies, baby #1 outcome, sex, weight). The ANC, delivery and labour chart forms are not changed.
+- Postnatal care record for the mother (with a baby check line); one form per date.
+- Newborn care items and birth vaccines are configurable (`server/clinical-options.json`). Draft Khmer for the new labels is in docs/phase8-newborn-drafts.md for the owner to approve.
+- Tests: 884/884 (new `tests/v414-newborn-postnatal.test.mjs`). `npm run check:khmer` passes.
+
+## v41.3.0 (Medical record restructure - Phase 7: consents, surgery, anaesthesia and transfusion)
+- Nine forms: Procedure consent, Anaesthesia consent, Blood transfusion consent, Refusal of treatment form, Pre-operative checklist (WHO, configurable), Operative note, Anaesthesia record, Post-operative orders, Blood transfusion record. Opened from a button at the top of the OPD, IPD and nursing records (works from a ward bed too).
+- One form per type and date (same date = same form, another date = a new form); every save keeps the previous version; audited; nothing deleted.
+- Signatures: staff e-signatures per slot ("changed after signing" when edited later); patient / representative signs on screen, by thumbprint photo, or on paper; a Fingerprint scanner button is ready for a device (docs/fingerprint-scanner.md).
+- Print button on every form: letterhead, patient details, the form, the consent text, signature lines.
+- The owner's approved Khmer for the consent texts, checklist and field labels (docs/phase7-consent-drafts.md) was applied with `npm run translations:apply` (77 texts).
+- The existing កិច្ចសន្យាទទួលការព្យាបាល is unchanged.
+- Tests: 881/881 (new `tests/v413-periop-forms.test.mjs`; `tests/translation-tools.test.mjs` now allows owner-applied translations after the 61 RULE 2 entries and checks each against the CSV). `npm run check:khmer` passes.
+
+## v41.2.0 (Medical record restructure - Phase 6: medication administration record and prescribing warnings)
+- FIXED: a nurse's "given" tick in the nursing medicine chart was kept only in the open page and lost when the record was reopened (browser test). Doses are now saved on the server.
+- Medication Administration Record: clicking a dose in the existing nursing chart opens a form - Given / Held / Refused, time, reason or note (required for held / refused), nurse signature (e-signature snapshot). The chart shows the status; a full list (with corrections crossed out) is under the chart and prints with the form. Linked to the existing treatment orders (admission prescription and daily notes). Nurses and midwives of the ward record; corrections void the old entry with a reason; nothing is deleted; audited.
+- Prescribing warnings for doctors (admission, daily note and OPD prescriptions): allergy (structured allergy record), duplicate medicine in the same prescription, interaction and maximum dose (admin tables, empty). Continuing requires an override reason, saved and audited; "Do not prescribe" clears the medicine.
+- New admin page `/admin/drug-safety` (menu: administration) for the interaction and maximum-dose tables; administrators edit, management views.
+- Tests: 879/879 (new `tests/v412-medication-safety.test.mjs`; `tests/v398-side-navigation.test.mjs` lists the new menu item and accepts a translation key as the label of an item without approved Khmer). `npm run check:khmer` passes.
+
+## v41.1.0 (Medical record restructure - Phase 5: display rules by age and sex, paediatric section)
+- Configurable display rules (`server/clinical-options.json`, `GET /api/clinical-options`, `docs/clinical-review.md`): immunization list 0-14; smoking / alcohol / drug questions from 10; paediatric section 0-14; head circumference 0-2; tetanus vaccine status for females 15-49 and pregnant patients. Unknown age or sex shows everything; hiding never clears a field; a section with saved values is always shown.
+- Ob/gyn history (owner's rule): females 15 and over; under 15 only when pregnant (EDD written) or in the obstetric ward; a "show" button for any other female; never for males.
+- New paediatric section in the IPD Subjective box: birth history, feeding, growth (weight and height from the vital signs, head circumference, notes), developmental milestones.
+- New tetanus vaccine status (TT1-TT5, no dose, unknown, last dose date).
+- TB screening is one shared block in OPD and IPD; IPD gains the "TB contact" item.
+- New fields are id-keyed; no existing storage key changed (browser check).
+- Tests: 876/876 (new `tests/v411-display-rules.test.mjs`; `tests/v407-ipd-soap-record.test.mjs` now expects the two filled Phase 5 slots and lists the 8 new fields, while still pinning all 113 old IPD keys). `npm run check:khmer` passes.
+
+## v41.0.0 (Medical record restructure - Phase 4: patient banner, structured allergy, problem list)
+- FIXED an allergy safety bug: the patient banner read two allergy fields that never existed, so it showed "no allergy history" for every patient, even when the doctor had written a drug allergy. It now reads the record's drug-allergy tick and text and the new structured allergy record. An empty record shows "Allergy not recorded".
+- FIXED nursing forms losing typed values: each time a record opened, the patient name, age, sex, code, ward, room and bed typed in the nursing forms were replaced by the registration values (and lost on the next save). Empty fields are still filled; a saved value that differs is kept and the banner value is shown next to it.
+- Structured allergy record (type, substance, reaction, severity, date, recorded by) in the IPD Subjective box; doctors add and remove (with a reason, nothing deleted); it follows the patient across visits (Health ID).
+- Active problem list (long-term, across visits) in the OPD and IPD Assessment boxes; doctors add, resolve and reactivate. It never replaces the encounter diagnoses.
+- Patient banner: new row with resuscitation status, risk flags (severe allergies, DNR), active problems and current medications; a details panel opens from the banner (allergy record, problems, medications; doctors set the resuscitation status).
+- Ward map bed popup: red drug-allergy box (or "Allergy not recorded").
+- Letterheads (ministry, kingdom, Tacteing ornament) print only; on screen the banner replaces them.
+- New text without approved Khmer is shown as highlighted English and listed in `docs/translations-needed.csv` (32 rows). Clinical lists to confirm: `docs/clinical-review.md`.
+- Tests: 870/870 (new `tests/v410-clinical-summary.test.mjs`, `tests/v410-clinical-summary-ui.test.mjs`). `npm run check:khmer` passes.
+
+## v40.9.0 (Medical record restructure - Phase 3: daily follow-up note in SOAP order)
+- FIXED a data-loss bug from the first SOAP version: when a record opened, every saved daily note was replayed through the new SOAP form. An old note without a conclusion failed the S/A check and disappeared from the screen (with a warning on every opening); the next save then deleted it. Old notes were also rewritten as "S: ..." / "A: ..." SOAP notes. Now each saved note is rebuilt from its saved data exactly as it was: old notes keep their original evolution text and show in the labelled old-note card.
+- Daily follow-up popup: the vital-sign inputs (with their abnormal-value colours) are in O, with an "Examination findings" label on the examination text; A has the existing conclusion label and ICD-10 with main / secondary diagnoses; P has the treatment and protocol medicine tables, then "Plan notes". Boxes are full width.
+- Main / secondary ICD-10 in daily notes: the main code is stored first with a `main` flag and fills the ICD-10 field; cards and the daily print show "Secondary diagnoses"; the card shows the main code.
+- Required boxes unchanged: S and A. The old hidden evolution (S + O) and conclusion (A + P) fields are still kept in sync for printing and PMRS2.
+- Doctor-only editing: the daily SOAP boxes are now really read-only for nurses (the role check ran before the signed-in role was known and was undone by the page permissions).
+- Tests: 860/860 (6 new in `tests/v409-daily-followup-soap.test.mjs`). `npm run check:khmer` passes.
+
+## v40.8.0 (Medical record restructure - Phase 2: OPD record in SOAP order)
+- The OPD record (`#sub_opd`) is shown in four boxes: S Subjective (history with the TB screening checkboxes), O Objective (weight, height, BMI, vital signs, examination text; investigations, where paraclinic orders still append), A Assessment (ICD-10 with main/secondary diagnoses), P Plan (prescription table with its print button, counselling, return date, admit-to-ward, NEW Plan notes). Title and doctor signature are unchanged.
+- Existing elements were moved unchanged. The only Khmer label change is the removal of the Roman numbers I.-V. from five titles (`docs/khmer-approved-changes.md`).
+- Saved data is safe: the 11 position-keyed OPD form fields keep their old positions; all 28 OPD form keys are pinned in `tests/fixtures/opd-storage-keys.json`. Browser round trip with synthetic records in the current and the oldest key formats: 39/39 OPD fields load and save.
+- OPD main / secondary ICD-10 (OPD stays separate from IPD); the main code stays first, so `diag_input` (PMRS2, daily report) follows it.
+- Fixed a timing race: the counter selector (`#session-counter`) is a screen setting and no longer takes part in record field numbering or saving. Depending on load timing it could shift the oldest (pre-v0.8) record keys by one.
+- Unchanged and checked: OPD cashier pre-payment lock (a doctor save is refused until the consultation fee is confirmed), prescription print sheet, OPD form print (one A4 page).
+- Tests: 854/854 (6 new in `tests/v408-opd-soap-record.test.mjs`; `tests/v3211-ipd-form-and-obgyn-history.test.mjs` keeps its numbered-title checks for the legacy copy). `npm run check:khmer` passes.
+
+## v40.7.0 (Medical record restructure - Phase 1: IPD admission record in SOAP order)
+- The IPD admission record (`#sub_ipd`) is shown in four boxes: S Subjective (reason for admission, present illness, other complaints, current medicines, past history incl. immunization, drug allergy, obstetric/gynaecological, family and community history), O Objective (vital signs, physical examination with the "mark all normal" KH/EN/FR control, investigations), A Assessment (provisional and differential diagnosis, ICD-10, prognosis), P Plan (drug treatment, other interventions, diet, monitoring, NEW Plan notes). Header and footer are unchanged.
+- Existing fields were moved, not rebuilt: ids, classes, data-keys and handlers are unchanged. The only Khmer label change is the removal of the leading section numbers of seven titles (listed in `docs/khmer-approved-changes.md`).
+- Saved data is safe: the 92 IPD fields whose saved key depended on their position now carry their old position (`data-emr-key-index` / `data-emr-legacy-index`), so old records load into the same fields. Checked in the browser with synthetic records in the current and the oldest key formats (103/103 fields load and save). The ICD-10 search boxes are no longer saved (`data-emr-no-save`); they only ever held search text.
+- Main / secondary ICD-10 (IPD): the first code is the main diagnosis (badge); the others are listed as secondary diagnoses, each with "Set as main". The main code is kept first, so the PMRS2, discharge and report primary-code field follows it. A `main` flag is also stored. Old records keep their first code as main.
+- One reusable SOAP component (`soap-note.css` / `soap-note.js`) now serves both the daily follow-up and record forms: letter badge, English title, icon, colour stripe, tinted body, collapse, empty/filled dot, dark mode, black-and-white print.
+- Print: the IPD record still prints on two A4 pages at the same size (page 1: S and O up to the respiratory examination; page 2: rest of O, A, P, signature).
+- Empty, hidden slots are reserved for Phase 4 (structured allergy, problem list), Phase 5 (paediatric section, tetanus status), Phase 6 (prescribing warnings) and Phase 9 (Early Warning Score).
+- Tests: 848/848 (8 new in `tests/v407-ipd-soap-record.test.mjs`; `tests/v398-side-navigation.test.mjs` selector updated). `npm run check:khmer` passes.
+
+## v40.6.0 (Medical record restructure - Phase 0: safety net)
+- No change to any screen, clinical logic or patient data.
+- Khmer text safety net: `scripts/extract-khmer.mjs` wrote `docs/khmer-baseline.json` (16,231 Khmer strings in 317 files). `npm run check:khmer` (also run inside `npm test`) fails if any of them is changed or removed, or if Khmer not in `docs/approved-new-khmer.json` is added. `npm run khmer:accept` updates the baseline and is for the owner only.
+- `docs/approved-new-khmer.json`: the 61 approved new Khmer terms, copied from the owner's plan.
+- Translation tools for new text: `newText()` / `newTextHtml()` / `data-new-text` in `public/new-text.js` show an English placeholder with a yellow dashed highlight until the owner fills the Khmer in `docs/translations-needed.csv`. `npm run translations:apply` writes it in. `SHOW_UNTRANSLATED=0` in .env turns the highlight off.
+- `docs/medical-record-map.md`: every field of the IPD, OPD and daily follow-up records, with id, storage key and readers.
+- `.gitignore` adds `data/*.db`, `data/demo-photos/`, `.validation-*/` and `_backup_*/`.
+- Tests: 840/840 (10 new).
+
 ## v40.5.0 (Check of the v40.1–v40.4 ward editing update)
 - Fixed: `/public/nationalities.js` and `/public/nationalities.css` were never served (404), so the nationality picker in the record did not load. Both are now registered.
 - Fixed: once loaded, the nationality picker crashed on every record ("Cannot read properties of undefined (reading 'querySelector')") because it updated its button before creating it. It now waits for the button.

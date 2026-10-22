@@ -90,6 +90,8 @@
       ],
     },
     { code: 'tb', nameKh: 'ផ្នែកជំងឺរបេង', nameEn: 'Tuberculosis (TB)', rooms: [['tb', 'បន្ទប់ជំងឺរបេង', 'TB Ward', 'nurse']] },
+    // v42.1: same layout as TB (one room, four beds), added to saved maps on load.
+    { code: 'infectious', nameKh: 'ផ្នែកជំងឺឆ្លង', nameEn: 'Infectious Diseases', rooms: [['infectious', 'ផ្នែកជំងឺឆ្លង', 'Infectious Diseases Ward', 'nurse']] },
     { code: 'icu', nameKh: 'ផ្នែកសង្គ្រោះបន្ទាន់កម្រិតធ្ងន់', nameEn: 'ICU', rooms: [['icu', 'បន្ទប់ ICU', 'ICU Room', 'nurse']] },
     { code: 'ncu', nameKh: 'ផ្នែកទារកទើបកើត', nameEn: 'NCU', rooms: [['ncu', 'បន្ទប់ NCU', 'NCU Room', 'nurse']] },
   ];
@@ -756,6 +758,22 @@
     return `/emr?${parameters.toString()}`;
   }
 
+  // v41.0: red drug-allergy box in the bed popup (structured allergy record and
+  // the record's free-text drug allergy, from /api/patients allergyAlert).
+  function bedAllergyHtml(patient) {
+    const alert = patient?.allergyAlert;
+    if (!alert || alert.state === 'none') return '';
+    const newText = (key, english) => (language === 'kh' && window.newTextHtml ? window.newTextHtml(key, english) : escapeHtml(english));
+    if (alert.state !== 'allergy') return `<p class="bed-allergy-unknown">${newText('banner.allergy.notRecorded', 'Allergy not recorded')}</p>`;
+    const items = (alert.items || []).map(entry => `<li><strong>${escapeHtml(entry.substance)}</strong></li>`).join('');
+    return `<section class="bed-allergy-alert" role="alert">
+            <strong class="bed-allergy-title">${escapeHtml(language === 'kh' ? 'ប្រតិកម្មអាលែកហ្ស៊ី' : 'Allergy alert')}</strong>
+            ${items ? `<ul>${items}</ul>` : ''}
+            ${alert.freeText ? `<p>${escapeHtml(alert.freeText)}</p>` : ''}
+            ${!items && !alert.freeText ? `<p>${newText('banner.allergy.tickedOnly', 'Drug allergy ticked in the record')}</p>` : ''}
+          </section>`;
+  }
+
   function openBedModal(bedId) {
     const item = allBeds().find(i => i.bed.id === bedId);
     if (!item) return;
@@ -788,6 +806,7 @@
             </div>
           </header>
 
+          ${bedAllergyHtml(patient)}
           <section class="bed-transfer-patient-card has-patient-avatar">
             ${patientAvatarHtml(patient, pName)}
             <div class="bed-transfer-patient-details">

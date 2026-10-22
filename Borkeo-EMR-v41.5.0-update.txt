@@ -1,0 +1,40 @@
+BORKEO EMR v41.5.0 - COMBINED UPDATE NOTE
+Fix: nursing, midwife and delivery form fields depended on page speed.
+Base: v41.4.0 (Phase 8). No clinical, pharmacy, laboratory or financial
+logic changed. Patient records are not touched.
+
+THE PROBLEM (in all earlier versions)
+  The program numbers each nursing field when the page opens. Three parts
+  of the nursing tab appear a moment early or late depending on how fast
+  the page loads:
+   - the boxes nurses type in on the vital-signs charts (416 boxes),
+   - the text boxes of the nurse assessment pages 1-2 (41 boxes),
+   - the ward billing panel at the top of the nursing tab (2 boxes).
+  When one of them was early or late, every later nursing field got a
+  different number, including the midwife forms and the delivery form.
+  Then:
+   - saved values could open in the wrong field (or look empty),
+   - chart and assessment entries were not saved on such a load,
+   - a save could write a value into a neighbouring field.
+  Nothing was deleted.
+
+THE FIX
+  The numbering no longer depends on page speed. Every load now gives the
+  same numbers, the same as the normal fast load that nurses have been
+  using. Tested in the browser: saved on a slow load, opened again on a
+  fast load, every value is back in its own field (nurse, midwife,
+  doctor).
+
+WHAT YOU SHOULD DO
+  If a nurse or midwife ever saw a value in the wrong place, or a chart
+  value that disappeared, please check those records once after this
+  update and correct them. The program cannot detect such old cases by
+  itself.
+
+TESTS
+  npm test -> 887 passed, 0 failed.  npm run check:khmer -> passed.
+
+INSTALL
+  Step 1. Close the EMR window.
+  Step 2. Double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser press Ctrl+F5 once on an EMR page.

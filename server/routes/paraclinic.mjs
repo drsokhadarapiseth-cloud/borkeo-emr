@@ -164,7 +164,7 @@ export function mountParaclinicRoutes(router) {
     const { session, requireContext, database, sendJson, response, config, sessionWard, parseStoredJson } = ctx;
     if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
     const role = requireContext(session);
-    if (role !== 'NURSE' || sessionWard(session) !== 'opd') return sendJson(response, 403, { error: 'This queue is available to OPD nurses only.' }, { secure: config.cookieSecure });
+    if ((role !== 'NURSE' || sessionWard(session) !== 'opd')) return sendJson(response, 403, { error: 'This queue is available to OPD nurses only.' }, { secure: config.cookieSecure });
     const orders = listOrders(database).filter(order => {
       const row = database.findPatient(order.patientKey);
       if (row?.service_mode !== 'opd' || order.status !== 'ORDERED' || order.request?.opdHandoff?.method !== 'NURSE' || !['WAITING_NURSE', 'NURSE_RECEIVED', 'SAMPLE_COLLECTED'].includes(order.request?.opdHandoff?.stage)) return false;
@@ -184,7 +184,7 @@ export function mountParaclinicRoutes(router) {
     const { session, requireContext, database, sendJson, response, config, readJson, request, audit, match, sessionWard, parseStoredJson } = ctx;
     if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
     const role = requireContext(session);
-    if (role !== 'NURSE' || sessionWard(session) !== 'opd') return sendJson(response, 403, { error: 'Only OPD nurses can process these handoffs.' }, { secure: config.cookieSecure });
+    if ((role !== 'NURSE' || sessionWard(session) !== 'opd')) return sendJson(response, 403, { error: 'Only OPD nurses can process these handoffs.' }, { secure: config.cookieSecure });
     const body = await readJson(request, 10_000);
     const order = getOrder(database, match[1]);
     if (!order) return sendJson(response, 404, { error: 'Paraclinic request was not found.' }, { secure: config.cookieSecure });
@@ -251,7 +251,7 @@ export function mountParaclinicRoutes(router) {
     const modality = String(url.searchParams.get('modality') || '').toUpperCase();
     if (!['ADMIN', 'VICE_DIRECTOR', 'LAB', 'IMAGING'].includes(role)) return sendJson(response, 403, { error: 'Laboratory or Imaging access is required.' }, { secure: config.cookieSecure });
     if (!['LAB', 'IMAGING'].includes(modality)) return sendJson(response, 400, { error: 'Select Laboratory or Imaging.' }, { secure: config.cookieSecure });
-    if (role === 'LAB' && modality !== 'LAB' || role === 'IMAGING' && modality !== 'IMAGING') return sendJson(response, 403, { error: 'You cannot add fees for this department.' }, { secure: config.cookieSecure });
+    if ((role === 'LAB' && modality !== 'LAB' || role === 'IMAGING' && modality !== 'IMAGING')) return sendJson(response, 403, { error: 'You cannot add fees for this department.' }, { secure: config.cookieSecure });
     const category = modality === 'LAB' ? 'LAB' : 'IMAGING';
     const services = serviceCatalog(database).filter(item => item.categoryCode === category && Number(item.defaultAmount) > 0);
     return sendJson(response, 200, { services }, { secure: config.cookieSecure });

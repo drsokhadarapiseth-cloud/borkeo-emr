@@ -1,0 +1,40 @@
+BORKEO EMR v40.6.0 - COMBINED UPDATE NOTE
+Medical record restructure, PHASE 0 ONLY (safety net). Base: v40.5.0 (02e764e).
+No screen, clinical, pharmacy, laboratory or financial logic changed.
+Patient records are not touched.
+
+WHAT CHANGED
+1. Backup of the whole project folder:
+   D:\EMR\Borkeo_EMR_v38_backup_20261021_before_phase0  (2,213 files)
+2. Khmer text safety net
+   - docs/khmer-baseline.json: every Khmer string in the program
+     (16,231 strings in 317 files), with file, line and exact text.
+   - npm run check:khmer: fails if any of them is changed or removed, or
+     if new Khmer is added that is not in docs/approved-new-khmer.json.
+     It also runs inside npm test.
+   - npm run khmer:accept: accepts the current text as the new baseline.
+     ONLY YOU run this.
+   - docs/approved-new-khmer.json: your 61 approved new terms, copied from
+     your plan file (not retyped).
+   - docs/khmer-approved-changes.md: list of approved section-number
+     removals (empty for now).
+   - docs/khmer-observations.md: possible Khmer mistakes for you to review
+     (empty for now).
+3. Translation tools for new text
+   - New text without approved Khmer shows in English with a yellow dashed
+     highlight, and is listed in docs/translations-needed.csv.
+   - Fill the "khmer" column, then run: npm run translations:apply
+   - To turn the highlight off: SHOW_UNTRANSLATED=0 in .env
+4. docs/medical-record-map.md: every field of the IPD record (219), OPD
+   record (166) and daily follow-up form (120): id, how it is saved, and
+   which other code reads it.
+5. docs/test-baseline.md: 830/830 before, 840/840 after (no old failures).
+6. .gitignore: data/*.db, data/demo-photos/, .validation-*/, _backup_*/
+7. Version 40.6.0.
+
+TESTS
+  npm test -> 840 passed, 0 failed.  npm run check:khmer -> passed.
+
+INSTALL
+  Nothing to do for staff. Restart the EMR (Start-Borkeo-WiFi.bat) when
+  convenient.

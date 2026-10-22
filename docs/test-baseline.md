@@ -1,3 +1,22 @@
+# Test baseline
+
+## 2026-10-21 - medical record restructure, Phase 0
+
+The plan expected many old tests to be failing. In this project they are not.
+
+| when | command | result |
+|---|---|---|
+| Before Phase 0 (v40.5.0, commit 02e764e) | `npm test` | **830 passed, 0 failed** |
+| After Phase 0 (v40.6.0) | `npm test` | **840 passed, 0 failed** (10 new safety-net and translation-tool tests) |
+| After Phase 0 | `npm run check:khmer` | passed: 16,231 Khmer strings in 317 files unchanged |
+
+There are no known failing tests to carry forward. From now on, any failing test
+means a later phase broke something.
+
+---
+
+## Earlier baseline (2026-10-19, kept unchanged below)
+
 # Test Baseline (Phase 0: Safety Net)
 
 Baseline test run recorded: 2026-10-19T05:36:01.488Z

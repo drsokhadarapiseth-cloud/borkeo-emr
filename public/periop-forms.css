@@ -1,0 +1,394 @@
+/* v41.3 - Consents, surgery, anaesthesia and transfusion forms (tab, editor, print). */
+/* Opened from a button at the top of the OPD, IPD and nursing records. */
+.periop-launcher {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 12px;
+}
+
+.periop-dialog {
+  width: min(1200px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  border: 0;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.3);
+  background: var(--bg-canvas, #f8fafc);
+}
+
+.periop-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.periop-close {
+  margin-left: auto;
+}
+
+.periop-layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.periop-types {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.periop-type {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  padding: 8px 12px;
+  min-height: 40px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.periop-type.is-active {
+  outline: 3px solid #0369a1;
+  outline-offset: 1px;
+  font-weight: 700;
+}
+
+.periop-type small {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.periop-editor {
+  border: 1px solid var(--border-default, #cbd5e1);
+  border-radius: 12px;
+  padding: 14px 18px;
+  background: var(--bg-surface, #ffffff);
+  min-width: 0;
+}
+
+.periop-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 18px;
+  margin-bottom: 10px;
+}
+
+.periop-head h3 {
+  margin: 0;
+  flex: 1 1 auto;
+  font-size: 18px;
+}
+
+.periop-status,
+.periop-hint {
+  font-size: 13px;
+  color: var(--text-secondary, #475569);
+}
+
+.periop-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.periop-date {
+  padding: 3px 10px;
+  min-height: 30px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.periop-date.is-active {
+  outline: 2px solid #0369a1;
+}
+
+.periop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px 16px;
+  margin: 8px 0;
+}
+
+.periop-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.periop-field.wide {
+  grid-column: 1 / -1;
+}
+
+.periop-field input,
+.periop-field select,
+.periop-field textarea {
+  font: inherit;
+  font-weight: 400;
+  padding: 6px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.periop-field textarea {
+  min-height: 64px;
+}
+
+.periop-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.periop-checklist {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  margin: 10px 0;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.periop-baby {
+  border: 2px solid #be185d;
+  border-radius: 10px;
+  margin: 12px 0;
+  padding: 10px 14px;
+}
+
+.periop-baby > legend {
+  font-weight: 800;
+  padding: 0 6px;
+}
+
+.periop-checklist legend {
+  font-weight: 800;
+  padding: 0 6px;
+}
+
+.periop-consent-text {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-left: 5px solid #0369a1;
+  background: #f0f9ff;
+  line-height: 1.9;
+  font-size: 14px;
+}
+
+.periop-patient-sign,
+.periop-staff-sign {
+  margin: 12px 0;
+  padding: 10px 12px;
+  border: 1px dashed #94a3b8;
+  border-radius: 8px;
+}
+
+.periop-patient-sign h4 {
+  margin: 0 0 6px;
+}
+
+.periop-sign-row,
+.periop-sign-buttons,
+.periop-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+}
+
+.periop-actions {
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.periop-button {
+  min-height: 36px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.periop-pad {
+  margin-top: 8px;
+}
+
+.periop-pad canvas {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  aspect-ratio: 3 / 1;
+  border: 2px solid #0369a1;
+  border-radius: 8px;
+  background: #ffffff;
+  touch-action: none;
+  margin-bottom: 6px;
+}
+
+.periop-sign-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 6px 0;
+  font-size: 13px;
+}
+
+.periop-sign-preview img {
+  max-height: 90px;
+  max-width: 260px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+}
+
+.periop-staff-sign {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+
+.periop-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+  font-size: 13px;
+}
+
+.periop-slot img {
+  max-height: 40px;
+  max-width: 160px;
+}
+
+.periop-stale {
+  color: #b45309;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.periop-message {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: #0369a1;
+}
+
+.periop-message:empty {
+  display: none;
+}
+
+.periop-empty {
+  color: #64748b;
+}
+
+@media screen and (max-width: 900px) {
+  .periop-layout {
+    grid-template-columns: 1fr;
+  }
+  .periop-types {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+/* Print: the form is drawn in #periop-print-layout and printed through printEmrReport. */
+#periop-print-layout {
+  display: none;
+}
+
+body.print-periop #periop-print-layout,
+.emr-report-print #periop-print-layout {
+  display: block !important;
+}
+
+.periop-print-sheet {
+  color: #000000;
+  font-size: 13px;
+}
+
+.periop-print-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+}
+
+.periop-print-table th,
+.periop-print-table td {
+  border: 1px solid #000000;
+  padding: 4px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.periop-print-table th {
+  width: 34%;
+}
+
+.periop-print-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 6px;
+}
+
+.periop-print-consent {
+  line-height: 1.9;
+  text-align: justify;
+  margin: 10px 0;
+}
+
+.periop-print-signatures {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 14px;
+  page-break-inside: avoid;
+}
+
+.periop-print-sign {
+  flex: 1 1 30%;
+  min-width: 180px;
+  text-align: center;
+}
+
+.periop-print-sign-box {
+  height: 70px;
+  border-bottom: 1px dotted #000000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.periop-print-sign-box img {
+  max-height: 66px;
+  max-width: 100%;
+}
+
+.emr-report-print .periop-print-sheet .needs-translation {
+  background: none !important;
+  outline: none !important;
+}
+
+/* v41.6: printable discharge summary (emr-inpatient-workflow.js), drawn only for printing. */
+#discharge-summary-print-layout { display: none; }
+.emr-report-print #discharge-summary-print-layout { display: block !important; }
+.discharge-summary-sheet { color: #000000; font-size: 13px; }
+.discharge-summary-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+.discharge-summary-table th, .discharge-summary-table td { border: 1px solid #000000; padding: 4px 6px; text-align: left; vertical-align: top; }
+.discharge-summary-table th { width: 32%; }
+.discharge-summary-sign { display: flex; justify-content: space-between; margin-top: 36px; }
+.discharge-summary-sign-line { width: 40%; border-bottom: 1px dotted #000000; height: 60px; }
+
+/* v41.6: intake / output daily balance row (fluid-balance.js); the sign is always written. */
+#sub_nursing tr[data-fluid-balance] td { font-weight: 700; background: #f8fafc; }
+#sub_nursing tr[data-fluid-balance] td[data-sign="negative"] { color: #b91c1c; }

@@ -1,0 +1,111 @@
+================================================================================
+Borkeo EMR Update Note: Version 41.8.0
+Universal Superuser Account & Full System Access
+================================================================================
+
+Date: 2026-10-21
+Previous Version: 41.7.0
+New Version: 41.8.0
+
+--------------------------------------------------------------------------------
+1. SUMMARY OF CHANGES
+--------------------------------------------------------------------------------
+This update implements a single, unified Superuser account that has unrestricted
+access to all functions of Borkeo EMR—from patient registration all the way to
+hospital director—with all staff roles, ward access, clickable action buttons,
+and cross-departmental alert notifications aggregated into one account.
+
+Credentials:
+  - ឈ្មោះគណនី (Username): Superuser
+  - ពាក្យសម្ងាត់ (Password): 1234
+
+Key Features:
+  a) Universal Role & Context:
+     - The account is assigned the SUPERUSER active role and has all system roles
+       (ADMIN, DIRECTOR, VICE_DIRECTOR, DOCTOR, NURSE, MIDWIFE, CHIEF_WARD, WARD_HEAD,
+       REGISTRATION, TRIAGE, PHARMACY, LAB, IMAGING, CLERK, ACCOUNTANT) and all wards.
+     - Automatically skips the ward/role selection page (/context) and lands
+       directly on the main workspace (/home).
+  b) Unrestricted Navigation:
+     - All sidebar navigation buttons across Care, Clinical Services, Pharmacy,
+       Stock, Finance, and Administration are visible and active.
+  c) Aggregated Notification Alerts:
+     - All departmental staff messages, patient referrals, lab alerts, critical
+       escalations, and cashier payment alerts across all wards and roles flow
+       directly into Superuser's notification bell badge and messaging inbox.
+  d) Full Clinical, Diagnostic & Financial Actions:
+     - Registration: Register new patients, edit patient demographics, create return visits.
+     - Triage & OPD: Perform triage, call OPD queue counters, open OPD consultation forms.
+     - IPD & Nursing: Perform admissions, transfers, MAR drug administration, bed assignments, discharges.
+     - Paraclinic: Order Lab & Imaging, collect specimens, receive orders, ack critical results, review reports.
+     - Pharmacy: Dispense OPD prescriptions, sign ward daily medicine reports (steps 1 to 6), manage stock.
+     - Finance & Billing: Create and edit invoices, waive/discount fees, receive payments, record expenses, review cashflow.
+  e) Safety & Integrity:
+     - No existing patient records, clinical data, or financial histories are overwritten.
+     - Fully backward-compatible with legacy SQLite database schemas.
+     - All 890+ automated tests and Khmer UI checks pass.
+
+--------------------------------------------------------------------------------
+2. MODIFIED & CREATED FILES
+--------------------------------------------------------------------------------
+New Files:
+  - server/superuser.mjs (Superuser seeding, role assignment, and esign generation)
+  - tests/v418-superuser.test.mjs (Unit and integration verification suite)
+
+Modified Files:
+  - package.json (Version bumped from 41.7.0 to 41.8.0)
+  - public/login.html (Updated build version tags to v41.8)
+  - public/login.js (Added Superuser to default accounts and quick-select)
+  - public/nav-config.js (Enabled visibility of all menu items for Superuser)
+  - public/patient-list.js (Allowed all management and clinical actions for Superuser)
+  - public/opd-queue.js (Allowed OPD call and skip actions for Superuser)
+  - public/paraclinic.js (Allowed ordering, collection, review, and delete actions for Superuser)
+  - server/database.mjs (Registered SUPERUSER role and legacy storage roles)
+  - server/access.mjs (Added isSuperuser helper, bypassed context selection, allowed all pages)
+  - server/encounter-access.mjs (Added SUPERUSER to record management and bypassed ward lock)
+  - server/messages.mjs (Aggregated all notification recipient filters for Superuser)
+  - server/ward-medicine-approvals.mjs (Allowed Superuser to sign all 6 ward medicine steps)
+  - server/ward-medicines.mjs (Allowed Superuser to view and sign all ward medicine reports)
+  - server/requests.mjs (Allowed Superuser to submit and review all workflow requests)
+  - server/routes/patients.mjs (Allowed Superuser in triage, registration, return visits, discharge)
+  - server/routes/paraclinic.mjs (Allowed Superuser in lab/imaging catalog, orders, handoffs, reviews)
+  - server/routes/pharmacy.mjs (Allowed Superuser in prescriptions, dispensing, stock receipts)
+  - server/routes/finance.mjs (Allowed Superuser in billing, payments, concessions, expenses, reports)
+  - server/hef-lookup.mjs (Added SUPERUSER to HEF lookup roles)
+  - server/nssf-lookup.mjs (Added SUPERUSER to NSSF lookup roles)
+  - server/symptoms.mjs (Added SUPERUSER to symptom creation roles)
+  - server/health-facility.mjs (Added SUPERUSER to health facility management roles)
+  - server/record-access.mjs (Added SUPERUSER to record log and document write roles)
+  - server/periop-forms.mjs (Added SUPERUSER to operative and consent form write roles)
+  - server/payment-policy.mjs (Added SUPERUSER to payment concession review roles)
+  - server/medication-safety.mjs (Added SUPERUSER to MAR write, override, and drug safety roles)
+  - server/clinical-summary.mjs (Added SUPERUSER to clinical summary write roles)
+  - server/invoice-edits.mjs (Added SUPERUSER to invoice edit approval and direct edit roles)
+  - server/server.mjs (Bootstrapped ensureSuperuser, updated clinical and messaging sets, allowed direct page access)
+  - tests/accessibility-quality-smoke.test.mjs (Updated version assertions to 41.8.0 / v41.8)
+  - docs/khmer-baseline.json (Registered approved Khmer strings for Superuser label)
+  - CHANGELOG.md (Documented v41.8.0 release notes)
+
+--------------------------------------------------------------------------------
+3. STEP-BY-STEP INSTALLATION INSTRUCTIONS
+--------------------------------------------------------------------------------
+Step 1: Stop the currently running server (Press Ctrl+C in the terminal window).
+
+Step 2: Start the updated server:
+        npm start
+        (or "npm run start:wifi" if serving over local LAN).
+
+Step 3: Open your web browser and navigate to:
+        http://localhost:3000/login
+
+Step 4: Log in with:
+        Username: Superuser
+        Password: 1234
+        (Or select "Superuser (មុខងារទាំងអស់)" from the dropdown list).
+
+Step 5: Verify that:
+        - The sidebar displays all functions (Care, Clinical, Pharmacy, Finance, Admin).
+        - The top notification bell aggregates all alerts across all departments.
+        - You can directly open any patient record, order lab/imaging, dispense medications,
+          sign reports, and view financial statements.
+================================================================================

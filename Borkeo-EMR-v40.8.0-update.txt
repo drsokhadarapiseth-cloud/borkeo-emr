@@ -1,0 +1,38 @@
+BORKEO EMR v40.8.0 - COMBINED UPDATE NOTE
+Medical record restructure, PHASE 2: OPD record in SOAP order.
+Base: v40.7.0 (Phase 1). Clinical, pharmacy, laboratory and financial logic
+and permissions were not changed. Patient records are not touched.
+
+WHAT CHANGED
+1. The OPD record now has the same four coloured boxes as the IPD record:
+   S  Subjective  - history, with the TB screening checkboxes
+   O  Objective   - weight, height, BMI, vital signs, examination text;
+                    investigations (paraclinic orders still add to it)
+   A  Assessment  - ICD-10 with main and secondary diagnoses
+   P  Plan        - prescription table and its print button, counselling,
+                    return date, admit to a ward, and a NEW "Plan notes" box
+   The title and the doctor's name and signature stay where they were.
+2. Main and secondary ICD-10 now also work in OPD (separate from IPD).
+   PMRS2 and the daily report use the main code.
+3. Your Khmer text is unchanged. The only change: the Roman numbers I. to V.
+   in front of five titles were removed. Listed in
+   docs/khmer-approved-changes.md.
+4. Old records are safe. Tested with fake OPD records in the current format
+   and in the oldest format: all 39 fields open in the right place and save
+   back unchanged.
+5. Fixed a hidden timing problem: the counter number box at the top
+   (ជ្រើសរើសបញ្ជរ) could, depending on loading speed, shift the numbering of
+   the oldest record fields by one. It is now kept out of record numbering.
+6. Checked and unchanged: the cashier rule (the doctor cannot save until the
+   consultation fee is confirmed), the prescription print sheet, the OPD form
+   print (one A4 page).
+7. Version 40.8.0.
+
+TESTS
+  npm test -> 854 passed, 0 failed.  npm run check:khmer -> passed.
+  docs/translations-needed.csv: no new rows.
+
+INSTALL
+  Step 1. Close the EMR window.
+  Step 2. Double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser press Ctrl+F5 once on an EMR page.

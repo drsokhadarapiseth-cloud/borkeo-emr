@@ -1,0 +1,59 @@
+BORKEO EMR v40.7.0 - COMBINED UPDATE NOTE
+Medical record restructure, PHASE 1: IPD admission record in SOAP order.
+Base: v40.6.0 (Phase 0). Clinical, pharmacy, laboratory and financial logic
+and permissions were not changed. Patient records are not touched.
+
+WHAT CHANGED
+1. The doctor's IPD admission record now has four coloured boxes:
+   S  Subjective  - reason for admission, present illness, other complaints
+                    (TB screening), current medicines, past history
+                    (immunization, drug allergy, obstetric/gynaecological,
+                    family, community)
+   O  Objective   - vital signs, physical examination (with the "mark all
+                    normal" KH/EN/FR button), investigations
+   A  Assessment  - provisional diagnosis, differential diagnosis, ICD-10,
+                    prognosis
+   P  Plan        - drug treatment, other interventions, diet, monitoring,
+                    and a NEW "Plan notes" box
+   Each box can be folded and shows a dot: grey = empty, green = filled.
+   The title, first-examination time and doctor signature stay where they were.
+2. Main and secondary ICD-10 (IPD):
+   - The first code is marked as the main diagnosis.
+   - The others are listed as secondary diagnoses, each with a
+     "set as main" button.
+   - PMRS2, discharge and reports use the main code.
+   - Old records keep their first code as the main one.
+3. Your Khmer text is unchanged. The only change: the numbers in front of
+   seven section titles were removed (the titles now sit inside S/O/A/P).
+   All seven are listed in docs/khmer-approved-changes.md.
+4. Old records are safe. The fields that were saved by their position on
+   the page keep their old position. Tested with fake records saved in the
+   current format and in the oldest format: all 103 fields open in the right
+   box and save back unchanged.
+5. Print: still two A4 pages at the same text size, now with the four
+   S/O/A/P sections. The prescription sheet is unchanged.
+6. Version 40.7.0.
+
+FILES
+  New:     tests/v407-ipd-soap-record.test.mjs,
+           tests/fixtures/ipd-storage-keys.json,
+           docs/ui-screenshots/phase1-*.png (before/after, desktop 1440,
+           phone 390, print)
+  Changed: protected/EMR.html (#sub_ipd layout, two dictionary lines),
+           public/emr-patient-record.js (frozen keys), public/emr-diagnoses.js
+           and .css (main/secondary), public/soap-note.js and .css (record
+           boxes), public/report-print.js (two-page print for SOAP),
+           docs/khmer-approved-changes.md, docs/medical-record-map.md,
+           tests/v398-side-navigation.test.mjs (selector only), package.json,
+           public/login.html, server/server.mjs, CHANGELOG.md,
+           tests/accessibility-quality-smoke.test.mjs (version)
+
+TESTS
+  npm test -> 848 passed, 0 failed.  npm run check:khmer -> passed.
+  docs/translations-needed.csv: no new rows (all new text is approved
+  Khmer or the fixed English S/O/A/P titles).
+
+INSTALL
+  Step 1. Close the EMR window.
+  Step 2. Double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser press Ctrl+F5 once on an EMR page.

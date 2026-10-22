@@ -32,7 +32,8 @@
       validationError: 'សូមបញ្ចូលព័ត៌មានចាំបាច់៖ ពាក្យបណ្តឹង (S) និងការវាយតម្លៃ (A)',
       noResultsFound: 'មិនមានលទ្ធផល Paraclinic ថ្មីសម្រាប់អ្នកជំងឺនេះទេ',
       noPreviousNote: 'មិនមានកំណត់ត្រាមុនសម្រាប់ចម្លងទេ',
-      copiedSuccess: 'បានចម្លងពីកំណត់ត្រាមុនរួចរាល់'
+      copiedSuccess: 'បានចម្លងពីកំណត់ត្រាមុនរួចរាល់',
+      mainDiagnosis: 'រោគវិនិច្ឆ័យចម្បង'
     },
     english: {
       sHint: 'Patient-reported complaints, symptoms, interval history',
@@ -50,7 +51,8 @@
       validationError: 'Please fill required sections: Subjective (S) and Assessment (A)',
       noResultsFound: 'No new paraclinic results found for this patient',
       noPreviousNote: 'No previous note found to copy from',
-      copiedSuccess: 'Copied from previous note'
+      copiedSuccess: 'Copied from previous note',
+      mainDiagnosis: 'Main diagnosis'
     }
   };
 
@@ -79,9 +81,14 @@
     textarea.style.height = newHeight + 'px';
   }
 
+  // The daily follow-up boxes; record-form boxes (data-soap-record-box) are separate.
+  function noteBox(section) {
+    return '.emr-soap-box.section-' + section + ':not([data-soap-record-box])';
+  }
+
   function updateStatusDot(section) {
     var textarea = document.getElementById('mon_soap_' + section);
-    var dot = document.querySelector('.emr-soap-box.section-' + section + ' .emr-soap-status-dot');
+    var dot = document.querySelector(noteBox(section) + ' .emr-soap-status-dot');
     if (!textarea || !dot) return;
     var filled = textarea.value.trim().length > 0;
     dot.classList.toggle('filled', filled);
@@ -248,7 +255,7 @@
         textarea.value = '';
         textarea.style.height = '84px';
       }
-      var dot = document.querySelector('.emr-soap-box.section-' + sec + ' .emr-soap-status-dot');
+      var dot = document.querySelector(noteBox(sec) + ' .emr-soap-status-dot');
       if (dot) dot.classList.remove('filled');
     });
     syncLegacyInputs();
@@ -385,7 +392,7 @@
     var oContent = escapeHtml(soap.o || '-');
     var aContent = escapeHtml(soap.a || '-');
     var pContent = escapeHtml(soap.p || '-');
-    var icd10Badge = data.icd10 ? ' <span style="font-weight:normal; font-size:11px; background:#fff7ed; padding:1px 6px; border-radius:4px; border:1px solid #fed7aa; color:#c2410c;">ICD-10: ' + escapeHtml(data.icd10) + '</span>' : '';
+    var icd10Badge = data.icd10 ? ' <span style="font-weight:normal; font-size:11px; background:#fff7ed; padding:1px 6px; border-radius:4px; border:1px solid #fed7aa; color:#c2410c;">' + escapeHtml(t('mainDiagnosis')) + ' · ICD-10: ' + escapeHtml(data.icd10) + '</span>' : '';
 
     return '<div class="emr-soap-card-grid">' +
       '<div class="emr-soap-card-sec sec-s">' +
@@ -425,6 +432,54 @@
     box.classList.toggle('is-collapsed');
   }
 
+  // Record forms (v40.7: IPD admission record): the S/O/A/P boxes wrap the
+  // existing form sections. The dot is filled when any saved field in the box
+  // has a value.
+  function recordBoxFilled(box) {
+    return Array.prototype.some.call(box.querySelectorAll('.emr-soap-body input, .emr-soap-body textarea'), function (control) {
+      var screenOnly = control.closest('.no-print');
+      if (control.hasAttribute('data-emr-no-save') || (screenOnly && box.contains(screenOnly))) return false;
+      if (control.type === 'checkbox' || control.type === 'radio') return control.checked;
+      var value = String(control.value || '').trim();
+      return control.type === 'hidden' ? value !== '' && value !== '[]' : value !== '';
+    });
+  }
+
+  function refreshRecordBoxes() {
+    document.querySelectorAll('[data-soap-record-box]').forEach(function (box) {
+      var dot = box.querySelector('[data-soap-status]');
+      if (!dot) return;
+      var filled = recordBoxFilled(box);
+      dot.classList.toggle('filled', filled);
+      dot.setAttribute('role', 'img');
+      dot.setAttribute('title', filled ? t('statusFilled') : t('statusEmpty'));
+      dot.setAttribute('aria-label', filled ? t('statusFilled') : t('statusEmpty'));
+    });
+  }
+
+  var recordRefreshPending = false;
+  function scheduleRecordRefresh() {
+    if (recordRefreshPending) return;
+    recordRefreshPending = true;
+    global.requestAnimationFrame(function () {
+      recordRefreshPending = false;
+      refreshRecordBoxes();
+    });
+  }
+
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest && event.target.closest('[data-soap-collapse]');
+    if (!button) return;
+    var box = button.closest('[data-soap-record-box]');
+    if (!box) return;
+    var collapsed = box.classList.toggle('is-collapsed');
+    button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  });
+  document.addEventListener('input', scheduleRecordRefresh, true);
+  document.addEventListener('change', scheduleRecordRefresh, true);
+  document.addEventListener('emr:patient-loaded', function () { global.setTimeout(refreshRecordBoxes, 300); });
+  document.addEventListener('emr:patient-saved', scheduleRecordRefresh);
+
   function refreshLanguageLabels() {
     var hints = {
       s: t('sHint'),
@@ -434,13 +489,13 @@
     };
 
     ['s', 'o', 'a', 'p'].forEach(function (sec) {
-      var titleEl = document.querySelector('.emr-soap-box.section-' + sec + ' .emr-soap-title');
+      var titleEl = document.querySelector(noteBox(sec) + ' .emr-soap-title');
       if (titleEl) {
         var req = (sec === 's' || sec === 'a') ? ' <span style="color:red;">*</span>' : '';
         titleEl.setAttribute('data-language-exclude', '');
         titleEl.innerHTML = SOAP_TITLES[sec] + req;
       }
-      var hintEl = document.querySelector('.emr-soap-box.section-' + sec + ' .emr-soap-hint');
+      var hintEl = document.querySelector(noteBox(sec) + ' .emr-soap-hint');
       if (hintEl) hintEl.textContent = hints[sec];
     });
 
@@ -468,11 +523,20 @@
     attachTabCycle('mon_soap_o', 'mon_soap_a');
     attachTabCycle('mon_soap_a', 'mon_soap_p');
 
-    // Enforce role permissions
+    enforceDoctorOnly();
+    refreshLanguageLabels();
+    refreshRecordBoxes();
+  }
+
+  // Only doctors write the daily follow-up note. The session may load after this
+  // script, so the check runs again when it is ready (v40.9).
+  function enforceDoctorOnly() {
     if (!isDoctorRole()) {
       ['s', 'o', 'a', 'p'].forEach(function (sec) {
         var txt = document.getElementById('mon_soap_' + sec);
-        if (txt) txt.disabled = true;
+        // readOnly as well: the page permissions re-enable 'disabled' fields
+        // in areas where nurses may write (v40.9).
+        if (txt) { txt.disabled = true; txt.readOnly = true; }
       });
       document.querySelectorAll('.emr-soap-chip, .emr-soap-btn').forEach(function (btn) {
         btn.disabled = true;
@@ -480,8 +544,6 @@
         btn.style.opacity = '0.6';
       });
     }
-
-    refreshLanguageLabels();
   }
 
   // Export public interface
@@ -498,12 +560,18 @@
     toggleCardText: toggleCardText,
     toggleBoxCollapse: toggleBoxCollapse,
     refreshLanguageLabels: refreshLanguageLabels,
+    refreshRecordBoxes: refreshRecordBoxes,
     titles: Object.freeze(Object.assign({}, SOAP_TITLES))
   };
 
   global.addEventListener('borkeo-language-change', refreshLanguageLabels);
+  global.addEventListener('emr-session-ready', enforceDoctorOnly);
+  document.addEventListener('emr:patient-loaded', enforceDoctorOnly);
   document.addEventListener('DOMContentLoaded', function () {
     init();
+    // The signed-in role arrives after the page loads and no event is
+    // guaranteed on every page, so check again a few times (repeats are harmless).
+    [500, 1500, 3000, 6000].forEach(function (delay) { global.setTimeout(enforceDoctorOnly, delay); });
   });
 
 })(typeof window !== 'undefined' ? window : this);

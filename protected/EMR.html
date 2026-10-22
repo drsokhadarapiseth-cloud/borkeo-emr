@@ -6810,7 +6810,7 @@
             <!-- SUB-TAB: AGREEMENT (កិច្ចសន្យា) -->
             <div id="sub_agreement" class="sub-tab">
                 <div class="rights-container" style="font-size: 14px;">
-                    <div
+                    <div class="emr-print-letterhead"
                         style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; line-height: 1.5;">
                         <div style="flex: 1; text-align: left; margin-top: 30px;">
                             ក្រសួងសុខាភិបាល<br>
@@ -6887,7 +6887,8 @@
         <div id="page2" class="page">
             <div
                 style="display: flex; justify-content: space-between; font-weight: bold; line-height: 1.5; margin-bottom: 5px;">
-                <div style="text-align: left; width: 30%;">
+                <!-- v41.0: letterhead parts print only (class emr-print-letterhead*) -->
+                <div class="emr-print-letterhead-space" style="text-align: left; width: 30%;">
                     <img src="/emr-assets/LOGO-MOH.jpg" alt="Ministry of Health Logo"
                         style="width: 60px; height: auto; margin: 0 0 5px 0; display: block;"
                         onerror="this.style.display='none'">
@@ -6898,10 +6899,10 @@
                         បរកែវ</span>
                 </div>
                 <div style="text-align: center; width: 40%;">
-                    <span data-key="kingdom" class="moul-font" style="font-size:16px;">ព្រះរាជាណាចក្រកម្ពុជា</span><br>
-                    <span data-key="nation" class="moul-font" style="font-size:16px;">ជាតិ សាសនា
-                        ព្រះមហាក្សត្រ</span><br>
-                    <div
+                    <span data-key="kingdom" class="moul-font emr-print-letterhead" style="font-size:16px;">ព្រះរាជាណាចក្រកម្ពុជា</span><br class="emr-print-letterhead">
+                    <span data-key="nation" class="moul-font emr-print-letterhead" style="font-size:16px;">ជាតិ សាសនា
+                        ព្រះមហាក្សត្រ</span><br class="emr-print-letterhead">
+                    <div class="emr-print-letterhead"
                         style="display: flex; justify-content: center; align-items: center; height: 20px; margin-top: 5px; margin-bottom: 10px;">
                         <img src="/emr-assets/Tacteing-6.png" alt="Tacteing 6 Ornament" style="height: 18px; width: auto;"
                             onerror="this.style.display='none'">
@@ -7359,29 +7360,67 @@
                     សំណុំបែបបទស្តីពីការពិនិត្យជំងឺក្រៅ
                 </div>
 
+                <!-- v40.8: OPD record in SOAP order. Existing fields were moved here unchanged; -->
+                <!-- their saved keys are fixed by data-emr-key-index / data-emr-legacy-index. -->
+                <div class="emr-soap-container single-column emr-soap-record" id="opd_soap_record">
+                <!-- SOAP S: Subjective (v40.8) -->
+                <section class="emr-soap-box section-s emr-soap-record-box" data-soap-record-box="s" aria-labelledby="opd_soap_s_title">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge" data-language-exclude aria-hidden="true">S</div>
+                            <i class="fa-solid fa-circle-info emr-soap-icon" aria-hidden="true"></i>
+                            <span class="emr-soap-title" id="opd_soap_s_title" data-language-exclude>Subjective</span>
+                        </div>
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" data-soap-status></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" data-soap-collapse aria-expanded="true" aria-controls="opd_soap_s_body" title="បង្រួម / ពង្រីក" aria-label="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="emr-soap-body" id="opd_soap_s_body">
                 <!-- I. History -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="opd_sec_history">I. ប្រវត្តិជំងឺ</div>
-                    <div class="opd-checkbox-grid opd-history-grid">
-                        <div><input type="checkbox"> <span data-key="hist_cough">ក្អក > ១៤ថ្ងៃ</span></div>
-                        <div><input type="checkbox"> <span data-key="hist_fever">ក្តៅខ្លួន > ១៤ថ្ងៃ</span></div>
-                        <div><input type="checkbox"> <span data-key="hist_sweat">បែកញើសពេលយប់ > ១៤ថ្ងៃ</span></div>
-                        <div><input type="checkbox"> <span data-key="hist_weight">ស្រកទម្ងន់ > ១៤ថ្ងៃ</span></div>
-                        <div style="grid-column: span 2;"><input type="checkbox"> <span
+                    <div class="opd-section-title" data-key="opd_sec_history">ប្រវត្តិជំងឺ</div>
+                    <!-- v41.1: TB screening block shared by OPD and IPD (.emr-tb-screening) -->
+                    <div class="opd-checkbox-grid opd-history-grid emr-tb-screening">
+                        <div><input data-emr-key-index="5" data-emr-legacy-index="172" type="checkbox"> <span data-key="hist_cough">ក្អក > ១៤ថ្ងៃ</span></div>
+                        <div><input data-emr-key-index="6" data-emr-legacy-index="173" type="checkbox"> <span data-key="hist_fever">ក្តៅខ្លួន > ១៤ថ្ងៃ</span></div>
+                        <div><input data-emr-key-index="7" data-emr-legacy-index="174" type="checkbox"> <span data-key="hist_sweat">បែកញើសពេលយប់ > ១៤ថ្ងៃ</span></div>
+                        <div><input data-emr-key-index="8" data-emr-legacy-index="175" type="checkbox"> <span data-key="hist_weight">ស្រកទម្ងន់ > ១៤ថ្ងៃ</span></div>
+                        <div style="grid-column: span 2;"><input data-emr-key-index="9" data-emr-legacy-index="176" type="checkbox"> <span
                                 data-key="hist_tb_contact">ជិតស្និទ្ធជាមួយសមាជិកគ្រួសារ ឬអ្នកជិតខាងដែលមានជំងឺរបេង</span>
                         </div>
-                        <div style="grid-column: span 3;"><input type="checkbox"> <span
+                        <div style="grid-column: span 3;"><input data-emr-key-index="10" data-emr-legacy-index="177" type="checkbox"> <span
                                 data-key="hist_hemo">កំហាកមានឈាម</span></div>
-                        <div><input type="checkbox"> HIV</div>
-                        <div style="grid-column: span 2;"><input type="checkbox"> <span
+                        <div><input data-emr-key-index="11" data-emr-legacy-index="178" type="checkbox"> HIV</div>
+                        <div style="grid-column: span 2;"><input data-emr-key-index="12" data-emr-legacy-index="179" type="checkbox"> <span
                                 data-key="hist_malnutrition">ខ្វះអាហារូបត្ថម្ភធ្ងន់ធ្ងរ</span></div>
                     </div>
-                    <textarea class="fill-blank" style="width: 100%; min-height: 50px; line-height:1.5;"></textarea>
+                    <textarea data-emr-key-index="13" data-emr-legacy-index="180" class="fill-blank" style="width: 100%; min-height: 50px; line-height:1.5;"></textarea>
                 </div>
 
+                    </div>
+                </section>
+                <!-- SOAP O: Objective (v40.8) -->
+                <section class="emr-soap-box section-o emr-soap-record-box" data-soap-record-box="o" aria-labelledby="opd_soap_o_title">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge" data-language-exclude aria-hidden="true">O</div>
+                            <i class="fa-solid fa-stethoscope emr-soap-icon" aria-hidden="true"></i>
+                            <span class="emr-soap-title" id="opd_soap_o_title" data-language-exclude>Objective</span>
+                        </div>
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" data-soap-status></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" data-soap-collapse aria-expanded="true" aria-controls="opd_soap_o_body" title="បង្រួម / ពង្រីក" aria-label="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="emr-soap-body" id="opd_soap_o_body">
                 <!-- II. Physical Exam -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="opd_sec_pe">II. ពិនិត្យរាងកាយ</div>
+                    <div class="opd-section-title" data-key="opd_sec_pe">ពិនិត្យរាងកាយ</div>
                     <div style="margin-left: 20px; line-height: 2;">
                         <span data-key="v_w">ទម្ងន់:</span> <input type="text" class="fill-blank"
                             style="width: 60px; color:#0284c7; font-weight:bold;" id="opd_weight" readonly> គ.ក (Kg)
@@ -7406,13 +7445,15 @@
                         <span data-key="v_resp_l">ចង្វាក់ដង្ហើម</span> <input type="text" class="fill-blank"
                             style="width: 50px; color:#0284c7; font-weight:bold;" id="opd_resp" readonly> BPM
                     </div>
-                    <textarea class="fill-blank"
+                    <textarea data-emr-key-index="22" data-emr-legacy-index="189" class="fill-blank"
                         style="width: 100%; min-height: 50px; line-height:1.5; margin-top: 10px;"></textarea>
                 </div>
 
+                    <!-- Slot for Phase 9 (early-warning-score); empty until that phase -->
+                    <div class="emr-soap-slot" data-soap-slot="early-warning-score" hidden></div>
                 <!-- III. Investigations -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="opd_sec_inv">III. ពិនិត្យអមគ្លីនិក</div>
+                    <div class="opd-section-title" data-key="opd_sec_inv">ពិនិត្យអមគ្លីនិក</div>
 
                     <div class="inv-builder no-print" hidden aria-hidden="true">
                         <select id="inv_category" class="modern-input" style="padding: 4px; font-size:13px;"
@@ -7434,20 +7475,58 @@
                         placeholder="..."></textarea>
                 </div>
 
+                    </div>
+                </section>
+                <!-- SOAP A: Assessment (v40.8) -->
+                <section class="emr-soap-box section-a emr-soap-record-box" data-soap-record-box="a" aria-labelledby="opd_soap_a_title">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge" data-language-exclude aria-hidden="true">A</div>
+                            <i class="fa-solid fa-clipboard-check emr-soap-icon" aria-hidden="true"></i>
+                            <span class="emr-soap-title" id="opd_soap_a_title" data-language-exclude>Assessment</span>
+                        </div>
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" data-soap-status></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" data-soap-collapse aria-expanded="true" aria-controls="opd_soap_a_body" title="បង្រួម / ពង្រីក" aria-label="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="emr-soap-body" id="opd_soap_a_body">
                 <!-- IV. Diagnosis -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="opd_sec_diag">IV. រោគវិនិច្ឆ័យ ICD-10</div>
+                    <div class="opd-section-title" data-key="opd_sec_diag">រោគវិនិច្ឆ័យ ICD-10</div>
                     <input type="hidden" id="diag_input" data-emr-no-auto-index>
                     <input type="hidden" id="emr_opd_diagnoses" data-emr-no-auto-index value="[]">
                     <div class="emr-diagnosis-list" data-diagnosis-editor="opd"></div>
-                    <textarea id="emr_pmrs_opd_diagnosis" data-emr-migrate-auto-key class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5; margin-top: 6px;" placeholder="កំណត់សម្គាល់បន្ថែម ឬរោគវិនិច្ឆ័យពិស្ដារ..."></textarea>
+                    <textarea data-emr-key-index="27" data-emr-legacy-index="194" id="emr_pmrs_opd_diagnosis" data-emr-migrate-auto-key class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5; margin-top: 6px;" placeholder="កំណត់សម្គាល់បន្ថែម ឬរោគវិនិច្ឆ័យពិស្ដារ..."></textarea>
                 </div>
 
+                    <!-- Slot for Phase 4 (problem-list); empty until that phase -->
+                    <div class="emr-soap-slot" data-soap-slot="problem-list" hidden></div>
+                    </div>
+                </section>
+                <!-- SOAP P: Plan (v40.8) -->
+                <section class="emr-soap-box section-p emr-soap-record-box" data-soap-record-box="p" aria-labelledby="opd_soap_p_title">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge" data-language-exclude aria-hidden="true">P</div>
+                            <i class="fa-solid fa-prescription emr-soap-icon" aria-hidden="true"></i>
+                            <span class="emr-soap-title" id="opd_soap_p_title" data-language-exclude>Plan</span>
+                        </div>
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" data-soap-status></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" data-soap-collapse aria-expanded="true" aria-controls="opd_soap_p_body" title="បង្រួម / ពង្រីក" aria-label="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="emr-soap-body" id="opd_soap_p_body">
                 <!-- OPD RX CONTAINER -->
                 <div id="opd_rx_container" style="margin-top: 20px;">
                     <div id="opd_rx_compact_block" class="opd-section opd-rx-compact">
                         <div class="opd-section-title opd-rx-compact-title">
-                            <span data-key="opd_sec_treat">V. វេជ្ជបញ្ជា</span>
+                            <span data-key="opd_sec_treat">វេជ្ជបញ្ជា</span>
                             <button class="btn-blue no-print" onclick="printSignedOpdPrescription()"><i
                                     class="fa-solid fa-print"></i> <span
                                     data-key="btn_print_rx">បោះពុម្ពវេជ្ជបញ្ជា</span></button>
@@ -7490,17 +7569,12 @@
                     </div>
                 </div>
 
-                <!-- OPD Footer -->
-                <div style="margin-top: 30px; line-height: 2;">
+                    <!-- Slot for Phase 6 (prescribing-warnings); empty until that phase -->
+                    <div class="emr-soap-slot" data-soap-slot="prescribing-warnings" hidden></div>
                     <div class="p-row">
                         <span class="p-label" data-key="opd_followup">ថ្ងៃត្រឡប់មកវិញ ៖</span>
                         <input type="date" class="p-fill" id="web_opd_followup" style="max-width: 200px;">
                     </div>
-                    <div class="p-row emr-esign-slot" id="opd-doctor-esign">
-                        <span class="p-label">ឈ្មោះ និងហត្ថលេខារបស់គ្រូពេទ្យ ៖</span>
-                        <div class="emr-esign-content" data-emr-esign-content></div>
-                    </div>
-                </div> <!-- Close OPD footer before the referral actions. -->
                 <div class="p-row no-print" style="margin-top: 15px; padding: 10px 14px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                     <span class="p-label" style="font-weight: bold; color: #0369a1;"><i class="fa-solid fa-bed-pulse"></i> បញ្ជូនទៅសម្រាកពេទ្យផ្នែក ៖</span>
                     <select id="web_opd_transfer_ward" class="modern-input" style="max-width: 260px; font-weight: bold; padding: 4px 8px;" onchange="syncAdmissionReferralWard()">
@@ -7516,6 +7590,22 @@
                     <span style="font-size: 12px; color: #64748b;">(ជ្រើសរើសដើម្បីផ្ទេរទៅសម្រាកពេទ្យ និងបញ្ចូលក្នុងលិខិតសម្រាកពេទ្យ)</span>
                 </div>
 
+                <!-- NEW v40.8: Plan notes -->
+                <div class="opd-section">
+                    <div class="opd-section-title" data-key="opd_plan_notes">កំណត់ចំណាំផែនការព្យាបាល</div>
+                    <textarea id="opd_plan_notes" data-emr-no-auto-index class="fill-blank ipd-plan-notes"></textarea>
+                </div>
+                    </div>
+                </section>
+                </div>
+
+                <!-- OPD Footer -->
+                <div style="margin-top: 30px; line-height: 2;">
+                    <div class="p-row emr-esign-slot" id="opd-doctor-esign">
+                        <span class="p-label">ឈ្មោះ និងហត្ថលេខារបស់គ្រូពេទ្យ ៖</span>
+                        <div class="emr-esign-content" data-emr-esign-content></div>
+                    </div>
+                </div> <!-- Close OPD footer before the referral actions. -->
                 <div class="action-bar no-print">
                     <button class="btn-blue no-print" onclick="printSignedOpdForm()"><i class="fa-solid fa-print"></i>
                         បោះពុម្ភទម្រង់ពិគ្រោះក្រៅ</button>
@@ -7550,107 +7640,102 @@
                     សំណុំឯកសារអ្នកជំងឺសម្រាកពេទ្យ
                 </div>
 
-                <!-- ១. សញ្ញាជីវិត -->
-                <div class="opd-section">
-                    <div class="opd-section-title" data-key="ipd_sec1">១. សញ្ញាជីវិត</div>
-                    <div
-                        style="margin-left: 20px; line-height: 2; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                        <div><span data-key="ipd_bp">សម្ពាធឈាម:</span> <input type="text" id="ipd_bp_sys"
-                                class="fill-blank" style="width:40px; color:#0284c7; font-weight:bold;" readonly>/<input
-                                type="text" id="ipd_bp_dia" class="fill-blank"
-                                style="width:40px; color:#0284c7; font-weight:bold;" readonly> mmHg</div>
-                        <div><span data-key="ipd_p">ជីពចរ:</span> <input type="text" id="ipd_pulse" class="fill-blank"
-                                style="width:50px; color:#0284c7; font-weight:bold;" readonly> /mn</div>
-                        <div><span data-key="ipd_rr">ចង្វាក់ដង្ហើម:</span> <input type="text" id="ipd_resp"
-                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;" readonly> /mn
+                <!-- v40.7: IPD admission record in SOAP order. Existing fields were moved here unchanged; -->
+                <!-- their saved keys are fixed by data-emr-key-index / data-emr-legacy-index. -->
+                <div class="emr-soap-container single-column emr-soap-record" id="ipd_soap_record">
+                <!-- SOAP S: Subjective (v40.7) -->
+                <section class="emr-soap-box section-s emr-soap-record-box" data-soap-record-box="s" aria-labelledby="ipd_soap_s_title">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge" data-language-exclude aria-hidden="true">S</div>
+                            <i class="fa-solid fa-circle-info emr-soap-icon" aria-hidden="true"></i>
+                            <span class="emr-soap-title" id="ipd_soap_s_title" data-language-exclude>Subjective</span>
                         </div>
-                        <div><span data-key="ipd_t">សីតុណ្ហភាព:</span> <input type="text" id="ipd_temp"
-                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;" readonly> °C
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" data-soap-status></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" data-soap-collapse aria-expanded="true" aria-controls="ipd_soap_s_body" title="បង្រួម / ពង្រីក" aria-label="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
                         </div>
-                        <div style="grid-column: span 2;"><span data-key="ipd_spo2">អុកស៊ីសែនក្នុងឈាម:</span> <input
-                                type="text" id="ipd_spo2" class="fill-blank"
-                                style="width:50px; color:#0284c7; font-weight:bold;" readonly> %</div>
-                        <div><span data-key="ipd_height">កម្ពស់:</span> <input type="text" id="ipd_height"
-                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;" readonly> cm
-                        </div>
-                        <div style="grid-column: span 2;"><span data-key="ipd_weight">ទម្ងន់:</span> <input type="text"
-                                id="ipd_weight" class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;"
-                                readonly> kg</div>
                     </div>
-                </div>
-
+                    <div class="emr-soap-body" id="ipd_soap_s_body">
                 <!-- ២. មូលហេតុចូល -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="ipd_sec2">២. មូលហេតុចូល:</div>
-                    <textarea class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
+                    <div class="opd-section-title" data-key="ipd_sec2">មូលហេតុចូល:</div>
+                    <textarea data-emr-key-index="67" data-emr-legacy-index="234" class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
                 </div>
 
                 <!-- ៣. ប្រវត្តិជំងឺបច្ចុប្បន្ន -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="ipd_sec3">៣. ប្រវត្តិជំងឺបច្ចុប្បន្ន:</div>
-                    <textarea id="ipd_history_present_illness" data-emr-migrate-auto-key class="fill-blank" style="width: 100%; min-height: 120px; line-height:1.5;"></textarea>
+                    <div class="opd-section-title" data-key="ipd_sec3">ប្រវត្តិជំងឺបច្ចុប្បន្ន:</div>
+                    <textarea data-emr-key-index="68" data-emr-legacy-index="235" id="ipd_history_present_illness" data-emr-migrate-auto-key class="fill-blank" style="width: 100%; min-height: 120px; line-height:1.5;"></textarea>
                 </div>
 
                 <!-- ៤. សញ្ញាតម្អូញផេ្សងទៀត -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="ipd_sec4">៤. សញ្ញាតម្អូញផេ្សងទៀត:</div>
-                    <div class="opd-checkbox-grid" style="grid-template-columns: repeat(4, 1fr);">
-                        <label><input type="checkbox"> <span data-key="hist_cough">ក្អក > ១៤ថ្ងៃ</span></label>
-                        <label><input type="checkbox"> <span data-key="hist_fever">ក្តៅខ្លួន > ១៤ថ្ងៃ</span></label>
-                        <label><input type="checkbox"> <span data-key="hist_sweat">បែកញើសពេលយប់ > ១៤ថ្ងៃ</span></label>
-                        <label><input type="checkbox"> <span data-key="hist_weight">ស្រកទម្ងន់ > ១៤ថ្ងៃ</span></label>
+                    <div class="opd-section-title" data-key="ipd_sec4">សញ្ញាតម្អូញផេ្សងទៀត:</div>
+                    <!-- v41.1: TB screening block shared by OPD and IPD (.emr-tb-screening); the TB contact -->
+                    <!-- item is new in IPD (id-keyed, data-emr-no-auto-index), label copied from OPD. -->
+                    <div class="opd-checkbox-grid opd-history-grid emr-tb-screening">
+                        <label><input data-emr-key-index="69" data-emr-legacy-index="236" type="checkbox"> <span data-key="hist_cough">ក្អក > ១៤ថ្ងៃ</span></label>
+                        <label><input data-emr-key-index="70" data-emr-legacy-index="237" type="checkbox"> <span data-key="hist_fever">ក្តៅខ្លួន > ១៤ថ្ងៃ</span></label>
+                        <label><input data-emr-key-index="71" data-emr-legacy-index="238" type="checkbox"> <span data-key="hist_sweat">បែកញើសពេលយប់ > ១៤ថ្ងៃ</span></label>
+                        <label><input data-emr-key-index="72" data-emr-legacy-index="239" type="checkbox"> <span data-key="hist_weight">ស្រកទម្ងន់ > ១៤ថ្ងៃ</span></label>
+                        <label style="grid-column: span 2;"><input id="ipd_tb_contact" data-emr-no-auto-index type="checkbox"> <span
+                                data-key="hist_tb_contact">ជិតស្និទ្ធជាមួយសមាជិកគ្រួសារ ឬអ្នកជិតខាងដែលមានជំងឺរបេង</span></label>
                     </div>
-                    <textarea class="fill-blank" style="width: 100%; min-height: 60px; line-height:1.5;"></textarea>
+                    <textarea data-emr-key-index="73" data-emr-legacy-index="240" class="fill-blank" style="width: 100%; min-height: 60px; line-height:1.5;"></textarea>
                 </div>
 
                 <!-- ៥. ឱសថដែលកំពុងប្រើព្យាបាល -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="ipd_sec5">៥. ឱសថដែលកំពុងប្រើព្យាបាល:</div>
-                    <textarea class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
+                    <div class="opd-section-title" data-key="ipd_sec5">ឱសថដែលកំពុងប្រើព្យាបាល:</div>
+                    <textarea data-emr-key-index="74" data-emr-legacy-index="241" class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
                 </div>
 
                 <!-- ៦. សាវតារោគ -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="ipd_sec6">៦. សាវតារោគ</div>
+                    <div class="opd-section-title" data-key="ipd_sec6">សាវតារោគ</div>
                     <div style="margin-left: 15px; line-height: 1.8;">
                         <strong data-key="ipd_v1">1: សាវតារោគផ្ទាល់ខ្លួន</strong><br>
-                        <div style="display: flex; align-items: flex-start; margin-bottom: 5px;">
+                        <!-- v41.1: display rule by age (docs/clinical-review.md) -->
+                        <div data-display-rule="immunization" style="display: flex; align-items: flex-start; margin-bottom: 5px;">
                             <div style="white-space: nowrap; margin-right: 15px;" data-key="ipd_vaccine">
                                 ចាក់ថ្នាំបង្ការ:</div>
                             <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                                <label><input type="checkbox"> BCG / HepB0</label>
-                                <label><input type="checkbox"> OPV+DPT-HepB-Hib1</label>
-                                <label><input type="checkbox"> OPV-HepB-Hib2</label>
-                                <label><input type="checkbox"> OPV+DPT-HepB-Hib3</label>
-                                <label><input type="checkbox"> Measles+JE</label>
-                                <label><input type="checkbox"> Tetanus</label>
-                                <label><input type="checkbox"> None</label>
+                                <label><input data-emr-key-index="75" data-emr-legacy-index="242" type="checkbox"> BCG / HepB0</label>
+                                <label><input data-emr-key-index="76" data-emr-legacy-index="243" type="checkbox"> OPV+DPT-HepB-Hib1</label>
+                                <label><input data-emr-key-index="77" data-emr-legacy-index="244" type="checkbox"> OPV-HepB-Hib2</label>
+                                <label><input data-emr-key-index="78" data-emr-legacy-index="245" type="checkbox"> OPV+DPT-HepB-Hib3</label>
+                                <label><input data-emr-key-index="79" data-emr-legacy-index="246" type="checkbox"> Measles+JE</label>
+                                <label><input data-emr-key-index="80" data-emr-legacy-index="247" type="checkbox"> Tetanus</label>
+                                <label><input data-emr-key-index="81" data-emr-legacy-index="248" type="checkbox"> None</label>
                             </div>
                         </div>
                         <div class="p-row" style="margin-bottom: 5px;">
-                            <label><input type="checkbox"> <span
-                                    data-key="ipd_allergy">ប្រតិកម្មនឹងថ្នាំ:</span></label> <input type="text"
+                            <label><input data-emr-key-index="82" data-emr-legacy-index="249" type="checkbox"> <span
+                                    data-key="ipd_allergy">ប្រតិកម្មនឹងថ្នាំ:</span></label> <input data-emr-key-index="83" data-emr-legacy-index="250" type="text"
                                 class="p-fill">
                         </div>
                         <div
                             style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 5px;">
-                            <label><input type="checkbox"> <span data-key="ipd_htn">លើសសម្ពាធឈាម</span></label>
-                            <label><input type="checkbox"> <span data-key="ipd_dm">ជំងឺទឹកនោមផ្អែម</span></label>
-                            <label><input type="checkbox"> <span data-key="ipd_tb">ជំងឺរបេង</span></label>
-                            <label><input type="checkbox"> <span data-key="ipd_cardio">ជំងឺបេះដូង</span></label>
+                            <label><input data-emr-key-index="84" data-emr-legacy-index="251" type="checkbox"> <span data-key="ipd_htn">លើសសម្ពាធឈាម</span></label>
+                            <label><input data-emr-key-index="85" data-emr-legacy-index="252" type="checkbox"> <span data-key="ipd_dm">ជំងឺទឹកនោមផ្អែម</span></label>
+                            <label><input data-emr-key-index="86" data-emr-legacy-index="253" type="checkbox"> <span data-key="ipd_tb">ជំងឺរបេង</span></label>
+                            <label><input data-emr-key-index="87" data-emr-legacy-index="254" type="checkbox"> <span data-key="ipd_cardio">ជំងឺបេះដូង</span></label>
                         </div>
                         <div
                             style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 5px;">
-                            <div style="display:flex; flex-grow:1;"><label><input type="checkbox"> <span
-                                        data-key="ipd_surg">វះកាត់</span> </label> <input type="text" class="fill-blank"
+                            <div style="display:flex; flex-grow:1;"><label><input data-emr-key-index="88" data-emr-legacy-index="255" type="checkbox"> <span
+                                        data-key="ipd_surg">វះកាត់</span> </label> <input data-emr-key-index="89" data-emr-legacy-index="256" type="text" class="fill-blank"
                                     style="flex-grow:1;"></div>
-                            <label><input type="checkbox"> <span data-key="ipd_smoke">ជក់បារី</span></label>
-                            <label><input type="checkbox"> <span data-key="ipd_alcohol">ផឹកស្រា</span></label>
-                            <label><input type="checkbox"> <span data-key="ipd_drugs">ប្រើគ្រឿងញៀន</span></label>
-                            <label><input type="checkbox"> <span data-key="ipd_mental">បញ្ហាផ្លូវចិត្ត</span></label>
+                            <label data-display-rule="substance-use"><input data-emr-key-index="90" data-emr-legacy-index="257" type="checkbox"> <span data-key="ipd_smoke">ជក់បារី</span></label>
+                            <label data-display-rule="substance-use"><input data-emr-key-index="91" data-emr-legacy-index="258" type="checkbox"> <span data-key="ipd_alcohol">ផឹកស្រា</span></label>
+                            <label data-display-rule="substance-use"><input data-emr-key-index="92" data-emr-legacy-index="259" type="checkbox"> <span data-key="ipd_drugs">ប្រើគ្រឿងញៀន</span></label>
+                            <label><input data-emr-key-index="93" data-emr-legacy-index="260" type="checkbox"> <span data-key="ipd_mental">បញ្ហាផ្លូវចិត្ត</span></label>
                         </div>
                         <div class="p-row" style="margin-bottom: 10px;">
-                            <span class="p-label" data-key="ipd_others">ផ្សេងៗ:</span><input type="text" class="p-fill">
+                            <span class="p-label" data-key="ipd_others">ផ្សេងៗ:</span><input data-emr-key-index="94" data-emr-legacy-index="261" type="text" class="p-fill">
                         </div>
 
                         <!-- ប្រវត្តិសម្ភព និងរោគស្ត្រី (សម្រាប់អ្នកជំងឺស្រី) -->
@@ -7680,15 +7765,123 @@
                         </div>
 
                         <strong data-key="ipd_v2">3: សាវតាក្នុងគ្រួសារ</strong><br>
-                        <textarea class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
+                        <textarea data-emr-key-index="95" data-emr-legacy-index="262" class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
                         <strong data-key="ipd_v3">4: សាវតារោគក្នុងសហគមន៍</strong><br>
                         <textarea id="ipd_community_history" data-emr-no-auto-index class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
                     </div>
                 </div>
 
+                    <!-- Slot for Phase 4 (structured-allergy); empty until that phase -->
+                    <div class="emr-soap-slot" data-soap-slot="structured-allergy" hidden></div>
+                    <!-- v41.1: Paediatric section (display rule by age, docs/clinical-review.md). -->
+                    <!-- New fields are id-keyed and data-emr-no-auto-index: no position key moves. -->
+                    <div class="emr-soap-slot emr-rule-block emr-paediatric-section" data-soap-slot="paediatric" data-display-rule="paediatric" hidden>
+                        <div class="emr-rule-block-title">ផ្នែកកុមារ</div>
+                        <div class="emr-rule-field">
+                            <label for="ipd_paed_birth_history">ប្រវត្តិកំណើត</label>
+                            <textarea id="ipd_paed_birth_history" data-emr-no-auto-index class="fill-blank"></textarea>
+                        </div>
+                        <div class="emr-rule-field">
+                            <label for="ipd_paed_feeding">ការបំបៅ</label>
+                            <textarea id="ipd_paed_feeding" data-emr-no-auto-index class="fill-blank"></textarea>
+                        </div>
+                        <div class="emr-rule-field">
+                            <label for="ipd_paed_growth_notes">ការលូតលាស់</label>
+                            <div class="emr-paediatric-growth">
+                                <span class="emr-paediatric-vitals" data-paediatric-vitals></span>
+                                <span class="emr-paediatric-head" data-display-rule="head-circumference">
+                                    <label for="ipd_paed_head_circumference" data-new-text="paediatric.headCircumference">Head circumference</label>
+                                    <input type="text" inputmode="decimal" id="ipd_paed_head_circumference" data-emr-no-auto-index class="fill-blank" maxlength="10"> cm
+                                </span>
+                            </div>
+                            <textarea id="ipd_paed_growth_notes" data-emr-no-auto-index class="fill-blank"></textarea>
+                        </div>
+                        <div class="emr-rule-field">
+                            <label for="ipd_paed_milestones">ដំណាក់កាលអភិវឌ្ឍន៍</label>
+                            <textarea id="ipd_paed_milestones" data-emr-no-auto-index class="fill-blank"></textarea>
+                        </div>
+                    </div>
+                    <!-- v41.1: Tetanus vaccine status (display rule by age, sex and pregnancy). -->
+                    <div class="emr-soap-slot emr-rule-block emr-tetanus-section" data-soap-slot="tetanus-status" data-display-rule="tetanus-status" hidden>
+                        <div class="emr-tetanus-row">
+                            <label for="ipd_tetanus_status" class="emr-rule-block-title">ស្ថានភាពទទួលថ្នាំការពាររោគតេតាណូស</label>
+                            <select id="ipd_tetanus_status" data-emr-no-auto-index class="fill-blank">
+                                <option value=""></option>
+                                <option value="TT1">TT1</option>
+                                <option value="TT2">TT2</option>
+                                <option value="TT3">TT3</option>
+                                <option value="TT4">TT4</option>
+                                <option value="TT5">TT5</option>
+                                <option value="none" data-new-text="tetanus.none">No dose</option>
+                                <option value="unknown" data-new-text="tetanus.unknown">Unknown</option>
+                            </select>
+                            <label for="ipd_tetanus_last_dose" data-new-text="tetanus.lastDose">Last dose date</label>
+                            <input type="date" id="ipd_tetanus_last_dose" data-emr-no-auto-index class="fill-blank">
+                        </div>
+                    </div>
+                    </div>
+                </section>
+                <!-- SOAP O: Objective (v40.7) -->
+                <section class="emr-soap-box section-o emr-soap-record-box" data-soap-record-box="o" aria-labelledby="ipd_soap_o_title">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge" data-language-exclude aria-hidden="true">O</div>
+                            <i class="fa-solid fa-stethoscope emr-soap-icon" aria-hidden="true"></i>
+                            <span class="emr-soap-title" id="ipd_soap_o_title" data-language-exclude>Objective</span>
+                        </div>
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" data-soap-status></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" data-soap-collapse aria-expanded="true" aria-controls="ipd_soap_o_body" title="បង្រួម / ពង្រីក" aria-label="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="emr-soap-body" id="ipd_soap_o_body">
+                <!-- ១. សញ្ញាជីវិត -->
+                <div class="opd-section">
+                    <div class="opd-section-title" data-key="ipd_sec1">សញ្ញាជីវិត</div>
+                    <div
+                        style="margin-left: 20px; line-height: 2; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                        <div><span data-key="ipd_bp">សម្ពាធឈាម:</span> <input type="text" id="ipd_bp_sys"
+                                class="fill-blank" style="width:40px; color:#0284c7; font-weight:bold;" readonly>/<input
+                                type="text" id="ipd_bp_dia" class="fill-blank"
+                                style="width:40px; color:#0284c7; font-weight:bold;" readonly> mmHg</div>
+                        <div><span data-key="ipd_p">ជីពចរ:</span> <input type="text" id="ipd_pulse" class="fill-blank"
+                                style="width:50px; color:#0284c7; font-weight:bold;" readonly> /mn</div>
+                        <div><span data-key="ipd_rr">ចង្វាក់ដង្ហើម:</span> <input type="text" id="ipd_resp"
+                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;" readonly> /mn
+                        </div>
+                        <div><span data-key="ipd_t">សីតុណ្ហភាព:</span> <input type="text" id="ipd_temp"
+                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;" readonly> °C
+                        </div>
+                        <div style="grid-column: span 2;"><span data-key="ipd_spo2">អុកស៊ីសែនក្នុងឈាម:</span> <input
+                                type="text" id="ipd_spo2" class="fill-blank"
+                                style="width:50px; color:#0284c7; font-weight:bold;" readonly> %</div>
+                        <div><span data-key="ipd_height">កម្ពស់:</span> <input type="text" id="ipd_height"
+                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;" readonly> cm
+                        </div>
+                        <div style="grid-column: span 2;"><span data-key="ipd_weight">ទម្ងន់:</span> <input type="text"
+                                id="ipd_weight" class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;"
+                                readonly> kg</div>
+                    </div>
+                </div>
+
+                    <!-- Slot for Phase 9 (early-warning-score); empty until that phase -->
+                    <!-- v41.6: Early Warning Score (NEWS2, public/early-warning.js). The two new fields are id-keyed and data-emr-no-auto-index. -->
+                    <div class="emr-soap-slot ews-panel" data-soap-slot="early-warning-score">
+                        <div class="ews-title">ពិន្ទុវាយតម្លៃកម្រិតសង្គ្រោះបន្ទាន់</div>
+                        <div class="ews-inputs">
+                            <label><input type="checkbox" id="ipd_ews_oxygen" data-emr-no-auto-index> <span data-ews-label="onOxygen">On oxygen</span></label>
+                            <label><span data-ews-label="consciousness">Consciousness (ACVPU)</span>
+                                <select id="ipd_ews_acvpu" data-emr-no-auto-index>
+                                    <option value=""></option><option value="A">A</option><option value="C">C</option><option value="V">V</option><option value="P">P</option><option value="U">U</option>
+                                </select></label>
+                        </div>
+                        <div data-ews-result></div>
+                    </div>
                 <!-- ៧. ការពិនិត្យរាង្គកាយ -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="ipd_sec7">៧. ការពិនិត្យរាង្គកាយ:</div>
+                    <div class="opd-section-title" data-key="ipd_sec7">ការពិនិត្យរាង្គកាយ:</div>
                     <div class="no-print" style="margin: 7px 0 12px 15px; font-size: 12px;">
                         <label for="ipd_exam_normal_language" data-key="ipd_normal_language">ភាសាអត្ថបទធម្មតា:</label>
                         <select id="ipd_exam_normal_language" data-emr-no-auto-index data-language-exclude style="width: auto; margin: 0 8px;">
@@ -7704,20 +7897,20 @@
                         <!-- General App -->
                         <div>
                             <strong data-key="ipd_gen_app">· សភាពទូទៅ:</strong> &nbsp;&nbsp;
-                            <label><input type="radio" name="gen_app" id="ipd_exam_general_good" data-emr-migrate-auto-key> <span data-key="ipd_good">ល្អ</span></label>
+                            <label><input data-emr-key-index="96" data-emr-legacy-index="263" type="radio" name="gen_app" id="ipd_exam_general_good" data-emr-migrate-auto-key> <span data-key="ipd_good">ល្អ</span></label>
                             &nbsp;&nbsp;
-                            <label><input type="radio" name="gen_app" id="ipd_exam_general_fair" data-emr-migrate-auto-key> <span
+                            <label><input data-emr-key-index="97" data-emr-legacy-index="264" type="radio" name="gen_app" id="ipd_exam_general_fair" data-emr-migrate-auto-key> <span
                                     data-key="ipd_fair">មិនសូវល្អ</span></label> &nbsp;&nbsp;
-                            <label><input type="radio" name="gen_app" id="ipd_exam_general_severe" data-emr-migrate-auto-key> <span
+                            <label><input data-emr-key-index="98" data-emr-legacy-index="265" type="radio" name="gen_app" id="ipd_exam_general_severe" data-emr-migrate-auto-key> <span
                                     data-key="ipd_severe">ធ្ងន់ធ្ងរ</span></label> &nbsp;&nbsp;
-                            <label><input type="radio" name="gen_app" id="ipd_exam_general_very_severe" data-emr-migrate-auto-key> <span
+                            <label><input data-emr-key-index="99" data-emr-legacy-index="266" type="radio" name="gen_app" id="ipd_exam_general_very_severe" data-emr-migrate-auto-key> <span
                                     data-key="ipd_v_severe">ធ្ងន់ធ្ងរខ្លាំង</span></label>
                             <div style="margin-left: 20px; display: inline-block;">
-                                <label><input type="checkbox"> <span data-key="ipd_pale">សេ្លកស្លាំង</span></label>
+                                <label><input data-emr-key-index="100" data-emr-legacy-index="267" type="checkbox"> <span data-key="ipd_pale">សេ្លកស្លាំង</span></label>
                                 &nbsp;&nbsp;
-                                <label><input type="checkbox"> <span data-key="ipd_cyanosis">ទ្បើងស្វាយ</span></label>
+                                <label><input data-emr-key-index="101" data-emr-legacy-index="268" type="checkbox"> <span data-key="ipd_cyanosis">ទ្បើងស្វាយ</span></label>
                                 &nbsp;&nbsp;
-                                <label><input type="checkbox"> <span data-key="ipd_jaundice">ខាន់លឿង</span></label>
+                                <label><input data-emr-key-index="102" data-emr-legacy-index="269" type="checkbox"> <span data-key="ipd_jaundice">ខាន់លឿង</span></label>
                             </div>
                         </div>
 
@@ -7725,31 +7918,31 @@
                         <div>
                             <strong data-key="ipd_neuro">· ប្រព័ន្ធសសៃប្រសាទ:</strong>
                             <button type="button" class="no-print" onclick="fillClinicalExamNormal('neurological')">ធម្មតា</button> &nbsp;&nbsp;
-                            <label><input type="radio" name="neuro" id="ipd_exam_neuro_conscious" data-emr-migrate-auto-key> <span
+                            <label><input data-emr-key-index="103" data-emr-legacy-index="270" type="radio" name="neuro" id="ipd_exam_neuro_conscious" data-emr-migrate-auto-key> <span
                                     data-key="ipd_conscious">ដឹងខ្លួន</span></label> &nbsp;&nbsp;
-                            <label><input type="radio" name="neuro" id="ipd_exam_neuro_delirium" data-emr-migrate-auto-key> <span
+                            <label><input data-emr-key-index="104" data-emr-legacy-index="271" type="radio" name="neuro" id="ipd_exam_neuro_delirium" data-emr-migrate-auto-key> <span
                                     data-key="ipd_delirium">រវើរវាយ</span></label> &nbsp;&nbsp;
-                            <label><input type="radio" name="neuro" id="ipd_exam_neuro_coma" data-emr-migrate-auto-key> <span data-key="ipd_coma">សន្លប់</span></label>
+                            <label><input data-emr-key-index="105" data-emr-legacy-index="272" type="radio" name="neuro" id="ipd_exam_neuro_coma" data-emr-migrate-auto-key> <span data-key="ipd_coma">សន្លប់</span></label>
                             &nbsp;&nbsp;
-                            <label><input type="radio" name="neuro" id="ipd_exam_neuro_seizure" data-emr-migrate-auto-key> <span data-key="ipd_seizure">ប្រកាច់</span></label>
+                            <label><input data-emr-key-index="106" data-emr-legacy-index="273" type="radio" name="neuro" id="ipd_exam_neuro_seizure" data-emr-migrate-auto-key> <span data-key="ipd_seizure">ប្រកាច់</span></label>
                         </div>
 
                         <div>
                             <strong data-key="ipd_gcs">· ពិន្ទុកម្រិតស្មារតី (GCS):</strong> &nbsp;
-                            <span data-key="ipd_eye">ភែ្នកៈ</span> <input type="text" id="ipd_exam_gcs_eye" data-emr-migrate-auto-key class="fill-blank"
+                            <span data-key="ipd_eye">ភែ្នកៈ</span> <input data-emr-key-index="107" data-emr-legacy-index="274" type="text" id="ipd_exam_gcs_eye" data-emr-migrate-auto-key class="fill-blank"
                                 style="width:40px; text-align:center;">
-                            <span data-key="ipd_verbal">ការនិយាយៈ</span> <input type="text" id="ipd_exam_gcs_verbal" data-emr-migrate-auto-key class="fill-blank"
+                            <span data-key="ipd_verbal">ការនិយាយៈ</span> <input data-emr-key-index="108" data-emr-legacy-index="275" type="text" id="ipd_exam_gcs_verbal" data-emr-migrate-auto-key class="fill-blank"
                                 style="width:40px; text-align:center;">
-                            <span data-key="ipd_motor">ចលនាៈ</span> <input type="text" id="ipd_exam_gcs_motor" data-emr-migrate-auto-key class="fill-blank"
+                            <span data-key="ipd_motor">ចលនាៈ</span> <input data-emr-key-index="109" data-emr-legacy-index="276" type="text" id="ipd_exam_gcs_motor" data-emr-migrate-auto-key class="fill-blank"
                                 style="width:40px; text-align:center;">
-                            <span data-key="ipd_total">សរុបៈ</span> <input type="text" id="ipd_exam_gcs_total" data-emr-migrate-auto-key class="fill-blank"
+                            <span data-key="ipd_total">សរុបៈ</span> <input data-emr-key-index="110" data-emr-legacy-index="277" type="text" id="ipd_exam_gcs_total" data-emr-migrate-auto-key class="fill-blank"
                                 style="width:40px; text-align:center;">
                         </div>
 
                         <div style="display: flex; gap: 20px;">
-                            <div style="flex:1;"><strong data-key="ipd_pain">· កម្រិតនៃការឈឺចាប់:</strong> <input
+                            <div style="flex:1;"><strong data-key="ipd_pain">· កម្រិតនៃការឈឺចាប់:</strong> <input data-emr-key-index="111" data-emr-legacy-index="278"
                                     type="text" id="ipd_exam_pain" data-emr-migrate-auto-key class="fill-blank" style="width: 60%;"></div>
-                            <div style="flex:1;"><strong data-key="ipd_others">ផ្សេងៗ:</strong> <input type="text"
+                            <div style="flex:1;"><strong data-key="ipd_others">ផ្សេងៗ:</strong> <input data-emr-key-index="112" data-emr-legacy-index="279" type="text"
                                     id="ipd_exam_neuro_other" data-emr-migrate-auto-key class="fill-blank" style="width: 65%;"></div>
                         </div>
 
@@ -7758,25 +7951,25 @@
                             <strong data-key="ipd_heent">· ក្បាល, ភ្នែក,ត្រចៀក, ច្រមុះ, បំពង់ក</strong>
                             <button type="button" class="no-print" onclick="fillClinicalExamNormal('heent')">ធម្មតា</button>
                             <div style="padding-left: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                                <div style="grid-column: span 2;"><span data-key="ipd_head">ក្បាល:</span> <input
+                                <div style="grid-column: span 2;"><span data-key="ipd_head">ក្បាល:</span> <input data-emr-key-index="113" data-emr-legacy-index="280"
                                         type="text" id="ipd_exam_head" data-emr-migrate-auto-key class="fill-blank" style="width: 85%;"></div>
                                 <div><span data-key="ipd_eyes">ភ្នែក:</span> <span data-key="ipd_left">ឆ្វេង</span>
-                                    <input type="text" id="ipd_exam_eye_left" data-emr-migrate-auto-key class="fill-blank" style="width:30%;"> <span
-                                        data-key="ipd_right">ស្តាំ</span> <input type="text" id="ipd_exam_eye_right" data-emr-migrate-auto-key class="fill-blank"
+                                    <input data-emr-key-index="114" data-emr-legacy-index="281" type="text" id="ipd_exam_eye_left" data-emr-migrate-auto-key class="fill-blank" style="width:30%;"> <span
+                                        data-key="ipd_right">ស្តាំ</span> <input data-emr-key-index="115" data-emr-legacy-index="282" type="text" id="ipd_exam_eye_right" data-emr-migrate-auto-key class="fill-blank"
                                         style="width:30%;"></div>
-                                <div><span data-key="ipd_fundus">បាតភ្នែក:</span> <input type="text" id="ipd_exam_fundus" data-emr-migrate-auto-key class="fill-blank"
+                                <div><span data-key="ipd_fundus">បាតភ្នែក:</span> <input data-emr-key-index="116" data-emr-legacy-index="283" type="text" id="ipd_exam_fundus" data-emr-migrate-auto-key class="fill-blank"
                                         style="width:55%;"></div>
                                 <div style="grid-column: span 2;"><span data-key="ipd_ears">ត្រចៀក:</span> <span
-                                        data-key="ipd_left">ឆ្វេង</span> <input type="text" id="ipd_exam_ear_left" data-emr-migrate-auto-key class="fill-blank"
-                                        style="width:20%;"> <span data-key="ipd_right">ស្តាំ</span> <input type="text" id="ipd_exam_ear_right" data-emr-migrate-auto-key
+                                        data-key="ipd_left">ឆ្វេង</span> <input data-emr-key-index="117" data-emr-legacy-index="284" type="text" id="ipd_exam_ear_left" data-emr-migrate-auto-key class="fill-blank"
+                                        style="width:20%;"> <span data-key="ipd_right">ស្តាំ</span> <input data-emr-key-index="118" data-emr-legacy-index="285" type="text" id="ipd_exam_ear_right" data-emr-migrate-auto-key
                                         class="fill-blank" style="width:20%;"></div>
-                                <div><span data-key="ipd_nose">ច្រមុះ:</span> <input type="text" id="ipd_exam_nose" data-emr-migrate-auto-key class="fill-blank"
+                                <div><span data-key="ipd_nose">ច្រមុះ:</span> <input data-emr-key-index="119" data-emr-legacy-index="286" type="text" id="ipd_exam_nose" data-emr-migrate-auto-key class="fill-blank"
                                         style="width:70%;"></div>
-                                <div><span data-key="ipd_throat">បំពង់ក:</span> <input type="text" id="ipd_exam_throat" data-emr-migrate-auto-key class="fill-blank"
+                                <div><span data-key="ipd_throat">បំពង់ក:</span> <input data-emr-key-index="120" data-emr-legacy-index="287" type="text" id="ipd_exam_throat" data-emr-migrate-auto-key class="fill-blank"
                                         style="width:65%;"></div>
-                                <div><span data-key="ipd_neck">ក:</span> <input type="text" id="ipd_exam_neck" data-emr-migrate-auto-key class="fill-blank"
+                                <div><span data-key="ipd_neck">ក:</span> <input data-emr-key-index="121" data-emr-legacy-index="288" type="text" id="ipd_exam_neck" data-emr-migrate-auto-key class="fill-blank"
                                         style="width:80%;"></div>
-                                <div><span data-key="ipd_lymph">ប្រព័ន្ធកូនកណ្តុល:</span> <input type="text"
+                                <div><span data-key="ipd_lymph">ប្រព័ន្ធកូនកណ្តុល:</span> <input data-emr-key-index="122" data-emr-legacy-index="289" type="text"
                                         id="ipd_exam_lymph" data-emr-migrate-auto-key class="fill-blank" style="width:57%;"></div>
                             </div>
                         </div>
@@ -7786,13 +7979,13 @@
                             <strong data-key="ipd_resp">· ប្រដាប់ដកដង្ហើម:</strong>
                             <button type="button" class="no-print" onclick="fillClinicalExamNormal('respiratory')">ធម្មតា</button><br>
                             <div style="padding-left: 15px;">
-                                <span data-key="ipd_inspect">មើល:</span> <input type="text" id="ipd_exam_resp_inspection" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_inspect">មើល:</span> <input data-emr-key-index="123" data-emr-legacy-index="290" type="text" id="ipd_exam_resp_inspection" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;"><br>
-                                <span data-key="ipd_ausc">ស្តាប់:</span> <input type="text" id="ipd_exam_resp_auscultation" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_ausc">ស្តាប់:</span> <input data-emr-key-index="124" data-emr-legacy-index="291" type="text" id="ipd_exam_resp_auscultation" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;"><br>
-                                <span data-key="ipd_palp">ស្ទាប:</span> <input type="text" id="ipd_exam_resp_palpation" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_palp">ស្ទាប:</span> <input data-emr-key-index="125" data-emr-legacy-index="292" type="text" id="ipd_exam_resp_palpation" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;"><br>
-                                <span data-key="ipd_perc">គោះ:</span> <input type="text" id="ipd_exam_resp_percussion" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_perc">គោះ:</span> <input data-emr-key-index="126" data-emr-legacy-index="293" type="text" id="ipd_exam_resp_percussion" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;">
                             </div>
                         </div>
@@ -7802,13 +7995,13 @@
                             <strong data-key="ipd_cvs">· ប្រដាប់បេះដូង និងឈាមរត់:</strong>
                             <button type="button" class="no-print" onclick="fillClinicalExamNormal('cardiovascular')">ធម្មតា</button><br>
                             <div style="padding-left: 15px;">
-                                <span data-key="ipd_inspect">មើល:</span> <input type="text" id="ipd_exam_cvs_inspection" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_inspect">មើល:</span> <input data-emr-key-index="127" data-emr-legacy-index="294" type="text" id="ipd_exam_cvs_inspection" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;"><br>
-                                <span data-key="ipd_ausc">ស្តាប់:</span> <input type="text" id="ipd_exam_cvs_auscultation" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_ausc">ស្តាប់:</span> <input data-emr-key-index="128" data-emr-legacy-index="295" type="text" id="ipd_exam_cvs_auscultation" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;"><br>
-                                <span data-key="ipd_palp">ស្ទាប:</span> <input type="text" id="ipd_exam_cvs_palpation" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_palp">ស្ទាប:</span> <input data-emr-key-index="129" data-emr-legacy-index="296" type="text" id="ipd_exam_cvs_palpation" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;"><br>
-                                <span data-key="ipd_perc">គោះ:</span> <input type="text" id="ipd_exam_cvs_percussion" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_perc">គោះ:</span> <input data-emr-key-index="130" data-emr-legacy-index="297" type="text" id="ipd_exam_cvs_percussion" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;">
                             </div>
                         </div>
@@ -7818,13 +8011,13 @@
                             <strong data-key="ipd_abd">· ពោះ:</strong>
                             <button type="button" class="no-print" onclick="fillClinicalExamNormal('abdomen')">ធម្មតា</button><br>
                             <div style="padding-left: 15px;">
-                                <span data-key="ipd_inspect">មើល:</span> <input type="text" id="ipd_exam_abd_inspection" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_inspect">មើល:</span> <input data-emr-key-index="131" data-emr-legacy-index="298" type="text" id="ipd_exam_abd_inspection" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;"><br>
-                                <span data-key="ipd_ausc">ស្តាប់:</span> <input type="text" id="ipd_exam_abd_auscultation" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_ausc">ស្តាប់:</span> <input data-emr-key-index="132" data-emr-legacy-index="299" type="text" id="ipd_exam_abd_auscultation" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;"><br>
-                                <span data-key="ipd_palp">ស្ទាប:</span> <input type="text" id="ipd_exam_abd_palpation" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_palp">ស្ទាប:</span> <input data-emr-key-index="133" data-emr-legacy-index="300" type="text" id="ipd_exam_abd_palpation" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;"><br>
-                                <span data-key="ipd_perc">គោះ:</span> <input type="text" id="ipd_exam_abd_percussion" data-emr-migrate-auto-key class="fill-blank"
+                                <span data-key="ipd_perc">គោះ:</span> <input data-emr-key-index="134" data-emr-legacy-index="301" type="text" id="ipd_exam_abd_percussion" data-emr-migrate-auto-key class="fill-blank"
                                     style="width: 84%;">
                             </div>
                         </div>
@@ -7835,40 +8028,83 @@
                             <button type="button" class="no-print" onclick="fillClinicalExamNormal('extremities')">ចុងអវៈយវៈ ធម្មតា</button>
                             <button type="button" class="no-print" onclick="fillClinicalExamNormal('musculoskeletal')">ឆ្អឹង/សាច់ដុំ ធម្មតា</button>
                             <button type="button" class="no-print" onclick="fillClinicalExamNormal('other')">ផ្សេងទៀត ធម្មតា</button><br>
-                            <strong data-key="ipd_gu">· ប្រដាប់បន្តពូជ និងទឹកនោម:</strong> <input type="text"
+                            <strong data-key="ipd_gu">· ប្រដាប់បន្តពូជ និងទឹកនោម:</strong> <input data-emr-key-index="135" data-emr-legacy-index="302" type="text"
                                 id="ipd_exam_gu" data-emr-migrate-auto-key class="fill-blank" style="width: 72.5%;"><br>
-                            <strong data-key="ipd_ext">· ចុងអវៈយវៈ:</strong> <input type="text" id="ipd_exam_extremities" data-emr-migrate-auto-key class="fill-blank"
-                                style="width: 70%;"> CRT: <input type="text" id="ipd_exam_crt" data-emr-migrate-auto-key class="fill-blank"
+                            <strong data-key="ipd_ext">· ចុងអវៈយវៈ:</strong> <input data-emr-key-index="136" data-emr-legacy-index="303" type="text" id="ipd_exam_extremities" data-emr-migrate-auto-key class="fill-blank"
+                                style="width: 70%;"> CRT: <input data-emr-key-index="137" data-emr-legacy-index="304" type="text" id="ipd_exam_crt" data-emr-migrate-auto-key class="fill-blank"
                                 style="width: 79px;"><br>
-                            <strong data-key="ipd_msk">· ប្រព័ន្ធឆ្អឹង សាច់ដុំ សន្លាក់:</strong> <input type="text"
+                            <strong data-key="ipd_msk">· ប្រព័ន្ធឆ្អឹង សាច់ដុំ សន្លាក់:</strong> <input data-emr-key-index="138" data-emr-legacy-index="305" type="text"
                                 id="ipd_exam_msk" data-emr-migrate-auto-key class="fill-blank" style="width: 74%;"><br>
-                            <strong data-key="ipd_other_sys">· ប្រព័ន្ធផេ្សងទៀត:</strong> <input type="text"
+                            <strong data-key="ipd_other_sys">· ប្រព័ន្ធផេ្សងទៀត:</strong> <input data-emr-key-index="139" data-emr-legacy-index="306" type="text"
                                 id="ipd_exam_other" data-emr-migrate-auto-key class="fill-blank" style="width: 78%;">
                         </div>
                     </div>
                 </div>
 
+                <div class="opd-section">
+                    <div class="opd-section-title" data-key="ipd_inv">ពិនិត្យអមគ្លីនិក:</div>
+                    <textarea data-emr-key-index="142" data-emr-legacy-index="309" id="ipd_investigations" data-emr-migrate-auto-key class="fill-blank" style="width: 100%; min-height: 60px; line-height:1.5;"></textarea>
+                </div>
+                    </div>
+                </section>
+                <!-- SOAP A: Assessment (v40.7) -->
+                <section class="emr-soap-box section-a emr-soap-record-box" data-soap-record-box="a" aria-labelledby="ipd_soap_a_title">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge" data-language-exclude aria-hidden="true">A</div>
+                            <i class="fa-solid fa-clipboard-check emr-soap-icon" aria-hidden="true"></i>
+                            <span class="emr-soap-title" id="ipd_soap_a_title" data-language-exclude>Assessment</span>
+                        </div>
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" data-soap-status></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" data-soap-collapse aria-expanded="true" aria-controls="ipd_soap_a_body" title="បង្រួម / ពង្រីក" aria-label="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="emr-soap-body" id="ipd_soap_a_body">
                 <!-- Diagnoses -->
                 <div class="opd-section">
                     <div class="opd-section-title" data-key="ipd_prob_diag">រោគវិនិច្ឆ័យបឋម:</div>
-                    <textarea class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
+                    <textarea data-emr-key-index="140" data-emr-legacy-index="307" class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
                 </div>
                 <div class="opd-section">
                     <div class="opd-section-title" data-key="ipd_diff_diag">រោគវិនិច្ឆ័យញែកជំងឺ:</div>
-                    <textarea class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
-                </div>
-                <div class="opd-section">
-                    <div class="opd-section-title" data-key="ipd_inv">ពិនិត្យអមគ្លីនិក:</div>
-                    <textarea id="ipd_investigations" data-emr-migrate-auto-key class="fill-blank" style="width: 100%; min-height: 60px; line-height:1.5;"></textarea>
+                    <textarea data-emr-key-index="141" data-emr-legacy-index="308" class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
                 </div>
                 <div class="opd-section">
                     <div class="opd-section-title" data-key="ipd_diag">រោគវិនិច្ឆ័យ ICD-10</div>
                     <input type="hidden" id="emr_pmrs_ipd_icd10" data-emr-no-auto-index>
                     <input type="hidden" id="emr_ipd_diagnoses" data-emr-no-auto-index value="[]">
                     <div class="emr-diagnosis-list" data-diagnosis-editor="ipd"></div>
-                    <textarea id="emr_pmrs_ipd_diagnosis" data-emr-migrate-auto-key class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5; margin-top: 6px;" placeholder="កំណត់សម្គាល់បន្ថែម ឬរោគវិនិច្ឆ័យពិស្ដារ..."></textarea>
+                    <textarea data-emr-key-index="144" data-emr-legacy-index="311" id="emr_pmrs_ipd_diagnosis" data-emr-migrate-auto-key class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5; margin-top: 6px;" placeholder="កំណត់សម្គាល់បន្ថែម ឬរោគវិនិច្ឆ័យពិស្ដារ..."></textarea>
                 </div>
 
+                <div class="opd-section">
+                    <div class="opd-section-title" data-key="ipd_prog">ប៉ាន់ប្រម៉ាណការវិវត្តនៃជំងឺ:</div>
+                    <textarea data-emr-key-index="146" data-emr-legacy-index="313" class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
+                </div>
+
+                    <!-- Slot for Phase 4 (problem-list); empty until that phase -->
+                    <div class="emr-soap-slot" data-soap-slot="problem-list" hidden></div>
+                    </div>
+                </section>
+                <!-- SOAP P: Plan (v40.7) -->
+                <section class="emr-soap-box section-p emr-soap-record-box" data-soap-record-box="p" aria-labelledby="ipd_soap_p_title">
+                    <div class="emr-soap-header">
+                        <div class="emr-soap-header-left">
+                            <div class="emr-soap-badge" data-language-exclude aria-hidden="true">P</div>
+                            <i class="fa-solid fa-prescription emr-soap-icon" aria-hidden="true"></i>
+                            <span class="emr-soap-title" id="ipd_soap_p_title" data-language-exclude>Plan</span>
+                        </div>
+                        <div class="emr-soap-header-right">
+                            <span class="emr-soap-status-dot" data-soap-status></span>
+                            <button type="button" class="emr-soap-collapse-toggle no-print" data-soap-collapse aria-expanded="true" aria-controls="ipd_soap_p_body" title="បង្រួម / ពង្រីក" aria-label="បង្រួម / ពង្រីក">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="emr-soap-body" id="ipd_soap_p_body">
                 <!-- TREATMENT & PRESCRIPTIONS (IPD Mode embeds RX here directly) -->
                 <div class="opd-section" style="margin-bottom: 5px;">
                     <div class="opd-section-title" data-key="ipd_treat_med">ការព្យាបាលដោយឱសថ</div>
@@ -7877,53 +8113,59 @@
                     </div>
                 </div>
 
+                    <!-- Slot for Phase 6 (prescribing-warnings); empty until that phase -->
+                    <div class="emr-soap-slot" data-soap-slot="prescribing-warnings" hidden></div>
                 <div class="opd-section">
                     <div class="opd-section-title" data-key="ipd_treat_other">ការព្យាបាលដោយអន្តរាគមន៍ផ្សេងៗ</div>
                     <textarea id="ipd_other_interventions" class="fill-blank ipd-intervention-textarea"></textarea>
-                </div>
-
-                <div class="opd-section">
-                    <div class="opd-section-title" data-key="ipd_prog">ប៉ាន់ប្រម៉ាណការវិវត្តនៃជំងឺ:</div>
-                    <textarea class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
                 </div>
 
                 <!-- Diet and Monitoring -->
                 <div class="opd-section">
                     <div style="line-height: 2;">
                         <strong data-key="ipd_diet">របបអាហារ:</strong> &nbsp;&nbsp;
-                        <label><input type="checkbox"> <span data-key="ipd_diet_normal">ធម្មតា</span></label>
+                        <label><input data-emr-key-index="147" data-emr-legacy-index="314" type="checkbox"> <span data-key="ipd_diet_normal">ធម្មតា</span></label>
                         &nbsp;&nbsp;
-                        <label><input type="checkbox"> <span data-key="ipd_diet_salt">តមប្រៃ</span></label> &nbsp;&nbsp;
-                        <label><input type="checkbox"> <span data-key="ipd_diet_sweet">តមផ្អែម</span></label>
+                        <label><input data-emr-key-index="148" data-emr-legacy-index="315" type="checkbox"> <span data-key="ipd_diet_salt">តមប្រៃ</span></label> &nbsp;&nbsp;
+                        <label><input data-emr-key-index="149" data-emr-legacy-index="316" type="checkbox"> <span data-key="ipd_diet_sweet">តមផ្អែម</span></label>
                         &nbsp;&nbsp;
-                        <span data-key="ipd_others">ផ្សេងៗ:</span> <input type="text" class="fill-blank"
+                        <span data-key="ipd_others">ផ្សេងៗ:</span> <input data-emr-key-index="150" data-emr-legacy-index="317" type="text" class="fill-blank"
                             style="width: 30%;">
                     </div>
                     <div style="line-height: 2; margin-top: 10px;">
                         <strong data-key="ipd_monitor">តាមដាន:</strong><br>
                         <div style="padding-left: 20px;">
-                            <label><input type="checkbox"> <span data-key="ipd_mon_vs">សញ្ញាជីវិត រៀងរាល់</span></label>
-                            <input type="text" class="fill-blank" style="width: 50px; text-align:center;"> <span
+                            <label><input data-emr-key-index="151" data-emr-legacy-index="318" type="checkbox"> <span data-key="ipd_mon_vs">សញ្ញាជីវិត រៀងរាល់</span></label>
+                            <input data-emr-key-index="152" data-emr-legacy-index="319" type="text" class="fill-blank" style="width: 50px; text-align:center;"> <span
                                 data-key="ipd_hr">ម៉ោង</span> &nbsp;&nbsp;&nbsp;&nbsp;
-                            <label><input type="checkbox"> <span data-key="ipd_mon_urine">ទឹកនោម រៀងរាល់</span></label>
-                            <input type="text" class="fill-blank" style="width: 50px; text-align:center;"> <span
+                            <label><input data-emr-key-index="153" data-emr-legacy-index="320" type="checkbox"> <span data-key="ipd_mon_urine">ទឹកនោម រៀងរាល់</span></label>
+                            <input data-emr-key-index="154" data-emr-legacy-index="321" type="text" class="fill-blank" style="width: 50px; text-align:center;"> <span
                                 data-key="ipd_hr">ម៉ោង</span> <br>
-                            <label><input type="checkbox"> <span data-key="ipd_mon_cons">ស្ថានភាពស្មារតី
-                                    រៀងរាល់</span></label> <input type="text" class="fill-blank"
+                            <label><input data-emr-key-index="155" data-emr-legacy-index="322" type="checkbox"> <span data-key="ipd_mon_cons">ស្ថានភាពស្មារតី
+                                    រៀងរាល់</span></label> <input data-emr-key-index="156" data-emr-legacy-index="323" type="text" class="fill-blank"
                                 style="width: 50px; text-align:center;"> <span data-key="ipd_hr">ម៉ោង</span> <br>
-                            <label><input type="checkbox"> <span data-key="ipd_others">ផ្សេងៗ:</span></label> <input
+                            <label><input data-emr-key-index="157" data-emr-legacy-index="324" type="checkbox"> <span data-key="ipd_others">ផ្សេងៗ:</span></label> <input data-emr-key-index="158" data-emr-legacy-index="325"
                                 type="text" class="fill-blank" style="width: 60%;">
                         </div>
                     </div>
+                </div>
+
+                <!-- NEW v40.7: Plan notes -->
+                <div class="opd-section">
+                    <div class="opd-section-title" data-key="ipd_plan_notes">កំណត់ចំណាំផែនការព្យាបាល</div>
+                    <textarea id="ipd_plan_notes" data-emr-no-auto-index class="fill-blank ipd-plan-notes"></textarea>
+                </div>
+                    </div>
+                </section>
                 </div>
 
                 <!-- Footer / Signatures -->
                 <div
                     style="margin-top: 30px; line-height: 2; display: flex; justify-content: space-between; font-weight: bold;">
                     <div>
-                        <span data-key="ipd_time_first">ពេលវេលាពិនិត្យដំបូង:</span> <input type="time"
+                        <span data-key="ipd_time_first">ពេលវេលាពិនិត្យដំបូង:</span> <input data-emr-key-index="159" data-emr-legacy-index="326" type="time"
                             id="ipd_first_exam_time" data-emr-migrate-auto-key class="fill-blank"><br>
-                        <span data-key="ipd_date_first">ថ្ងៃ ខែ ឆ្នាំ ពិនិត្យដំបូង:</span> <input type="date"
+                        <span data-key="ipd_date_first">ថ្ងៃ ខែ ឆ្នាំ ពិនិត្យដំបូង:</span> <input data-emr-key-index="160" data-emr-legacy-index="327" type="date"
                             id="ipd_first_exam_date" data-emr-migrate-auto-key class="fill-blank">
                     </div>
                     <div style="text-align: center;" class="emr-esign-slot" id="ipd-doctor-esign">
@@ -9994,8 +10236,8 @@
                         <!-- Midwife labor examination: first page, intentionally no added button -->
                         <section class="page-a4 midwife-labor-exam-page">
 
-                            <!-- Header Section -->
-                            <div style="text-align: center; margin-bottom: 25px; line-height: 1.6;">
+                            <!-- Header Section (v41.0: letterhead prints only) -->
+                            <div class="emr-print-letterhead" style="text-align: center; margin-bottom: 25px; line-height: 1.6;">
                                 <div class="moul-font" style="font-size: 15px;">ព្រះរាជាណាចក្រកម្ពុជា</div>
                                 <div class="moul-font" style="font-size: 15px;">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
                                 <div
@@ -10005,7 +10247,7 @@
                                 </div>
                             </div>
 
-                            <div style="font-weight: bold; line-height: 1.8; margin-bottom: 25px;">
+                            <div class="emr-print-letterhead" style="font-weight: bold; line-height: 1.8; margin-bottom: 25px;">
                                 មន្ទីរសុខាភិបាលខេត្ត រតនគិរី<br>
                                 <span style="white-space: nowrap;">ការិយាល័យសុខាភិបាលស្រុកប្រតិបត្តិបរកែវ</span><br>
                                 មន្ទីរពេទ្យបង្អែក បរកែវ<br>
@@ -12690,47 +12932,9 @@
                 <input type="datetime-local" id="mon_input_date" class="modern-input" style="margin-top: 5px;">
             </div>
 
-            <div class="monitoring-vitals-grid">
-                <div>
-                    <label style="font-weight: bold; font-size: 12px; color:#475569;"><i
-                            class="fa-solid fa-temperature-half"></i> សីតុណ្ហភាព <span
-                            style="color:red;">*</span></label>
-                    <input type="text" id="mon_input_temp" class="modern-input" placeholder="°C"
-                        style="margin-top: 4px;" oninput="evaluateMonitoringVitalStates()">
-                </div>
-                <div>
-                    <label style="font-weight: bold; font-size: 12px; color:#475569;"><i
-                            class="fa-solid fa-heart-pulse"></i> សម្ពាធឈាម <span style="color:red;">*</span></label>
-                    <div style="display: flex; gap: 4px; align-items: center; margin-top: 4px;">
-                        <input type="text" id="mon_input_bp_sys" class="modern-input" placeholder="Systolic(mmHg)"
-                            oninput="evaluateMonitoringVitalStates()">
-                        <span>/</span>
-                        <input type="text" id="mon_input_bp_dia" class="modern-input" placeholder="Diastolic(mmHg)"
-                            oninput="evaluateMonitoringVitalStates()">
-                    </div>
-                </div>
-                <div>
-                    <label style="font-weight: bold; font-size: 12px; color:#475569;"><i class="fa-solid fa-heart"></i>
-                        ចង្វាក់បេះដូង <span style="color:red;">*</span></label>
-                    <input type="text" id="mon_input_pulse" class="modern-input" placeholder="ចំនួន/នាទី"
-                        style="margin-top: 4px;" oninput="evaluateMonitoringVitalStates()">
-                </div>
-                <div>
-                    <label style="font-weight: bold; font-size: 12px; color:#475569;"><i class="fa-solid fa-lungs"></i>
-                        ចង្វាក់ដង្ហើម <span style="color:red;">*</span></label>
-                    <input type="text" id="mon_input_resp" class="modern-input" placeholder="ចំនួន/នាទី"
-                        style="margin-top: 4px;" oninput="evaluateMonitoringVitalStates()">
-                </div>
-                <div>
-                    <label style="font-weight: bold; font-size: 12px; color:#475569;"><i class="fa-solid fa-vial"></i>
-                        កំហាប់អុកស៊ីសែនក្នុងឈាម <span style="color:red;">*</span></label>
-                    <input type="text" id="mon_input_spo2" class="modern-input" placeholder="(%)"
-                        style="margin-top: 4px;" oninput="evaluateMonitoringVitalStates()">
-                </div>
-            </div>
 
             <!-- SOAP Note 4-Box Colour-Coded Grid (Phase 5) -->
-            <div id="mon_soap_container" class="emr-soap-container">
+            <div id="mon_soap_container" class="emr-soap-container single-column">
                 <!-- S: Subjective (Blue) -->
                 <div class="emr-soap-box section-s">
                     <div class="emr-soap-header">
@@ -12776,11 +12980,50 @@
                         </div>
                     </div>
                     <div class="emr-soap-body">
+            <div class="monitoring-vitals-grid">
+                <div>
+                    <label style="font-weight: bold; font-size: 12px; color:#475569;"><i
+                            class="fa-solid fa-temperature-half"></i> សីតុណ្ហភាព <span
+                            style="color:red;">*</span></label>
+                    <input type="text" id="mon_input_temp" class="modern-input" placeholder="°C"
+                        style="margin-top: 4px;" oninput="evaluateMonitoringVitalStates()">
+                </div>
+                <div>
+                    <label style="font-weight: bold; font-size: 12px; color:#475569;"><i
+                            class="fa-solid fa-heart-pulse"></i> សម្ពាធឈាម <span style="color:red;">*</span></label>
+                    <div style="display: flex; gap: 4px; align-items: center; margin-top: 4px;">
+                        <input type="text" id="mon_input_bp_sys" class="modern-input" placeholder="Systolic(mmHg)"
+                            oninput="evaluateMonitoringVitalStates()">
+                        <span>/</span>
+                        <input type="text" id="mon_input_bp_dia" class="modern-input" placeholder="Diastolic(mmHg)"
+                            oninput="evaluateMonitoringVitalStates()">
+                    </div>
+                </div>
+                <div>
+                    <label style="font-weight: bold; font-size: 12px; color:#475569;"><i class="fa-solid fa-heart"></i>
+                        ចង្វាក់បេះដូង <span style="color:red;">*</span></label>
+                    <input type="text" id="mon_input_pulse" class="modern-input" placeholder="ចំនួន/នាទី"
+                        style="margin-top: 4px;" oninput="evaluateMonitoringVitalStates()">
+                </div>
+                <div>
+                    <label style="font-weight: bold; font-size: 12px; color:#475569;"><i class="fa-solid fa-lungs"></i>
+                        ចង្វាក់ដង្ហើម <span style="color:red;">*</span></label>
+                    <input type="text" id="mon_input_resp" class="modern-input" placeholder="ចំនួន/នាទី"
+                        style="margin-top: 4px;" oninput="evaluateMonitoringVitalStates()">
+                </div>
+                <div>
+                    <label style="font-weight: bold; font-size: 12px; color:#475569;"><i class="fa-solid fa-vial"></i>
+                        កំហាប់អុកស៊ីសែនក្នុងឈាម <span style="color:red;">*</span></label>
+                    <input type="text" id="mon_input_spo2" class="modern-input" placeholder="(%)"
+                        style="margin-top: 4px;" oninput="evaluateMonitoringVitalStates()">
+                </div>
+            </div>
                         <div class="emr-soap-actions-strip no-print">
                             <button type="button" id="mon_soap_btn_pull" class="emr-soap-btn" onclick="EmrSoapNote.pullLatestResults()">
                                 <i class="fa-solid fa-arrows-rotate"></i> ទាញលទ្ធផលចុងក្រោយ
                             </button>
                         </div>
+                        <label for="mon_soap_o" class="mon-soap-field-label">លទ្ធផលពិនិត្យរាងកាយ</label>
                         <textarea id="mon_soap_o" class="emr-soap-textarea" placeholder="សូមបញ្ចូលការពិនិត្យរាងកាយ និងលទ្ធផល..."></textarea>
                         <div class="emr-soap-chips-wrap no-print">
                             <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('o', 'សញ្ញាជីវិតមានស្ថេរភាព')">សញ្ញាជីវិតមានស្ថេរភាព</button>
@@ -12821,6 +13064,7 @@
                             </div>
                         </div>
                         <div class="emr-diagnosis-list" data-diagnosis-editor="followup"></div>
+                        <label for="mon_soap_a" class="mon-soap-field-label">សេចក្តីសន្និដ្ឋាន</label>
                         <textarea id="mon_soap_a" class="emr-soap-textarea" placeholder="សូមបញ្ចូលការវាយតម្លៃ និងរោគវិនិច្ឆ័យ..."></textarea>
                         <div class="emr-soap-chips-wrap no-print">
                             <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('a', 'ស្ថានភាពជំងឺមានការវិវត្តល្អ')">ស្ថានភាពជំងឺមានការវិវត្តល្អ</button>
@@ -12852,20 +13096,6 @@
                                 <i class="fa-regular fa-copy"></i> ចម្លងពីកំណត់ត្រាមុន
                             </button>
                         </div>
-                        <textarea id="mon_soap_p" class="emr-soap-textarea" placeholder="សូមបញ្ចូលផែនការព្យាបាល និងការណែនាំ..."></textarea>
-                        <div class="emr-soap-chips-wrap no-print">
-                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('p', 'បន្តការព្យាបាលតាមវេជ្ជបញ្ជាដដែល')">បន្តការព្យាបាលតាមវេជ្ជបញ្ជាដដែល</button>
-                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('p', 'តាមដានសញ្ញាជីវិតរៀងរាល់ ៤ ម៉ោង')">តាមដានសញ្ញាជីវិតរៀងរាល់ ៤ ម៉ោង</button>
-                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('p', 'ត្រៀមបញ្ចេញអ្នកជំងឺនៅថ្ងៃស្អែក')">ត្រៀមបញ្ចេញអ្នកជំងឺនៅថ្ងៃស្អែក</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Legacy fallback fields for backward compatibility and test assertions -->
-            <textarea id="mon_input_evol" style="display:none;" aria-hidden="true"></textarea>
-            <textarea id="mon_input_conclusion" style="display:none;" aria-hidden="true"></textarea>
-
             <div style="margin-bottom: 20px;">
                 <label
                     style="font-weight: bold; color: #475569; font-size: 13px; margin-bottom: 8px; display: block;"><i
@@ -12984,6 +13214,21 @@
                 </div>
 
             </div>
+                        <label for="mon_soap_p" class="mon-soap-field-label">កំណត់ចំណាំផែនការព្យាបាល</label>
+                        <textarea id="mon_soap_p" class="emr-soap-textarea" placeholder="សូមបញ្ចូលផែនការព្យាបាល និងការណែនាំ..."></textarea>
+                        <div class="emr-soap-chips-wrap no-print">
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('p', 'បន្តការព្យាបាលតាមវេជ្ជបញ្ជាដដែល')">បន្តការព្យាបាលតាមវេជ្ជបញ្ជាដដែល</button>
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('p', 'តាមដានសញ្ញាជីវិតរៀងរាល់ ៤ ម៉ោង')">តាមដានសញ្ញាជីវិតរៀងរាល់ ៤ ម៉ោង</button>
+                            <button type="button" class="emr-soap-chip" onclick="EmrSoapNote.insertQuickPhrase('p', 'ត្រៀមបញ្ចេញអ្នកជំងឺនៅថ្ងៃស្អែក')">ត្រៀមបញ្ចេញអ្នកជំងឺនៅថ្ងៃស្អែក</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legacy fallback fields for backward compatibility and test assertions -->
+            <textarea id="mon_input_evol" style="display:none;" aria-hidden="true"></textarea>
+            <textarea id="mon_input_conclusion" style="display:none;" aria-hidden="true"></textarea>
+
 
             <div class="modal-actions" style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button type="button" class="btn-orange" onclick="closeMonModal()">បោះបង់</button>
@@ -15516,22 +15761,22 @@ aHRtbD4K
                 vitals_header: "សញ្ញាជីវិត", v_temp: "កម្ដៅ", v_bp: "សម្ពាធឈាម", v_resp: "ចង្វាក់ដង្ហើម", v_glucose: "កម្រិតជាតិស្ករ", v_weight: "ទម្ងន់", v_height: "កម្ពស់",
                 route_red: "ពណ៌ក្រហមទៅបន្ទប់សង្គ្រោះបន្ទាន់", route_green: "ពណ៌លឿង-បៃតងទៅបន្ទប់ពិគ្រោះក្រៅ", nurse_sign: "ឈ្មោះគិលានុបដ្ឋាក:",
                 opd_title: "សំណុំបែបបទស្តីពីការពិនិត្យជំងឺក្រៅ",
-                opd_sec_history: "I. ប្រវត្តិជំងឺ", hist_cough: "ក្អក > ១៤ថ្ងៃ", hist_fever: "ក្តៅខ្លួន > ១៤ថ្ងៃ", hist_sweat: "បែកញើសពេលយប់ > ១៤ថ្ងៃ", hist_weight: "ស្រកទម្ងន់ > ១៤ថ្ងៃ", hist_tb_contact: "ជិតស្និទ្ធជាមួយសមាជិកគ្រួសារ ឬអ្នកជិតខាងដែលមានជំងឺរបេង", hist_hemo: "កំហាកមានឈាម", hist_malnutrition: "ខ្វះអាហារូបត្ថម្ភធ្ងន់ធ្ងរ",
-                opd_sec_pe: "II. ពិនិត្យរាងកាយ", opd_sec_inv: "III. ពិនិត្យអមគ្លីនិក", opd_sec_diag: "IV. រោគវិនិច្ឆ័យ ICD-10",
-                opd_sec_treat: "V. វេជ្ជបញ្ជា", rx_counsel: "ការប្រឹក្សាយោបល់",
+                opd_sec_history: "ប្រវត្តិជំងឺ", hist_cough: "ក្អក > ១៤ថ្ងៃ", hist_fever: "ក្តៅខ្លួន > ១៤ថ្ងៃ", hist_sweat: "បែកញើសពេលយប់ > ១៤ថ្ងៃ", hist_weight: "ស្រកទម្ងន់ > ១៤ថ្ងៃ", hist_tb_contact: "ជិតស្និទ្ធជាមួយសមាជិកគ្រួសារ ឬអ្នកជិតខាងដែលមានជំងឺរបេង", hist_hemo: "កំហាកមានឈាម", hist_malnutrition: "ខ្វះអាហារូបត្ថម្ភធ្ងន់ធ្ងរ",
+                opd_sec_pe: "ពិនិត្យរាងកាយ", opd_sec_inv: "ពិនិត្យអមគ្លីនិក", opd_sec_diag: "រោគវិនិច្ឆ័យ ICD-10",
+                opd_sec_treat: "វេជ្ជបញ្ជា", rx_counsel: "ការប្រឹក្សាយោបល់", opd_plan_notes: "កំណត់ចំណាំផែនការព្យាបាល",
                 opd_followup: "ថ្ងៃត្រឡប់មកវិញ ៖", opd_doc_sign: "ឈ្មោះ និងហត្ថលេខារបស់គ្រូពេទ្យ ៖", opd_time: "ម៉ោង ៖",
                 rx_th_no: "ល.រ.", rx_th_med: "ឈ្មោះថ្នាំ", rx_th_route: "របៀបប្រើ", rx_th_m: "ព្រឹក", rx_th_a: "ថ្ងៃ", rx_th_e: "ល្ងាច", rx_th_n: "យប់", rx_th_dur: "ចំនួនថ្ងៃ", rx_th_qty: "សរុប", rx_th_unit: "ឯកតា", rx_th_sig: "សម្គាល់",
                 unit_kg: "kg", unit_cm: "cm",
                 ipd_title: "សំណុំឯកសារអ្នកជំងឺសម្រាកពេទ្យ",
-                ipd_sec1: "១. សញ្ញាជីវិត", ipd_bp: "សម្ពាធឈាម:", ipd_p: "ជីពចរ:", ipd_rr: "ចង្វាក់ដង្ហើម:", ipd_t: "សីតុណ្ហភាព:", ipd_spo2: "អុកស៊ីសែនក្នុងឈាម:", ipd_height: "កម្ពស់:", ipd_weight: "ទម្ងន់:",
-                ipd_sec2: "២. មូលហេតុចូល:", ipd_sec3: "៣. ប្រវត្តិជំងឺបច្ចុប្បន្ន:", ipd_sec4: "៤. សញ្ញាតម្អូញផេ្សងទៀត:", ipd_sec5: "៥. ឱសថដែលកំពុងប្រើព្យាបាល:", ipd_sec6: "៦. សាវតារោគ",
+                ipd_sec1: "សញ្ញាជីវិត", ipd_bp: "សម្ពាធឈាម:", ipd_p: "ជីពចរ:", ipd_rr: "ចង្វាក់ដង្ហើម:", ipd_t: "សីតុណ្ហភាព:", ipd_spo2: "អុកស៊ីសែនក្នុងឈាម:", ipd_height: "កម្ពស់:", ipd_weight: "ទម្ងន់:",
+                ipd_sec2: "មូលហេតុចូល:", ipd_sec3: "ប្រវត្តិជំងឺបច្ចុប្បន្ន:", ipd_sec4: "សញ្ញាតម្អូញផេ្សងទៀត:", ipd_sec5: "ឱសថដែលកំពុងប្រើព្យាបាល:", ipd_sec6: "សាវតារោគ",
                 ipd_v1: "1: សាវតារោគផ្ទាល់ខ្លួន", ipd_vaccine: "ចាក់ថ្នាំបង្ការ:", ipd_allergy: "ប្រតិកម្មនឹងថ្នាំ:", ipd_htn: "លើសសម្ពាធឈាម", ipd_dm: "ជំងឺទឹកនោមផ្អែម", ipd_tb: "ជំងឺរបេង", ipd_cardio: "ជំងឺបេះដូង", ipd_surg: "វះកាត់", ipd_smoke: "ជក់បារី", ipd_alcohol: "ផឹកស្រា", ipd_drugs: "ប្រើគ្រឿងញៀន", ipd_mental: "បញ្ហាផ្លូវចិត្ត", ipd_others: "ផ្សេងៗ:", ipd_v2: "3: សាវតាក្នុងគ្រួសារ", ipd_v3: "4: សាវតារោគក្នុងសហគមន៍", ipd_obgyn_title: "2: ប្រវត្តិសម្ភព និងរោគស្ត្រី:", ipd_obgyn_lmp: "កាលបរិច្ឆេទមករដូវចុងក្រោយ (LMP):", ipd_obgyn_edd: "ថ្ងៃរំពឹងសម្រាល (EDD):", ipd_obgyn_contra: "វិធីពន្យារកំណើត:", ipd_obgyn_notes: "កំណត់សម្គាល់/ផ្សេងៗ:",
-                ipd_sec7: "៧. ការពិនិត្យរាង្គកាយ:", ipd_gen_app: "· សភាពទូទៅ:", ipd_good: "ល្អ", ipd_fair: "មិនសូវល្អ", ipd_severe: "ធ្ងន់ធ្ងរ", ipd_v_severe: "ធ្ងន់ធ្ងរខ្លាំង", ipd_pale: "សេ្លកស្លាំង", ipd_cyanosis: "ទ្បើងស្វាយ", ipd_jaundice: "ខាន់លឿង",
+                ipd_sec7: "ការពិនិត្យរាង្គកាយ:", ipd_gen_app: "· សភាពទូទៅ:", ipd_good: "ល្អ", ipd_fair: "មិនសូវល្អ", ipd_severe: "ធ្ងន់ធ្ងរ", ipd_v_severe: "ធ្ងន់ធ្ងរខ្លាំង", ipd_pale: "សេ្លកស្លាំង", ipd_cyanosis: "ទ្បើងស្វាយ", ipd_jaundice: "ខាន់លឿង",
                 ipd_neuro: "· ប្រព័ន្ធសសៃប្រសាទ:", ipd_conscious: "ដឹងខ្លួន", ipd_delirium: "រវើរវាយ", ipd_coma: "សន្លប់", ipd_seizure: "ប្រកាច់", ipd_gcs: "· ពិន្ទុកម្រិតស្មារតី (GCS):", ipd_eye: "ភែ្នកៈ", ipd_verbal: "ការនិយាយៈ", ipd_motor: "ចលនាៈ", ipd_total: "សរុបៈ", ipd_pain: "· កម្រិតនៃការឈឺចាប់:",
                 ipd_heent: "· ក្បាល, ភ្នែក,ត្រចៀក, ច្រមុះ, បំពង់ក", ipd_head: "ក្បាល:", ipd_eyes: "ភ្នែក:", ipd_left: "ឆ្វេង", ipd_right: "ស្តាំ", ipd_fundus: "បាតភ្នែក:", ipd_ears: "ត្រចៀក:", ipd_nose: "ច្រមុះ:", ipd_throat: "បំពង់ក:", ipd_neck: "ក:", ipd_lymph: "ប្រព័ន្ធកូនកណ្តុល:",
                 ipd_resp: "· ប្រដាប់ដកដង្ហើម:", ipd_inspect: "មើល:", ipd_palp: "ស្ទាប:", ipd_perc: "គោះ:", ipd_ausc: "ស្តាប់:", ipd_chest_asym: "ទ្រូងមិនស្មើគ្នា", ipd_dyspnea: "ពិបាកដកដង្ហើម", ipd_polypnea: "ដកដង្ហើមញាប់", ipd_tirage: "ទាញចន្លោះឆ្អឹងជំនី", ipd_stridor: "ដកដង្ហើមលឺសូរ",
                 ipd_cvs: "· ប្រដាប់បេះដូង និងឈាមរត់:", ipd_abd: "· ពោះ:", ipd_gu: "· ប្រដាប់បន្តពូជ និងទឹកនោម:", ipd_ext: "· ចុងអវៈយវៈ:", ipd_msk: "· ប្រព័ន្ធឆ្អឹង សាច់ដុំ សន្លាក់:", ipd_other_sys: "· ប្រព័ន្ធផេ្សងទៀត:",
-                ipd_prob_diag: "រោគវិនិច្ឆ័យបឋម:", ipd_diff_diag: "រោគវិនិច្ឆ័យញែកជំងឺ:", ipd_inv: "ពិនិត្យអមគ្លីនិក:", ipd_diag: "រោគវិនិច្ឆ័យ ICD-10", ipd_treat: "ការព្យាបាល:", ipd_treat_med: "ការព្យាបាលដោយឱសថ", ipd_treat_other: "ការព្យាបាលដោយអន្តរាគមន៍ផ្សេងៗ", ipd_prog: "ប៉ាន់ប្រម៉ាណការវិវត្តនៃជំងឺ:",
+                ipd_prob_diag: "រោគវិនិច្ឆ័យបឋម:", ipd_diff_diag: "រោគវិនិច្ឆ័យញែកជំងឺ:", ipd_inv: "ពិនិត្យអមគ្លីនិក:", ipd_diag: "រោគវិនិច្ឆ័យ ICD-10", ipd_treat: "ការព្យាបាល:", ipd_treat_med: "ការព្យាបាលដោយឱសថ", ipd_treat_other: "ការព្យាបាលដោយអន្តរាគមន៍ផ្សេងៗ", ipd_prog: "ប៉ាន់ប្រម៉ាណការវិវត្តនៃជំងឺ:", ipd_plan_notes: "កំណត់ចំណាំផែនការព្យាបាល",
                 ipd_diet: "របបអាហារ:", ipd_diet_normal: "ធម្មតា", ipd_diet_salt: "តមប្រៃ", ipd_diet_sweet: "តមផ្អែម",
                 ipd_monitor: "តាមដាន:", ipd_mon_vs: "សញ្ញាជីវិត រៀងរាល់", ipd_mon_urine: "ទឹកនោម រៀងរាល់", ipd_mon_cons: "ស្ថានភាពស្មារតី រៀងរាល់", ipd_hr: "ម៉ោង",
                 ipd_time_first: "ពេលវេលាពិនិត្យដំបូង:", ipd_date_first: "ថ្ងៃ ខែ ឆ្នាំ ពិនិត្យដំបូង:", ipd_sign: "ហត្ថលេខា និងឈោ្មះគ្រូពេទ្យព្យាបាល",
@@ -15585,22 +15830,22 @@ aHRtbD4K
                 vitals_header: "Vital Signs", v_temp: "Temp", v_bp: "BP", v_resp: "Resp Rate", v_glucose: "Blood Glucose", v_weight: "Weight", v_height: "Height",
                 route_red: "Red - To Emergency Room", route_green: "Yellow/Green - To Outpatient", nurse_sign: "Nurse Name:",
                 opd_title: "Outpatient Department Form",
-                opd_sec_history: "I. History", hist_cough: "Cough > 14 days", hist_fever: "Fever > 14 days", hist_sweat: "Night sweats > 14 days", hist_weight: "Weight loss > 14 days", hist_tb_contact: "Close contact with TB patient", hist_hemo: "Hemoptysis (Coughing blood)", hist_malnutrition: "Severe malnutrition",
-                opd_sec_pe: "II. Physical Examination", opd_sec_inv: "III. Investigations", opd_sec_diag: "IV. Diagnosis ICD-10",
-                opd_sec_treat: "V. Prescription", rx_counsel: "Consultation Note",
+                opd_sec_history: "History", hist_cough: "Cough > 14 days", hist_fever: "Fever > 14 days", hist_sweat: "Night sweats > 14 days", hist_weight: "Weight loss > 14 days", hist_tb_contact: "Close contact with TB patient", hist_hemo: "Hemoptysis (Coughing blood)", hist_malnutrition: "Severe malnutrition",
+                opd_sec_pe: "Physical Examination", opd_sec_inv: "Investigations", opd_sec_diag: "Diagnosis ICD-10",
+                opd_sec_treat: "Prescription", rx_counsel: "Consultation Note", opd_plan_notes: "Plan notes",
                 opd_followup: "Follow up date on :", opd_doc_sign: "Name and Signature of Doctor :", opd_time: "Time :",
                 rx_th_no: "No.", rx_th_med: "Medication", rx_th_route: "Route", rx_th_m: "M", rx_th_a: "A", rx_th_e: "E", rx_th_n: "N", rx_th_dur: "Days", rx_th_qty: "Qty", rx_th_unit: "Unit", rx_th_sig: "Note",
                 unit_kg: "kg", unit_cm: "cm",
                 ipd_title: "Inpatient Medical Record",
-                ipd_sec1: "1. Vital Signs", ipd_bp: "BP:", ipd_p: "Pulse:", ipd_rr: "Resp. Rate:", ipd_t: "Temp:", ipd_spo2: "SpO2:", ipd_height: "Height:", ipd_weight: "Weight:",
-                ipd_sec2: "2. Chief Complaint:", ipd_sec3: "3. History of Present Illness:", ipd_sec4: "4. Review of Systems:", ipd_sec5: "5. Current Medications:", ipd_sec6: "6. Past Medical History",
+                ipd_sec1: "Vital Signs", ipd_bp: "BP:", ipd_p: "Pulse:", ipd_rr: "Resp. Rate:", ipd_t: "Temp:", ipd_spo2: "SpO2:", ipd_height: "Height:", ipd_weight: "Weight:",
+                ipd_sec2: "Chief Complaint:", ipd_sec3: "History of Present Illness:", ipd_sec4: "Review of Systems:", ipd_sec5: "Current Medications:", ipd_sec6: "Past Medical History",
                 ipd_v1: "1: Personal Medical History", ipd_vaccine: "Vaccination:", ipd_allergy: "Drug Allergies:", ipd_htn: "Hypertension", ipd_dm: "Diabetes", ipd_tb: "Tuberculosis", ipd_cardio: "Heart Disease", ipd_surg: "Surgery", ipd_smoke: "Smoking", ipd_alcohol: "Alcohol Use", ipd_drugs: "Drug Use", ipd_mental: "Mental Health Issues", ipd_others: "Others:", ipd_v2: "3: Family History", ipd_v3: "4: Community Medical History", ipd_obgyn_title: "2: Obstetric & Gynecological History:", ipd_obgyn_lmp: "Last Menstrual Period (LMP):", ipd_obgyn_edd: "Estimated Date of Delivery (EDD):", ipd_obgyn_contra: "Contraception Method:", ipd_obgyn_notes: "Notes / Others:",
-                ipd_sec7: "7. Physical Examination:", ipd_gen_app: "· General Appearance:", ipd_good: "Good", ipd_fair: "Fair", ipd_severe: "Severe", ipd_v_severe: "Very Severe", ipd_pale: "Pale", ipd_cyanosis: "Cyanosis", ipd_jaundice: "Jaundice",
+                ipd_sec7: "Physical Examination:", ipd_gen_app: "· General Appearance:", ipd_good: "Good", ipd_fair: "Fair", ipd_severe: "Severe", ipd_v_severe: "Very Severe", ipd_pale: "Pale", ipd_cyanosis: "Cyanosis", ipd_jaundice: "Jaundice",
                 ipd_neuro: "· Neurological System:", ipd_conscious: "Conscious", ipd_delirium: "Delirious", ipd_coma: "Coma", ipd_seizure: "Seizure", ipd_gcs: "· Glasgow Coma Scale (GCS):", ipd_eye: "Eye:", ipd_verbal: "Verbal:", ipd_motor: "Motor:", ipd_total: "Total:", ipd_pain: "· Pain Score:",
                 ipd_heent: "· Head, Eyes, Ears, Nose, Throat", ipd_head: "Head:", ipd_eyes: "Eyes:", ipd_left: "Left", ipd_right: "Right", ipd_fundus: "Fundus:", ipd_ears: "Ears:", ipd_nose: "Nose:", ipd_throat: "Throat:", ipd_neck: "Neck:", ipd_lymph: "Lymphadenopathy:",
                 ipd_resp: "· Respiratory System:", ipd_inspect: "Inspection:", ipd_palp: "Palpation:", ipd_perc: "Percussion:", ipd_ausc: "Auscultation:", ipd_chest_asym: "Chest Asymmetric", ipd_dyspnea: "Dyspnea", ipd_polypnea: "Polypnea", ipd_tirage: "Retractions", ipd_stridor: "Stridor",
                 ipd_cvs: "· Cardiovascular System:", ipd_abd: "· Abdomen:", ipd_gu: "· Genitourinary:", ipd_ext: "· Extremities:", ipd_msk: "· Musculoskeletal:", ipd_other_sys: "· Other Systems:",
-                ipd_prob_diag: "Probable Diagnosis:", ipd_diff_diag: "Differential Diagnosis:", ipd_inv: "Investigations:", ipd_diag: "Diagnosis ICD-10", ipd_treat: "Treatment:", ipd_treat_med: "Medication Treatment", ipd_treat_other: "Other Interventional Treatment", ipd_prog: "Prognosis:",
+                ipd_prob_diag: "Probable Diagnosis:", ipd_diff_diag: "Differential Diagnosis:", ipd_inv: "Investigations:", ipd_diag: "Diagnosis ICD-10", ipd_treat: "Treatment:", ipd_treat_med: "Medication Treatment", ipd_treat_other: "Other Interventional Treatment", ipd_prog: "Prognosis:", ipd_plan_notes: "Plan notes",
                 ipd_diet: "Diet:", ipd_diet_normal: "Normal", ipd_diet_salt: "Low Salt", ipd_diet_sweet: "Low Sugar",
                 ipd_monitor: "Monitor:", ipd_mon_vs: "Vital signs every", ipd_mon_urine: "Urine every", ipd_mon_cons: "Consciousness every", ipd_hr: "hours",
                 ipd_time_first: "First visit time:", ipd_date_first: "First visit date:", ipd_sign: "Attending Physician Signature",
@@ -21526,12 +21771,17 @@ aHRtbD4K
             handleMedicationQuickChange(inputElem);
         }
 
-        function saveDailyMonitoring() {
-            var diagnoses = window.collectEmrDiagnoses ? window.collectEmrDiagnoses('followup', true) : [];
+        function saveDailyMonitoring(restoreRecord) {
+            // v40.9: when a record opens, every saved note is rebuilt from its saved
+            // data exactly as it was (no SOAP conversion, no required-field check), so
+            // old notes keep their original text and are never dropped.
+            var restoring = Boolean(restoreRecord && typeof restoreRecord === 'object' && !(restoreRecord instanceof Event));
+            var diagnoses = restoring ? (Array.isArray(restoreRecord.diagnoses) ? restoreRecord.diagnoses : [])
+                : (window.collectEmrDiagnoses ? window.collectEmrDiagnoses('followup', true) : []);
             if (diagnoses === null) return false;
-            var icd10 = normalizeMonitoringIcd10Input();
+            var icd10 = restoring ? (restoreRecord.icd10 || '') : normalizeMonitoringIcd10Input();
             var icd10Field = document.getElementById('mon_input_icd10');
-            if (icd10Field && !icd10Field.checkValidity()) { icd10Field.reportValidity(); return false; }
+            if (!restoring && icd10Field && !icd10Field.checkValidity()) { icd10Field.reportValidity(); return false; }
             var dtVal = document.getElementById('mon_input_date') ? document.getElementById('mon_input_date').value : '2026-08-29 21:24';
             var temp = document.getElementById('mon_input_temp') ? document.getElementById('mon_input_temp').value : '-';
             var bp_sys = document.getElementById('mon_input_bp_sys') ? document.getElementById('mon_input_bp_sys').value : '-';
@@ -21543,7 +21793,12 @@ aHRtbD4K
             var evol = document.getElementById('mon_input_evol') ? document.getElementById('mon_input_evol').value : '-';
             var conclusion = document.getElementById('mon_input_conclusion') ? document.getElementById('mon_input_conclusion').value : '-';
 
-            if (soap && (soap.s || soap.o || soap.a || soap.p)) {
+            if (restoring) {
+                var savedSoap = restoreRecord.soap;
+                soap = savedSoap && (savedSoap.s || savedSoap.o || savedSoap.a || savedSoap.p) ? savedSoap : null;
+                evol = restoreRecord.evol || '';
+                conclusion = restoreRecord.conclusion || '';
+            } else if (soap && (soap.s || soap.o || soap.a || soap.p)) {
                 if (!soap.s || !soap.a) {
                     if (window.EmrSoapNote && !window.EmrSoapNote.validate()) return false;
                 }
@@ -21684,6 +21939,7 @@ aHRtbD4K
                             ${icd10 ? `<div class="mon-conclusion-code"><strong>ICD-10:</strong> <span data-language-exclude>${escapeMonitoringPrint(icd10)}</span></div>` : ''}
                             <div style="color: #ea580c; font-weight: bold; font-size: 13px; white-space: pre-line;">${conclusion}</div>
                         </div>`}
+                        ${diagnoses.length > 1 ? '<div class="mon-secondary-heading">' + (currentLang === 'khmer' ? 'រោគវិនិច្ឆ័យបន្ទាប់បន្សំ' : 'Secondary diagnoses') + '</div>' : ''}
                         ${diagnoses.slice(1).map(function (diagnosis) { return `<div class="mon-extra-diagnosis">${diagnosis.icd10 ? `<strong>ICD-10: ${escapeMonitoringPrint(diagnosis.icd10)}</strong><br>` : ''}${escapeMonitoringPrint(diagnosis.text)}</div>`; }).join('')}
                     </div>
 
@@ -21695,7 +21951,7 @@ aHRtbD4K
                     </div>
                 </div>
             `;
-            card._monitoringCopyData = {
+            card._monitoringCopyData = restoring ? JSON.parse(JSON.stringify(restoreRecord)) : {
                 dtVal: dtVal,
                 temp: temp,
                 bp_sys: bp_sys,
@@ -21804,6 +22060,7 @@ aHRtbD4K
                     </td>
                     <td class="mon-print-evolution">
                         ${soapContent}
+                        ${(data.diagnoses || []).length > 1 ? '<div class="mon-secondary-heading">' + (khmer ? 'រោគវិនិច្ឆ័យបន្ទាប់បន្សំ' : 'Secondary diagnoses') + '</div>' : ''}
                         ${(data.diagnoses || []).slice(1).map(function (diagnosis) { return `<div class="mon-extra-diagnosis">${monitoringIcd10(diagnosis.icd10) ? `<strong>ICD-10: ${escapeMonitoringPrint(monitoringIcd10(diagnosis.icd10))}</strong><br>` : ''}${escapeMonitoringPrint(diagnosis.text)}</div>`; }).join('')}
                     </td>
                     <td class="mon-print-treatment">${buildMonitoringTreatmentPrint(data.medications)}</td>

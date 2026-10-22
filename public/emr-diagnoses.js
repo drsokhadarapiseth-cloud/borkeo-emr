@@ -1,9 +1,14 @@
 'use strict';
 (function () {
   const definitions = {
-    opd: { code: 'diag_input', text: 'emr_pmrs_opd_diagnosis', hidden: 'emr_opd_diagnoses' },
-    ipd: { code: 'emr_pmrs_ipd_icd10', text: 'emr_pmrs_ipd_diagnosis', hidden: 'emr_ipd_diagnoses' },
-    followup: { code: 'mon_input_icd10', text: 'mon_input_conclusion' }
+    opd: { code: 'diag_input', text: 'emr_pmrs_opd_diagnosis', hidden: 'emr_opd_diagnoses', mainSecondary: true },
+    // mainSecondary (v40.7): one code is shown as the main diagnosis, the others as
+    // secondary diagnoses. The main code is always kept first in the list, so the
+    // primary-code field (read by PMRS2, discharge and reports) stays correct.
+    ipd: { code: 'emr_pmrs_ipd_icd10', text: 'emr_pmrs_ipd_diagnosis', hidden: 'emr_ipd_diagnoses', mainSecondary: true },
+    followup: { code: 'mon_input_icd10', text: 'mon_input_conclusion', mainSecondary: true },
+    // v41.6: discharge form (drawn by emr-inpatient-workflow.js, mounted with mountEmrDiagnosisEditor).
+    discharge: { code: 'emr_discharge_icd10', text: 'emr_discharge_diagnosis', hidden: 'emr_discharge_diagnoses', mainSecondary: true }
   };
 
   const hosts = new Map();
@@ -13,6 +18,9 @@
   const placeholders = () => english()
     ? 'Type ICD-10 code (e.g. A90) or disease name...'
     : 'វាយលេខកូដ ICD-10 (ឧ. A90) ឬឈ្មោះជំងឺ...';
+  const mainLabels = () => english()
+    ? { main: 'Main diagnosis', secondary: 'Secondary diagnoses', setMain: 'Set as main' }
+    : { main: 'រោគវិនិច្ឆ័យចម្បង', secondary: 'រោគវិនិច្ឆ័យបន្ទាប់បន្សំ', setMain: 'កំណត់ជារោគវិនិច្ឆ័យចម្បង' };
 
   // Store selected diagnoses per host: Map<kind, Array<{icd10: string, text: string}>>
   const selectedState = new Map();
@@ -40,7 +48,9 @@
     // Update hidden JSON field if present
     const hiddenEl = def.hidden && el(def.hidden);
     if (hiddenEl) {
-      hiddenEl.value = JSON.stringify(items);
+      hiddenEl.value = JSON.stringify(def.mainSecondary
+        ? items.map((item, index) => ({ icd10: item.icd10, text: item.text || '', main: index === 0 }))
+        : items);
       hiddenEl.dispatchEvent(new Event('input', { bubbles: true }));
       hiddenEl.dispatchEvent(new Event('change', { bubbles: true }));
     }
@@ -55,12 +65,26 @@
     if (!list) return;
 
     const items = getSelected(kind);
+    const mainSecondary = Boolean(definitions[kind]?.mainSecondary);
     list.replaceChildren();
 
     items.forEach((item, index) => {
+      if (mainSecondary && index === 1) {
+        const heading = document.createElement('span');
+        heading.className = 'diag-secondary-heading';
+        heading.textContent = mainLabels().secondary;
+        list.append(heading);
+      }
       const tag = document.createElement('span');
       tag.className = 'diag-tag';
       tag.dataset.code = item.icd10;
+      if (mainSecondary && index === 0) {
+        tag.classList.add('diag-tag-main');
+        const badge = document.createElement('span');
+        badge.className = 'diag-main-badge';
+        badge.textContent = mainLabels().main;
+        tag.append(badge);
+      }
 
       const codeSpan = document.createElement('strong');
       codeSpan.className = 'diag-tag-code';
@@ -83,6 +107,17 @@
 
       tag.append(codeSpan);
       if (item.text) tag.append(descSpan);
+      if (mainSecondary && index > 0) {
+        const setMainButton = document.createElement('button');
+        setMainButton.type = 'button';
+        setMainButton.className = 'diag-set-main no-print';
+        setMainButton.textContent = mainLabels().setMain;
+        setMainButton.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setMain(kind, index);
+        });
+        tag.append(setMainButton);
+      }
       tag.append(removeBtn);
       list.append(tag);
     });
@@ -115,6 +150,16 @@
     sync(kind);
   }
 
+  // Moves the chosen code to the front: the first code is the main diagnosis.
+  function setMain(kind, index) {
+    const items = getSelected(kind);
+    if (!definitions[kind]?.mainSecondary || index <= 0 || index >= items.length) return;
+    const [item] = items.splice(index, 1);
+    items.unshift(item);
+    renderTags(kind);
+    sync(kind);
+  }
+
   function restore(kind, rows) {
     const items = getSelected(kind);
     items.length = 0;
@@ -135,6 +180,12 @@
           items.push({ icd10: c, text: t });
         }
       });
+      // A saved main flag wins; records saved before v40.7 have none, so their
+      // first code stays the main diagnosis exactly as before.
+      const flagged = definitions[kind]?.mainSecondary && parsed.find(r => r && r.main === true);
+      const flaggedCode = flagged ? String(flagged.icd10 || flagged.code || '').trim().toUpperCase() : '';
+      const flaggedIndex = flaggedCode ? items.findIndex(x => x.icd10 === flaggedCode) : -1;
+      if (flaggedIndex > 0) items.unshift(...items.splice(flaggedIndex, 1));
     } else {
       const def = definitions[kind];
       const legacyCode = el(def?.code)?.value?.trim()?.toUpperCase();
@@ -157,6 +208,8 @@
       if (codeVal) return [{ icd10: codeVal, text: textVal }];
       return [];
     }
+    // Daily notes store this list directly; the main code is first and flagged.
+    if (definitions[kind]?.mainSecondary) return items.map((x, index) => ({ icd10: x.icd10, text: x.text || '', main: index === 0 }));
     return items.map(x => ({ icd10: x.icd10, text: x.text || '' }));
   }
 
@@ -181,7 +234,7 @@
       <div class="diag-tag-wrapper">
         <div class="diag-tag-box" tabindex="0">
           <div class="diag-tags-list"></div>
-          <input type="text" class="diag-search-input no-print" placeholder="${placeholders()}" autocomplete="off" spellcheck="false">
+          <input type="text" class="diag-search-input no-print" data-emr-no-save placeholder="${placeholders()}" autocomplete="off" spellcheck="false">
         </div>
         <div class="diag-dropdown no-print" hidden>
           <div class="diag-status" hidden></div>
@@ -344,7 +397,12 @@
   }
 
   window.collectEmrDiagnoses = collect;
+  window.mountEmrDiagnosisEditor = (kind, host) => { if (definitions[kind] && host && !hosts.has(kind)) setupHost(kind, host); };
   window.restoreEmrDiagnoses = restore;
+  window.setEmrMainDiagnosis = (kind, code) => {
+    const index = getSelected(kind).findIndex(x => x.icd10 === String(code || '').trim().toUpperCase());
+    setMain(kind, index);
+  };
   window.syncEmrDiagnosisFields = () => {
     for (const kind of ['opd', 'ipd']) sync(kind);
   };

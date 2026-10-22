@@ -93,8 +93,9 @@ test('new symptom controls preserve old anonymous clinical storage keys and lega
  assert.match(source,/cb.dataset.emrTransient = '1'/);
  const record=fs.readFileSync(new URL('../public/emr-patient-record.js',import.meta.url),'utf8');
  const start=record.indexOf('  function prepareStorageKeys()'),end=record.indexOf('  function ensureFirstExamDateTime()',start);
- function control(id='',attrs=[]){return{id,dataset:{},hasAttribute:x=>attrs.includes(x)};}
- function keys(controls){const ctx={document:{querySelectorAll:()=>controls},storageScope:()=> 'triage',storagePrepared:false};vm.runInNewContext(record.slice(start,end)+'\nprepareStorageKeys();',ctx);return controls.filter(c=>!c.hasAttribute('data-emr-no-auto-index')&&!c.hasAttribute('data-emr-transient')).map(c=>({...c.dataset}));}
+ // v41.5: prepareStorageKeys also asks window for the nursing chart initializer and filters with matches/closest.
+ function control(id='',attrs=[]){return{id,dataset:{},hasAttribute:x=>attrs.includes(x),matches:()=>false,closest:()=>null};}
+ function keys(controls){const ctx={window:{},document:{querySelectorAll:()=>controls},storageScope:()=> 'triage',storagePrepared:false};vm.runInNewContext(record.slice(start,end)+'\nprepareStorageKeys();',ctx);return controls.filter(c=>!c.hasAttribute('data-emr-no-auto-index')&&!c.hasAttribute('data-emr-transient')).map(c=>({...c.dataset}));}
  const old=keys([control('pmrs_chief_complaint'),control(),control('next_field')]);
  const updated=keys([control('pmrs_chief_complaint'),control('pmrs_chief_complaint_items',['data-emr-no-auto-index']),control('', ['data-emr-transient']),control(),control('next_field')]);
  assert.deepEqual(updated,old);

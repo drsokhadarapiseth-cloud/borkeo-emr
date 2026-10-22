@@ -61,21 +61,21 @@ export function mountPharmacyRoutes(router) {
     const sub = match[2] || '';
 
     if (!sub) {
-      const allowed = kind === 'medicine'
+      const allowed = (kind === 'medicine'
         ? ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'PHARMACY', 'DOCTOR'].includes(role)
         : kind === 'material'
           ? ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'LAB'].includes(role)
-          : ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'IMAGING', 'DOCTOR'].includes(role);
+          : ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'IMAGING', 'DOCTOR'].includes(role));
       if (!allowed) return sendJson(response, 403, { error: 'Your role cannot view this stock list.' }, { secure: config.cookieSecure });
       return sendJson(response, 200, { items: listStock(database, kind) }, { secure: config.cookieSecure });
     }
 
     if (sub === 'history') {
-      const allowed = kind === 'medicine'
+      const allowed = (kind === 'medicine'
         ? ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'PHARMACY', 'DOCTOR'].includes(role)
         : kind === 'material'
           ? ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'LAB'].includes(role)
-          : ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'IMAGING', 'DOCTOR'].includes(role);
+          : ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'IMAGING', 'DOCTOR'].includes(role));
       if (!allowed) return sendJson(response, 403, { error: 'Your role cannot view stock history.' }, { secure: config.cookieSecure });
       return sendJson(response, 200, { history: stockHistory(database, kind) }, { secure: config.cookieSecure });
     }
@@ -91,11 +91,11 @@ export function mountPharmacyRoutes(router) {
     const body = await readJson(request, config.maxBodyBytes);
 
     if (!sub) {
-      const allowed = kind === 'medicine'
+      const allowed = (kind === 'medicine'
         ? ['ADMIN', 'VICE_DIRECTOR', 'PHARMACY'].includes(role)
         : kind === 'material'
           ? ['ADMIN', 'VICE_DIRECTOR', 'LAB'].includes(role)
-          : ['ADMIN', 'VICE_DIRECTOR', 'IMAGING'].includes(role);
+          : ['ADMIN', 'VICE_DIRECTOR', 'IMAGING'].includes(role));
       if (!allowed) return sendJson(response, 403, { error: 'Your role cannot add new items.' }, { secure: config.cookieSecure });
       try {
         const id = addStockItem(database, kind, body || {}, session.user_id);
@@ -107,11 +107,11 @@ export function mountPharmacyRoutes(router) {
     }
 
     if (sub === 'receipt') {
-      const allowed = kind === 'medicine'
+      const allowed = (kind === 'medicine'
         ? ['ADMIN', 'VICE_DIRECTOR', 'PHARMACY'].includes(role)
         : kind === 'material'
           ? ['ADMIN', 'VICE_DIRECTOR', 'LAB'].includes(role)
-          : ['ADMIN', 'VICE_DIRECTOR', 'IMAGING'].includes(role);
+          : ['ADMIN', 'VICE_DIRECTOR', 'IMAGING'].includes(role));
       if (!allowed) return sendJson(response, 403, { error: 'Your role cannot receive stock.' }, { secure: config.cookieSecure });
       try {
         receiveStock(database, body?.id, body?.quantity, session.user_id);

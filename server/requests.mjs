@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import {ensureEncounterAccessSchema,encounterAccess} from './encounter-access.mjs';
-import {getESignature} from './esign.mjs';
+import {getESignature,userSignerName} from './esign.mjs';
 import {createStaffMessage} from './messages.mjs';
 import {approveAdmission} from './admission-approvals.mjs';
 import {invalidatePaymentStatusCache} from './finance.mjs';
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS finance_service_concessions(request_id TEXT NOT NULL,
     ALTER TABLE workflow_requests_v285 RENAME TO workflow_requests;`);
   }
 }
-export function signedBy(db,actor){const e=getESignature(db,actor.userId);const user=db.sqlite.prepare('SELECT display_name FROM users WHERE id=?').get(actor.userId);return {userId:actor.userId,name:e?.signerName||user?.display_name||actor.name||'',role:actor.role,wardCode:actor.wardCode||'',signedAt:Date.now(),signatureDataUrl:e?.signatureDataUrl||''}}
+export function signedBy(db,actor){const e=getESignature(db,actor.userId);const user=db.sqlite.prepare('SELECT display_name FROM users WHERE id=?').get(actor.userId);return {userId:actor.userId,name:userSignerName(db,actor.userId,e?.signerName||user?.display_name||actor.name||'',actor.role),role:actor.role,wardCode:actor.wardCode||'',signedAt:Date.now(),signatureDataUrl:e?.signatureDataUrl||''}}
 export function requestVisible(row,actor){if(actor.role==='PHARMACY')return row.kind==='PATIENT_DELETE'&&row.submitted_by===actor.userId;if(['CLERK','ACCOUNTANT'].includes(actor.role)&&row.kind!=='FEE')return false;return MANAGEMENT.includes(actor.role)||(['CLERK','ACCOUNTANT'].includes(actor.role)&&row.kind==='FEE'&&['APPROVED','APPLIED'].includes(row.status))||row.submitted_by===actor.userId||Boolean(actor.wardCode&&row.source_ward===actor.wardCode)}
 function view(row){if(!row)return null;const snapshot=parse(row.snapshot_json);return {id:row.id,kind:row.kind,patientKey:row.patient_key,patientName:snapshot.full_name||'',caseNumber:snapshot.case_number||'',department:snapshot.department_name_kh||snapshot.department_code||'',sourceWard:row.source_ward,sourceRole:row.source_role,submittedBy:row.submitted_by,submittedAt:row.submitted_at,status:row.status,revision:row.revision,reason:row.reason,reviewNote:row.review_note,reviewedAt:row.reviewed_at,signature:parse(row.signature_json),payload:parse(row.payload_json)}}
 export function listWorkflowRequests(db,actor){return db.sqlite.prepare('SELECT * FROM workflow_requests ORDER BY submitted_at DESC').all().filter(r=>requestVisible(r,actor)).map(view)}

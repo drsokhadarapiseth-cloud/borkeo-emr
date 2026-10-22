@@ -1,0 +1,230 @@
+{
+  "note": "Clinical option lists for the structured allergy record and resuscitation status (v41.0), display rules by age and sex (v41.1), and the WHO Surgical Safety Checklist used by the pre-operative checklist (v41.3), immediate newborn care items and birth vaccines (v41.4), critical result escalation and the NEWS2 early warning score (v41.6). Codes are stored; labels are translated in the UI (docs/translations-needed.csv). A doctor must confirm these lists and numbers: see docs/clinical-review.md.",
+  "allergyTypes": [
+    "drug",
+    "food",
+    "other"
+  ],
+  "allergySeverities": [
+    "mild",
+    "moderate",
+    "severe",
+    "life-threatening",
+    "unknown"
+  ],
+  "resuscitationStatuses": [
+    "full",
+    "dnr"
+  ],
+  "displayRules": {
+    "immunizationMaxAge": 14,
+    "substanceUseMinAge": 10,
+    "paediatricMaxAge": 14,
+    "headCircumferenceMaxAge": 2,
+    "tetanusFemaleMinAge": 15,
+    "tetanusFemaleMaxAge": 49,
+    "tetanusWhenPregnant": true,
+    "obgynFemaleMinAge": 15,
+    "obgynYoungerWhenPregnant": true,
+    "obstetricWardCodes": [
+      "obstetric",
+      "gyneco-obstetric"
+    ]
+  },
+  "whoChecklist": [
+    {
+      "section": "who.signIn",
+      "items": [
+        "who.identity",
+        "who.siteMarked",
+        "who.anaesthesiaCheck",
+        "who.oximeter",
+        "who.allergy",
+        "who.airway",
+        "who.bloodLoss"
+      ]
+    },
+    {
+      "section": "who.timeOut",
+      "items": [
+        "who.teamIntroduced",
+        "who.confirmed",
+        "who.antibiotic",
+        "who.criticalEvents",
+        "who.sterility",
+        "who.imaging"
+      ]
+    },
+    {
+      "section": "who.signOut",
+      "items": [
+        "who.procedureRecorded",
+        "who.counts",
+        "who.specimen",
+        "who.equipmentProblems",
+        "who.recoveryConcerns"
+      ]
+    }
+  ],
+  "newbornCare": [
+    "newborn.drying",
+    "newborn.skinToSkin",
+    "newborn.delayedCordClamping",
+    "newborn.breastfeeding1h",
+    "newborn.eyeCare",
+    "newborn.cordCare"
+  ],
+  "birthVaccines": [
+    "vaccine.bcg",
+    "vaccine.hepB0"
+  ],
+  "criticalEscalation": {
+    "minutes": 30,
+    "roles": [
+      "DOCTOR",
+      "CHIEF_WARD",
+      "WARD_HEAD"
+    ]
+  },
+  "earlyWarning": {
+    "name": "NEWS2",
+    "minAge": 16,
+    "excludePregnant": true,
+    "parameters": {
+      "respRate": [
+        {
+          "max": 8,
+          "points": 3
+        },
+        {
+          "max": 11,
+          "points": 1
+        },
+        {
+          "max": 20,
+          "points": 0
+        },
+        {
+          "max": 24,
+          "points": 2
+        },
+        {
+          "points": 3
+        }
+      ],
+      "spo2": [
+        {
+          "max": 91,
+          "points": 3
+        },
+        {
+          "max": 93,
+          "points": 2
+        },
+        {
+          "max": 95,
+          "points": 1
+        },
+        {
+          "points": 0
+        }
+      ],
+      "onOxygen": {
+        "yes": 2,
+        "no": 0
+      },
+      "systolic": [
+        {
+          "max": 90,
+          "points": 3
+        },
+        {
+          "max": 100,
+          "points": 2
+        },
+        {
+          "max": 110,
+          "points": 1
+        },
+        {
+          "max": 219,
+          "points": 0
+        },
+        {
+          "points": 3
+        }
+      ],
+      "pulse": [
+        {
+          "max": 40,
+          "points": 3
+        },
+        {
+          "max": 50,
+          "points": 1
+        },
+        {
+          "max": 90,
+          "points": 0
+        },
+        {
+          "max": 110,
+          "points": 1
+        },
+        {
+          "max": 130,
+          "points": 2
+        },
+        {
+          "points": 3
+        }
+      ],
+      "consciousness": {
+        "A": 0,
+        "C": 3,
+        "V": 3,
+        "P": 3,
+        "U": 3
+      },
+      "temperature": [
+        {
+          "max": 35.0,
+          "points": 3
+        },
+        {
+          "max": 36.0,
+          "points": 1
+        },
+        {
+          "max": 38.0,
+          "points": 0
+        },
+        {
+          "max": 39.0,
+          "points": 1
+        },
+        {
+          "points": 2
+        }
+      ]
+    },
+    "risk": [
+      {
+        "min": 7,
+        "level": "high"
+      },
+      {
+        "min": 5,
+        "level": "medium"
+      },
+      {
+        "anySingle": 3,
+        "level": "lowMedium"
+      },
+      {
+        "min": 0,
+        "level": "low"
+      }
+    ]
+  }
+}

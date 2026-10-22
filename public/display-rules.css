@@ -1,0 +1,119 @@
+/* v41.1 - Display rules by age and sex: paediatric section, tetanus vaccine
+   status, ob/gyn "show" button and the TB screening block shared by OPD and IPD. */
+[data-display-rule].emr-rule-hidden,
+[data-display-rule][hidden] {
+  display: none !important;
+}
+
+.emr-rule-block {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border: 1px solid var(--border-default, #cbd5e1);
+  border-radius: 10px;
+  background: var(--bg-surface, #ffffff);
+}
+
+.emr-rule-block-title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.emr-rule-field {
+  margin-bottom: 8px;
+}
+
+.emr-rule-field > label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.emr-rule-field textarea {
+  width: 100%;
+  min-height: 40px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.emr-paediatric-growth {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
+  margin-bottom: 4px;
+}
+
+.emr-paediatric-vitals {
+  color: var(--text-secondary, #475569);
+}
+
+.emr-paediatric-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.emr-paediatric-head input {
+  width: 70px;
+  text-align: center;
+}
+
+.emr-tetanus-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.emr-tetanus-row .emr-rule-block-title {
+  margin-bottom: 0;
+}
+
+.emr-tetanus-row select {
+  min-width: 140px;
+}
+
+#sub_ipd .emr-rule-show-button {
+  display: flex !important;
+  width: fit-content;
+  float: none;
+  margin: 6px 0 10px;
+  padding: 4px 12px;
+  min-height: 32px;
+  border: 1px dashed #be185d;
+  border-radius: 8px;
+  background: #fdf2f8;
+  color: #9d174d;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* TB screening: the same block layout in OPD and IPD (as the OPD layout since v18.0). */
+#sub_ipd .emr-tb-screening,
+#sub_opd .emr-tb-screening {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  column-gap: 16px;
+  row-gap: 6px;
+}
+
+#sub_ipd .emr-tb-screening > label,
+#sub_ipd .emr-tb-screening > div {
+  grid-column: auto !important;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+#sub_ipd .emr-tb-screening input[type="checkbox"] {
+  flex: 0 0 auto;
+  margin: 0.25em 0 0;
+}
+
+@media print {
+  .emr-rule-block {
+    border-color: #000000;
+  }
+}

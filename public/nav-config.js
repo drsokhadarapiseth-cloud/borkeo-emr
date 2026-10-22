@@ -62,6 +62,8 @@
     { id: 'admin-users', group: 'admin', href: '/admin/users', icon: 'icon-lock', label: 'គ្រប់គ្រងគណនី', labelEn: 'User accounts', access: MGMT },
     { id: 'admin-organization', group: 'admin', href: '/admin/organization', icon: 'icon-building', label: 'ឈ្មោះ និងស្លាកសញ្ញា', labelEn: 'Name and logo', access: MGMT },
     { id: 'admin-health-facility', group: 'admin', href: '/admin/health-facility', icon: 'icon-hospital', label: 'ព័ត៌មានមូលដ្ឋានសុខាភិបាល', labelEn: 'Health facility', access: MGMT },
+    { id: 'admin-record-log', group: 'admin', href: '/admin/record-log', icon: 'icon-eye', label: 'កំណត់ត្រាអ្នកបើកមើលឯកសារ', labelEn: 'Record view log', access: MGMT },
+    { id: 'admin-drug-safety', group: 'admin', href: '/admin/drug-safety', icon: 'icon-pill', label: '', newTextKey: 'nav.drugSafety', labelEn: 'Drug safety tables', access: MGMT },
     { id: 'admin-interface', group: 'admin', href: '/admin/interface', icon: 'icon-palette', label: 'រចនាគេហទំព័រ', labelEn: 'Interface design', access: MGMT },
     { id: 'styleguide', group: 'admin', href: '/styleguide', icon: 'icon-sliders', label: 'មគ្គុទ្ទេសក៍រចនាប័ទ្ម', labelEn: 'Styleguide', access: MGMT },
   ];
@@ -73,6 +75,8 @@
     return wardRule.startsWith('!') ? ward !== wardRule.slice(1) : ward === wardRule;
   }
 
+  // v42.1: the Superuser account gets exactly the menu of its active user
+  // type, like a real account of that type.
   function itemVisible(item, user) {
     const role = String(user?.activeRole || '').toUpperCase();
     const ward = String(user?.activeWard?.code || '').toLowerCase();

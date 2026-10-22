@@ -112,10 +112,10 @@
   }
 
   function canUse() { return ['DOCTOR', 'ADMIN','VICE_DIRECTOR', 'NURSE', 'MIDWIFE'].includes(user?.activeRole); }
-  function isPrePaymentOpdReview() { return new URLSearchParams(window.location.search).get('view') === 'opd-paraclinic' && user?.activeRole === 'DOCTOR'; }
+  function isPrePaymentOpdReview() { return new URLSearchParams(window.location.search).get('view') === 'opd-paraclinic' && (user?.activeRole === 'DOCTOR'); }
   function needsOpdFeeChoice(context) {
     return context === 'opd' && String(patient?.serviceMode || patient?.summary?.serviceMode || '').toLowerCase() === 'opd'
-      && user?.activeRole === 'DOCTOR';
+      && (user?.activeRole === 'DOCTOR');
   }
   function opdFeeChoice(context) {
     if (!needsOpdFeeChoice(context)) return '';
@@ -1519,8 +1519,8 @@
         if (order.status === 'REJECTED') content += '<div class="paraclinic-submit"><button class="critical-action" data-recollect>Recollect Specimen</button></div>';
         if (order.status === 'RESULT_AVAILABLE' && !order.wardSeenAt) content += '<div class="paraclinic-submit"><button class="primary" data-ward-seen>Ward Mark as Seen</button></div>';
       }
-      if (order.hasCritical && order.releasedAt && !order.criticalAckAt && ['DOCTOR','ADMIN','VICE_DIRECTOR'].includes(user?.activeRole)) content += '<div class="paraclinic-submit"><button class="critical-action" data-critical-ack>Acknowledge Critical Result</button></div>';
-      if (order.releasedAt && !order.reviewedAt && ['DOCTOR','ADMIN','VICE_DIRECTOR'].includes(user?.activeRole)) content += '<div class="paraclinic-submit"><button class="primary" data-review>Confirm Seen</button></div>';
+      if (order.hasCritical && order.releasedAt && !order.criticalAckAt && (['DOCTOR','ADMIN','VICE_DIRECTOR'].includes(user?.activeRole))) content += '<div class="paraclinic-submit"><button class="critical-action" data-critical-ack>Acknowledge Critical Result</button></div>';
+      if (order.releasedAt && !order.reviewedAt && (['DOCTOR','ADMIN','VICE_DIRECTOR'].includes(user?.activeRole))) content += '<div class="paraclinic-submit"><button class="primary" data-review>Confirm Seen</button></div>';
       content += seenNotes(order);
       if (order.wardSeenAt) content += `<p class="ward-seen-note"><strong>Ward Seen:</strong> ${new Date(order.wardSeenAt).toLocaleString('en-GB')} by ${esc(order.wardSeenName || '')}</p>`;
       content += `<div class="paraclinic-print-actions" style="margin:14px 0;padding:10px 14px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
@@ -1537,7 +1537,7 @@
       });
       // Opening a released report counts as seen only after the first explicit
       // acknowledgment. Worklists, background polling and printing never stamp it.
-      if (order.releasedAt && order.reviewedAt && ['DOCTOR','ADMIN','VICE_DIRECTOR'].includes(user?.activeRole)) {
+      if (order.releasedAt && order.reviewedAt && (['DOCTOR','ADMIN','VICE_DIRECTOR'].includes(user?.activeRole))) {
         json(`/api/paraclinic/orders/${order.id}/view`, {method:'POST'}).then(result => {
           view.body.querySelector('[data-result-seen]')?.replaceWith(seenNotesElement(result.order));
         }).catch(error => {

@@ -393,6 +393,87 @@
   border: 2px solid var(--bg-surface, #ffffff);
 }
 
+/* v42.1: Superuser "switch user type" button and window */
+.emr-user-type-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid var(--color-primary-300, #66bcd5);
+  background: var(--color-primary-50, #e6f4f8);
+  color: var(--color-primary-700, #0369a1);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.emr-user-type-btn:hover {
+  background: var(--color-primary-100, #cce9f1);
+}
+
+.emr-user-type-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.emr-user-type-dialog {
+  max-width: 420px;
+  display: grid;
+  gap: 8px;
+}
+
+.emr-user-type-dialog label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary, #475569);
+}
+
+.emr-user-type-dialog select {
+  width: 100%;
+  min-height: 38px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-default, #cbd5e1);
+  border-radius: var(--radius-md, 8px);
+  background: var(--bg-surface, #ffffff);
+  font: inherit;
+}
+
+.emr-user-type-dialog [hidden] {
+  display: none;
+}
+
+.emr-user-type-status {
+  min-height: 18px;
+  font-size: 13px;
+  color: var(--color-danger-600, #dc2626);
+}
+
+.emr-user-type-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.emr-user-type-submit {
+  min-height: 38px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-primary-600, #0284c7);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.emr-user-type-submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
 /* Topbar alignment with the rail; the brand and menu button live in the
    sidebar on desktop and return to the topbar in drawer mode. */
 body.sidebar-pinned .emr-topbar {
@@ -927,26 +1008,26 @@ body.sidebar-pinned .emr-sidebar.is-expanded {
     width: 36px;
   }
 
-  /* Section headings become a thin divider */
+  /* v42.0: section headings keep their full height and only show a thin
+     divider, so the items do not move when the rail expands under the
+     pointer (a click aimed at one item used to land on the item above). */
   .emr-sidebar:not(.is-expanded) .emr-sidebar-section-title {
+    position: relative;
+    color: transparent;
+  }
+
+  .emr-sidebar:not(.is-expanded) .emr-sidebar-section-title::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 50%;
     height: 1px;
-    margin: 9px 12px;
-    padding: 0;
     background: var(--emr-nav-border);
   }
 
-  .emr-sidebar:not(.is-expanded) .emr-sidebar-section:first-child .emr-sidebar-section-title {
-    background: transparent;
-    margin: 3px 12px;
-  }
-
-  .emr-sidebar:not(.is-expanded) .emr-sidebar-section-title span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
+  .emr-sidebar:not(.is-expanded) .emr-sidebar-section:first-child .emr-sidebar-section-title::after {
+    display: none;
   }
 
   /* Counters stay visible on the icon */
@@ -1354,7 +1435,8 @@ body.sidebar-pinned .emr-sidebar.is-expanded {
 
   .emr-search-kbd,
   .emr-topbar-subtitle,
-  .emr-sync-status .emr-status-text {
+  .emr-sync-status .emr-status-text,
+  .emr-user-type-btn span {
     display: none;
   }
 

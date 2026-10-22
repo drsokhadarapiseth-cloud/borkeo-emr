@@ -4,10 +4,10 @@ import { DatabaseSync } from 'node:sqlite';
 
 export const USER_ROLES = Object.freeze([
   'ADMIN', 'REGISTRATION', 'TRIAGE', 'DOCTOR', 'NURSE', 'MIDWIFE',
-  'LAB', 'IMAGING', 'PHARMACY', 'ACCOUNTANT', 'CLERK', 'DIRECTOR', 'VICE_DIRECTOR', 'CHIEF_WARD', 'WARD_HEAD',
+  'LAB', 'IMAGING', 'PHARMACY', 'ACCOUNTANT', 'CLERK', 'DIRECTOR', 'VICE_DIRECTOR', 'CHIEF_WARD', 'WARD_HEAD', 'SUPERUSER',
 ]);
 
-const LEGACY_STORAGE_ROLES = new Set(['ADMIN','REGISTRATION','TRIAGE','DOCTOR','NURSE','MIDWIFE','LAB','IMAGING','PHARMACY']);
+const LEGACY_STORAGE_ROLES = new Set(['ADMIN','REGISTRATION','TRIAGE','DOCTOR','NURSE','MIDWIFE','LAB','IMAGING','PHARMACY','SUPERUSER']);
 function storageRole(role) {
   const normalized = String(role || '').toUpperCase();
   return LEGACY_STORAGE_ROLES.has(normalized) ? normalized : 'REGISTRATION';

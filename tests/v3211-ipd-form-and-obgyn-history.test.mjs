@@ -61,9 +61,12 @@ test('v32.11 Diagnosis section renamed to ICD-10 and redundant label removed in 
   const emrHtml = fs.readFileSync(path.join(rootDir, 'protected/EMR.html'), 'utf8');
   const legacyHtml = fs.readFileSync(path.join(rootDir, 'legacy-html/EMR.html'), 'utf8');
 
+  // v40.8: inside the SOAP A box the OPD title has no section number (approved change).
+  assert.match(emrHtml, /<div class="opd-section-title" data-key="opd_sec_diag">រោគវិនិច្ឆ័យ ICD-10<\/div>/, 'OPD diagnosis title in the A box');
+
   [emrHtml, legacyHtml].forEach(html => {
     // Section headers
-    assert.match(html, /<div class="opd-section-title" data-key="opd_sec_diag">IV\. រោគវិនិច្ឆ័យ ICD-10<\/div>/, 'OPD diagnosis title must be IV. រោគវិនិច្ឆ័យ ICD-10');
+    if (html === legacyHtml) assert.match(html, /<div class="opd-section-title" data-key="opd_sec_diag">IV\. រោគវិនិច្ឆ័យ ICD-10<\/div>/, 'OPD diagnosis title must be IV. រោគវិនិច្ឆ័យ ICD-10');
     assert.match(html, /<div class="opd-section-title" data-key="ipd_diag">រោគវិនិច្ឆ័យ ICD-10<\/div>/, 'IPD diagnosis title must be រោគវិនិច្ឆ័យ ICD-10');
 
     // Redundant label removed
@@ -74,9 +77,11 @@ test('v32.11 Diagnosis section renamed to ICD-10 and redundant label removed in 
     assert.match(html, /data-diagnosis-editor="ipd"/, 'IPD diagnosis editor must exist');
 
     // Dictionaries
-    assert.match(html, /opd_sec_diag:\s*"IV\. រោគវិនិច្ឆ័យ ICD-10"/, 'Khmer dictionary must have updated OPD title');
+    if (html === legacyHtml) assert.match(html, /opd_sec_diag:\s*"IV\. រោគវិនិច្ឆ័យ ICD-10"/, 'Khmer dictionary must have updated OPD title');
+    else assert.match(html, /opd_sec_diag:\s*"រោគវិនិច្ឆ័យ ICD-10"/, 'v40.8 Khmer dictionary OPD title without its number');
     assert.match(html, /ipd_diag:\s*"រោគវិនិច្ឆ័យ ICD-10"/, 'Khmer dictionary must have updated IPD title');
-    assert.match(html, /opd_sec_diag:\s*"IV\. Diagnosis ICD-10"/, 'English dictionary must have updated OPD title');
+    if (html === legacyHtml) assert.match(html, /opd_sec_diag:\s*"IV\. Diagnosis ICD-10"/, 'English dictionary must have updated OPD title');
+    else assert.match(html, /opd_sec_diag:\s*"Diagnosis ICD-10"/, 'v40.8 English dictionary OPD title without its number');
     assert.match(html, /ipd_diag:\s*"Diagnosis ICD-10"/, 'English dictionary must have updated IPD title');
   });
 });

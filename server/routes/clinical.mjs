@@ -1,3 +1,4 @@
+import { logFromContext } from '../record-access.mjs';
 import crypto from 'node:crypto';
 import { listSymptoms, addCustomSymptom, SYMPTOM_CREATE_ROLES } from '../symptoms.mjs';
 import { roleCanPage, WARDS } from '../access.mjs';
@@ -511,6 +512,7 @@ export function mountClinicalRoutes(router) {
     if (!patient) return sendJson(ctx.response, 404, { error: 'Patient not found.' }, { secure: config.cookieSecure });
     if (!canAccessPatient(database, session, patient)) return sendJson(ctx.response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
     const preview = pmrs2Preview(patientRecordResponse(patient, true));
+    logFromContext(ctx, patient, 'open', 'PMRS2 review'); // v41.7 record view log
     return sendJson(ctx.response, 200, { preview, reviewIssues: pmrs2ReviewIssues(preview, preview.triage) }, { secure: config.cookieSecure });
   });
 
@@ -535,6 +537,7 @@ export function mountClinicalRoutes(router) {
     }
     if (body.reviewed !== true) return sendJson(response, 400, { error: 'Review the patient and all clinical sections first.' }, { secure: config.cookieSecure });
     const transferPackage = buildPmrs2TransferPackage(patient, new Date().toISOString());
+    logFromContext(ctx, row, 'export', 'PMRS2 transfer package'); // v41.7 record view log
     const checksum = crypto.createHash('sha256').update(JSON.stringify(transferPackage)).digest('hex');
     audit(database, request, 'PMRS2_EXPORT_PREPARED', {
       userId: session.user_id,

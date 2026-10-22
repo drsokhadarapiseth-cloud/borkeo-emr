@@ -54,6 +54,57 @@
   letter-spacing: 0.02em;
 }
 
+/* v40.7: main and secondary diagnoses (IPD) */
+.diag-tag-main {
+  background: #075985;
+  box-shadow: 0 0 0 2px #bae6fd;
+}
+
+.diag-main-badge {
+  background: #ffffff;
+  color: #075985;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.diag-secondary-heading {
+  flex-basis: 100%;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.diag-set-main {
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: transparent;
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.diag-set-main:hover,
+.diag-set-main:focus-visible {
+  background: #ffffff;
+  color: #0369a1;
+}
+
+@media print {
+  .diag-tag-main {
+    box-shadow: none;
+    border: 2px solid #000000;
+  }
+
+  .diag-main-badge {
+    border: 1px solid #000000;
+  }
+}
+
 .diag-tag-desc {
   font-size: 12px;
   opacity: 0.95;
@@ -187,4 +238,12 @@
   .diag-tag * {
     color: #000 !important;
   }
+}
+
+/* v40.9: secondary diagnoses heading in daily follow-up cards and print */
+.mon-secondary-heading {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
 }

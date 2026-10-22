@@ -1,0 +1,203 @@
+{
+ "note": "Storage keys of every saved field written in the OPD form, captured in the browser before the v40.8 SOAP move. They must never change.",
+ "fields": [
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:5",
+   "legacy": "auto:172"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:6",
+   "legacy": "auto:173"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:7",
+   "legacy": "auto:174"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:8",
+   "legacy": "auto:175"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:9",
+   "legacy": "auto:176"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:10",
+   "legacy": "auto:177"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:11",
+   "legacy": "auto:178"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:12",
+   "legacy": "auto:179"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "",
+   "key": "scope:medical:auto:13",
+   "legacy": "auto:180"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "opd_weight",
+   "key": "scope:medical:id:opd_weight",
+   "legacy": "id:opd_weight"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "opd_height",
+   "key": "scope:medical:id:opd_height",
+   "legacy": "id:opd_height"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "opd_bmi",
+   "key": "scope:medical:id:opd_bmi",
+   "legacy": "id:opd_bmi"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "opd_temp",
+   "key": "scope:medical:id:opd_temp",
+   "legacy": "id:opd_temp"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "opd_bp_sys",
+   "key": "scope:medical:id:opd_bp_sys",
+   "legacy": "id:opd_bp_sys"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "opd_bp_dia",
+   "key": "scope:medical:id:opd_bp_dia",
+   "legacy": "id:opd_bp_dia"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "opd_pulse",
+   "key": "scope:medical:id:opd_pulse",
+   "legacy": "id:opd_pulse"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "opd_resp",
+   "key": "scope:medical:id:opd_resp",
+   "legacy": "id:opd_resp"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "",
+   "key": "scope:medical:auto:22",
+   "legacy": "auto:189"
+  },
+  {
+   "tag": "select",
+   "type": "select-one",
+   "id": "inv_category",
+   "key": "scope:medical:id:inv_category",
+   "legacy": "id:inv_category"
+  },
+  {
+   "tag": "select",
+   "type": "select-one",
+   "id": "inv_sub",
+   "key": "scope:medical:id:inv_sub",
+   "legacy": "id:inv_sub"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "inv_list",
+   "key": "scope:medical:id:inv_list",
+   "legacy": "id:inv_list"
+  },
+  {
+   "tag": "input",
+   "type": "hidden",
+   "id": "diag_input",
+   "key": "scope:medical:id:diag_input",
+   "legacy": "id:diag_input"
+  },
+  {
+   "tag": "input",
+   "type": "hidden",
+   "id": "emr_opd_diagnoses",
+   "key": "scope:medical:id:emr_opd_diagnoses",
+   "legacy": "id:emr_opd_diagnoses"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "emr_pmrs_opd_diagnosis",
+   "key": "scope:medical:id:emr_pmrs_opd_diagnosis",
+   "legacy": "id:emr_pmrs_opd_diagnosis",
+   "previous": "scope:medical:auto:27",
+   "previousLegacy": "auto:194"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "web_rx_counsel",
+   "key": "scope:medical:id:web_rx_counsel",
+   "legacy": "id:web_rx_counsel"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "web_rx_counsel_note",
+   "key": "scope:medical:id:web_rx_counsel_note",
+   "legacy": "id:web_rx_counsel_note"
+  },
+  {
+   "tag": "input",
+   "type": "date",
+   "id": "web_opd_followup",
+   "key": "scope:medical:id:web_opd_followup",
+   "legacy": "id:web_opd_followup"
+  },
+  {
+   "tag": "select",
+   "type": "select-one",
+   "id": "web_opd_transfer_ward",
+   "key": "scope:medical:id:web_opd_transfer_ward",
+   "legacy": "id:web_opd_transfer_ward"
+  }
+ ]
+}

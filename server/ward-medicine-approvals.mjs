@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import { buildMedicineMatrix } from './ward-medicine-matrix.mjs';
 import { wardMedicineReport } from './ward-medicines.mjs';
 import { patientWorkWard, WARDS } from './access.mjs';
+import { userSignerName } from './esign.mjs';
 
 function nextDay(date) {
   const [year,month,day]=date.split('-').map(Number);
@@ -120,7 +121,7 @@ export function signWardMedicineReport(database,date,ward,role,actorId,signature
   const report=reviewedWardMedicineReport(database,date,ward);
   if(expectedFingerprint&&expectedFingerprint!==report.fingerprint)throw Object.assign(Error('Medicine orders changed. Refresh the form before signing.'),{status:409});
   if(!report.matrix.patientCount)throw Error('There are no medicine orders for this ward and date.');
-  const actorName=database.sqlite.prepare('SELECT display_name FROM users WHERE id=?').get(actorId)?.display_name||'';
+  const actorName=userSignerName(database,actorId,database.sqlite.prepare('SELECT display_name FROM users WHERE id=?').get(actorId)?.display_name||'',normalizedRole);
   const now=Date.now(),sig=JSON.stringify({...signature,role:normalizedRole,step});
   if(!existing)database.sqlite.prepare("INSERT INTO ward_medicine_approvals(ward_code,report_date) VALUES(?,?)").run(ward,date);
   if(step===1 && existing?.rejected_at){database.sqlite.prepare("UPDATE ward_medicine_approvals SET revision=revision+1,nurse_at=0,chief_at=0,director_at=0,pharmacy_at=0,sender_at=0,receiver_at=0,approved_at=0,rejected_at=0,pharmacy_alerted_at=0,snapshot_json='',legacy_complete=0 WHERE ward_code=? AND report_date=?").run(ward,date);}

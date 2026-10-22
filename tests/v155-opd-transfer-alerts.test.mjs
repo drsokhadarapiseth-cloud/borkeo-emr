@@ -49,7 +49,8 @@ test('OPD can transfer to every IPD ward and settled OPD payment alerts the shar
     const wardList=await fetch(origin+'/api/opd/ipd-wards',{headers:doctor});
     assert.equal(wardList.status,200,await wardList.clone().text());
     const wards=(await wardList.json()).wards;
-    assert.equal(wards.length,9);
+    assert.equal(wards.length,10); // v42.1: + Infectious diseases ward
+    assert.ok(wards.some(ward=>ward.code==='infectious'));
     assert.ok(wards.some(ward=>ward.code==='obstetric'));
     assert.ok(wards.every(ward=>ward.code!=='opd'));
     const transfer=await fetch(origin+'/api/opd/transfer-to-ipd',{method:'POST',headers:doctor,body:JSON.stringify({patientKey:transferKey,wardCode:'obstetric'})});

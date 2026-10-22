@@ -1,0 +1,43 @@
+BORKEO EMR v40.9.0 - COMBINED UPDATE NOTE
+Medical record restructure, PHASE 3: daily follow-up note in SOAP order.
+Base: v40.8.0 (Phase 2). Clinical, pharmacy, laboratory and financial logic
+and permissions were not changed. Patient records are not touched.
+
+IMPORTANT - DATA BUG FIXED (it is in the version you are running now)
+  In the current EMR, when a doctor opens a patient record, every old daily
+  follow-up note is re-processed by the SOAP form:
+  - An old note that has no conclusion is hidden, a warning
+    "please fill S and A" appears, and when a NEW note is saved the hidden
+    old note is DELETED from the record.
+  - Old notes are rewritten as "S: ..." / "A: ..." SOAP notes.
+  v40.9.0 rebuilds every saved note exactly as it was saved. Please install
+  this update soon. Notes already deleted before this update cannot be
+  brought back by the program, but they are still in your earlier database
+  backups (C:\Users\Local-admin\Borkeo_EMR_Data\backups\).
+
+WHAT CHANGED
+1. Old daily notes keep their original text and show in the labelled
+   "old note" card. Nothing is hidden or deleted.
+2. The daily follow-up form:
+   S  Subjective  - what the patient reports today (required)
+   O  Objective   - vital signs (abnormal values in red), then
+                    examination findings
+   A  Assessment  - ICD-10 with main and secondary diagnoses, then the
+                    conclusion (required)
+   P  Plan        - treatment and protocol medicines, then plan notes
+3. Main and secondary ICD-10 in daily notes: the cards and the daily print
+   show the main code and list the secondary diagnoses.
+4. Nurses can read the daily notes but cannot type in them.
+5. Your Khmer text is unchanged. New labels use your approved Khmer.
+6. Version 40.9.0.
+
+TESTS
+  npm test -> 860 passed, 0 failed.  npm run check:khmer -> passed.
+  Tested in the browser with fake notes: old notes with and without a
+  conclusion, SOAP notes, adding a new note, the S/A rule, nurse read-only,
+  and the daily print.
+
+INSTALL
+  Step 1. Close the EMR window.
+  Step 2. Double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser press Ctrl+F5 once on an EMR page.

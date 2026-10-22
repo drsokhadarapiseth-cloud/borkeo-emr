@@ -1,0 +1,239 @@
+/* v41.2 - Medication Administration Record (nursing chart cells, list and form)
+   and the prescribing warning dialog. Colour is never the only signal: each
+   status also shows its word. */
+#sub_nursing td.nursing-med-time-cell.mar-held,
+#sub_nursing td.nursing-med-time-cell.mar-refused {
+  background: #fff7ed;
+}
+
+#sub_nursing td.nursing-med-time-cell.mar-refused {
+  background: #fef2f2;
+}
+
+.mar-status-badge {
+  display: block;
+  margin: 0 auto;
+  width: fit-content;
+  padding: 0 2px;
+  border-radius: 4px;
+  font-size: 9px;
+  line-height: 1.4;
+  font-weight: 700;
+  border: 1px solid currentColor;
+}
+
+.mar-held .mar-status-badge { color: #9a3412; }
+.mar-refused .mar-status-badge { color: #b91c1c; }
+
+.mar-log {
+  margin: 12px 0 18px;
+}
+
+.mar-log-title {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.mar-table-wrap {
+  overflow-x: auto;
+}
+
+.mar-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.mar-table th,
+.mar-table td {
+  border: 1px solid #94a3b8;
+  padding: 4px 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.mar-table tr.mar-voided td {
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+.mar-table tr.mar-voided .mar-void-note {
+  text-decoration: none;
+  display: block;
+}
+
+.mar-status {
+  font-weight: 700;
+}
+
+.mar-status-held { color: #9a3412; }
+.mar-status-refused { color: #b91c1c; }
+.mar-status-given { color: #166534; }
+
+.mar-sign img {
+  display: block;
+  max-height: 28px;
+  max-width: 110px;
+}
+
+.mar-empty {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.mar-dialog {
+  border: 0;
+  border-radius: 14px;
+  padding: 0;
+  width: min(520px, calc(100vw - 32px));
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.3);
+}
+
+.mar-dialog::backdrop {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.mar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+}
+
+.mar-form h3 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.mar-order,
+.mar-existing {
+  margin: 0;
+  font-size: 13px;
+}
+
+.mar-existing {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #f1f5f9;
+}
+
+.mar-status-choice {
+  display: flex;
+  gap: 16px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.mar-status-choice label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.mar-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mar-field input,
+.mar-field textarea {
+  font: inherit;
+  font-weight: 400;
+  padding: 6px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.mar-field textarea {
+  min-height: 60px;
+}
+
+.mar-signature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.mar-signature img {
+  max-height: 34px;
+  max-width: 140px;
+}
+
+.mar-message {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 13px;
+}
+
+.mar-message:empty {
+  display: none;
+}
+
+.mar-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Button colours come from the interface theme (interface-theme.css). */
+.mar-button {
+  min-height: 36px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mar-button:disabled {
+  opacity: 0.6;
+}
+
+.safety-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.safety-list li {
+  padding: 8px 10px;
+  border-left: 5px solid #b45309;
+  background: #fffbeb;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.safety-list li.safety-allergy {
+  border-left-color: #b91c1c;
+  background: #fef2f2;
+}
+
+@media print {
+  .mar-dialog {
+    display: none !important;
+  }
+  .mar-table th,
+  .mar-table td {
+    border-color: #000000;
+  }
+}
+
+/* Held / refused: the word sits above the time inside the narrow dose cell. */
+#sub_nursing td.mar-held .nursing-med-dose-main,
+#sub_nursing td.mar-refused .nursing-med-dose-main {
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}

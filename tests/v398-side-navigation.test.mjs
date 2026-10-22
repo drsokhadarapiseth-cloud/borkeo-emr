@@ -14,7 +14,7 @@ function loadNavConfig() {
 }
 
 const MGMT_ITEMS = ['home', 'departments', 'patient-list', 'lab', 'imaging', 'pharmacy-opd', 'ward-medicines', 'pharmacy-medicines',
-  'billing', 'expenses', 'finance', 'requests', 'admin-users', 'admin-organization', 'admin-health-facility', 'admin-interface', 'styleguide'];
+  'billing', 'expenses', 'finance', 'requests', 'admin-users', 'admin-organization', 'admin-health-facility', 'admin-record-log', 'admin-drug-safety', 'admin-interface', 'styleguide'];
 
 // docs/nav-roles.md
 const EXPECTED = [
@@ -54,7 +54,8 @@ test('v39.8 navigation map is one central declarative config; empty groups disap
   for (const item of nav.ITEMS) {
     assert.ok(nav.GROUPS.some(group => group.id === item.group), `${item.id} has a known group`);
     assert.ok(Array.isArray(item.access) && item.access.length, `${item.id} declares access`);
-    assert.ok(item.label && item.labelEn && item.icon.startsWith('icon-'), `${item.id} has labels and icon`);
+    // v41.2: an item without approved Khmer yet has a newText key instead (docs/translations-needed.csv).
+    assert.ok((item.label || item.newTextKey) && item.labelEn && item.icon.startsWith('icon-'), `${item.id} has labels and icon`);
   }
   const clerkGroups = nav.visibleGroups(asUser({ role: 'CLERK' }));
   assert.deepEqual([...clerkGroups.map(group => group.id)], ['care', 'finance'], 'only groups with items are kept');
@@ -216,7 +217,8 @@ test('v39.8 SOAP titles are always Subjective, Objective, Assessment, Plan in KH
     context.currentLang = lang;
     api.refreshLanguageLabels();
     for (const [sec, word] of Object.entries(titles)) {
-      const title = nodes[`.emr-soap-box.section-${sec} .emr-soap-title`];
+      // v40.7: the daily follow-up boxes are looked up apart from the IPD record boxes.
+      const title = nodes[`.emr-soap-box.section-${sec}:not([data-soap-record-box]) .emr-soap-title`];
       assert.equal(title.innerHTML.replace(/ <span[\s\S]*$/, ''), word, `${lang}: ${sec}`);
       assert.equal(title.attrs['data-language-exclude'], '', `${lang}: ${sec} excluded from translation`);
     }
@@ -227,10 +229,10 @@ test('v39.8 SOAP titles are always Subjective, Objective, Assessment, Plan in KH
   }
   context.currentLang = 'khmer';
   api.refreshLanguageLabels();
-  assert.equal(nodes['.emr-soap-box.section-s .emr-soap-hint'].textContent, 'អ្វីដែលអ្នកជំងឺរាយការណ៍ (រោគសញ្ញា ប្រវត្តិជំងឺ)', 'hint follows Khmer');
+  assert.equal(nodes['.emr-soap-box.section-s:not([data-soap-record-box]) .emr-soap-hint'].textContent, 'អ្វីដែលអ្នកជំងឺរាយការណ៍ (រោគសញ្ញា ប្រវត្តិជំងឺ)', 'hint follows Khmer');
   context.currentLang = 'english';
   api.refreshLanguageLabels();
-  assert.equal(nodes['.emr-soap-box.section-s .emr-soap-hint'].textContent, 'Patient-reported complaints, symptoms, interval history', 'hint follows EN');
+  assert.equal(nodes['.emr-soap-box.section-s:not([data-soap-record-box]) .emr-soap-hint'].textContent, 'Patient-reported complaints, symptoms, interval history', 'hint follows EN');
 
   // The page translator skips [data-language-exclude], so the KH-mode
   // reverse dictionary ("Assessment" -> Khmer) cannot touch the titles.

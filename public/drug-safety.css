@@ -1,0 +1,25 @@
+/* v41.2 - Drug safety tables page (administrators). */
+body.ds-page { margin: 0; background: #eef5f4; color: #153d43; font-family: Arial, 'Khmer OS Battambang', sans-serif; }
+.ds-shell { max-width: 1200px; margin: 24px auto; padding: 0 16px; }
+.ds-hero { background: linear-gradient(115deg, #123b45, #126c68); color: #ffffff; border-radius: 18px; padding: 24px 28px; }
+.ds-hero h1 { font-size: 24px; margin: 0 0 8px; }
+.ds-hero p { margin: 0; color: #d6f0ea; }
+.ds-panel { background: #ffffff; border: 1px solid #d7e6e1; border-radius: 16px; padding: 20px 22px; margin: 18px 0; }
+.ds-panel h2 { margin: 0 0 12px; font-size: 19px; }
+.ds-table-wrap { overflow-x: auto; }
+.ds-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ds-table th, .ds-table td { text-align: left; padding: 7px 9px; border-bottom: 1px solid #e2ece9; vertical-align: top; }
+.ds-table th { color: #4a6a6f; }
+.ds-empty { color: #64748b; padding: 10px 0; }
+.ds-form { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #c7dfd9; }
+.ds-form[hidden] { display: none; }
+.ds-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; flex: 0 1 160px; min-width: 120px; }
+.ds-form label.wide { flex: 1 1 240px; }
+.ds-form input { font: inherit; padding: 8px 10px; border: 1px solid #bdd3cf; border-radius: 8px; box-sizing: border-box; width: 100%; }
+.ds-form button, .ds-delete { font: inherit; padding: 8px 16px; border-radius: 8px; border: 1px solid #087d72; background: #087d72; color: #ffffff; font-weight: 700; cursor: pointer; min-height: 38px; }
+.ds-delete { background: #ffffff; color: #b91c1c; border-color: #b91c1c; padding: 4px 12px; min-height: 30px; }
+#ds-status:empty { display: none; }
+#ds-status { margin: 12px 0 0; color: #b91c1c; }
+@media (max-width: 600px) { .ds-form label { flex: 1 1 100%; } }
+/* Untranslated placeholder text stays readable on the dark header. */
+.ds-hero .needs-translation { color: #3b2f00; }

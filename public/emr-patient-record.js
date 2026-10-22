@@ -202,9 +202,24 @@
   }
 
   function prepareStorageKeys() {
-    const controls = document.querySelectorAll(
-      'input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):not([type="password"]), select, textarea, [contenteditable="true"]',
-    );
+    // v41.5: the nursing chart cells that nurses type in (EMR.html,
+    // initializeNursingEditableTables) are made editable first, so they always
+    // take their positions. Before v41.5 this depended on load timing: when the
+    // chart script ran later, the 416 cells had no key (not saved) and every
+    // later nursing field (midwife and delivery forms) got a key 416 lower.
+    window.initializeNursingEditableTables?.();
+    // v41.5: a text box that a read-only lock (emr-permissions.js, emr-encounter-editor.js)
+    // has already switched to contenteditable="false" still counts, through the
+    // original value the lock keeps. Before v41.5, on a slow page load the lock
+    // ran first and the 41 boxes of the nurse assessment pages 1-2 were skipped,
+    // so they were not saved and every later nursing field got a key 41 lower.
+    // Not part of the record, and added by script at a varying moment, so they must
+    // never take a position: the app's search box (Ctrl K, app-shell.js) and the
+    // ward billing panel that ward-services.js puts at the top of the nursing tab
+    // (before v41.5, on a slow load its two controls pushed every nursing key up by 2).
+    const controls = Array.from(document.querySelectorAll(
+      'input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="file"]):not([type="password"]), select, textarea, [contenteditable="true"], [data-original-contenteditable="true"], [data-editor-editable="true"]',
+    )).filter(control => !control.matches('.emr-palette-input') && !control.closest('.ward-service-panel'));
     const counters = Object.create(null);
     let addedControls = 0;
     controls.forEach((control, index) => {
@@ -213,19 +228,27 @@
       const localIndex = counters[scope] || 0;
       const isNewControl = control.hasAttribute('data-emr-no-auto-index');
       if (!isNewControl) counters[scope] = localIndex + 1;
+      // v40.7: a control still counts toward the positions, but is never saved
+      // or restored (search boxes); its position number may match a moved field.
+      if (control.hasAttribute('data-emr-no-save')) return;
+      // v40.7: fields moved into the SOAP boxes keep the position numbers they
+      // had before the move (data-emr-key-index / data-emr-legacy-index), so
+      // old records still load into the same field.
+      const keyIndex = control.dataset.emrKeyIndex ?? localIndex;
+      const legacyIndex = control.dataset.emrLegacyIndex ?? (index - addedControls);
       // Keep the old key solely for loading records created before v0.8.0.
       // New writes use scope-separated keys so the server can enforce role
       // boundaries without trusting which UI controls happened to be enabled.
-      control.dataset.emrLegacyStorageKey = control.id ? `id:${control.id}` : `auto:${index - addedControls}`;
+      control.dataset.emrLegacyStorageKey = control.id ? `id:${control.id}` : `auto:${legacyIndex}`;
       control.dataset.emrStorageScope = scope;
       control.dataset.emrStorageKey = control.id
         ? `scope:${scope}:id:${control.id}`
-        : `scope:${scope}:auto:${localIndex}`;
+        : `scope:${scope}:auto:${keyIndex}`;
       // Newly named complaint/diagnosis fields used anonymous auto keys in old records.
       // Their position is unchanged because the new case/ICD controls skip the counters.
       if (control.hasAttribute('data-emr-migrate-auto-key')) {
-        control.dataset.emrPreviousStorageKey = `scope:${scope}:auto:${localIndex}`;
-        control.dataset.emrPreviousLegacyStorageKey = `auto:${index - addedControls}`;
+        control.dataset.emrPreviousStorageKey = `scope:${scope}:auto:${keyIndex}`;
+        control.dataset.emrPreviousLegacyStorageKey = `auto:${legacyIndex}`;
       }
       if (isNewControl) addedControls += 1;
     });
@@ -509,7 +532,13 @@
       else if (meta.includes('ប្រុស') || meta.toLowerCase().includes('male')) sex = 'ប្រុស';
     }
     const isFemale = sex === 'ស្រី' || ['f', 'female', 'girl'].includes(String(sex).trim().toLowerCase());
-    if (isFemale) {
+    // v41.1: age rule from public/display-rules.js (null = no decision, keep the
+    // female rule above). A section that holds saved values is always shown.
+    const ruled = window.EmrDisplayRules?.obgynVisible?.();
+    const hasValues = Array.from(section.querySelectorAll('input, textarea')).some(control => String(control.value || '').trim() !== '');
+    const visible = hasValues || (ruled === null || ruled === undefined ? isFemale : ruled);
+    window.EmrDisplayRules?.obgynShowButton?.(section, visible);
+    if (visible) {
       section.style.display = 'block';
       section.classList.remove('ipd-obgyn-hidden');
     } else {
@@ -767,6 +796,7 @@
       if (otherDept === 'maternity' || otherDept === 'safe') return 'obstetric';
       if (otherDept === 'pediatric') return 'pediatric';
       if (otherDept === 'tb') return 'tb';
+      if (otherDept === 'infectious') return 'infectious';
       if (otherDept === 'medicine') return 'medicine';
       return 'opd';
     }
@@ -1112,9 +1142,9 @@
     if (!context.summary.fullName) return t('nameRequired');
     if (!context.summary.sex || !context.summary.age || !context.summary.entryDate) return t('detailsRequired');
     const currentRole = String(window.emrSession?.user?.activeRole || '').toUpperCase();
+    const inRegistrationScope = activeEditorScope() === 'registration' || options.transferToTriage || currentRole === 'REGISTRATION';
     if (currentRole === 'REGISTRATION' && !selectedCaseType()) return 'សូមជ្រើសរើស ករណីថ្មី ឬ ករណីចាស់ មុនរក្សាទុកការចុះឈ្មោះ។';
 
-    const inRegistrationScope = activeEditorScope() === 'registration' || options.transferToTriage || currentRole === 'REGISTRATION';
     if (inRegistrationScope) {
       const caregiverError = validateCaregiverInfo();
       if (caregiverError) return caregiverError;
@@ -1181,7 +1211,7 @@
       const token = await getCsrfToken();
       const rawRecordData = readRecordData();
       const data = window.EmrEncounterEditor?.filterData(rawRecordData) || rawRecordData;
-      if (String(window.emrSession?.user?.activeRole || '').toUpperCase() === 'REGISTRATION' && selectedCaseType()) { data['scope:registration:id:emr_pmrs_case_new'] = selectedCaseType() === 'new'; data['scope:registration:id:emr_pmrs_case_old'] = selectedCaseType() === 'old'; }
+      if (['REGISTRATION'].includes(String(window.emrSession?.user?.activeRole || '').toUpperCase()) && selectedCaseType()) { data['scope:registration:id:emr_pmrs_case_new'] = selectedCaseType() === 'new'; data['scope:registration:id:emr_pmrs_case_old'] = selectedCaseType() === 'old'; }
       const nursingMeta = nursingDayAndLabel();
       const marksMedicalComplete = options.markMedicalComplete ||
         document.body.dataset.clinicalView === 'medical';

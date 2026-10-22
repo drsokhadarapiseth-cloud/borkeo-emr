@@ -89,6 +89,7 @@ export const FINANCE_DEPARTMENTS = Object.freeze([
   { code:'surgery', labelKh:'ផ្នែកវះកាត់', labelEn:'Surgery' },
   { code:'pediatric', labelKh:'ផ្នែកជំងឺកុមារ', labelEn:'Pediatric' },
   { code:'tb', labelKh:'ផ្នែកជំងឺរបេង', labelEn:'Tuberculosis' },
+  { code:'infectious', labelKh:'ផ្នែកជំងឺឆ្លង', labelEn:'Infectious Diseases' },
   { code:'gyneco-obstetric', labelKh:'ផ្នែករោគស្ត្រី និងសម្ភព', labelEn:'Gynecology–Obstetric' },
   { code:'lab', labelKh:'មន្ទីរពិសោធន៍', labelEn:'Laboratory' },
   { code:'imaging', labelKh:'រូបភាពវេជ្ជសាស្ត្រ', labelEn:'Imaging' },

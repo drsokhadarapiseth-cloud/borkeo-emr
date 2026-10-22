@@ -44,6 +44,7 @@
     gynecology: 'ផ្នែករោគស្ត្រី',
     emergency: 'ផ្នែកសង្គ្រោះបន្ទាន់',
     tb: 'ផ្នែកជំងឺរបេង',
+    infectious: 'ផ្នែកជំងឺឆ្លង',
     dental: 'ផ្នែកធ្មេញ',
     mental: 'ផ្នែកសុខភាពផ្លូវចិត្ត'
   };
@@ -84,7 +85,8 @@
       logout: 'ចាកចេញពីប្រព័ន្ធ', language: 'ភាសាប្រព័ន្ធ', languageName: 'ភាសាខ្មែរ', search: 'ស្វែងរក',
       switching: 'កំពុងប្តូរតួនាទី…', switchFailed: 'មិនអាចប្តូរតួនាទី ឬផ្នែកបានទេ។',
       switched: 'បានប្តូរទៅ', reloadHint: 'ផ្ទុកទំព័រឡើងវិញ ដើម្បីបង្ហាញទិន្នន័យសម្រាប់តួនាទីថ្មី។', reload: 'ផ្ទុកឡើងវិញ', dismiss: 'បិទ',
-      noItems: 'មិនមានទំព័រសម្រាប់តួនាទីនេះទេ'
+      noItems: 'មិនមានទំព័រសម្រាប់តួនាទីនេះទេ',
+      switchUserType: 'ប្តូរប្រភេទអ្នកប្រើ', userTypeRole: 'តួនាទី', userTypeWard: 'ផ្នែក', chooseWard: 'ជ្រើសរើសផ្នែក'
     },
     en: {
       mainNav: 'Main navigation', menu: 'Menu', openMenu: 'Open navigation menu', closeMenu: 'Close navigation menu',
@@ -93,7 +95,8 @@
       logout: 'Sign out', language: 'Interface language', languageName: 'English', search: 'Search',
       switching: 'Switching role…', switchFailed: 'Could not switch role or ward.',
       switched: 'Switched to', reloadHint: 'Reload the page to show data for the new role.', reload: 'Reload', dismiss: 'Close',
-      noItems: 'No pages for this role'
+      noItems: 'No pages for this role',
+      switchUserType: 'Switch user type', userTypeRole: 'Role', userTypeWard: 'Ward', chooseWard: 'Choose ward'
     }
   };
 
@@ -119,6 +122,22 @@
     if (!code) return '';
     const ward = (user.wards || []).find(item => item.code === code) || (user.activeWard?.code === code ? user.activeWard : null);
     return (lang() === 'en' ? ward?.nameEn : ward?.nameKh) || WARD_LABELS[code] || ward?.name || code;
+  }
+
+  // v42.1: the Superuser "switch user type" window. The same 15 user types
+  // and ward rules as the /context picker (server/access.mjs roleWardAllowed).
+  const USER_TYPE_ORDER = ['ADMIN', 'DIRECTOR', 'VICE_DIRECTOR', 'REGISTRATION', 'TRIAGE', 'DOCTOR', 'NURSE', 'MIDWIFE',
+    'CHIEF_WARD', 'WARD_HEAD', 'LAB', 'IMAGING', 'PHARMACY', 'CLERK', 'ACCOUNTANT'];
+
+  function userTypeNeedsWard(role) {
+    return ['DOCTOR', 'NURSE', 'MIDWIFE', 'CHIEF_WARD', 'WARD_HEAD'].includes(role);
+  }
+
+  function userTypeWardAllowed(role, code) {
+    if (role === 'MIDWIFE') return code === 'obstetric';
+    if (role === 'NURSE') return code !== 'obstetric';
+    if (role === 'CHIEF_WARD' || role === 'WARD_HEAD') return code !== 'opd';
+    return true;
   }
 
   function contextLabel(user, role, wardCode) {
@@ -153,7 +172,8 @@
         <div class="emr-sidebar-section-title" id="emr-nav-group-${escapeHtml(group.id)}"><span>${escapeHtml(en ? group.labelEn : group.label)}</span></div>
         <ul class="emr-sidebar-list">
           ${group.items.map(item => {
-            const label = en ? item.labelEn : item.label;
+            // v41.2: an item without approved Khmer uses its newText key (public/new-text.js).
+            const label = en ? item.labelEn : (item.label || window.newText?.(item.newTextKey, item.labelEn) || item.labelEn);
             const active = item.id === activeId;
             return `<li><a href="${escapeHtml(item.href)}" class="emr-sidebar-item${active ? ' is-active' : ''}" data-nav-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(label)}" data-tooltip="${escapeHtml(label)}"${active ? ' aria-current="page"' : ''}>
               <svg class="emr-sidebar-icon" aria-hidden="true" focusable="false"><use href="/public/icons.svg#${escapeHtml(item.icon)}"></use></svg>
@@ -370,6 +390,13 @@
       `;
     }
 
+    const userTypeHtml = user.isSuperuser ? `
+        <button type="button" class="emr-user-type-btn" id="emr-user-type-btn" aria-haspopup="dialog" aria-controls="emr-user-type-backdrop" aria-label="${escapeHtml(t('switchUserType'))}" title="${escapeHtml(t('switchUserType'))}">
+          <svg class="emr-icon" aria-hidden="true"><use href="/public/icons.svg#icon-users"></use></svg>
+          <span>${escapeHtml(t('switchUserType'))}</span>
+        </button>
+    ` : '';
+
     topbar.innerHTML = `
       <div class="emr-topbar-left">
         <button type="button" class="emr-sidebar-toggle-btn" id="emr-sidebar-toggle-btn" aria-label="${escapeHtml(t('openMenu'))}" aria-controls="emr-sidebar" aria-expanded="false">
@@ -393,6 +420,7 @@
       </div>
 
       <div class="emr-topbar-right">
+        ${userTypeHtml}
         ${counterHtml}
         <div class="emr-sync-status" id="emr-sync-status" title="ស្ថានភាពការតភ្ជាប់ប្រព័ន្ធ">
           <span class="emr-status-dot online"></span>
@@ -471,7 +499,7 @@
         ${items.map(item => `
           <a href="${escapeHtml(item.href)}" class="emr-mobile-nav-item ${item.id === activeId ? 'is-active' : ''}"${item.id === activeId ? ' aria-current="page"' : ''}>
             <svg aria-hidden="true"><use href="/public/icons.svg#${escapeHtml(item.icon)}"></use></svg>
-            <span>${escapeHtml(en ? item.labelEn : item.label)}</span>
+            <span>${escapeHtml(en ? item.labelEn : (item.label || window.newText?.(item.newTextKey, item.labelEn) || item.labelEn))}</span>
           </a>
         `).join('')}
         <button type="button" class="emr-mobile-nav-item" id="emr-mobile-search-btn">
@@ -548,6 +576,38 @@
       </div>
     `;
     document.body.append(shortcutsBackdrop);
+
+    // 8. Switch user type window (Superuser account only, v42.1)
+    let userTypeBackdrop = null;
+    if (user.isSuperuser) {
+      userTypeBackdrop = document.createElement('div');
+      userTypeBackdrop.className = 'emr-shortcuts-backdrop emr-user-type-backdrop no-print';
+      userTypeBackdrop.id = 'emr-user-type-backdrop';
+      userTypeBackdrop.setAttribute('role', 'dialog');
+      userTypeBackdrop.setAttribute('aria-modal', 'true');
+      userTypeBackdrop.setAttribute('aria-labelledby', 'emr-user-type-title');
+      userTypeBackdrop.setAttribute('data-language-exclude', '');
+      const roles = USER_TYPE_ORDER.filter(item => (user.roles || []).includes(item));
+      userTypeBackdrop.innerHTML = `
+        <form class="emr-shortcuts-dialog emr-user-type-dialog" id="emr-user-type-form">
+          <div class="emr-shortcuts-head">
+            <h3 id="emr-user-type-title">${escapeHtml(t('switchUserType'))}</h3>
+            <button type="button" class="emr-palette-close" id="emr-user-type-close" aria-label="${escapeHtml(t('dismiss'))}">×</button>
+          </div>
+          <label for="emr-user-type-role">${escapeHtml(t('userTypeRole'))}</label>
+          <select id="emr-user-type-role" required>
+            ${roles.map(item => `<option value="${escapeHtml(item)}">${escapeHtml(roleLabel(item))}</option>`).join('')}
+          </select>
+          <label for="emr-user-type-ward" id="emr-user-type-ward-label">${escapeHtml(t('userTypeWard'))}</label>
+          <select id="emr-user-type-ward"></select>
+          <div class="emr-user-type-status" id="emr-user-type-status" role="alert" aria-live="polite"></div>
+          <div class="emr-user-type-actions">
+            <button type="submit" class="emr-user-type-submit">${escapeHtml(t('switchUserType'))}</button>
+          </div>
+        </form>
+      `;
+      document.body.append(userTypeBackdrop);
+    }
 
     // =========================================================================
     // EVENT HANDLERS & BEHAVIORS
@@ -1074,6 +1134,66 @@
       if (e.target === shortcutsBackdrop) closeShortcuts();
     });
 
+    // Switch user type window: role first, then the ward for roles that need
+    // one; the server returns the landing page of the chosen user type.
+    const closeUserType = () => {
+      if (!userTypeBackdrop?.classList.contains('is-open')) return;
+      userTypeBackdrop.classList.remove('is-open');
+      document.getElementById('emr-user-type-btn')?.focus({ preventScroll: true });
+    };
+    if (userTypeBackdrop) {
+      const roleSelect = document.getElementById('emr-user-type-role');
+      const wardSelect = document.getElementById('emr-user-type-ward');
+      const wardLabelEl = document.getElementById('emr-user-type-ward-label');
+      const status = document.getElementById('emr-user-type-status');
+      const renderUserTypeWards = () => {
+        const nextRole = roleSelect.value;
+        const needed = userTypeNeedsWard(nextRole);
+        wardSelect.hidden = !needed;
+        wardLabelEl.hidden = !needed;
+        wardSelect.required = needed;
+        const available = (user.wards || []).filter(ward => userTypeWardAllowed(nextRole, ward.code));
+        wardSelect.innerHTML = `<option value="">${escapeHtml(t('chooseWard'))}</option>` +
+          available.map(ward => `<option value="${escapeHtml(ward.code)}">${escapeHtml(wardLabel(user, ward.code))}</option>`).join('');
+        const current = session.user.activeRole === nextRole ? session.user.activeWard?.code : '';
+        if (current && available.some(ward => ward.code === current)) wardSelect.value = current;
+        else if (needed && available.length === 1) wardSelect.value = available[0].code;
+      };
+      const openUserType = () => {
+        if (USER_TYPE_ORDER.includes(session.user.activeRole)) roleSelect.value = session.user.activeRole;
+        renderUserTypeWards();
+        status.textContent = '';
+        userTypeBackdrop.classList.add('is-open');
+        roleSelect.focus({ preventScroll: true });
+      };
+      roleSelect.addEventListener('change', renderUserTypeWards);
+      document.getElementById('emr-user-type-btn')?.addEventListener('click', openUserType);
+      document.getElementById('emr-user-type-close')?.addEventListener('click', closeUserType);
+      userTypeBackdrop.addEventListener('click', (e) => {
+        if (e.target === userTypeBackdrop) closeUserType();
+      });
+      document.getElementById('emr-user-type-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        status.textContent = '';
+        const submit = e.currentTarget.querySelector('button[type=submit]');
+        submit.disabled = true;
+        try {
+          const res = await fetch('/api/auth/context', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': session.csrfToken },
+            body: JSON.stringify({ role: roleSelect.value, wardCode: wardSelect.hidden ? '' : wardSelect.value })
+          });
+          const result = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(result.error || t('switchFailed'));
+          window.location.assign(result.landingPath || '/home');
+        } catch (error) {
+          status.textContent = error.message || t('switchFailed');
+          submit.disabled = false;
+        }
+      });
+    }
+
     // Global Keyboard Navigation
     document.addEventListener('keydown', (e) => {
       // Ctrl+K or Cmd+K: Open Palette
@@ -1095,6 +1215,10 @@
         }
         if (shortcutsBackdrop.classList.contains('is-open')) {
           closeShortcuts();
+          return;
+        }
+        if (userTypeBackdrop?.classList.contains('is-open')) {
+          closeUserType();
           return;
         }
         if (document.getElementById('emr-user-dropdown')?.classList.contains('is-open')) {

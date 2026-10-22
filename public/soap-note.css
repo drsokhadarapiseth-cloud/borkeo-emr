@@ -400,6 +400,90 @@
 }
 
 /* ==========================================================================
+   3b. Record forms in SOAP order (v40.7: IPD admission record)
+   The boxes wrap the existing form sections; each box has a letter badge,
+   the English title, an icon, a colour stripe and a light tinted body.
+   ========================================================================== */
+.emr-soap-record {
+  gap: 18px;
+}
+
+.emr-soap-record-box .emr-soap-header {
+  padding: 12px 16px;
+}
+
+.emr-soap-record-box .emr-soap-badge {
+  width: 36px;
+  height: 36px;
+  font-size: 19px;
+}
+
+.emr-soap-record-box .emr-soap-title {
+  font-size: 17px;
+}
+
+.emr-soap-icon {
+  font-size: 15px;
+}
+
+.emr-soap-record-box .emr-soap-body {
+  padding: 14px;
+  gap: 14px;
+}
+
+.emr-soap-record-box.section-s .emr-soap-body { background: var(--soap-s-bg); }
+.emr-soap-record-box.section-o .emr-soap-body { background: var(--soap-o-bg); }
+.emr-soap-record-box.section-a .emr-soap-body { background: var(--soap-a-bg); }
+.emr-soap-record-box.section-p .emr-soap-body { background: var(--soap-p-bg); }
+.emr-soap-record-box.section-s .emr-soap-icon { color: var(--soap-s-text); }
+.emr-soap-record-box.section-o .emr-soap-icon { color: var(--soap-o-text); }
+.emr-soap-record-box.section-a .emr-soap-icon { color: var(--soap-a-text); }
+.emr-soap-record-box.section-p .emr-soap-icon { color: var(--soap-p-text); }
+
+.emr-soap-record-box .emr-soap-body > .opd-section {
+  margin: 0;
+}
+
+/* v40.9: field labels inside the daily follow-up boxes */
+.mon-soap-field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary, #334155);
+  margin-bottom: -4px;
+}
+
+#mon_modal .emr-soap-body .monitoring-vitals-grid {
+  margin: 0;
+}
+
+.emr-soap-slot[hidden] {
+  display: none !important;
+}
+
+.ipd-plan-notes {
+  width: 100%;
+  min-height: 60px;
+  line-height: 1.5;
+}
+
+html[data-theme="dark"] {
+  --soap-s-bg: #0b2233; --soap-s-border: #155e75; --soap-s-text: #7dd3fc;
+  --soap-o-bg: #0b2a1b; --soap-o-border: #166534; --soap-o-text: #86efac;
+  --soap-a-bg: #2d1a0b; --soap-a-border: #9a3412; --soap-a-text: #fdba74;
+  --soap-p-bg: #241433; --soap-p-border: #6b21a8; --soap-p-text: #d8b4fe;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]):not([data-theme="high-contrast"]) {
+    --soap-s-bg: #0b2233; --soap-s-border: #155e75; --soap-s-text: #7dd3fc;
+    --soap-o-bg: #0b2a1b; --soap-o-border: #166534; --soap-o-text: #86efac;
+    --soap-a-bg: #2d1a0b; --soap-a-border: #9a3412; --soap-a-text: #fdba74;
+    --soap-p-bg: #241433; --soap-p-border: #6b21a8; --soap-p-text: #d8b4fe;
+  }
+}
+
+/* ==========================================================================
    4. Responsive Adjustments
    ========================================================================== */
 @media screen and (max-width: 768px) {
@@ -443,6 +527,51 @@
   .emr-soap-actions-strip,
   .emr-soap-toggle-more,
   .emr-soap-collapse-toggle {
+    display: none !important;
+  }
+
+  /* Record forms: same four labelled sections, legible in black and white. */
+  .emr-soap-record {
+    display: block !important;
+  }
+
+  .emr-soap-record-box {
+    border: 1px solid #000000 !important;
+    border-left: 4px solid #000000 !important;
+    box-shadow: none !important;
+    margin-bottom: 8px !important;
+  }
+
+  .emr-soap-record-box .emr-soap-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid #000000 !important;
+    padding: 4px 8px !important;
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .emr-soap-record-box.is-collapsed .emr-soap-body,
+  .emr-soap-record-box .emr-soap-body {
+    display: flex !important;
+    background: #ffffff !important;
+    padding: 6px 8px !important;
+  }
+
+  .emr-soap-record-box .emr-soap-badge {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000;
+    width: 26px;
+    height: 26px;
+    font-size: 15px;
+  }
+
+  .emr-soap-record-box .emr-soap-title,
+  .emr-soap-record-box .emr-soap-icon {
+    color: #000000 !important;
+  }
+
+  .emr-soap-record-box .emr-soap-status-dot {
     display: none !important;
   }
 }

@@ -1,0 +1,31 @@
+/* v41.7 - Scanned documents window. Button colours come from the interface theme. */
+.periop-launcher { gap: 8px; flex-wrap: wrap; }
+.docs-dialog {
+  width: min(1000px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  border: 0;
+  border-radius: 14px;
+  padding: 0;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.3);
+}
+.docs-dialog::backdrop { background: rgba(15, 23, 42, 0.45); }
+.docs-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+.docs-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.docs-head h3 { margin: 0; font-size: 18px; }
+.docs-upload { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; padding: 10px 12px; border: 1px dashed #94a3b8; border-radius: 8px; }
+.docs-field { display: flex; flex-direction: column; gap: 3px; font-size: 13px; font-weight: 600; flex: 0 1 200px; min-width: 160px; }
+.docs-field.wide { flex: 1 1 260px; }
+.docs-field input, .docs-field select { font: inherit; font-weight: 400; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; width: 100%; }
+.docs-button { min-height: 34px; font: inherit; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; padding: 4px 12px; }
+.docs-message { margin: 0; font-size: 13px; color: #0369a1; }
+.docs-message:empty { display: none; }
+.docs-table-wrap { overflow-x: auto; }
+.docs-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.docs-table td { border-bottom: 1px solid #e2e8f0; padding: 6px 8px; vertical-align: top; }
+.docs-file { color: #64748b; font-size: 12px; }
+.docs-actions { white-space: nowrap; }
+.docs-actions .docs-button + .docs-button { margin-left: 6px; }
+.docs-removed td { color: #64748b; text-decoration: line-through; }
+.docs-removed .docs-actions { text-decoration: none; }
+.docs-empty { color: #64748b; margin: 0; }
+@media print { .docs-dialog { display: none !important; } }

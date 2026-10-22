@@ -1,0 +1,52 @@
+BORKEO EMR v41.1.0 - COMBINED UPDATE NOTE
+Medical record restructure, PHASE 5: display rules by age and sex, and the
+paediatric section.
+Base: v41.0.0 (Phase 4). Clinical, pharmacy, laboratory and financial logic
+was not changed. Patient records are not touched. Hiding a section never
+deletes what was written in it.
+
+WHAT CHANGED (IPD medical record, Subjective box)
+1. Sections now follow the patient's age and sex:
+   - Vaccination list: shown for ages 0-14, hidden from 15.
+   - Smoking / alcohol / drug questions: shown from age 10.
+   - NEW Paediatric section (ages 0-14): birth history, feeding, growth
+     (weight and height from the vital signs, head circumference up to
+     age 2, notes), developmental milestones.
+   - NEW Tetanus vaccine status (TT1-TT5, no dose, unknown, last dose
+     date): women 15-49 and pregnant patients.
+   - Obstetric / gynaecological history, your rule:
+       women 15 and over: shown;
+       girls under 15: shown when pregnant (EDD written) or in the
+       obstetric ward; otherwise a "show" button opens it;
+       men: never.
+   When age or sex is not known, everything is shown. A section that
+   already has something written in it is always shown.
+2. TB screening: the same block in OPD and IPD. IPD now also has
+   "contact with a TB patient".
+3. Version 41.1.0.
+
+NEW TEXT TO TRANSLATE
+  6 more texts have no Khmer yet (yellow dashed box), now 38 in total in
+  docs\translations-needed.csv.
+
+PLEASE CONFIRM (docs\clinical-review.md)
+  The ages above, the head circumference age, the tetanus options, and
+  whether you want a "pregnant" tick box.
+
+FOUND, NOT CHANGED (needs your decision)
+  The midwife delivery form: in some openings of a record, its 41 fields
+  do not load their saved values, and new typing in them is not saved.
+  The saved values are not deleted. This was already in earlier versions.
+  I propose to fix it as a separate update.
+
+TESTS
+  npm test -> 876 passed, 0 failed.  npm run check:khmer -> passed.
+  Tested in the browser with five fake patients: woman 40, girl 13 in the
+  obstetric ward, girl 13 in medicine (show button), boy 1 year
+  (paediatric section saved and reopened), man 40 with an old vaccine tick
+  (vaccination list still shown). All old field positions are unchanged.
+
+INSTALL
+  Step 1. Close the EMR window.
+  Step 2. Double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser press Ctrl+F5 once on an EMR page.

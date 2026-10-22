@@ -1,7 +1,7 @@
 import {
   normalizeUsername, randomToken, tokenHash, validatePassword, verifyPassword, hashPassword
 } from '../password.mjs';
-import { defaultContext, getUserAccess, setSessionContext, readSessionContext, sessionRole } from '../access.mjs';
+import { defaultContext, getUserAccess, setSessionContext, readSessionContext, sessionRole, isSuperuser } from '../access.mjs';
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from '../totp.mjs';
 import { validate, Schemas } from '../validation.mjs';
 
@@ -91,7 +91,7 @@ export function mountAuthRoutes(router) {
       createdAt: now,
       expiresAt: now + config.sessionTtlMs,
     });
-    const automatic = defaultContext(getUserAccess(database, user.id));
+    const automatic = defaultContext(getUserAccess(database, user.id), user);
     if (automatic) setSessionContext(database, hash, user.id, automatic.role, automatic.wardCode);
     database.markLogin(user.id, now);
     const context = readSessionContext(database, hash);
@@ -115,7 +115,7 @@ export function mountAuthRoutes(router) {
 
   // POST /api/auth/context
   router.post('/api/auth/context', async (ctx) => {
-    const { request, response, session, database, config, sendJson, readJson, buildIdentity, audit } = ctx;
+    const { request, response, session, database, config, sendJson, readJson, buildIdentity, audit, landingPathForRole } = ctx;
     if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
     const body = await readJson(request, config.maxBodyBytes);
     const validRes = validate(body, Schemas.authContext);
@@ -126,9 +126,12 @@ export function mountAuthRoutes(router) {
       const identity = buildIdentity(database, refreshed);
       audit(database, request, 'WORK_CONTEXT_CHANGED', {
         userId: session.user_id, subjectUsername: session.username,
-        details: { role: chosen.role, wardCode: chosen.wardCode },
+        details: { role: chosen.role, wardCode: chosen.wardCode, ...(isSuperuser(session) ? { switchedBy: 'Superuser' } : {}) },
       });
-      return sendJson(response, 200, { user: identity }, { secure: config.cookieSecure });
+      // v42.1: the landing page of the chosen user type, the same as after a
+      // real login (one source of truth for /context and the switch window).
+      const landingPath = landingPathForRole(chosen.role, chosen.wardCode);
+      return sendJson(response, 200, { user: identity, landingPath }, { secure: config.cookieSecure });
     } catch (error) {
       return sendJson(response, 400, { error: error.message }, { secure: config.cookieSecure });
     }

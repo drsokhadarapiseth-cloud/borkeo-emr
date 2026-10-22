@@ -1,0 +1,48 @@
+BORKEO EMR v41.6.0 - COMBINED UPDATE NOTE
+Medical record restructure, PHASE 9: discharge, intake/output, early
+warning score, critical results.
+Base: v41.5.0. Pharmacy, laboratory and financial logic was not changed.
+Patient records are not touched; one new table is added.
+
+WHAT CHANGED
+1. Discharge form:
+   - Main and secondary ICD-10 diagnoses (the main code also goes into the
+     existing discharge ICD-10 box, as before).
+   - Patient instructions.
+   - "Printable discharge summary" button: prints the SAVED discharge with
+     the letterhead (diagnoses, outcome, follow-up date, discharge
+     medicines, instructions, signature line).
+   - All existing discharge fields and outcomes are unchanged.
+2. Nursing chart: a new "Daily balance" row under the fluid-out total
+   (fluid in minus fluid out). It is calculated automatically.
+3. Early Warning Score (NEWS2, your choice):
+   - Shown in the IPD record (Objective box) and in the patient banner.
+   - New in the Objective box: "on oxygen" and consciousness (A, C, V, P, U).
+   - Uses the latest daily note, otherwise the admission vital signs.
+   - Not used for patients under 16 or for pregnant women.
+   - If a value is missing it shows "8 or more, incomplete".
+4. Critical results: a critical lab or imaging result that nobody
+   acknowledges within 30 minutes (your choice) is sent to the ward
+   doctors, the ward chief and the ward head (messages).
+5. Version 41.6.0.
+
+NEW TEXT TO TRANSLATE
+  21 more texts for the early warning score (yellow box), in
+  docs\translations-needed.csv. The discharge labels use your approved
+  Khmer.
+
+PLEASE CONFIRM (docs\clinical-review.md)
+  The NEWS2 table (copied from the official chart; a doctor must check
+  it) and the 30-minute escalation.
+
+TESTS
+  npm test -> 890 passed, 0 failed.  npm run check:khmer -> passed.
+  Tested in the browser with fake patients: NEWS2 in the record and the
+  banner (adult; pregnant woman gets no score), discharge with two
+  diagnoses and instructions, summary print, nursing daily balance. All
+  record field positions are unchanged (4 new named fields).
+
+INSTALL
+  Step 1. Close the EMR window.
+  Step 2. Double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser press Ctrl+F5 once on an EMR page.

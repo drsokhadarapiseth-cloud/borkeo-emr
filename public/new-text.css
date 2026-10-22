@@ -1,0 +1,15 @@
+/* New UI text still waiting for the owner's Khmer translation (see public/new-text.js). */
+.needs-translation {
+  background: #fff3a3;
+  color: #3d3300;
+  outline: 1px dashed #b38600;
+  outline-offset: 1px;
+  border-radius: 2px;
+}
+
+@media print {
+  .needs-translation {
+    background: none;
+    outline: none;
+  }
+}

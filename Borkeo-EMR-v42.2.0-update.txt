@@ -1,0 +1,204 @@
+================================================================================
+Borkeo EMR Update Note: Version 42.2.0
+Start-Borkeo-WiFi.bat no longer closes at once
+================================================================================
+
+Date: 2026-10-22
+Previous Version: 42.1.0
+New Version: 42.2.0
+Patient data: not touched. No database change. No EMR screen changed.
+
+--------------------------------------------------------------------------------
+1. WHAT WAS WRONG
+--------------------------------------------------------------------------------
+Double-clicking Start-Borkeo-WiFi.bat closed the window at once.
+The file started the EMR with "npm" without "call". npm is itself a batch
+file, so Windows never came back to the "pause" line: when the server could
+not start, the window closed before the error message could be read.
+The usual reasons the server cannot start are:
+  - the EMR is already running in another window (port 3001 is in use);
+  - Node.js is not found;
+  - the ZIP was opened but not extracted.
+
+--------------------------------------------------------------------------------
+2. WHAT CHANGED
+--------------------------------------------------------------------------------
+Start-Borkeo-WiFi.bat now:
+  - starts the server with Node directly (no npm);
+  - finds Node on the PATH, or in C:\Program Files\nodejs, or in the user's
+    AppData\Local\Programs\nodejs;
+  - checks first, with a clear message, that the EMR files are next to it,
+    that Node.js is installed and that port 3001 is free;
+  - keeps the window open on any error, so the message can be read.
+The EMR itself starts exactly as before (same server, same data file).
+
+Checked from Windows cmd in a test copy: normal start; port 3001 already in
+use; Node.js not found; batch file without the EMR files. Each error stays on
+screen with "Press any key to continue".
+npm test: 903 of 903 pass. npm run check:khmer passes.
+
+--------------------------------------------------------------------------------
+3. FILES
+--------------------------------------------------------------------------------
+  Start-Borkeo-WiFi.bat      starts Node directly, checks, stays open on error
+  package.json               version 42.2.0
+  public/login.html          shows v42.2
+  server/server.mjs          version comment v42.2
+  CHANGELOG.md               v42.2.0 entry
+  tests/accessibility-quality-smoke.test.mjs  expects version 42.2.0
+
+--------------------------------------------------------------------------------
+4. INSTALLATION (one step at a time)
+--------------------------------------------------------------------------------
+The files are already updated in this folder.
+
+Step 1: Close any open EMR server window.
+Step 2: Double-click "Start-Borkeo-WiFi.bat".
+Step 3: If the window shows [ERROR], read the message and do what it says
+        (for example close the other EMR window), then double-click again.
+
+For Antigravity (only when applying to another copy of v42.1.0): apply the
+code change in section 5 exactly (it keeps each file's line endings), then
+run "npm test".
+
+--------------------------------------------------------------------------------
+5. CODE CHANGE (unified diff against v42.1.0)
+--------------------------------------------------------------------------------
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 4fe6109..d262e79 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,9 @@
+ # Borkeo EMR Changelog
+ 
++## v42.2.0 (Start-Borkeo-WiFi.bat no longer closes at once)
++- Start-Borkeo-WiFi.bat called npm without "call", so when the server could not start, the window closed before the error could be read. It now starts Node directly (Node is also found in C:\Program Files\nodejs when it is not on the PATH), and first checks the usual problems with a clear message: the EMR files are not next to the file (ZIP not extracted), Node.js is not installed, or port 3001 is already in use (the EMR is already running). On any error the window stays open.
++- Tests: 903/903 (tests/accessibility-quality-smoke.test.mjs expects 42.2.0). npm run check:khmer passes.
++
+ ## v42.1.0 (Superuser becomes a "switch user type" account; new Infectious diseases ward)
+ - Superuser: the "all buttons" mode, the SUPERUSER active role and the v42.0 automatic role switch on page open are removed. The account now holds every real staff role (15) and every ward, and is always exactly one real user type at a time. While switched it is checked exactly like a real account of that type: the same side menu, pages, buttons, data, server refusals and message bell. isSuperuser() only identifies the account (switch button and audit); every permission bypass for the Superuser was removed from the server and the page scripts. Old sessions saved with the SUPERUSER role go to the picker.
+ - After login the Superuser always starts on the user type picker (/context): pick the role, then the ward for roles that need one (Midwife = obstetric only; Nurse = not obstetric; Chief of ward and Ward head = not OPD; Doctor = any ward). The picker lists the 15 user types (VICE_DIRECTOR label added).
+diff --git a/package.json b/package.json
+index 96d468e..37bb339 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "borkeo-emr",
+-  "version": "42.1.0",
++  "version": "42.2.0",
+   "private": true,
+   "type": "module",
+   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",
+diff --git a/public/login.html b/public/login.html
+index ade8d22..0c4bc74 100644
+--- a/public/login.html
++++ b/public/login.html
+@@ -34,7 +34,7 @@
+         </div>
+         <div class="header-meta">
+           <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
+-          <span class="login-build-version" data-app-version data-language-exclude>v42.1</span>
++          <span class="login-build-version" data-app-version data-language-exclude>v42.2</span>
+         </div>
+       </header>
+ 
+@@ -108,7 +108,7 @@
+ 
+         <aside class="info-panel" aria-label="ព័ត៌មានប្រព័ន្ធ">
+           <div class="info-card accent">
+-            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v42.1</span></h3>
++            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v42.2</span></h3>
+             <p>គណនីសាកល្បងចូលបានដោយគ្មានពាក្យសម្ងាត់។ ប្រើតែទិន្នន័យសាកល្បងប៉ុណ្ណោះ។</p>
+           </div>
+           <div class="info-card">
+diff --git a/server/server.mjs b/server/server.mjs
+index 7a293c5..5697dbc 100644
+--- a/server/server.mjs
++++ b/server/server.mjs
+@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
+ import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
+ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
+ import { createDiagnosisSearch } from './icd10.mjs';
+-// Borkeo EMR v42.1 - Electronic Medical Record System
++// Borkeo EMR v42.2 - Electronic Medical Record System
+ import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
+ import {validateAddressHierarchy} from './gazetteer.mjs';
+ import {validateCambodianPhone} from './cambodia-phone.mjs';
+diff --git a/Start-Borkeo-WiFi.bat b/Start-Borkeo-WiFi.bat
+index 1cbbcfb..54a1076 100644
+--- a/Start-Borkeo-WiFi.bat
++++ b/Start-Borkeo-WiFi.bat
+@@ -1,5 +1,52 @@
+ @echo off
+ rem Start Borkeo EMR so phones on the same Wi-Fi can open it.
++rem v42.2: runs Node directly (no npm), checks the usual problems first, and
++rem keeps this window open on any error so the message can be read.
++setlocal
+ cd /d "%~dp0"
+-npm run start:wifi
++title Borkeo EMR
++
++if not exist "%~dp0server\server.mjs" (
++  echo.
++  echo [ERROR] The EMR files were not found next to this file.
++  echo         If you opened the ZIP, extract it first ^(right-click - Extract All^),
++  echo         then double-click Start-Borkeo-WiFi.bat inside the extracted folder.
++  goto failed
++)
++
++set "NODE_EXE="
++for %%N in (node.exe) do set "NODE_EXE=%%~$PATH:N"
++if not defined NODE_EXE if exist "%ProgramFiles%\nodejs\node.exe" set "NODE_EXE=%ProgramFiles%\nodejs\node.exe"
++if not defined NODE_EXE if exist "%LocalAppData%\Programs\nodejs\node.exe" set "NODE_EXE=%LocalAppData%\Programs\nodejs\node.exe"
++if not defined NODE_EXE (
++  echo.
++  echo [ERROR] Node.js was not found. Install Node.js 24 or newer from https://nodejs.org
++  echo         then restart the computer and double-click this file again.
++  goto failed
++)
++
++if not defined PORT set "PORT=3001"
++netstat -ano | findstr /r /c:":%PORT% .*LISTENING" >nul
++if not errorlevel 1 (
++  echo.
++  echo [ERROR] Port %PORT% is already in use. The EMR is probably already running
++  echo         in another window. Use that window, or close it and try again.
++  echo         To find it: Task Manager - Details - node.exe
++  goto failed
++)
++
++"%NODE_EXE%" scripts\start-wifi.mjs
++if errorlevel 1 (
++  echo.
++  echo [ERROR] The EMR server stopped with an error ^(see the message above^).
++  goto failed
++)
++echo.
++echo The EMR server has stopped.
+ pause
++exit /b 0
++
++:failed
++echo.
++pause
++exit /b 1
+diff --git a/tests/accessibility-quality-smoke.test.mjs b/tests/accessibility-quality-smoke.test.mjs
+index bcade02..78a093e 100644
+--- a/tests/accessibility-quality-smoke.test.mjs
++++ b/tests/accessibility-quality-smoke.test.mjs
+@@ -17,11 +17,11 @@ test('Phase 8: Version consistency across package.json, server.mjs, and login.ht
+   const serverCode = read('server/server.mjs');
+   const loginHtml = read('public/login.html');
+ 
+-  assert.equal(pkg.version, '42.1.0', 'package.json version must be 42.1.0');
++  assert.equal(pkg.version, '42.2.0', 'package.json version must be 42.2.0');
+   assert.match(serverCode, /Borkeo EMR v(?:39\.[6-9]|4[0-9]\.[0-9])/, 'server.mjs must declare v39.6 or above');
+   assert.match(serverCode, /design-system\.css\?v=3970/, 'server.mjs must inject design-system.css with v=3970');
+   assert.match(serverCode, /worklists-feedback\.css\?v=3970/, 'server.mjs must inject worklists-feedback.css with v=3970');
+-  assert.match(loginHtml, /data-app-version[^>]*>v42\.1<\/span>/, 'login.html must display v42.1');
++  assert.match(loginHtml, /data-app-version[^>]*>v42\.2<\/span>/, 'login.html must display v42.2');
+ });
+ 
+ test('Phase 8: Complete presentation-layer suite of assets is present and registered', () => {
+================================================================================

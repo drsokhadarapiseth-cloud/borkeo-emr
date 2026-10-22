@@ -20,7 +20,7 @@ Groups (Khmer UI): ការថែទាំអ្នកជំងឺ (Patient car
 | PHARMACY | Patient list | | OPD dispensing · Daily ward medicines · Medicine list · Queue display | | |
 | CLERK | Patient list | | | Billing | |
 | ACCOUNTANT | Patient list | | | Billing · Expenses | |
-| ADMIN / DIRECTOR / VICE_DIRECTOR | Home and reports · Wards and beds · Patient list | Laboratory · Medical imaging | OPD dispensing · Daily ward medicines · Medicine list | Billing · Expenses · Cash flow | Requests · User accounts · Name and logo · Health facility · Interface design · Styleguide |
+| ADMIN / DIRECTOR / VICE_DIRECTOR | Home and reports · Wards and beds · Patient list | Laboratory · Medical imaging | OPD dispensing · Daily ward medicines · Medicine list | Billing · Expenses · Cash flow | Requests · User accounts · Name and logo · Health facility · Record view log (v41.7) · Drug safety tables (v41.2) · Interface design · Styleguide |
 
 ## Decisions
 

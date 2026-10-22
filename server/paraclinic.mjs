@@ -1,6 +1,7 @@
 import {REFERENCE_DEFAULTS} from './lab-reference-defaults.mjs';
 import {clinicalLimits,displayLimits,resultFlag,convertValue,unitRule,rebaseTest,LIMIT_KEYS} from '../public/lab-reference.mjs';
 import { IMAGING_SUBTYPE_DETAILS } from './access.mjs';
+import { userSignerName } from './esign.mjs';
 import crypto from 'node:crypto';
 
 const CATALOG = [
@@ -932,7 +933,7 @@ export function updateOrder(database, id, patch, actor) {
       scheduledAt || null, performedAt || null, critical ? 1 : 0, now, id,
     );
   if (released) database.sqlite.prepare('UPDATE paraclinic_orders SET reviewed_by=NULL,reviewed_at=NULL WHERE id=?').run(id);
-  if (released && current.modality === 'LAB') database.sqlite.prepare('INSERT OR IGNORE INTO lab_report_snapshots VALUES (?,?,?,?)').run(id,releasedAt,JSON.stringify(result),database.sqlite.prepare('SELECT display_name FROM users WHERE id=?').get(actor.userId)?.display_name||'');
+  if (released && current.modality === 'LAB') database.sqlite.prepare('INSERT OR IGNORE INTO lab_report_snapshots VALUES (?,?,?,?)').run(id,releasedAt,JSON.stringify(result),userSignerName(database,actor.userId,database.sqlite.prepare('SELECT display_name FROM users WHERE id=?').get(actor.userId)?.display_name||'',actor.role));
   return getOrder(database, id);
 }
 

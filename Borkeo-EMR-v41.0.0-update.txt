@@ -1,0 +1,63 @@
+BORKEO EMR v41.0.0 - COMBINED UPDATE NOTE
+Medical record restructure, PHASE 4: patient banner, structured allergy
+record, active problem list.
+Base: v40.9.0 (Phase 3). Clinical, pharmacy, laboratory and financial logic
+was not changed. Patient records are not replaced; three new tables are
+added (allergies, problems, resuscitation status).
+
+IMPORTANT - TWO BUGS FIXED (they are in the version you are running now)
+  1. ALLERGY: the patient banner always showed "no allergy history"
+     (គ្មានប្រវត្តិអាលែកហ្ស៊ី), even when the doctor had written a drug
+     allergy in the record. It read two fields that did not exist.
+     Now the banner shows the written drug allergy in red.
+  2. NURSING FORMS: every time a record was opened, the name, age, sex,
+     code, ward, room and bed typed in the nursing forms were replaced by
+     the registration values, and the typed values were lost at the next
+     save. Now a typed value is kept; if it differs, the banner value is
+     shown next to it in yellow.
+
+WHAT CHANGED
+1. Patient banner (top of every clinical screen):
+   - Allergy alert: red when an allergy is recorded; grey "no allergy"
+     only when the doctor wrote "no allergy"; yellow "Allergy not recorded"
+     when nothing is written.
+   - New row: resuscitation status, risk flags (severe allergies, DNR),
+     active problem list, current medications.
+   - The arrow button (or the allergy badge) opens the details: allergy
+     record, problems, medications. Doctors set the resuscitation status
+     there.
+2. Structured allergy record in the IPD record, Subjective box:
+   type, substance, reaction, severity, date, recorded by.
+   Doctors add allergies and can remove one with a reason (it is kept in
+   the history). The old drug-allergy text box stays and still shows in
+   the banner. Allergies follow the patient to the next visit (Health ID).
+3. Active problem list in the OPD and IPD Assessment boxes (long-term
+   diseases). Doctors add, resolve and make active again. Encounter
+   diagnoses are not changed.
+4. Ward map: the bed popup shows a red drug-allergy box.
+5. Letterheads (Ministry, Kingdom, ornament) are printed but no longer
+   shown on screen; the banner replaces them.
+6. Add / remove buttons appear for doctors while the record is in edit
+   mode. Nurses and other staff can read but not change.
+7. Version 41.0.0.
+
+NEW TEXT TO TRANSLATE
+  32 new texts have no Khmer yet. They show in English with a yellow
+  dashed box. Write your Khmer in the "khmer" column of
+  docs\translations-needed.csv, then run: npm run translations:apply
+
+PLEASE CONFIRM (docs\clinical-review.md)
+  Allergy types, severity levels, resuscitation statuses, and which risk
+  flags you want in the banner.
+
+TESTS
+  npm test -> 870 passed, 0 failed.  npm run check:khmer -> passed.
+  Tested in the browser with a fake patient: written allergy in the
+  banner, adding an allergy and a problem, DNR, nurse read-only, a typed
+  nursing value kept after save and reopen, letterheads on print only.
+  All 1086 saved field positions on the record page are unchanged.
+
+INSTALL
+  Step 1. Close the EMR window.
+  Step 2. Double-click Start-Borkeo-WiFi.bat.
+  Step 3. In each browser press Ctrl+F5 once on an EMR page.

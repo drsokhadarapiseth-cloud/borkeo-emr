@@ -1,0 +1,888 @@
+{
+ "note": "Storage keys of every saved IPD admission field, captured in the browser before the v40.7 SOAP move. They must never change.",
+ "fields": [
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_bp_sys",
+   "key": "scope:medical:id:ipd_bp_sys",
+   "legacy": "id:ipd_bp_sys"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_bp_dia",
+   "key": "scope:medical:id:ipd_bp_dia",
+   "legacy": "id:ipd_bp_dia"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_pulse",
+   "key": "scope:medical:id:ipd_pulse",
+   "legacy": "id:ipd_pulse"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_resp",
+   "key": "scope:medical:id:ipd_resp",
+   "legacy": "id:ipd_resp"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_temp",
+   "key": "scope:medical:id:ipd_temp",
+   "legacy": "id:ipd_temp"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_spo2",
+   "key": "scope:medical:id:ipd_spo2",
+   "legacy": "id:ipd_spo2"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_height",
+   "key": "scope:medical:id:ipd_height",
+   "legacy": "id:ipd_height"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_weight",
+   "key": "scope:medical:id:ipd_weight",
+   "legacy": "id:ipd_weight"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "",
+   "key": "scope:medical:auto:67",
+   "legacy": "auto:234"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "ipd_history_present_illness",
+   "key": "scope:medical:id:ipd_history_present_illness",
+   "legacy": "id:ipd_history_present_illness",
+   "previous": "scope:medical:auto:68",
+   "previousLegacy": "auto:235"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:69",
+   "legacy": "auto:236"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:70",
+   "legacy": "auto:237"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:71",
+   "legacy": "auto:238"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:72",
+   "legacy": "auto:239"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "",
+   "key": "scope:medical:auto:73",
+   "legacy": "auto:240"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "",
+   "key": "scope:medical:auto:74",
+   "legacy": "auto:241"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:75",
+   "legacy": "auto:242"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:76",
+   "legacy": "auto:243"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:77",
+   "legacy": "auto:244"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:78",
+   "legacy": "auto:245"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:79",
+   "legacy": "auto:246"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:80",
+   "legacy": "auto:247"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:81",
+   "legacy": "auto:248"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:82",
+   "legacy": "auto:249"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "",
+   "key": "scope:medical:auto:83",
+   "legacy": "auto:250"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:84",
+   "legacy": "auto:251"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:85",
+   "legacy": "auto:252"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:86",
+   "legacy": "auto:253"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:87",
+   "legacy": "auto:254"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:88",
+   "legacy": "auto:255"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "",
+   "key": "scope:medical:auto:89",
+   "legacy": "auto:256"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:90",
+   "legacy": "auto:257"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:91",
+   "legacy": "auto:258"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:92",
+   "legacy": "auto:259"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:93",
+   "legacy": "auto:260"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "",
+   "key": "scope:medical:auto:94",
+   "legacy": "auto:261"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_obgyn_g",
+   "key": "scope:medical:id:ipd_obgyn_g",
+   "legacy": "id:ipd_obgyn_g"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_obgyn_p",
+   "key": "scope:medical:id:ipd_obgyn_p",
+   "legacy": "id:ipd_obgyn_p"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_obgyn_a",
+   "key": "scope:medical:id:ipd_obgyn_a",
+   "legacy": "id:ipd_obgyn_a"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_obgyn_l",
+   "key": "scope:medical:id:ipd_obgyn_l",
+   "legacy": "id:ipd_obgyn_l"
+  },
+  {
+   "tag": "input",
+   "type": "date",
+   "id": "ipd_obgyn_lmp",
+   "key": "scope:medical:id:ipd_obgyn_lmp",
+   "legacy": "id:ipd_obgyn_lmp"
+  },
+  {
+   "tag": "input",
+   "type": "date",
+   "id": "ipd_obgyn_edd",
+   "key": "scope:medical:id:ipd_obgyn_edd",
+   "legacy": "id:ipd_obgyn_edd"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_obgyn_contra",
+   "key": "scope:medical:id:ipd_obgyn_contra",
+   "legacy": "id:ipd_obgyn_contra"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_obgyn_notes",
+   "key": "scope:medical:id:ipd_obgyn_notes",
+   "legacy": "id:ipd_obgyn_notes"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "",
+   "key": "scope:medical:auto:95",
+   "legacy": "auto:262"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "ipd_community_history",
+   "key": "scope:medical:id:ipd_community_history",
+   "legacy": "id:ipd_community_history"
+  },
+  {
+   "tag": "select",
+   "type": "select-one",
+   "id": "ipd_exam_normal_language",
+   "key": "scope:medical:id:ipd_exam_normal_language",
+   "legacy": "id:ipd_exam_normal_language"
+  },
+  {
+   "tag": "input",
+   "type": "radio",
+   "id": "ipd_exam_general_good",
+   "key": "scope:medical:id:ipd_exam_general_good",
+   "legacy": "id:ipd_exam_general_good",
+   "previous": "scope:medical:auto:96",
+   "previousLegacy": "auto:263"
+  },
+  {
+   "tag": "input",
+   "type": "radio",
+   "id": "ipd_exam_general_fair",
+   "key": "scope:medical:id:ipd_exam_general_fair",
+   "legacy": "id:ipd_exam_general_fair",
+   "previous": "scope:medical:auto:97",
+   "previousLegacy": "auto:264"
+  },
+  {
+   "tag": "input",
+   "type": "radio",
+   "id": "ipd_exam_general_severe",
+   "key": "scope:medical:id:ipd_exam_general_severe",
+   "legacy": "id:ipd_exam_general_severe",
+   "previous": "scope:medical:auto:98",
+   "previousLegacy": "auto:265"
+  },
+  {
+   "tag": "input",
+   "type": "radio",
+   "id": "ipd_exam_general_very_severe",
+   "key": "scope:medical:id:ipd_exam_general_very_severe",
+   "legacy": "id:ipd_exam_general_very_severe",
+   "previous": "scope:medical:auto:99",
+   "previousLegacy": "auto:266"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:100",
+   "legacy": "auto:267"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:101",
+   "legacy": "auto:268"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:102",
+   "legacy": "auto:269"
+  },
+  {
+   "tag": "input",
+   "type": "radio",
+   "id": "ipd_exam_neuro_conscious",
+   "key": "scope:medical:id:ipd_exam_neuro_conscious",
+   "legacy": "id:ipd_exam_neuro_conscious",
+   "previous": "scope:medical:auto:103",
+   "previousLegacy": "auto:270"
+  },
+  {
+   "tag": "input",
+   "type": "radio",
+   "id": "ipd_exam_neuro_delirium",
+   "key": "scope:medical:id:ipd_exam_neuro_delirium",
+   "legacy": "id:ipd_exam_neuro_delirium",
+   "previous": "scope:medical:auto:104",
+   "previousLegacy": "auto:271"
+  },
+  {
+   "tag": "input",
+   "type": "radio",
+   "id": "ipd_exam_neuro_coma",
+   "key": "scope:medical:id:ipd_exam_neuro_coma",
+   "legacy": "id:ipd_exam_neuro_coma",
+   "previous": "scope:medical:auto:105",
+   "previousLegacy": "auto:272"
+  },
+  {
+   "tag": "input",
+   "type": "radio",
+   "id": "ipd_exam_neuro_seizure",
+   "key": "scope:medical:id:ipd_exam_neuro_seizure",
+   "legacy": "id:ipd_exam_neuro_seizure",
+   "previous": "scope:medical:auto:106",
+   "previousLegacy": "auto:273"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_gcs_eye",
+   "key": "scope:medical:id:ipd_exam_gcs_eye",
+   "legacy": "id:ipd_exam_gcs_eye",
+   "previous": "scope:medical:auto:107",
+   "previousLegacy": "auto:274"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_gcs_verbal",
+   "key": "scope:medical:id:ipd_exam_gcs_verbal",
+   "legacy": "id:ipd_exam_gcs_verbal",
+   "previous": "scope:medical:auto:108",
+   "previousLegacy": "auto:275"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_gcs_motor",
+   "key": "scope:medical:id:ipd_exam_gcs_motor",
+   "legacy": "id:ipd_exam_gcs_motor",
+   "previous": "scope:medical:auto:109",
+   "previousLegacy": "auto:276"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_gcs_total",
+   "key": "scope:medical:id:ipd_exam_gcs_total",
+   "legacy": "id:ipd_exam_gcs_total",
+   "previous": "scope:medical:auto:110",
+   "previousLegacy": "auto:277"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_pain",
+   "key": "scope:medical:id:ipd_exam_pain",
+   "legacy": "id:ipd_exam_pain",
+   "previous": "scope:medical:auto:111",
+   "previousLegacy": "auto:278"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_neuro_other",
+   "key": "scope:medical:id:ipd_exam_neuro_other",
+   "legacy": "id:ipd_exam_neuro_other",
+   "previous": "scope:medical:auto:112",
+   "previousLegacy": "auto:279"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_head",
+   "key": "scope:medical:id:ipd_exam_head",
+   "legacy": "id:ipd_exam_head",
+   "previous": "scope:medical:auto:113",
+   "previousLegacy": "auto:280"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_eye_left",
+   "key": "scope:medical:id:ipd_exam_eye_left",
+   "legacy": "id:ipd_exam_eye_left",
+   "previous": "scope:medical:auto:114",
+   "previousLegacy": "auto:281"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_eye_right",
+   "key": "scope:medical:id:ipd_exam_eye_right",
+   "legacy": "id:ipd_exam_eye_right",
+   "previous": "scope:medical:auto:115",
+   "previousLegacy": "auto:282"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_fundus",
+   "key": "scope:medical:id:ipd_exam_fundus",
+   "legacy": "id:ipd_exam_fundus",
+   "previous": "scope:medical:auto:116",
+   "previousLegacy": "auto:283"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_ear_left",
+   "key": "scope:medical:id:ipd_exam_ear_left",
+   "legacy": "id:ipd_exam_ear_left",
+   "previous": "scope:medical:auto:117",
+   "previousLegacy": "auto:284"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_ear_right",
+   "key": "scope:medical:id:ipd_exam_ear_right",
+   "legacy": "id:ipd_exam_ear_right",
+   "previous": "scope:medical:auto:118",
+   "previousLegacy": "auto:285"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_nose",
+   "key": "scope:medical:id:ipd_exam_nose",
+   "legacy": "id:ipd_exam_nose",
+   "previous": "scope:medical:auto:119",
+   "previousLegacy": "auto:286"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_throat",
+   "key": "scope:medical:id:ipd_exam_throat",
+   "legacy": "id:ipd_exam_throat",
+   "previous": "scope:medical:auto:120",
+   "previousLegacy": "auto:287"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_neck",
+   "key": "scope:medical:id:ipd_exam_neck",
+   "legacy": "id:ipd_exam_neck",
+   "previous": "scope:medical:auto:121",
+   "previousLegacy": "auto:288"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_lymph",
+   "key": "scope:medical:id:ipd_exam_lymph",
+   "legacy": "id:ipd_exam_lymph",
+   "previous": "scope:medical:auto:122",
+   "previousLegacy": "auto:289"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_resp_inspection",
+   "key": "scope:medical:id:ipd_exam_resp_inspection",
+   "legacy": "id:ipd_exam_resp_inspection",
+   "previous": "scope:medical:auto:123",
+   "previousLegacy": "auto:290"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_resp_auscultation",
+   "key": "scope:medical:id:ipd_exam_resp_auscultation",
+   "legacy": "id:ipd_exam_resp_auscultation",
+   "previous": "scope:medical:auto:124",
+   "previousLegacy": "auto:291"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_resp_palpation",
+   "key": "scope:medical:id:ipd_exam_resp_palpation",
+   "legacy": "id:ipd_exam_resp_palpation",
+   "previous": "scope:medical:auto:125",
+   "previousLegacy": "auto:292"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_resp_percussion",
+   "key": "scope:medical:id:ipd_exam_resp_percussion",
+   "legacy": "id:ipd_exam_resp_percussion",
+   "previous": "scope:medical:auto:126",
+   "previousLegacy": "auto:293"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_cvs_inspection",
+   "key": "scope:medical:id:ipd_exam_cvs_inspection",
+   "legacy": "id:ipd_exam_cvs_inspection",
+   "previous": "scope:medical:auto:127",
+   "previousLegacy": "auto:294"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_cvs_auscultation",
+   "key": "scope:medical:id:ipd_exam_cvs_auscultation",
+   "legacy": "id:ipd_exam_cvs_auscultation",
+   "previous": "scope:medical:auto:128",
+   "previousLegacy": "auto:295"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_cvs_palpation",
+   "key": "scope:medical:id:ipd_exam_cvs_palpation",
+   "legacy": "id:ipd_exam_cvs_palpation",
+   "previous": "scope:medical:auto:129",
+   "previousLegacy": "auto:296"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_cvs_percussion",
+   "key": "scope:medical:id:ipd_exam_cvs_percussion",
+   "legacy": "id:ipd_exam_cvs_percussion",
+   "previous": "scope:medical:auto:130",
+   "previousLegacy": "auto:297"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_abd_inspection",
+   "key": "scope:medical:id:ipd_exam_abd_inspection",
+   "legacy": "id:ipd_exam_abd_inspection",
+   "previous": "scope:medical:auto:131",
+   "previousLegacy": "auto:298"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_abd_auscultation",
+   "key": "scope:medical:id:ipd_exam_abd_auscultation",
+   "legacy": "id:ipd_exam_abd_auscultation",
+   "previous": "scope:medical:auto:132",
+   "previousLegacy": "auto:299"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_abd_palpation",
+   "key": "scope:medical:id:ipd_exam_abd_palpation",
+   "legacy": "id:ipd_exam_abd_palpation",
+   "previous": "scope:medical:auto:133",
+   "previousLegacy": "auto:300"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_abd_percussion",
+   "key": "scope:medical:id:ipd_exam_abd_percussion",
+   "legacy": "id:ipd_exam_abd_percussion",
+   "previous": "scope:medical:auto:134",
+   "previousLegacy": "auto:301"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_gu",
+   "key": "scope:medical:id:ipd_exam_gu",
+   "legacy": "id:ipd_exam_gu",
+   "previous": "scope:medical:auto:135",
+   "previousLegacy": "auto:302"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_extremities",
+   "key": "scope:medical:id:ipd_exam_extremities",
+   "legacy": "id:ipd_exam_extremities",
+   "previous": "scope:medical:auto:136",
+   "previousLegacy": "auto:303"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_crt",
+   "key": "scope:medical:id:ipd_exam_crt",
+   "legacy": "id:ipd_exam_crt",
+   "previous": "scope:medical:auto:137",
+   "previousLegacy": "auto:304"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_msk",
+   "key": "scope:medical:id:ipd_exam_msk",
+   "legacy": "id:ipd_exam_msk",
+   "previous": "scope:medical:auto:138",
+   "previousLegacy": "auto:305"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "ipd_exam_other",
+   "key": "scope:medical:id:ipd_exam_other",
+   "legacy": "id:ipd_exam_other",
+   "previous": "scope:medical:auto:139",
+   "previousLegacy": "auto:306"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "",
+   "key": "scope:medical:auto:140",
+   "legacy": "auto:307"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "",
+   "key": "scope:medical:auto:141",
+   "legacy": "auto:308"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "ipd_investigations",
+   "key": "scope:medical:id:ipd_investigations",
+   "legacy": "id:ipd_investigations",
+   "previous": "scope:medical:auto:142",
+   "previousLegacy": "auto:309"
+  },
+  {
+   "tag": "input",
+   "type": "hidden",
+   "id": "emr_pmrs_ipd_icd10",
+   "key": "scope:medical:id:emr_pmrs_ipd_icd10",
+   "legacy": "id:emr_pmrs_ipd_icd10"
+  },
+  {
+   "tag": "input",
+   "type": "hidden",
+   "id": "emr_ipd_diagnoses",
+   "key": "scope:medical:id:emr_ipd_diagnoses",
+   "legacy": "id:emr_ipd_diagnoses"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "emr_pmrs_ipd_diagnosis",
+   "key": "scope:medical:id:emr_pmrs_ipd_diagnosis",
+   "legacy": "id:emr_pmrs_ipd_diagnosis",
+   "previous": "scope:medical:auto:144",
+   "previousLegacy": "auto:311"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "ipd_other_interventions",
+   "key": "scope:medical:id:ipd_other_interventions",
+   "legacy": "id:ipd_other_interventions"
+  },
+  {
+   "tag": "textarea",
+   "type": "textarea",
+   "id": "",
+   "key": "scope:medical:auto:146",
+   "legacy": "auto:313"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:147",
+   "legacy": "auto:314"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:148",
+   "legacy": "auto:315"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:149",
+   "legacy": "auto:316"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "",
+   "key": "scope:medical:auto:150",
+   "legacy": "auto:317"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:151",
+   "legacy": "auto:318"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "",
+   "key": "scope:medical:auto:152",
+   "legacy": "auto:319"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:153",
+   "legacy": "auto:320"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "",
+   "key": "scope:medical:auto:154",
+   "legacy": "auto:321"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:155",
+   "legacy": "auto:322"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "",
+   "key": "scope:medical:auto:156",
+   "legacy": "auto:323"
+  },
+  {
+   "tag": "input",
+   "type": "checkbox",
+   "id": "",
+   "key": "scope:medical:auto:157",
+   "legacy": "auto:324"
+  },
+  {
+   "tag": "input",
+   "type": "text",
+   "id": "",
+   "key": "scope:medical:auto:158",
+   "legacy": "auto:325"
+  },
+  {
+   "tag": "input",
+   "type": "time",
+   "id": "ipd_first_exam_time",
+   "key": "scope:medical:id:ipd_first_exam_time",
+   "legacy": "id:ipd_first_exam_time",
+   "previous": "scope:medical:auto:159",
+   "previousLegacy": "auto:326"
+  },
+  {
+   "tag": "input",
+   "type": "date",
+   "id": "ipd_first_exam_date",
+   "key": "scope:medical:id:ipd_first_exam_date",
+   "legacy": "id:ipd_first_exam_date",
+   "previous": "scope:medical:auto:160",
+   "previousLegacy": "auto:327"
+  }
+ ]
+}

@@ -159,6 +159,9 @@
     label.className = 'portal-counter-control';
     label.innerHTML = '<span>ជ្រើសរើសបញ្ជរ</span><select id="session-counter" aria-label="ជ្រើសរើស Counter របស់អ្នក">'+[1,2,3,4,5].map(n=>`<option value="${n}">${n}</option>`).join('')+'</select>';
     const select = label.querySelector('select');
+    // v40.8: the counter is a screen setting, not patient data. Its arrival time
+    // varies, so it must never take part in the record's field numbering.
+    select.setAttribute('data-emr-transient', '');
     const updateLanguage=()=>{
       const english=window.getBorkeoLanguage?.()==='en';
       label.querySelector('span').textContent=english?'Choose Counter':'ជ្រើសរើសបញ្ជរ';

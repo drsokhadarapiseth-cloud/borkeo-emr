@@ -10,12 +10,15 @@ export const WARDS = Object.freeze([
   { code: 'gynecology', nameKh: 'ផ្នែករោគស្ត្រី', nameEn: 'Gynecology' },
   { code: 'obstetric', nameKh: 'ផ្នែកសម្ភព', nameEn: 'Obstetric' },
   { code: 'tb', nameKh: 'ផ្នែកជំងឺរបេង', nameEn: 'Tuberculosis (TB)' },
+  { code: 'infectious', nameKh: 'ផ្នែកជំងឺឆ្លង', nameEn: 'Infectious Diseases' },
   { code: 'ncu', nameKh: 'ផ្នែកទារកទើបកើត', nameEn: 'NCU' },
   { code: 'opd', nameKh: 'ផ្នែកពិគ្រោះក្រៅ', nameEn: 'Outpatient' },
 ]);
 
-export const ROLES = USER_ROLES;
-const ROLE_SET = new Set(USER_ROLES);
+export const ROLES = Object.freeze(USER_ROLES.filter(role => role !== 'SUPERUSER'));
+// v42.1: SUPERUSER stays in USER_ROLES only for the users table CHECK
+// constraint of existing databases. It is never an assignable or active role.
+const ROLE_SET = new Set(ROLES);
 const WARD_SET = new Set(WARDS.map(item => item.code));
 const WARD_REQUIRED = new Set(['DOCTOR', 'NURSE', 'MIDWIFE', 'CHIEF_WARD', 'WARD_HEAD']);
 
@@ -35,7 +38,16 @@ export const DEFAULT_ROLE_LABELS = Object.freeze({
   VICE_DIRECTOR: 'អនុប្រធានមន្ទីរពេទ្យ',
   CHIEF_WARD: 'ប្រធានផ្នែក',
   WARD_HEAD: 'នាយសាល',
+  SUPERUSER: 'អ្នកប្រើប្រាស់ជាន់ខ្ពស់',
 });
+
+// v42.1: identifies the Superuser account (for the switch user type button
+// and audit only). It never grants a permission: while switched, the account
+// is checked exactly like a real account of the active role.
+export function isSuperuser(session) {
+  if (!session) return false;
+  return String(session.username || '').toLowerCase() === 'superuser';
+}
 
 export const IMAGING_GROUPS = Object.freeze([
   { id: 'RADIOLOGY', code: 'RADIOLOGY', nameKh: 'វិទ្យុសកម្មទូទៅ', nameEn: 'General Radiology', subtypes: ['XRAY', 'ULTRASOUND', 'CT', 'MRI'] },
@@ -130,11 +142,11 @@ export function ensureAccessSchema(database) {
 }
 
 export function listAllRoles(database) {
-  const list = [...USER_ROLES];
+  const list = [...ROLES];
   if (database) {
     try {
       const custom = database.sqlite.prepare('SELECT code FROM custom_roles ORDER BY created_at').all();
-      custom.forEach(r => { if (!list.includes(r.code)) list.push(r.code); });
+      custom.forEach(r => { if (r.code !== 'SUPERUSER' && !list.includes(r.code)) list.push(r.code); });
     } catch {}
   }
   return list;
@@ -171,6 +183,7 @@ export function createCustomRole(database, { code, labelKh, labelEn = '' }) {
   const cleanLabelKh = String(labelKh || '').trim();
   const cleanLabelEn = String(labelEn || '').trim();
   if (cleanCode.length < 2) throw new Error('Role code must be at least 2 characters.');
+  if (cleanCode === 'SUPERUSER') throw new Error('This role code is reserved.');
   if (!cleanLabelKh) throw new Error('Khmer label is required.');
   database.sqlite.prepare(`
     INSERT INTO custom_roles (code, label_kh, label_en, created_at)
@@ -301,6 +314,7 @@ export function wardInfo(code, database) {
 export function validContexts(access) {
   const result = [];
   access.roles.forEach(role => {
+    if (role === 'SUPERUSER') return;
     if (!roleRequiresWard(role)) {
       result.push({ role, wardCode: '', wardName: '' });
       return;
@@ -314,8 +328,11 @@ export function validContexts(access) {
   return result;
 }
 
-export function defaultContext(access) {
+export function defaultContext(access, user = null) {
   const contexts = validContexts(access);
+  // v42.1: the Superuser starts every login with no active role and picks a
+  // user type on /context.
+  if (String(user?.username || '').trim().toLowerCase() === 'superuser') return null;
   // Multi-role administrators start in the admin dashboard and can use the
   // existing context switcher to visit any of their assigned wards.
   if (access.roles.includes('ADMIN')) return contexts.find(context => ['ADMIN','VICE_DIRECTOR'].includes(context.role)) || null;
@@ -332,7 +349,7 @@ export function setSessionContext(database, tokenHash, userId, role, wardCode = 
   const access = getUserAccess(database, userId);
   const normalizedRole = String(role || '').trim().toUpperCase();
   const normalizedWard = String(wardCode || '').trim().toLowerCase();
-  if (!access.roles.includes(normalizedRole)) throw new Error('This role is not assigned to this account.');
+  if (normalizedRole === 'SUPERUSER' || !access.roles.includes(normalizedRole)) throw new Error('This role is not assigned to this account.');
   if (roleRequiresWard(normalizedRole)) {
     if (!access.wards.includes(normalizedWard) || !roleWardAllowed(normalizedRole, normalizedWard)) {
       throw new Error('This ward is not available for the selected role.');
@@ -349,7 +366,10 @@ export function setSessionContext(database, tokenHash, userId, role, wardCode = 
 }
 
 export function sessionRole(session) {
-  return String(session?.active_role || '').toUpperCase();
+  const role = String(session?.active_role || '').toUpperCase();
+  // v42.1: an old session saved with the removed SUPERUSER role has no role,
+  // so it goes to the user type picker.
+  return role === 'SUPERUSER' ? '' : role;
 }
 
 export function sessionWard(session) {
@@ -362,7 +382,7 @@ export function buildIdentity(database, session) {
   const activeRole = sessionRole(session);
   const activeWardCode = sessionWard(session);
   const activeWard = wardInfo(activeWardCode);
-  const contextValid = contexts.some(item => item.role === activeRole && item.wardCode === activeWardCode);
+  const contextValid = Boolean(activeRole) && contexts.some(item => item.role === activeRole && item.wardCode === activeWardCode);
   return {
     id: session.user_id,
     username: session.username,
@@ -376,6 +396,7 @@ export function buildIdentity(database, session) {
     needsContext: !contextValid,
     contexts,
     mustChangePassword: Boolean(session.must_change_password),
+    isSuperuser: isSuperuser(session),
   };
 }
 
@@ -469,6 +490,10 @@ function dataHasAssignedRoom(row) {
 export function roleCanPage(role, pathname) {
   role = String(role || '').toUpperCase();
   if (['/admin/organization','/admin/interface','/admin/health-facility','/styleguide'].includes(pathname)) return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
+  // v41.2: drug interaction and maximum-dose tables (administrators edit, management views).
+  if (pathname === '/admin/drug-safety') return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
+  // v41.7: record view log viewer (management only).
+  if (pathname === '/admin/record-log') return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
   if (['ADMIN','VICE_DIRECTOR'].includes(role) || role === 'DIRECTOR') return true;
   if (pathname === '/requests') return ['REGISTRATION','TRIAGE','DOCTOR','NURSE','MIDWIFE','CHIEF_WARD','WARD_HEAD','PHARMACY','LAB','IMAGING','CLERK','ACCOUNTANT'].includes(role);
   if (pathname === '/record-viewer') return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
