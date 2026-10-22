@@ -1200,6 +1200,13 @@
     ensureFirstExamDateTime();
     const context = patientContext();
     if (activeEditorScope() === 'medical' && window.validateEmrDiagnoses?.() === false) return false;
+    // v42.3: a prescription line with a medicine but no route cannot be saved.
+    const routeError = activeEditorScope() === 'medical'
+      ? window.validateMedicationRoutes?.('#opd_rx_tbody tr.orx-main-row, #rx_tbody tr.rx-main-row, #rx_protocol_tbody tr.protocol-main-row') : '';
+    if (routeError) {
+      setStatus('error', routeError);
+      return false;
+    }
     const validation = validatePatient(context, options);
     if (validation) {
       setStatus('error', validation);

@@ -728,6 +728,30 @@
       "kh": "ប្តូរប្រភេទអ្នកប្រើ",
       "key": "shell.switchUserType",
       "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "No matching medicine",
+      "kh": "រកមិនឃើញឱសថ",
+      "key": "medicine.noMatch",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Choose the route",
+      "kh": "សូមជ្រើសរើសផ្លូវប្រើថ្នាំ",
+      "key": "medicine.routeRequired",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Piece",
+      "kh": "ដុំ",
+      "key": "medicine.unitPiece",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Puff",
+      "kh": "ដង",
+      "key": "medicine.cataloguePuff",
+      "source": "docs/translations-needed.csv"
     }
   ]
 }

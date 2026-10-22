@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v42.2 - Electronic Medical Record System
+// Borkeo EMR v42.3 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -150,6 +150,10 @@ const publicFiles = new Map([
   ['/public/nav-config.js', ['nav-config.js', 'text/javascript; charset=utf-8']],
   ['/public/patient-banner.css', ['patient-banner.css', 'text/css; charset=utf-8']],
   ['/public/patient-banner.js', ['patient-banner.js', 'text/javascript; charset=utf-8']],
+  // v42.3: medicine search (Cambodia Essential Medicines List) and medication units.
+  ['/public/medicine-autocomplete.js', ['medicine-autocomplete.js', 'text/javascript; charset=utf-8']],
+  ['/public/medicine-autocomplete.css', ['medicine-autocomplete.css', 'text/css; charset=utf-8']],
+  ['/public/medicine-units.js', ['medicine-units.js', 'text/javascript; charset=utf-8']],
   ['/public/clinical-summary.css', ['clinical-summary.css', 'text/css; charset=utf-8']],
   ['/public/clinical-summary.js', ['clinical-summary.js', 'text/javascript; charset=utf-8']],
   ['/public/display-rules.css', ['display-rules.css', 'text/css; charset=utf-8']],
@@ -486,6 +490,10 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   html = html.replace(/<head\b[^>]*>/i, head => head + '<style>.emr-language-switch, [data-emr-language], #langBtn, .lang-btn, body #emr-site-banner .portal-account-actions .emr-language-switch, #emr-session-control .portal-account-actions .emr-language-switch, .portal-account-actions .emr-language-switch { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; max-width: 0 !important; max-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; position: absolute !important; left: -9999px !important; clip: rect(0,0,0,0) !important; }</style><script src="/public/emr-language-lock.js?v=3760"></script><link rel="stylesheet" href="/public/emr-required-fields.css?v=3770"><script src="/public/emr-required-fields.js?v=3770"></script>');
   html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=3980"><link rel="stylesheet" href="/public/patient-banner.css?v=4100"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=3980" defer></script><script src="/public/app-shell.js?v=3980" defer></script><script src="/public/patient-banner.js?v=4170" defer></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
+  // v42.3: one medication unit table for every page (old Khmer unit labels shown as mg, mL, mcg, g, IU).
+  html = html.replace('</head>', '<script src="/public/medicine-units.js?v=4230"></script></head>');
+  // v42.3: medicine name search in the prescription forms (medical record page only).
+  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/medicine-autocomplete.css?v=4230"><script src="/public/medicine-autocomplete.js?v=4230" defer></script></head>');
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=3800" defer></script></head>');
   // v41.0: structured allergy record, problem list and nursing demographics (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/clinical-summary.css?v=4100"><script src="/public/clinical-summary.js?v=4100" defer></script><link rel="stylesheet" href="/public/display-rules.css?v=4110"><script src="/public/display-rules.js?v=4110" defer></script><link rel="stylesheet" href="/public/medication-safety.css?v=4120"><script src="/public/medication-safety.js?v=4120" defer></script><link rel="stylesheet" href="/public/periop-forms.css?v=4160"><script src="/public/periop-forms.js?v=4160" defer></script><script src="/public/fluid-balance.js?v=4160" defer></script><script src="/public/early-warning.js?v=4160" defer></script><link rel="stylesheet" href="/public/patient-documents.css?v=4170"><script src="/public/patient-documents.js?v=4170" defer></script></head>');
@@ -1607,7 +1615,8 @@ function sanitizeAdmissionAction(value) {
     }
     const read = (key, length = 100) => boundedText(medication[key], length, `Discharge medicine ${key}`);
     return {
-      name: read('name', 240), route: read('route', 80), unit: read('unit', 40),
+      // v42.3: names chosen from the Essential Medicines List can be up to 515 characters.
+      name: read('name', 600), route: read('route', 80), unit: read('unit', 40),
       scheduleType: read('scheduleType', 40), doseAmount: read('doseAmount', 40),
       m: read('m', 40), a: read('a', 40), e: read('e', 40), n: read('n', 40),
       d: read('d', 40), total: read('total', 40), note: read('note', 1_000),
@@ -1618,6 +1627,8 @@ function sanitizeAdmissionAction(value) {
       protocolRepeatUnit: read('protocolRepeatUnit', 40),
       protocolMaxDoses: read('protocolMaxDoses', 40),
       protocolStopAt: read('protocolStopAt', 40),
+      // v42.3: CMS code of a medicine chosen from the Essential Medicines List (additive).
+      ...(read('cmsCode', 40) ? { cmsCode: read('cmsCode', 40) } : {}),
     };
   }) : null;
   const discharge = action === 'discharge' ? {

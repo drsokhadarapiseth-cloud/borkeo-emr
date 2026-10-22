@@ -1,6 +1,7 @@
 import { logFromContext } from '../record-access.mjs';
 import crypto from 'node:crypto';
 import { listSymptoms, addCustomSymptom, SYMPTOM_CREATE_ROLES } from '../symptoms.mjs';
+import { medicineCatalogue } from '../medicine-catalogue.mjs';
 import { roleCanPage, WARDS } from '../access.mjs';
 import { listPatientInvoices, patientBill, startPatientInvoice } from '../finance.mjs';
 import {
@@ -32,6 +33,14 @@ export function mountClinicalRoutes(router) {
     const role = sessionRole(session);
     const canCreate = SYMPTOM_CREATE_ROLES.has(role);
     return sendJson(ctx.response, 200, { items: listSymptoms(database), canCreate }, { secure: config.cookieSecure });
+  });
+
+  // v42.3: GET /api/medicines/catalogue - Cambodia Essential Medicines List for
+  // the medicine name search in the prescription forms (searched in the browser).
+  router.get('/api/medicines/catalogue', async (ctx) => {
+    const { session, config, sendJson } = ctx;
+    if (!session) return sendJson(ctx.response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
+    return sendJson(ctx.response, 200, medicineCatalogue(), { secure: config.cookieSecure });
   });
 
   // 2. POST /api/symptoms

@@ -42,14 +42,17 @@ test('v12.0 OPD form explicitly maps stored triage vitals', () => {
   assert.match(source, /'opd_pulse'/);
 });
 
+// v42.3: the short meds_list datalist was replaced by the Cambodia Essential
+// Medicines List search (public/medicine-autocomplete.js). Enoxaparin is not in
+// that list; it can still be typed as free text.
 test('v12.0 medicine type-ahead includes common oral and parenteral drugs', () => {
   const html = fs.readFileSync(path.join(root, 'protected', 'EMR.html'), 'utf8');
-  assert.match(html, /<datalist id="meds_list">/);
-  assert.match(html, /Paracetamol 500 mg/);
-  assert.match(html, /Ceftriaxone 1 g injection/);
-  assert.match(html, /Hyoscine butylbromide 20 mg\/mL injection/);
-  assert.match(html, /Enoxaparin 40 mg\/0\.4 mL injection/);
-  assert.match(html, /list="meds_list" autocomplete="off"/);
+  const labels = JSON.parse(fs.readFileSync(path.join(root, 'server', 'catalogues', 'medicines-eml-2024.json'), 'utf8')).map(item => item.label);
+  assert.doesNotMatch(html, /meds_list/);
+  assert.match(html, /<input type="text" autocomplete="off" class="rx-select \$\{prefix\}-name"/);
+  for (const name of ['Paracetamol (acetaminophen)-Tablet-500 mg', 'Ceftriaxone-Powder for injection-1 g', 'Hyoscine butylbromide-Injection-20 mg/mL']) {
+    assert.ok(labels.some(label => label.includes(name)), name);
+  }
 });
 
 test('v12.0 follow-up future date setting is Admin/Vice-Director-only and server validated', () => {

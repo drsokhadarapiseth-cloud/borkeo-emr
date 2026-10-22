@@ -8,7 +8,7 @@
     ['subcutaneous','ចាក់ក្រោមស្បែក (SC)'],['topical','លាប'],['drops','បន្តក់'],
     ['inhaled','ស្រូប'],['vaginal','តាមទ្វារមាស'],['rectal','តាមទ្វារធំ'],['sublingual','ក្រោមអណ្តាត'],
   ];
-  const units = ['', 'គ្រាប់','កាប់ស៊ុល','អំពូល','ផ្លាកុង','ដប','ទីប','កញ្ចប់','ដំណក់','គ្រាប់សុល','បន្ទះ','បាញ់','ស្លាបព្រា','ម.ល','ម.ក្រ','ក្រាម','លីត្រ','UI','mEq','mmol','ឯកតា'];
+  const units = ['', 'គ្រាប់','កាប់ស៊ុល','អំពូល','ផ្លាកុង','ដប','ទីប','កញ្ចប់','ដំណក់','គ្រាប់សុល','បន្ទះ','បាញ់','ស្លាបព្រា','ដុំ','mL','mg','mcg','g','លីត្រ','IU','mEq','mmol','ឯកតា'];
   let csrf = '';
   let payload = null;
   let candidates = [];
@@ -30,7 +30,9 @@
   }
   function guessedUnit(text) {
     const value=visibleText(text);
-    return units.find(unit => unit && unit===value) || '';
+    // v42.3: old Khmer unit labels are offered as mg, mL, mcg, g, IU.
+    const unit = window.BorkeoMedicineUnits?.canonical(value) ?? value;
+    return units.find(item => item && item===unit) || '';
   }
   function field(type,cls,value,aria) {
     const node=document.createElement('input');node.type=type;node.className=cls;node.value=String(value??'');node.setAttribute('aria-label',aria);

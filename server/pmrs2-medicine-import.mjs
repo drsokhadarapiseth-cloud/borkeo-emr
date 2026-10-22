@@ -8,6 +8,8 @@ const units = new Set([
   'គ្រាប់', 'កាប់ស៊ុល', 'អំពូល', 'ផ្លាកុង', 'ដប', 'ទីប', 'កញ្ចប់',
   'ដំណក់', 'គ្រាប់សុល', 'បន្ទះ', 'បាញ់', 'ស្លាបព្រា', 'ម.ល', 'ម.ក្រ',
   'ក្រាម', 'លីត្រ', 'UI', 'mEq', 'mmol', 'ឯកតា',
+  // v42.3: units written by the prescription forms (the old labels stay accepted).
+  'mg', 'mL', 'mcg', 'g', 'IU', 'ដុំ',
 ]);
 
 export const normalizePmrsId = value => String(value || '').replace(/[\s-]/g, '').toLowerCase();

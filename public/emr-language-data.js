@@ -79,3 +79,7 @@ window.BORKEO_EMR_LANGUAGE_PAIRS.push(["គ្មានប្រតិកម្�
 window.BORKEO_EMR_LANGUAGE_PAIRS.push(["វិធានការដែលបានអនុវត្ត","Action taken"]);
 window.BORKEO_EMR_LANGUAGE_PAIRS.push(["ទម្រង់ថ្មី","New form"]);
 window.BORKEO_EMR_LANGUAGE_PAIRS.push(["ប្តូរប្រភេទអ្នកប្រើ","Switch user type"]);
+window.BORKEO_EMR_LANGUAGE_PAIRS.push(["រកមិនឃើញឱសថ","No matching medicine"]);
+window.BORKEO_EMR_LANGUAGE_PAIRS.push(["សូមជ្រើសរើសផ្លូវប្រើថ្នាំ","Choose the route"]);
+window.BORKEO_EMR_LANGUAGE_PAIRS.push(["ដុំ","Piece"]);
+window.BORKEO_EMR_LANGUAGE_PAIRS.push(["ដង","Puff"]);

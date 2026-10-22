@@ -1,3 +1,5 @@
+import { canonicalMedicineUnit } from './medicine-units.mjs';
+
 const round = value => Math.round((value + Number.EPSILON) * 1e6) / 1e6;
 
 function number(value) {
@@ -27,7 +29,8 @@ function normalize(value) {
 }
 
 function unitKey(value) {
-  const unit = normalize(value);
+  // v42.3: old Khmer unit labels count as mg, mL, mcg, g and IU.
+  const unit = normalize(canonicalMedicineUnit(value));
   const aliases = {tablet:'គ្រាប់',tablets:'គ្រាប់',tab:'គ្រាប់',tabs:'គ្រាប់',
     capsule:'កាប់ស៊ុល',capsules:'កាប់ស៊ុល',cap:'កាប់ស៊ុល',
     ampoule:'អំពូល',ampoules:'អំពូល',amp:'អំពូល',ampul:'អំពូល'};

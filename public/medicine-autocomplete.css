@@ -1,0 +1,66 @@
+/* v42.3: medicine search list (public/medicine-autocomplete.js). */
+.bk-med-list {
+  position: fixed;
+  z-index: 99999;
+  max-height: 340px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #9cc3d5;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(6, 60, 90, .25);
+  padding: 4px;
+  font-size: 14px;
+  min-width: 380px;
+}
+
+.bk-med-item {
+  padding: 7px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.bk-med-item.on,
+.bk-med-item:hover {
+  background: #e3f3fa;
+}
+
+.bk-med-label {
+  color: #0f172a;
+}
+
+.bk-med-unit {
+  margin-left: auto;
+  font-size: 12px;
+  color: #557;
+  white-space: nowrap;
+}
+
+.bk-med-list mark {
+  background: #fff2a8;
+  color: inherit;
+  border-radius: 2px;
+}
+
+.bk-med-empty {
+  padding: 8px 10px;
+  color: #777;
+}
+
+.medication-route-required {
+  outline: 2px solid #dc2626;
+  outline-offset: 1px;
+}
+
+.medication-route-message {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: #dc2626;
+}
+
+@media print {
+  .bk-med-list { display: none !important; }
+}

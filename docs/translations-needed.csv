@@ -263,3 +263,7 @@ recordLog.time,Time,Record view log page (/admin/record-log; Admin and Directors
 recordLog.what,What,Record view log page (/admin/record-log; Admin and Directors),protected/record-log.html; public/record-log.js,
 recordLog.empty,No entries for this search.,Record view log page (/admin/record-log; Admin and Directors),protected/record-log.html; public/record-log.js,
 shell.switchUserType,Switch user type,"Top bar button and its window, Superuser account only (v42.1 prompt)",public/app-shell.js,ប្តូរប្រភេទអ្នកប្រើ
+medicine.noMatch,No matching medicine,"Medicine name search list in every prescription form, when nothing matches (v42.3 owner text)",public/medicine-autocomplete.js,រកមិនឃើញឱសថ
+medicine.routeRequired,Choose the route,"Prescription row with a medicine but no route, shown next to the row on save (v42.3 owner text)",protected/EMR.html; public/emr-inpatient-workflow.js,សូមជ្រើសរើសផ្លូវប្រើថ្នាំ
+medicine.unitPiece,Piece,"Dose unit for patches, IUDs and implants in the prescription forms (v42.3 owner text)",protected/EMR.html; public/pmrs-import.js,ដុំ
+medicine.cataloguePuff,Puff,Unit of inhalers in the owner-supplied Essential Medicines List file; the form shows the existing puff unit (v42.3),server/catalogues/medicines-eml-2024.json,ដង

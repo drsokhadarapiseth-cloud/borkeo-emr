@@ -73,6 +73,11 @@ export function stripSectionNumber(text) {
   return text.replace(/^(?:[IVXLC]+|[0-9]+|[០-៩]+)\s*[.)]\s*/, '');
 }
 
+// v42.3 (owner's order): measurement units are written as the original
+// international units, never translated. An approved row may replace a Khmer unit
+// label with one of these units (docs/khmer-approved-changes.md, unit table).
+export const INTERNATIONAL_UNITS = new Set(['mg', 'mL', 'mcg', 'g', 'IU']);
+
 // Reads the "| file | line | before | after |" table in docs/khmer-approved-changes.md.
 export function readApprovedChanges(file = approvedChangesPath) {
   if (!fs.existsSync(file)) return [];
@@ -103,6 +108,7 @@ export function checkAgainstBaseline({ baseline, current, approvedChanges, appro
     if (missing <= 0) continue;
     const change = changes.get(text);
     if (change && change.after === stripSectionNumber(text) && now.has(change.after)) continue;
+    if (change && INTERNATIONAL_UNITS.has(change.after)) continue;
     const where = baseline.filter((item) => item.text === text).map((item) => `${item.file}:${item.line}`).slice(0, 3).join(', ');
     problems.push(`CHANGED OR REMOVED (${missing} of ${count}): "${text}" (was at ${where})`);
   }

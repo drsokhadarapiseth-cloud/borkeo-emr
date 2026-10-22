@@ -712,6 +712,10 @@
     for (const key of ['name', 'unit', 'doseAmount', 'scheduleType', 'm', 'a', 'e', 'n', 'd', 'total', 'note']) {
       if (med[key] !== null && med[key] !== undefined) input(key).value = String(med[key]);
     }
+    // v42.3: old Khmer unit labels open as mg, mL, mcg, g, IU; the CMS code of a
+    // medicine chosen from the Essential Medicines List stays with the line.
+    if (med.unit) input('unit').value = window.BorkeoMedicineUnits?.canonical(med.unit) ?? String(med.unit);
+    if (med.cmsCode) input('name').dataset.cmsCode = String(med.cmsCode);
     if (med.scheduleType && !Array.from(input('scheduleType').options).some(opt => opt.value === med.scheduleType)) {
       input('scheduleType').add(new Option(`${med.scheduleType} (ពិនិត្យ)`, med.scheduleType));
       input('scheduleType').value = med.scheduleType;
@@ -731,12 +735,39 @@
   function collectDischargeMedications() {
     return Array.from(document.querySelectorAll('#emr-discharge-rx-body tr')).map(row => {
       const read = key => String(row.querySelector(`[data-med="${key}"]`)?.value || '').trim();
-      return {
+      const med = {
         ...(row._preservedMedication || {}),
         ...Object.fromEntries(['name','route','unit','doseAmount','scheduleType','m','a','e','n','d','total','note']
           .map(key => [key, read(key)])),
       };
+      const cmsCode = row.querySelector('[data-med="name"]')?.dataset.cmsCode || '';
+      if (cmsCode) med.cmsCode = cmsCode;
+      else if (med.cmsCode && med.name !== row._preservedMedication?.name) delete med.cmsCode;
+      return med;
     }).filter(med => med.name);
+  }
+
+  // v42.3: a discharge medicine needs a route before saving; empty rows are ignored.
+  function dischargeRouteError() {
+    const message = window.getBorkeoLanguage?.() === 'en' ? 'Choose the route' : 'សូមជ្រើសរើសផ្លូវប្រើថ្នាំ';
+    let first = null;
+    document.querySelectorAll('#emr-discharge-rx-body tr').forEach(row => {
+      const name = String(row.querySelector('[data-med="name"]')?.value || '').trim();
+      const route = row.querySelector('[data-med="route"]');
+      if (!route) return;
+      const missing = Boolean(name) && !route.value;
+      route.classList.toggle('medication-route-required', missing);
+      let note = route.parentNode?.querySelector('.medication-route-message');
+      if (missing && !note) {
+        note = document.createElement('span');
+        note.className = 'medication-route-message';
+        route.insertAdjacentElement('afterend', note);
+      }
+      if (note) { if (missing) note.textContent = message; else note.remove(); }
+      if (missing && !first) first = route;
+    });
+    if (first) { first.focus(); return message; }
+    return '';
   }
 
   function fillDischargePrescription(patient) {
@@ -868,6 +899,11 @@
       return;
     }
     const statusNode = document.getElementById('emr-discharge-status');
+    const routeError = dischargeRouteError();
+    if (routeError) {
+      if (statusNode) { statusNode.dataset.state = 'error'; statusNode.textContent = routeError; }
+      return;
+    }
     const button = document.getElementById('emr-save-discharge');
     button.disabled = true;
     statusNode.textContent = text('saveDaily');
@@ -936,7 +972,7 @@
         ${row('outcome', option(saved.outcome))}${row('dischargeStatus', option(saved.status))}
         ${row('followUp', saved.followUpDate)}${row('patientInstructions', saved.patientInstructions)}
       </table>
-      ${meds.length ? `<h4>${esc(text('dischargeMedications'))}</h4><table class="discharge-summary-table"><tbody>${meds.map((m) => `<tr><td>${esc(m.name)}</td><td>${esc([m.doseAmount, m.unit, m.route].filter(Boolean).join(' '))}</td><td>${esc([m.m, m.a, m.e, m.n].map((x) => x || '0').join('-'))}</td><td>${esc([m.d, m.total].filter(Boolean).join(' / '))}</td><td>${esc(m.note || '')}</td></tr>`).join('')}</tbody></table>` : ''}
+      ${meds.length ? `<h4>${esc(text('dischargeMedications'))}</h4><table class="discharge-summary-table"><tbody>${meds.map((m) => `<tr><td>${esc(m.name)}</td><td>${esc([m.doseAmount, (window.BorkeoMedicineUnits?.canonical(m.unit) ?? m.unit), m.route].filter(Boolean).join(' '))}</td><td>${esc([m.m, m.a, m.e, m.n].map((x) => x || '0').join('-'))}</td><td>${esc([m.d, m.total].filter(Boolean).join(' / '))}</td><td>${esc(m.note || '')}</td></tr>`).join('')}</tbody></table>` : ''}
       <div class="discharge-summary-sign"><div></div><div class="discharge-summary-sign-line"></div></div>
     </div>`;
     return window.printEmrReport?.({ selectors: ['#discharge-summary-print-layout'], classes: ['print-discharge-summary'], title: text('dischargeSummary') });

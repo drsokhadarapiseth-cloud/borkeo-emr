@@ -79,4 +79,8 @@ window.BORKEO_NEW_TEXT_KH = {
   "form.newEntry": "ទម្រង់ថ្មី",
   "form.print": "បោះពុម្ព",
   "shell.switchUserType": "ប្តូរប្រភេទអ្នកប្រើ",
+  "medicine.noMatch": "រកមិនឃើញឱសថ",
+  "medicine.routeRequired": "សូមជ្រើសរើសផ្លូវប្រើថ្នាំ",
+  "medicine.unitPiece": "ដុំ",
+  "medicine.cataloguePuff": "ដង",
 };

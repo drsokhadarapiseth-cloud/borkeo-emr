@@ -13136,13 +13136,23 @@
                                         placeholder="ជ្រើសរើស / បញ្ចូលឈ្មោះថ្នាំ..."></td>
                                 <td class="ipd-dose-cell">
                                     <input type="number" min="0" step="0.1" class="rx-num-input mrx-dose"
-                                        placeholder="1" oninput="handleMedicationQuickChange(this)">
+                                        value="" oninput="handleMedicationQuickChange(this)">
                                     <select class="rx-select mrx-unit" onchange="handleMedicationQuickChange(this)">
-                                        <option value="គ្រាប់">គ្រាប់</option>
+                                        <option value="mg">mg</option>
+                                        <option value="mL">mL</option>
+                                        <option value="g">g</option>
+                                        <option value="mcg">mcg</option>
+                                        <option value="IU">IU</option>
+                                        <option value="mEq">mEq</option>
+                                        <option value="mmol">mmol</option>
+                                        <option value="គ្រាប់" selected>គ្រាប់</option>
                                         <option value="បន្ទះ">បន្ទះ</option>
+                                        <option value="ដុំ">ដុំ</option>
                                         <option value="ដប">ដប</option>
                                         <option value="ទីប">ទីប</option>
                                         <option value="កញ្ចប់">កញ្ចប់</option>
+                                        <option value="ដំណក់">ដំណក់</option>
+                                        <option value="បាញ់">បាញ់ / ផ្លុំ</option>
                                     </select>
                                     <input type="hidden" class="mrx-m" value="0">
                                     <input type="hidden" class="mrx-a" value="0">
@@ -13151,6 +13161,7 @@
                                 </td>
                                 <td>
                                     <select class="rx-select mrx-route">
+                                        <option value="" selected>-- ជ្រើស --</option>
                                         <option value="លេប">លេប</option>
                                         <option value="ចាក់">ចាក់</option>
                                         <option value="លាប">លាប</option>
@@ -16790,17 +16801,17 @@ aHRtbD4K
 
             tr.innerHTML = `
                 <td class="${prefix}-index">${rowCount}</td>
-                <td><input type="text" list="meds_list" autocomplete="off" class="rx-select ${prefix}-name" placeholder="Search or enter medicine name..." oninput="handleMedicationQuickChange(this)"></td>
+                <td><input type="text" autocomplete="off" class="rx-select ${prefix}-name" placeholder="Search or enter medicine name..." oninput="handleMedicationQuickChange(this)"></td>
                 <td>
                     <div class="ipd-dose-cell-wrapper">
-                        <input type="number" min="0" step="0.1" class="rx-num-input ${prefix}-dose" value="1" placeholder="1" oninput="handleMedicationQuickChange(this)">
+                        <input type="number" min="0" step="0.1" class="rx-num-input ${prefix}-dose" value="" oninput="handleMedicationQuickChange(this)">
                         <select class="rx-select ${prefix}-unit" onchange="handleMedicationQuickChange(this)">
-                            <option value="ម.ក្រ">ម.ក្រ (mg)</option>
-                            <option value="ម.ល">ម.ល (ml)</option>
-                            <option value="ក្រាម">ក្រាម (g)</option>
-                            <option value="ម៉ៃក្រូក្រាម">ម៉ៃក្រូក្រាម (mcg/µg)</option>
+                            <option value="mg">mg</option>
+                            <option value="mL">mL</option>
+                            <option value="g">g</option>
+                            <option value="mcg">mcg</option>
                             <option value="លីត្រ">លីត្រ (L)</option>
-                            <option value="UI">UI / IU</option>
+                            <option value="IU">IU</option>
                             <option value="mEq">mEq</option>
                             <option value="mmol">mmol</option>
                             <option value="គ្រាប់" selected>គ្រាប់</option>
@@ -16813,6 +16824,7 @@ aHRtbD4K
                             <option value="ដំណក់">ដំណក់</option>
                             <option value="គ្រាប់សុល">គ្រាប់សុល</option>
                             <option value="បន្ទះ">បន្ទះ</option>
+                            <option value="ដុំ">ដុំ</option>
                             <option value="បាញ់">បាញ់ / ផ្លុំ</option>
                             <option value="ស្លាបព្រា">ស្លាបព្រា</option>
                             <option value="ភាគរយ">ភាគរយ (%)</option>
@@ -16824,6 +16836,7 @@ aHRtbD4K
                 </td>
                 <td>
                     <select class="rx-select ${prefix}-route" onchange="handleMedicationQuickChange(this)">
+                        <option value="" selected>-- ជ្រើស --</option>
                         <option value="other_iv">IV</option>
                         <option value="other_im">IM</option>
                         <option value="po">PO</option>
@@ -16852,8 +16865,9 @@ aHRtbD4K
             var prefix = getMedicationRowPrefix(row);
             ['name', 'unit', 'd', 'note'].forEach(function (key) {
                 var input = row.querySelector('.' + prefix + '-' + key);
-                if (input && med[key] !== undefined && med[key] !== null) input.value = String(med[key]);
+                if (input && med[key] !== undefined && med[key] !== null) input.value = key === 'unit' && med.unit ? medicationUnitValue(med.unit) : String(med[key]);
             });
+            restoreMedicationCmsCode(row, prefix, med);
             var dose = row.querySelector('.' + prefix + '-dose');
             if (dose) dose.value = med.doseAmount || med.protocolDose || '';
             var route = row.querySelector('.' + prefix + '-route');
@@ -17011,19 +17025,20 @@ aHRtbD4K
                 switchSubTab('reg');
             }
 
-            // Add 5 default rows to the OPD table
-            for (var i = 0; i < 5; i++) {
+            // v42.3: each prescription table starts with 3 rows.
+            for (var i = 0; i < 3; i++) {
                 addOpdRxRow(true);
             }
 
-            // Main IPD treatment table starts empty: create five working medication rows.
-            for (var i = 0; i < 5; i++) {
+            // Main IPD treatment table starts empty: create three working medication rows.
+            for (var i = 0; i < 3; i++) {
                 addRxRow(true);
             }
-            // Daily monitoring already contains one starter row, so add four more.
-            for (var i = 0; i < 4; i++) {
+            // Daily monitoring already contains one starter row, so add two more.
+            for (var i = 0; i < 2; i++) {
                 addMonRxRow(true);
             }
+            reserveMonitoringKeyPositions(2);
 
             initializeMedicationPrescriptionRows();
 
@@ -17901,15 +17916,22 @@ aHRtbD4K
 
         function populateMedicationRouteSelect(select, selectedValue) {
             if (!select) return;
-            var selected = normalizeMedicationRoute(selectedValue !== undefined ? selectedValue : select.value);
+            // v42.3: a new row starts with no route; the doctor chooses it (no default PO).
+            var rawRoute = selectedValue !== undefined ? selectedValue : select.value;
+            var noRoute = normalizeNursingCellText(rawRoute) === '';
+            var selected = noRoute ? '' : normalizeMedicationRoute(rawRoute);
             select.innerHTML = '';
+            var blankRoute = document.createElement('option');
+            blankRoute.value = '';
+            blankRoute.textContent = currentLang === 'khmer' ? '-- ជ្រើស --' : '-- Select --';
+            select.appendChild(blankRoute);
             getMedicationRouteDefinitions().forEach(function (definition) {
                 var option = document.createElement('option');
                 option.value = definition.value;
                 option.textContent = definition[currentLang === 'khmer' ? 'khmer' : 'english'];
                 select.appendChild(option);
             });
-            if (!getMedicationRouteDefinitions().some(function (definition) { return definition.value === selected; })) {
+            if (!noRoute && !getMedicationRouteDefinitions().some(function (definition) { return definition.value === selected; })) {
                 var unverified = document.createElement('option');
                 unverified.value = selected;
                 unverified.textContent = selected + ' (ពិនិត្យផ្លូវប្រើ)';
@@ -17917,6 +17939,61 @@ aHRtbD4K
             }
             select.value = selected;
         }
+
+        // v42.3: saved lines from before v42.3 may hold the old Khmer unit labels
+        // (see public/medicine-units.js); they open as mg, mL, mcg, g, IU.
+        // Saved data is not rewritten until a user saves the record again.
+        function medicationUnitValue(unit) {
+            return window.BorkeoMedicineUnits ? window.BorkeoMedicineUnits.canonical(unit) : String(unit || '');
+        }
+
+        // v42.3: CMS code of a medicine chosen from the Essential Medicines List
+        // (public/medicine-autocomplete.js keeps it on the name box).
+        function medicationCmsCode(row, prefix) {
+            var nameInput = row ? row.querySelector('.' + prefix + '-name') : null;
+            return nameInput && nameInput.dataset.cmsCode ? nameInput.dataset.cmsCode : '';
+        }
+
+        function restoreMedicationCmsCode(row, prefix, med) {
+            var nameInput = row ? row.querySelector('.' + prefix + '-name') : null;
+            if (nameInput && med && med.cmsCode) nameInput.dataset.cmsCode = String(med.cmsCode);
+        }
+
+        // v42.3: a row with a medicine name must have a route before saving.
+        // Empty rows (no medicine name) are ignored. Returns the message, or ''.
+        window.validateMedicationRoutes = function (rowSelector) {
+            var message = currentLang === 'khmer' ? 'សូមជ្រើសរើសផ្លូវប្រើថ្នាំ' : 'Choose the route';
+            var firstMissing = null;
+            document.querySelectorAll(rowSelector).forEach(function (row) {
+                var prefix = getMedicationRowPrefix(row);
+                var name = row.querySelector('.' + prefix + '-name');
+                var route = row.querySelector('.' + prefix + '-route');
+                if (!route) return;
+                var missing = Boolean(name && normalizeNursingCellText(name.value)) && !normalizeNursingCellText(route.value);
+                route.classList.toggle('medication-route-required', missing);
+                var note = route.parentNode ? route.parentNode.querySelector('.medication-route-message') : null;
+                if (missing && !note) {
+                    note = document.createElement('span');
+                    note.className = 'medication-route-message';
+                    route.insertAdjacentElement('afterend', note);
+                }
+                if (note) {
+                    if (missing) note.textContent = message;
+                    else note.remove();
+                }
+                if (missing && !firstMissing) firstMissing = route;
+            });
+            if (firstMissing) { firstMissing.focus(); return message; }
+            return '';
+        };
+
+        document.addEventListener('change', function (event) {
+            var route = event.target;
+            if (!route || !route.classList || !route.classList.contains('medication-route-required') || !route.value) return;
+            route.classList.remove('medication-route-required');
+            var note = route.parentNode ? route.parentNode.querySelector('.medication-route-message') : null;
+            if (note) note.remove();
+        });
 
         function formatMedicationLocalDateTime(date) {
             var value = date instanceof Date ? date : new Date(date || Date.now());
@@ -18301,6 +18378,8 @@ aHRtbD4K
                         d: value('d'), total: value('total'), note: value('note')
                     }, getMedicationTimingData(row, ''));
                     if (prefix === 'prx') order.doseAmount = value('dose');
+                    var cmsCode = medicationCmsCode(row, prefix);
+                    if (cmsCode) order.cmsCode = cmsCode;
                     return order;
                 }).filter(Boolean);
         };
@@ -18329,8 +18408,9 @@ aHRtbD4K
                     if (control && value !== null && value !== undefined) control.value = String(value);
                 };
                 ['name', 'dose', 'unit', 'd', 'total', 'note'].forEach(function (part) {
-                    put('.' + prefix + '-' + part, part === 'dose' ? med.doseAmount : med[part]);
+                    put('.' + prefix + '-' + part, part === 'dose' ? med.doseAmount : (part === 'unit' && med.unit ? medicationUnitValue(med.unit) : med[part]));
                 });
+                restoreMedicationCmsCode(row, prefix, med);
                 var route = row.querySelector('.' + prefix + '-route');
                 if (route) populateMedicationRouteSelect(route, med.route || 'po');
                     put('.med-q-hours', med.qHours);
@@ -18354,7 +18434,7 @@ aHRtbD4K
                     }
                     ['m', 'a', 'e', 'n'].forEach(function (part) { put('.rx-' + part, med[part]); });
             });
-            while (body.querySelectorAll('tr.rx-main-row').length < 5) addRxRow(true);
+            while (body.querySelectorAll('tr.rx-main-row').length < 3) addRxRow(true);
             syncNursingMedicationOrders();
         };
 
@@ -18367,11 +18447,14 @@ aHRtbD4K
                     return input ? String(input.value || '').trim() : '';
                 };
                 if (!read('name')) return null;
-                return Object.assign({
+                var order = Object.assign({
                     name: read('name'), route: read('route'), unit: read('unit'),
                     m: read('m'), a: read('a'), e: read('e'), n: read('n'),
                     d: read('d'), total: read('total'), note: read('note')
                 }, getMedicationTimingData(row, ''));
+                var cmsCode = medicationCmsCode(row, 'orx');
+                if (cmsCode) order.cmsCode = cmsCode;
+                return order;
             }).filter(Boolean);
         };
 
@@ -18391,8 +18474,9 @@ aHRtbD4K
                     if (input && value !== null && value !== undefined) input.value = String(value);
                 };
                 ['name', 'unit', 'd', 'total', 'note'].forEach(function (part) {
-                    put('.orx-' + part, med[part]);
+                    put('.orx-' + part, part === 'unit' && med.unit ? medicationUnitValue(med.unit) : med[part]);
                 });
+                restoreMedicationCmsCode(row, 'orx', med);
                 put('.orx-dose', med.doseAmount);
                 var route = row.querySelector('.orx-route');
                 if (route) populateMedicationRouteSelect(route, med.route || 'po');
@@ -18405,7 +18489,7 @@ aHRtbD4K
                 }
                 ['m', 'a', 'e', 'n'].forEach(function (part) { put('.orx-' + part, med[part]); });
             });
-            while (body.querySelectorAll('tr.orx-main-row').length < 5) addOpdRxRow(true);
+            while (body.querySelectorAll('tr.orx-main-row').length < 3) addOpdRxRow(true);
         };
 
         function formatMedicationProtocolIntervals(sequence, language) {
@@ -18537,7 +18621,7 @@ aHRtbD4K
                 return normalizeMedicationDoseSequence(order.protocolDose) || '-';
             }
             if (order && normalizeNursingCellText(order.doseAmount)) {
-                var doseText = normalizeNursingCellText(order.doseAmount) + (normalizeNursingCellText(order.unit) ? ' ' + normalizeNursingCellText(order.unit) : '');
+                var doseText = normalizeNursingCellText(order.doseAmount) + (normalizeNursingCellText(order.unit) ? ' ' + medicationUnitValue(normalizeNursingCellText(order.unit)) : '');
                 var scheduleText = formatMedicationScheduleLabel(order.scheduleType, order.qHours, currentLang);
                 return [doseText, scheduleText].filter(Boolean).join(' · ');
             }
@@ -21284,7 +21368,7 @@ aHRtbD4K
             tr.className = 'orx-main-row';
             tr.innerHTML = getMedicationEntryRowHtml('orx', rowCount, false, true);
             tbody.appendChild(tr);
-            populateMedicationRouteSelect(tr.querySelector('.orx-route'), 'po');
+            populateMedicationRouteSelect(tr.querySelector('.orx-route'), '');
             var scheduleSelect = tr.querySelector('.med-schedule-type');
             if (scheduleSelect) handleMedicationScheduleChange(scheduleSelect);
             reindexOpdRxRows();
@@ -21316,17 +21400,17 @@ aHRtbD4K
 
             return `
                 <td class="${prefix}-index">${rowCount}</td>
-                <td><input type="text" list="meds_list" autocomplete="off" class="rx-select ${prefix}-name" placeholder="${namePlaceholder}"></td>
+                <td><input type="text" autocomplete="off" class="rx-select ${prefix}-name" placeholder="${namePlaceholder}"></td>
                 <td>
                     <div class="ipd-dose-cell-wrapper">
-                        <input type="number" min="0" step="0.1" class="rx-num-input ${prefix}-dose" value="1" placeholder="1" oninput="handleMedicationQuickChange(this)">
+                        <input type="number" min="0" step="0.1" class="rx-num-input ${prefix}-dose" value="" oninput="handleMedicationQuickChange(this)">
                         <select class="rx-select ${prefix}-unit" onchange="handleMedicationQuickChange(this)">
-                            <option value="ម.ក្រ">ម.ក្រ (mg)</option>
-                            <option value="ម.ល">ម.ល (ml)</option>
-                            <option value="ក្រាម">ក្រាម (g)</option>
-                            <option value="ម៉ៃក្រូក្រាម">ម៉ៃក្រូក្រាម (mcg/µg)</option>
+                            <option value="mg">mg</option>
+                            <option value="mL">mL</option>
+                            <option value="g">g</option>
+                            <option value="mcg">mcg</option>
                             <option value="លីត្រ">លីត្រ (L)</option>
-                            <option value="UI">UI / IU</option>
+                            <option value="IU">IU</option>
                             <option value="mEq">mEq</option>
                             <option value="mmol">mmol</option>
                             <option value="គ្រាប់" selected>គ្រាប់</option>
@@ -21339,6 +21423,7 @@ aHRtbD4K
                             <option value="ដំណក់">ដំណក់</option>
                             <option value="គ្រាប់សុល">គ្រាប់សុល</option>
                             <option value="បន្ទះ">បន្ទះ</option>
+                            <option value="ដុំ">ដុំ</option>
                             <option value="បាញ់">បាញ់ / ផ្លុំ</option>
                             <option value="ស្លាបព្រា">ស្លាបព្រា</option>
                             <option value="ភាគរយ">ភាគរយ (%)</option>
@@ -21350,7 +21435,7 @@ aHRtbD4K
                         <input type="hidden" class="${prefix}-n" value="0">
                     </div>
                 </td>
-                <td><select class="rx-select ${prefix}-route"><option value="po">លេប (PO)</option></select></td>
+                <td><select class="rx-select ${prefix}-route"><option value="" selected>-- ជ្រើស --</option><option value="po">លេប (PO)</option></select></td>
                 <td class="ipd-schedule-cell">
                     <select class="rx-select med-schedule-type" onchange="handleMedicationScheduleChange(this)">
                         <option value="">-- ជ្រើស --</option>
@@ -21384,7 +21469,7 @@ aHRtbD4K
             tr.className = 'rx-main-row';
             tr.innerHTML = getMedicationEntryRowHtml('rx', rowCount, false);
             tbody.appendChild(tr);
-            populateMedicationRouteSelect(tr.querySelector('.rx-route'), 'po');
+            populateMedicationRouteSelect(tr.querySelector('.rx-route'), '');
             createMedicationTimingDetailRow(tr, 'rx');
             var startInput = tr.querySelector('.med-effective-at');
             if (startInput) startInput.value = formatMedicationLocalDateTime(new Date());
@@ -21541,10 +21626,46 @@ aHRtbD4K
             var tbody = document.getElementById('mon_rx_tbody');
             if (tbody) {
                 tbody.innerHTML = '';
-                for (var i = 0; i < 5; i++) {
+                for (var i = 0; i < 3; i++) {
                     addMonRxRow(true);
                 }
+                reserveMonitoringKeyPositions(2);
             }
+        }
+
+        // v42.3: the daily note shows 3 medicine rows (5 before v42.3). The daily
+        // form is built while the page loads, before the record storage keys are
+        // numbered (emr-patient-record.js prepareStorageKeys), and each control of
+        // these rows takes a numbered position (scope:medical:auto:N). Two hidden
+        // placeholder rows keep the positions of the old rows 4 and 5, so every
+        // saved key after them stays exactly the same. Their controls are never
+        // saved (data-emr-no-save), disabled, and not medicine rows.
+        function reserveMonitoringKeyPositions(count) {
+            var tbody = document.getElementById('mon_rx_tbody');
+            if (!tbody) return;
+            for (var i = 0; i < count; i++) {
+                addMonRxRow(true);
+                var rows = tbody.querySelectorAll('tr.mrx-main-row');
+                var row = rows[rows.length - 1];
+                if (!row) return;
+                var detailRow = getMedicationTimingDetailRow(row);
+                [row, detailRow].forEach(function (part) {
+                    if (!part) return;
+                    part.hidden = true;
+                    part.setAttribute('aria-hidden', 'true');
+                    part.querySelectorAll('input, select, textarea').forEach(function (control) {
+                        control.setAttribute('data-emr-no-save', '');
+                        control.disabled = true;
+                        control.tabIndex = -1;
+                    });
+                });
+                row.classList.remove('mrx-main-row');
+                row.classList.add('mrx-key-reserve-row');
+                var nameInput = row.querySelector('.mrx-name');
+                if (nameInput) nameInput.classList.remove('mrx-name');
+                if (detailRow) detailRow.classList.add('mrx-key-reserve-row');
+            }
+            reindexMonRxRows();
         }
 
         function evaluateMonitoringVitalStates() {
@@ -21652,7 +21773,8 @@ aHRtbD4K
                     var daysField = row.querySelector('.mrx-d');
                     if (daysField) daysField.value = med.d || '';
                     var unitField = row.querySelector('.mrx-unit');
-                    if (unitField) unitField.value = med.unit || 'គ្រាប់';
+                    if (unitField) unitField.value = medicationUnitValue(med.unit) || 'គ្រាប់';
+                    restoreMedicationCmsCode(row, 'mrx', med);
                     var noteField = row.querySelector('.mrx-note');
                     if (noteField) noteField.value = med.note || '';
                     var legacyFrequency = [med.m, med.a, med.e, med.n].reduce(function (total, value) {
@@ -21686,7 +21808,7 @@ aHRtbD4K
                     if (totalField && normalizeNursingCellText(med.total)) totalField.value = med.total;
                 });
             } else {
-                for (var i = 0; i < 5; i++) {
+                for (var i = 0; i < 3; i++) {
                     addMonRxRow(true);
                 }
             }
@@ -21736,7 +21858,7 @@ aHRtbD4K
             tr.className = 'mrx-main-row';
             tr.innerHTML = getMedicationEntryRowHtml('mrx', rowCount, true);
             tbody.appendChild(tr);
-            populateMedicationRouteSelect(tr.querySelector('.mrx-route'), 'po');
+            populateMedicationRouteSelect(tr.querySelector('.mrx-route'), '');
             createMedicationTimingDetailRow(tr, 'mrx');
             var monitoringDate = document.getElementById('mon_input_date');
             var startInput = tr.querySelector('.med-effective-at');
@@ -21811,6 +21933,8 @@ aHRtbD4K
 
             var dateDisplay = dtVal ? dtVal.replace('T', ' ') : '29-08-2026 21:24';
 
+            if (!restoring && window.validateMedicationRoutes('#mon_rx_tbody tr.mrx-main-row, #mon_rx_protocol_tbody tr.protocol-main-row')) return false;
+
             var rxHtml = '';
             var medications = [];
             var monRows = document.querySelectorAll('#mon_rx_tbody tr.mrx-main-row, #mon_rx_protocol_tbody tr.protocol-main-row');
@@ -21839,6 +21963,8 @@ aHRtbD4K
                         name: name, route: route, m: m, a: a, e: e, n: n,
                         d: d, total: total, unit: unit, note: note
                     }, timing);
+                    var cmsCode = medicationCmsCode(row, prefix);
+                    if (cmsCode) medication.cmsCode = cmsCode;
                     medications.push(medication);
 
                     var freqArr = [];
@@ -22021,7 +22147,7 @@ aHRtbD4K
                     <div class="mon-print-med">
                         <div class="mon-print-med-name">${escapeMonitoringPrint(med.name || '')}</div>
                         <div>${instruction}</div>
-                        <div>${currentLang === 'khmer' ? 'ចំនួន៖' : 'Quantity:'} ${escapeMonitoringPrint(med.total || '0')} ${escapeMonitoringPrint(med.unit || '')}</div>
+                        <div>${currentLang === 'khmer' ? 'ចំនួន៖' : 'Quantity:'} ${escapeMonitoringPrint(med.total || '0')} ${escapeMonitoringPrint(medicationUnitValue(med.unit || ''))}</div>
                         ${noteHtml}
                     </div>
                 `;
@@ -22479,12 +22605,13 @@ aHRtbD4K
             refreshMedicationTimingLanguage();
 
             var unitTranslations = {
-                "ម.ក្រ": { khmer: "ម.ក្រ (mg)", english: "mg" },
-                "ម.ល": { khmer: "ម.ល (ml)", english: "ml" },
-                "ក្រាម": { khmer: "ក្រាម (g)", english: "g" },
-                "ម៉ៃក្រូក្រាម": { khmer: "ម៉ៃក្រូក្រាម (mcg/µg)", english: "mcg/µg" },
+                // v42.3: international units are never translated.
+                "mg": { khmer: "mg", english: "mg" },
+                "mL": { khmer: "mL", english: "mL" },
+                "g": { khmer: "g", english: "g" },
+                "mcg": { khmer: "mcg", english: "mcg" },
                 "លីត្រ": { khmer: "លីត្រ (L)", english: "L" },
-                "UI": { khmer: "UI / IU", english: "IU" },
+                "IU": { khmer: "IU", english: "IU" },
                 "mEq": { khmer: "mEq", english: "mEq" },
                 "mmol": { khmer: "mmol", english: "mmol" },
                 "គ្រាប់": { khmer: "គ្រាប់", english: "Tablet" },
@@ -22497,6 +22624,7 @@ aHRtbD4K
                 "ដំណក់": { khmer: "ដំណក់", english: "Drop" },
                 "គ្រាប់សុល": { khmer: "គ្រាប់សុល", english: "Suppository" },
                 "បន្ទះ": { khmer: "បន្ទះ", english: "Patch/Strip" },
+                "ដុំ": { khmer: "ដុំ", english: "Piece" },
                 "បាញ់": { khmer: "បាញ់ / ផ្លុំ", english: "Puff/Spray" },
                 "ស្លាបព្រា": { khmer: "ស្លាបព្រា", english: "Spoon" },
                 "ភាគរយ": { khmer: "ភាគរយ (%)", english: "%" },
@@ -22957,33 +23085,6 @@ function updateOtherIdPreview() {
         });
 </script>
 
-    <!-- Common medication search/type-ahead for OPD and IPD prescriptions. -->
-    <datalist id="meds_list">
-        <option value="Paracetamol 500 mg" label="Antalgic · PO"></option>
-        <option value="Paracetamol 10 mg/mL injection" label="Antalgic · IV"></option>
-        <option value="Ibuprofen 200 mg" label="Antalgic · PO"></option>
-        <option value="Diclofenac 50 mg" label="Antalgic · PO"></option>
-        <option value="Ketorolac 30 mg/mL injection" label="Antalgic · IV/IM"></option>
-
-        <option value="Amoxicillin 500 mg" label="Antibiotic · PO"></option>
-        <option value="Ampicillin 1 g injection" label="Antibiotic · IV/IM"></option>
-        <option value="Ceftriaxone 1 g injection" label="Antibiotic · IV/IM"></option>
-        <option value="Cefotaxime 1 g injection" label="Antibiotic · IV/IM"></option>
-        <option value="Metronidazole 500 mg" label="Antibiotic · PO"></option>
-        <option value="Metronidazole 500 mg/100 mL infusion" label="Antibiotic · IV"></option>
-        <option value="Ciprofloxacin 500 mg" label="Antibiotic · PO"></option>
-        <option value="Ciprofloxacin 200 mg/100 mL infusion" label="Antibiotic · IV"></option>
-        <option value="Azithromycin 500 mg" label="Antibiotic · PO"></option>
-        <option value="Gentamicin 40 mg/mL injection" label="Antibiotic · IV/IM"></option>
-
-        <option value="Hyoscine butylbromide 10 mg" label="Antispasmodic · PO"></option>
-        <option value="Hyoscine butylbromide 20 mg/mL injection" label="Antispasmodic · IV/IM/SC"></option>
-        <option value="Drotaverine 40 mg" label="Antispasmodic · PO"></option>
-
-        <option value="Enoxaparin 40 mg/0.4 mL injection" label="Anticoagulant · SC"></option>
-        <option value="Heparin 5,000 IU/mL injection" label="Anticoagulant · SC/IV"></option>
-        <option value="Warfarin 5 mg" label="Anticoagulant · PO"></option>
-    </datalist>
 
     <script src="/public/qrcode.min.js?v=3330"></script>
     <script>

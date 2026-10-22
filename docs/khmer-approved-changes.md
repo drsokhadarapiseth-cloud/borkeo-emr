@@ -34,3 +34,22 @@ text without the number) exists in the project.
 | protected/EMR.html | 15702 (KH dictionary) | III. ពិនិត្យអមគ្លីនិក | ពិនិត្យអមគ្លីនិក |
 | protected/EMR.html | 15702 (KH dictionary) | IV. រោគវិនិច្ឆ័យ ICD-10 | រោគវិនិច្ឆ័យ ICD-10 |
 | protected/EMR.html | 15703 (KH dictionary) | V. វេជ្ជបញ្ជា | វេជ្ជបញ្ជា |
+
+## v42.3: medication units written as international units (owner's order)
+
+The owner ordered that mg, mL, mcg, g and IU are written in the original
+international units, not translated, in the medication unit lists
+(protected/EMR.html unit selects and their EN/KH label table, public/pmrs-import.js).
+A Khmer unit label listed here may disappear only when it is replaced by one of
+these five units (scripts/khmer-lib.mjs INTERNATIONAL_UNITS). Records saved with
+the old labels still open as the new units (public/medicine-units.js).
+
+| file | line | before | after |
+|------|------|--------|-------|
+| protected/EMR.html, public/pmrs-import.js | unit lists | ម.ក្រ (mg) | mg |
+| protected/EMR.html, public/pmrs-import.js | unit lists | ម.ក្រ | mg |
+| protected/EMR.html, public/pmrs-import.js | unit lists | ម.ល (ml) | mL |
+| protected/EMR.html, public/pmrs-import.js | unit lists | ម.ល | mL |
+| protected/EMR.html, public/pmrs-import.js | unit lists | ម៉ៃក្រូក្រាម (mcg/µg) | mcg |
+| protected/EMR.html, public/pmrs-import.js | unit lists | ម៉ៃក្រូក្រាម | mcg |
+| protected/EMR.html, public/pmrs-import.js | unit lists | ក្រាម (g) | g |

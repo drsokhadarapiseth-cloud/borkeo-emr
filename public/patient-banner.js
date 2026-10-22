@@ -400,7 +400,7 @@
       </section>
       <section>
         <h3>${label('', 'Current medications', 'ឱសថដែលកំពុងប្រើ')}</h3>
-        ${meds.length ? `<ul>${meds.map(m => `<li><strong>${escapeHtml(m.name || '')}</strong> ${escapeHtml([m.doseAmount, m.unit].filter(Boolean).join(' '))}</li>`).join('')}</ul>` : empty}
+        ${meds.length ? `<ul>${meds.map(m => `<li><strong>${escapeHtml(m.name || '')}</strong> ${escapeHtml([m.doseAmount, (window.BorkeoMedicineUnits?.canonical(m.unit) ?? m.unit)].filter(Boolean).join(' '))}</li>`).join('')}</ul>` : empty}
       </section>
       <section data-banner-resuscitation-section>
         <h3>${label('', 'Resuscitation status', 'ស្ថានភាពការសង្គ្រោះជីវិត')}</h3>
@@ -575,7 +575,7 @@
           <div class="emr-summary-card-body">
             ${meds.length ? `
               <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6;">
-                ${meds.map(m => `<li><strong>${escapeHtml(m.name)}</strong> · ${escapeHtml(m.doseAmount || '')} ${escapeHtml(m.unit || '')}</li>`).join('')}
+                ${meds.map(m => `<li><strong>${escapeHtml(m.name)}</strong> · ${escapeHtml(m.doseAmount || '')} ${escapeHtml((window.BorkeoMedicineUnits?.canonical(m.unit) ?? m.unit) || '')}</li>`).join('')}
               </ul>
             ` : '<div class="emr-card-empty">មិនមានឱសថកំពុងប្រើប្រាស់នៅឡើយទេ។</div>'}
           </div>

@@ -262,6 +262,8 @@
   const pendingOverrides = [];
 
   const normalize = (value) => String(value || '').toLowerCase().normalize('NFKC').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  // v42.3: old Khmer unit labels (public/medicine-units.js) count as mg, mL, mcg, g, IU.
+  const canonicalUnit = (value) => window.BorkeoMedicineUnits?.canonical(value) ?? value;
   const firstWord = (value) => normalize(value).split(' ')[0] || '';
   // Same medicine: the first word (generic name) matches, at least 4 letters.
   const sameMedicine = (a, b) => { const x = firstWord(a); return x.length >= 4 && x === firstWord(b); };
@@ -284,7 +286,7 @@
     const value = (suffix) => number(row.querySelector(`.${prefix}-${suffix}`)?.value);
     const slots = ['m', 'a', 'e', 'n'].map(value);
     const single = value('dose') || Math.max(...slots);
-    return { perDose: single, perDay: slots.reduce((sum, n) => sum + n, 0), unit: normalize(row.querySelector(`.${prefix}-unit`)?.value) };
+    return { perDose: single, perDay: slots.reduce((sum, n) => sum + n, 0), unit: normalize(canonicalUnit(row.querySelector(`.${prefix}-unit`)?.value)) };
   }
 
   function warningsFor(row) {
@@ -306,7 +308,7 @@
     const doses = rowDoses(row);
     for (const rule of safetyTables?.maxDoses || []) {
       if (!names(medicine, rule.drug)) continue;
-      if (rule.unit && doses.unit && normalize(rule.unit) !== doses.unit) continue;
+      if (rule.unit && doses.unit && normalize(canonicalUnit(rule.unit)) !== doses.unit) continue;
       if (rule.maxPerDose && doses.perDose > rule.maxPerDose) warnings.push({ kind: 'max-dose', detail: `${doses.perDose} > ${rule.maxPerDose} ${rule.unit}`.trim() });
       if (rule.maxPerDay && doses.perDay > rule.maxPerDay) warnings.push({ kind: 'max-dose', detail: `${doses.perDay} / 24h > ${rule.maxPerDay} ${rule.unit}`.trim() });
     }
