@@ -32,6 +32,16 @@ function positiveInteger(value, fallback, name) {
   return parsed;
 }
 
+// v42.4: patient uploads (scanned documents, message, payment and paraclinic
+// attachments). With DATA_DIR: DATA_DIR/uploads. Without it: next to the
+// database, exactly as before.
+export function uploadDirectory(config, ...parts) {
+  const base = config.dataDirectory
+    ? path.join(config.dataDirectory, 'uploads')
+    : path.join(path.dirname(config.databasePath), 'uploads');
+  return path.join(base, ...parts);
+}
+
 export function loadConfig(overrides = {}) {
   loadDotEnv(path.join(projectRoot, '.env'));
   const emrMode = String(overrides.emrMode ?? process.env.EMR_MODE ?? '').toLowerCase();
@@ -61,9 +71,14 @@ export function loadConfig(overrides = {}) {
       overrides.databasePath !== ':memory:' && path.resolve(overrides.databasePath) !== demoDatabasePath) {
     throw new Error('Username-only demo cannot use the patient database.');
   }
+  // v42.4: DATA_DIR (online host volume, for example /data) holds everything that
+  // must survive a restart: the database, patient uploads and backups. Without it
+  // the hospital computer keeps today's locations. The local demo ignores it.
+  const dataDirectorySetting = demoMode ? '' : String(overrides.dataDirectory ?? process.env.DATA_DIR ?? '').trim();
+  const dataDirectory = dataDirectorySetting ? path.resolve(projectRoot, dataDirectorySetting) : '';
   const databaseSetting = demoMode
     ? (overrides.databasePath ?? demoDatabasePath)
-    : (overrides.databasePath ?? process.env.DATABASE_PATH ?? 'auto');
+    : (overrides.databasePath ?? (process.env.DATABASE_PATH || undefined) ?? (dataDirectory ? path.join(dataDirectory, 'emr.sqlite') : 'auto'));
   const autoDatabase = String(databaseSetting).trim().toLowerCase() === 'auto';
   const databasePath = databaseSetting === ':memory:'
     ? databaseSetting
@@ -78,9 +93,18 @@ export function loadConfig(overrides = {}) {
     throw new Error('COOKIE_SECURE must be true in production.');
   }
 
-  return {
+  // v42.4: behind a hosting proxy (Railway, Render, Fly.io) the client address
+  // is read from X-Forwarded-For only when TRUST_PROXY=true.
+  const trustProxy = overrides.trustProxy ?? process.env.TRUST_PROXY === 'true';
+
+  const config = {
     projectRoot,
     demoMode,
+    isProduction,
+    trustProxy,
+    dataDirectory,
+    // Empty when DATA_DIR is not set: each backup keeps its usual folder.
+    backupDirectory: dataDirectory ? path.join(dataDirectory, 'backups') : '',
     host,
     port,
     appOrigin: originUrl.origin,
@@ -110,4 +134,11 @@ export function loadConfig(overrides = {}) {
     publicDirectory: path.join(projectRoot, 'public'),
     protectedDirectory: path.join(projectRoot, 'protected'),
   };
+  // v42.4: the production Superuser password (SUPERUSER_PASSWORD). Not enumerable,
+  // so it never appears when the configuration is printed or logged.
+  Object.defineProperty(config, 'superuserPassword', {
+    value: String(overrides.superuserPassword ?? process.env.SUPERUSER_PASSWORD ?? ''),
+    enumerable: false,
+  });
+  return config;
 }

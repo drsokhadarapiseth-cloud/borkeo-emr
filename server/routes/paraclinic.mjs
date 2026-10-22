@@ -1,3 +1,4 @@
+import { uploadDirectory } from '../config.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -741,7 +742,7 @@ export function mountParaclinicRoutes(router) {
     if (!extension) return sendJson(response, 415, { error: 'Only PDF, JPEG and PNG attachments are allowed.' }, { secure: config.cookieSecure });
     const bytes = await readBinary(request, 12 * 1024 * 1024);
     if (!bytes.length) return sendJson(response, 400, { error: 'Attachment is empty.' }, { secure: config.cookieSecure });
-    const uploadRoot = path.join(path.dirname(config.databasePath), 'uploads', order.id);
+    const uploadRoot = uploadDirectory(config, order.id);
     fs.mkdirSync(uploadRoot, { recursive: true });
     const storedName = `${crypto.randomUUID()}${extension}`;
     const storagePath = path.join(uploadRoot, storedName);

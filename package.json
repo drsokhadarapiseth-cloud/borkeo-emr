@@ -1,6 +1,6 @@
 {
   "name": "borkeo-emr",
-  "version": "42.3.0",
+  "version": "42.4.0",
   "private": true,
   "type": "module",
   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",

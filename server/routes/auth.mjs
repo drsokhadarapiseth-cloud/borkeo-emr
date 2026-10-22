@@ -19,7 +19,8 @@ export function mountAuthRoutes(router) {
           wards: u.wards || [],
         }))
       : [];
-    return sendJson(response, 200, { demoMode: config.demoMode, accounts }, { secure: config.cookieSecure });
+    // v42.4: an online server (production) lists no accounts on the login page.
+    return sendJson(response, 200, { demoMode: config.demoMode, production: config.isProduction === true, accounts }, { secure: config.cookieSecure });
   });
 
   // GET /api/auth/me

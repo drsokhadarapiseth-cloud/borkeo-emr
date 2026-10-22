@@ -1,0 +1,40 @@
+# Never put patient data, backups, secrets or Git history into the server image.
+.git
+.gitignore
+node_modules
+.env
+.env.*
+!.env.example
+
+# Databases, backups and patient uploads
+**/*.sqlite
+**/*.sqlite-wal
+**/*.sqlite-shm
+**/*.sqlite-journal
+**/*.db
+**/*.db-wal
+**/*.db-shm
+# ICD-10 reference catalogue (no patient data): needed by the server
+!data/icd10/catalogue.sqlite
+data/backups
+data/uploads
+backups
+uploads
+Borkeo_EMR_Data
+*.bak
+borkeo-emr-passwords.csv
+
+# Logs
+logs
+*.log
+
+# Not needed to run the server
+tests
+docs
+legacy-html
+Borkeo-EMR-*-update.txt
+Borkeo-*-prompt.md
+*.zip
+Start-Borkeo-WiFi.bat
+Dockerfile
+.dockerignore
