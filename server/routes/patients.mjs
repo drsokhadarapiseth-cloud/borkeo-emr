@@ -18,6 +18,7 @@ import { queueCashierPayment } from '../invoice-edits.mjs';
 import { encounterAccess, assertEncounterWrite, consumeCorrection, RECORD_MANAGEMENT } from '../encounter-access.mjs';
 import { allergyAlert, patientRef } from '../clinical-summary.mjs';
 import { logFromContext } from '../record-access.mjs';
+import { isFreeMaternalService, isGynecologyOutpatient, isMaternalService, maternalOptions } from '../maternal.mjs';
 
 const caseTypeFromData = dataValue => {
   const hasNew = dataValue?.['scope:registration:id:emr_pmrs_case_new'] === true || dataValue?.['scope:registration:id:emr_pmrs_case_new'] === 'true';
@@ -379,7 +380,9 @@ export function mountPatientsRoutes(router) {
     const editorScope = RECORD_MANAGEMENT.includes(activeClinicalRole) && ['registration', 'triage', 'medical', 'nursing'].includes(body.editorScope)
       ? body.editorScope : '';
     const triageSave = !(body.editOnly === true && existingData['system:triageStatus'] === 'COMPLETED') && (body.triageSave === true || activeClinicalRole === 'TRIAGE' || editorScope === 'triage');
-    const effectiveRoleForMerge = registrationSave ? 'REGISTRATION' : (activeRoleBeforeSave === 'TRIAGE' || triageSave || editorScope === 'triage' ? 'TRIAGE' : RECORD_MANAGEMENT.includes(activeRoleBeforeSave) ? (body.editorScope === 'nursing' ? 'NURSE' : 'DOCTOR') : activeRoleBeforeSave);
+    // v42.6: the midwife writes the OPD forms of the maternal services (PNC, family planning, cervical screening).
+    const maternalMidwife = activeRoleBeforeSave === 'MIDWIFE' && Boolean(existingPatient) && isMaternalService(existingPatient);
+    const effectiveRoleForMerge = registrationSave ? 'REGISTRATION' : (activeRoleBeforeSave === 'TRIAGE' || triageSave || editorScope === 'triage' ? 'TRIAGE' : RECORD_MANAGEMENT.includes(activeRoleBeforeSave) ? (body.editorScope === 'nursing' ? 'NURSE' : 'DOCTOR') : maternalMidwife ? 'DOCTOR' : activeRoleBeforeSave);
     summary = mergePatientSummaryForRole(existingPatient, submittedSummary, effectiveRoleForMerge);
     const data = mergeRecordDataForRole(existingData, submittedData, effectiveRoleForMerge, Boolean(existingPatient));
 
@@ -445,6 +448,12 @@ export function mountPatientsRoutes(router) {
       }
     } else if (triageSave) {
       if (!summary.departmentCode || !summary.serviceMode) badRequest('Select a receiving ward/service before completing triage.');
+      // v42.6: the official ANC record imports every Triage value; none may be blank.
+      if (String(summary.departmentCode).toLowerCase() === 'anc') {
+        const missing = ['p2_weight', 'p2_height', 'p2_bp_sys', 'p2_bp_dia', 'p2_pulse', 'p2_temp', 'p2_spo2']
+          .filter(key => !String(data[`scope:triage:id:${key}`] ?? '').trim());
+        if (missing.length) return sendJson(response, 400, { error: 'សូមបំពេញសញ្ញាជីវិតទាំងអស់ មុនបញ្ជូនទៅពិនិត្យផ្ទៃពោះ។', missing }, { secure: config.cookieSecure });
+      }
       data['system:signature:triage'] = JSON.stringify(signatureSnapshot(database, session, savedAt));
       data['system:triageStatus'] = 'COMPLETED';
       const paraclinicRequested = submittedData['scope:triage:id:triage_paraclinic'] === true || submittedData['scope:triage:id:triage_paraclinic'] === 'true';
@@ -475,7 +484,7 @@ export function mountPatientsRoutes(router) {
         if (existingData['system:triageCompletedAt']) data['system:triageCompletedAt'] = existingData['system:triageCompletedAt'];
         data['system:triageUpdatedAt'] = savedAt;
       }
-    } else if (activeClinicalRole === 'DOCTOR' || editorScope === 'medical') {
+    } else if (activeClinicalRole === 'DOCTOR' || editorScope === 'medical' || maternalMidwife) {
       const doctorSig = JSON.stringify(signatureSnapshot(database, session, savedAt));
       data['system:signature:medical'] = doctorSig;
       const subTab = String(body.clinicalSubTab || '').toLowerCase();
@@ -507,7 +516,15 @@ export function mountPatientsRoutes(router) {
     }
     let prescriptionSnapshot = null;
     if (body.submitOpdPrescription === true) {
-      if (activeClinicalRole !== 'DOCTOR') return sendJson(response, 403, { error: 'Only the prescribing doctor can submit an OPD prescription.' }, { secure: config.cookieSecure });
+      if (activeClinicalRole !== 'DOCTOR' && !maternalMidwife) return sendJson(response, 403, { error: 'Only the prescribing doctor can submit an OPD prescription.' }, { secure: config.cookieSecure });
+      // v42.6: the midwife prescribes only the medicines of the maternal services.
+      if (maternalMidwife) {
+        const allowed = maternalOptions().midwifeMedicines.map(name => name.toLowerCase());
+        let rows = [];
+        try { rows = JSON.parse(data['system:opdMedications'] || '[]'); } catch { rows = []; }
+        const refused = (Array.isArray(rows) ? rows : []).filter(row => row?.name && !allowed.some(name => String(row.name).toLowerCase().replace(/^[a-z]{2}\d{4}(?:,\s*[a-z]{2}\d{4})*-/, '').startsWith(`${name}-`) || String(row.name).toLowerCase() === name));
+        if (refused.length) return sendJson(response, 403, { error: 'ឆ្មបអាចចេញវេជ្ជបញ្ជាតែឱសថសេវាមាតាប៉ុណ្ណោះ។', refused: refused.map(row => row.name) }, { secure: config.cookieSecure });
+      }
       try { prescriptionSnapshot = prepareOpdPrescription(data, summary, JSON.parse(data['system:signature:medical'])); }
       catch (error) { return sendJson(response, 400, { error: error.message }, { secure: config.cookieSecure }); }
     }
@@ -532,7 +549,14 @@ export function mountPatientsRoutes(router) {
           existingData['system:triageSaved']
         )
       );
-      if (triageSave && !wasTransferredBefore && patient.service_mode === 'opd') {
+      if (triageSave && !wasTransferredBefore && patient.service_mode === 'opd' && isFreeMaternalService(patient)) {
+        // v42.6: vaccination is free: straight to the midwife, no Cashier.
+        data['system:workflowStage'] = 'DOCTOR_READY';
+        data['system:maternalFreeService'] = true;
+        delete data['system:cashierQueueRequest'];
+        database.sqlite.prepare('UPDATE patient_records SET record_json=?,updated_at=? WHERE patient_key=?').run(JSON.stringify(data), savedAt, patientKey);
+        patient = database.findPatient(patientKey);
+      } else if (triageSave && !wasTransferredBefore && patient.service_mode === 'opd') {
         const consultationCharge = addCatalogCharge(database, patientKey, 'OPD_CONSULT', session.user_id, `CARE_ROUTE:${patientKey}:OPD`, 'Automatically added when Triage selected OPD');
         const consultationBill = patientBill(database, patientKey, consultationCharge.invoiceId);
         const balance = Number(consultationBill?.summary?.KHR?.balance || 0) + Number(consultationBill?.summary?.USD?.balance || 0);
@@ -543,7 +567,8 @@ export function mountPatientsRoutes(router) {
             delete data['system:cashierQueueRequest'];
           } else {
             data['system:workflowStage'] = 'CASHIER_PENDING_OPD';
-            data['system:cashierQueueRequest'] = { invoiceId: consultationCharge.invoiceId, sentAt: savedAt, sentBy: session.user_id, wardCode: 'opd', source: 'TRIAGE_OPD_CONSULTATION' };
+            // v42.6: safe abortion is billed under the Gynecology ward.
+            data['system:cashierQueueRequest'] = { invoiceId: consultationCharge.invoiceId, sentAt: savedAt, sentBy: session.user_id, wardCode: isGynecologyOutpatient(patient) ? 'gynecology' : 'opd', source: 'TRIAGE_OPD_CONSULTATION' };
             queueCashierPayment(database, patientKey, data['system:cashierQueueRequest']);
           }
         } else {

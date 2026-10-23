@@ -1,0 +1,115 @@
+/* v42.6 - Official ANC record page (protected/anc-record.html). */
+body.anc-page { margin: 0; background: #f4f7f6; color: #10313a; font-family: 'Khmer OS Battambang', Battambang, Arial, sans-serif; }
+.anc-shell { max-width: 1600px; margin: 0 auto; padding: 12px 16px 40px; }
+.anc-top { display: flex; align-items: center; gap: 16px; background: #ffffff; border: 1px solid #d7e6e1; border-radius: 14px; padding: 12px 18px; }
+.anc-logo { width: 56px; height: 56px; object-fit: contain; }
+.anc-top h1 { flex: 1; text-align: center; margin: 0; font-size: 24px; text-decoration: underline; font-family: 'Khmer OS Muol Light', 'Moul', serif; }
+.anc-colour-boxes { display: flex; gap: 14px; font-weight: 700; font-size: 18px; }
+.anc-colour-box { display: inline-flex; align-items: center; gap: 6px; }
+.anc-box { display: inline-flex; width: 20px; height: 20px; border: 2px solid currentColor; align-items: center; justify-content: center; font-size: 15px; }
+.anc-box-green { color: #3a9d23; }
+.anc-box-yellow { color: #c9a400; }
+.anc-box-red { color: #d32f2f; }
+.anc-colour-box.is-ticked { padding: 2px 8px; border-radius: 8px; background: currentColor; }
+.anc-colour-box.is-ticked, .anc-colour-box.is-ticked .anc-box { color: #ffffff; }
+.anc-box-yellow.is-ticked { background: #e8c300; }
+#anc-status { min-height: 1.2em; margin: 6px 0; }
+#anc-status[data-state="error"] { color: #b91c1c; }
+.anc-summary { background: #ffffff; border: 1px solid #d7e6e1; border-radius: 14px; padding: 10px 16px; margin: 8px 0; }
+.anc-summary-line { margin: 2px 0; }
+.anc-closed { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: #e2e8f0; }
+.anc-colour-note { margin: 6px 0; padding: 6px 10px; border-radius: 8px; font-weight: 700; }
+.anc-note-green { background: #dcfce7; color: #166534; }
+.anc-note-yellow { background: #fef9c3; color: #854d0e; }
+.anc-note-red { background: #fee2e2; color: #991b1b; }
+.anc-reasons { margin: 4px 0; padding-left: 20px; font-size: 14px; }
+.anc-reason-red { color: #b91c1c; }
+.anc-reason-yellow { color: #92400e; }
+.anc-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+.anc-actions button, .anc-rx button:not(.link) { font: inherit; padding: 7px 14px; border-radius: 8px; border: 1px solid #087d72; background: #087d72; color: #ffffff; cursor: pointer; }
+.anc-actions button.secondary, .anc-rx button.secondary { background: #ffffff; color: #087d72; }
+.anc-actions button.danger { background: #b91c1c; border-color: #b91c1c; }
+.anc-pending { color: #b91c1c; font-weight: 700; }
+button.link, a.link, a.secondary-link { font: inherit; font-size: 13px; background: none; border: none; color: #0369a1; cursor: pointer; text-decoration: underline; padding: 0 4px; }
+.anc-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; align-items: start; }
+.anc-tasks { position: sticky; top: 8px; background: #ffffff; border: 2px solid #0ea5a3; border-radius: 14px; padding: 10px 12px; max-height: calc(100vh - 20px); overflow: auto; }
+.anc-tasks h2 { margin: 0 0 6px; font-size: 18px; }
+.anc-task-visit { font-weight: 700; margin: 0; }
+.anc-task-next { margin: 2px 0 8px; color: #075985; }
+.anc-task-list { list-style: none; padding: 0; margin: 0; }
+.anc-task { padding: 6px 0; border-bottom: 1px dashed #d7e6e1; font-size: 14px; }
+.anc-task.is-done label { color: #64748b; text-decoration: line-through; }
+.anc-task.is-closed label { color: #92400e; }
+.anc-task.is-overdue { color: #b91c1c; }
+.anc-task small { display: block; color: #92400e; }
+.anc-task-actions { display: block; }
+.anc-overdue-title { color: #b91c1c; font-size: 16px; margin: 12px 0 4px; }
+.anc-page { background: #ffffff; border: 1px solid #d7e6e1; border-radius: 14px; padding: 12px 16px; margin-bottom: 12px; }
+.anc-page h2 { font-size: 19px; margin: 0 0 8px; }
+.anc-page h3 { font-size: 16px; margin: 0 0 6px; text-align: center; }
+.anc-box-panel { border: 1.5px solid #10313a; border-radius: 12px; padding: 8px 12px; margin-bottom: 10px; }
+.anc-identity { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.anc-two { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
+.anc-indent { margin: 2px 0 2px 18px; }
+.anc-choice { display: inline-flex; align-items: center; gap: 4px; margin-right: 8px; }
+.anc-choice.is-applied { font-weight: 700; text-decoration: underline; }
+.anc-field { font: inherit; font-size: 14px; border: none; border-bottom: 1px dotted #475569; background: transparent; padding: 1px 4px; min-width: 90px; }
+.anc-field.tiny { width: 56px; min-width: 56px; }
+.anc-field.small { width: 100px; }
+.anc-field.wide { min-width: 220px; }
+.anc-field:focus { outline: 2px solid #0ea5a3; background: #f0fdfa; }
+.anc-hint { color: #475569; font-size: 13px; margin: 4px 0; }
+.anc-footnote { font-size: 12px; margin: 6px 0 0; }
+.anc-table-wrap { overflow-x: auto; }
+.anc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.anc-table th, .anc-table td { border: 1px solid #334155; padding: 3px 5px; vertical-align: middle; }
+.anc-table th { background: #f8fafc; font-weight: 700; text-align: center; }
+.anc-table td .anc-field { min-width: 0; width: 100%; border-bottom: none; }
+.anc-readonly { background: #f1f5f9; }
+.anc-src-lab::after { content: ' ⓛ'; color: #0369a1; }
+.anc-src-rapid::after { content: ' ⓡ'; color: #9d174d; }
+.anc-lab-table th:first-child { text-align: left; min-width: 220px; }
+.anc-visit-table td { min-height: 26px; }
+.anc-referred td { background: #fee2e2; }
+.anc-visit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 6px 14px; margin: 6px 0; }
+.anc-visit-grid.wide { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
+.anc-rapid, .anc-rx { border: 1px solid #94a3b8; border-radius: 10px; margin: 8px 0; }
+.anc-rapid label { margin-right: 18px; }
+.anc-chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.anc-chart-level { margin: 4px 0; padding: 4px 6px; border-radius: 8px; font-size: 13px; }
+.anc-level-green { background: #f0fdf4; }
+.anc-level-yellow { background: #fefce8; }
+.anc-level-red { background: #fef2f2; }
+.anc-auto { color: #0369a1; }
+.anc-history ul { margin: 0; padding-left: 18px; }
+.anc-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+.anc-dot.anc-green { background: #16a34a; } .anc-dot.anc-yellow { background: #eab308; } .anc-dot.anc-red { background: #dc2626; }
+.anc-dialog { border: none; border-radius: 16px; max-width: 620px; width: 92vw; padding: 16px; }
+.anc-dialog::backdrop { background: rgba(15, 23, 42, .45); }
+.anc-error { color: #b91c1c; }
+.anc-print { display: none; }
+@media (max-width: 1100px) { .anc-layout { grid-template-columns: 1fr; } .anc-tasks { position: static; max-height: none; } .anc-two, .anc-chart-grid { grid-template-columns: 1fr; } }
+
+/* Print: pages 2-5 of the official record, A4 landscape. */
+@page { size: A4 landscape; margin: 8mm; }
+@media print {
+  body.anc-printing .anc-shell, body.anc-printing dialog { display: none !important; }
+  body.anc-printing .anc-print { display: block; }
+  .anc-print-page { page-break-after: always; break-after: page; font-size: 11px; }
+  .anc-print-page:last-child { page-break-after: auto; break-after: auto; }
+  .anc-print-head { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #000; margin-bottom: 6px; }
+  .anc-print-head img { width: 42px; height: 42px; }
+  .anc-print-head h1 { flex: 1; text-align: center; font-size: 18px; text-decoration: underline; margin: 0; }
+  .anc-print-foot { text-align: right; font-size: 10px; margin-top: 4px; }
+  .anc-print-page .anc-box-panel { border-color: #000; }
+  .anc-print-page .anc-table th, .anc-print-page .anc-table td { border-color: #000; }
+  .anc-print-value { display: inline-block; min-width: 40px; border-bottom: 1px dotted #000; }
+  .anc-letter { font-size: 14px; }
+  .anc-letter-table { width: 100%; border-collapse: collapse; }
+  .anc-letter-table th, .anc-letter-table td { border: 1px solid #000; padding: 6px; text-align: left; vertical-align: top; }
+  .anc-letter-table th { width: 30%; }
+  .anc-letter-sign { margin: 24px 0 0 auto; width: 45%; text-align: center; }
+  .anc-letter-sign img { max-height: 70px; }
+  .anc-sign-line { height: 60px; }
+  .no-print { display: none !important; }
+}

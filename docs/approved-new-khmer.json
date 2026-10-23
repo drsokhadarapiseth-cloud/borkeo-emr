@@ -1076,6 +1076,540 @@
       "kh": "សូមសរសេរមូលហេតុ ដើម្បីបន្តលើសកម្រិតថ្នាំអតិបរមា។",
       "key": "safety.doseReasonOnSave",
       "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Vaccination",
+      "kh": "ចាក់វ៉ាក់សាំង",
+      "key": "maternal.vaccination",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Maternal services queue",
+      "kh": "បញ្ជីអ្នកជំងឺសេវាមាតា",
+      "key": "maternal.queueTitle",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Maternal services queue · Borkeo EMR",
+      "kh": "បញ្ជីអ្នកជំងឺសេវាមាតា · Borkeo EMR",
+      "key": "maternal.queuePageTitle",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "No patient waiting.",
+      "kh": "មិនមានអ្នកជំងឺរង់ចាំទេ។",
+      "key": "maternal.queueEmpty",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "The midwife can order only HBsAg and ultrasound.",
+      "kh": "ឆ្មបអាចស្នើតែ HBsAg និងអេកូសាស្ត្រប៉ុណ្ណោះ។",
+      "key": "maternal.midwifeOrders",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Fill every vital sign before sending to ANC.",
+      "kh": "សូមបំពេញសញ្ញាជីវិតទាំងអស់ មុនបញ្ជូនទៅពិនិត្យផ្ទៃពោះ។",
+      "key": "maternal.triageVitals",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "The midwife prescribes only the medicines of the maternal services.",
+      "kh": "ឆ្មបអាចចេញវេជ្ជបញ្ជាតែឱសថសេវាមាតាប៉ុណ្ណោះ។",
+      "key": "maternal.midwifeMedicines",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Add to the prescription",
+      "kh": "បញ្ចូលក្នុងវេជ្ជបញ្ជា",
+      "key": "anc.addIron",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Drug allergies are also kept in the structured allergy record (patient banner).",
+      "kh": "ប្រវត្តិអាល្លែកហ្ស៊ីថ្នាំក៏ត្រូវកត់ក្នុងកំណត់ត្រាអាលែកហ្ស៊ី (ផ្ទាំងព័ត៌មានអ្នកជំងឺ) ផងដែរ។",
+      "key": "anc.allergyLink",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Ask a doctor to order",
+      "kh": "ស្នើវេជ្ជបណ្ឌិតឱ្យចេញសំណើ",
+      "key": "anc.askDoctor",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "automatic",
+      "kh": "ស្វ័យប្រវត្តិ",
+      "key": "anc.auto",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Has the woman delivered? OK = delivered, Cancel = close for another reason",
+      "kh": "ស្ត្រីបានសម្រាលកូនហើយឬនៅ? យល់ព្រម = បានសម្រាល, បោះបង់ = បិទដោយមូលហេតុផ្សេង",
+      "key": "anc.closeDelivered",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Close the record",
+      "kh": "បិទកំណត់ត្រា",
+      "key": "anc.closeRecord",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Close without doing",
+      "kh": "បិទដោយមិនបានធ្វើ",
+      "key": "anc.closeUndone",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Colour changes",
+      "kh": "ប្រវត្តិប្តូរកូដពណ៌",
+      "key": "anc.colourHistory",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "days",
+      "kh": "ថ្ងៃ",
+      "key": "anc.days",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Enter the result",
+      "kh": "បញ្ចូលលទ្ធផល",
+      "key": "anc.enterResult",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "from Triage",
+      "kh": "ពីទ្រីយ៉ា",
+      "key": "anc.fromTriage",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Open the vaccination",
+      "kh": "បើកការចាក់វ៉ាក់សាំង",
+      "key": "anc.giveVaccine",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "ANC with the midwife - 4 visits",
+      "kh": "ពិនិត្យផ្ទៃពោះជាមួយឆ្មប - ៤ដង",
+      "key": "anc.greenNote",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Height under 145 cm: check",
+      "kh": "កម្ពស់ក្រោម ១៤៥ ស.ម៖ សូមពិនិត្យ",
+      "key": "anc.heightCheck",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Values from Registration and from Triage of this visit; the midwife can correct them (the Triage value stays saved).",
+      "kh": "តម្លៃពីការចុះឈ្មោះ និងពីទ្រីយ៉ានៃការមកលើកនេះ។ ឆ្មបអាចកែបាន (តម្លៃទ្រីយ៉ានៅតែរក្សាទុក)។",
+      "key": "anc.importedHint",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Referring doctor",
+      "kh": "វេជ្ជបណ្ឌិតអ្នកបញ្ជូន",
+      "key": "anc.letterDoctor",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Reasons (red)",
+      "kh": "មូលហេតុ (ក្រហម)",
+      "key": "anc.letterReasons",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Test results",
+      "kh": "លទ្ធផលតេស្ត",
+      "key": "anc.letterResults",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Referral letter",
+      "kh": "លិខិតបញ្ជូនអ្នកជំងឺ",
+      "key": "anc.letterTitle",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "To: the provincial referral hospital (CPA3)",
+      "kh": "ជូនចំពោះ៖ មន្ទីរពេទ្យបង្អែកខេត្ត (CPA3)",
+      "key": "anc.letterTo",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Treatment given",
+      "kh": "ការព្យាបាលដែលបានផ្តល់",
+      "key": "anc.letterTreatment",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Vital signs",
+      "kh": "សញ្ញាជីវិត",
+      "key": "anc.letterVitals",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Negative",
+      "kh": "អវិជ្ជមាន",
+      "key": "anc.negative",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Positive",
+      "kh": "វិជ្ជមាន",
+      "key": "anc.positive",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Next scheduled visit",
+      "kh": "ការពិនិត្យតាមកាលវិភាគលើកក្រោយ",
+      "key": "anc.nextVisit",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "No ANC record for this pregnancy yet.",
+      "kh": "មិនទាន់មានកំណត់ត្រាការពិនិត្យផ្ទៃពោះសម្រាប់ផ្ទៃពោះនេះទេ។",
+      "key": "anc.noRecord",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Not a scheduled visit",
+      "kh": "មិនមែនជាការពិនិត្យតាមកាលវិភាគ",
+      "key": "anc.notScheduled",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "OK",
+      "kh": "យល់ព្រម",
+      "key": "anc.ok",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Open the ANC record",
+      "kh": "បើកកំណត់ត្រាការពិនិត្យផ្ទៃពោះ",
+      "key": "anc.open",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Sent. The patient pays at the Cashier.",
+      "kh": "បានបញ្ជូន។ អ្នកជំងឺបង់ប្រាក់នៅបេឡា។",
+      "key": "anc.ordered",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Send to the Laboratory (pay at the Cashier)",
+      "kh": "បញ្ជូនទៅមន្ទីរពិសោធន៍ (បង់ប្រាក់នៅបេឡា)",
+      "key": "anc.orderLab",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Send to Imaging (pay at the Cashier)",
+      "kh": "បញ្ជូនទៅផ្នែករូបភាពវេជ្ជសាស្ត្រ (បង់ប្រាក់នៅបេឡា)",
+      "key": "anc.orderUltrasound",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Overdue from earlier visits",
+      "kh": "ការងារលើកមុនដែលមិនទាន់ធ្វើ",
+      "key": "anc.overdue",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Prescription (maternal services medicines)",
+      "kh": "វេជ្ជបញ្ជា (ឱសថសេវាមាតា)",
+      "key": "anc.prescription",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Print the referral letter",
+      "kh": "បោះពុម្ពលិខិតបញ្ជូន",
+      "key": "anc.printReferral",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Rapid tests done by the midwife",
+      "kh": "តេស្តរហ័សដែលឆ្មបធ្វើ",
+      "key": "anc.rapidTests",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Refer to the provincial hospital (CPA3) with a referral form signed by a doctor",
+      "kh": "បញ្ជូនទៅមន្ទីរពេទ្យខេត្ត (CPA3) ជាមួយលិខិតបញ្ជូនដែលវេជ្ជបណ្ឌិតចុះហត្ថលេខា",
+      "key": "anc.redNote",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Referral waiting for a doctor signature",
+      "kh": "លិខិតបញ្ជូនកំពុងរង់ចាំហត្ថលេខាវេជ្ជបណ្ឌិត",
+      "key": "anc.referralPending",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Reopen",
+      "kh": "បើកវិញ",
+      "key": "anc.reopen",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Refer to CPA3 (doctor signs)",
+      "kh": "បញ្ជូនទៅ CPA3 (វេជ្ជបណ្ឌិតចុះហត្ថលេខា)",
+      "key": "anc.requestReferral",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Saved.",
+      "kh": "បានរក្សាទុក។",
+      "key": "anc.saved",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Save the record",
+      "kh": "រក្សាទុកកំណត់ត្រា",
+      "key": "anc.saveRecord",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Save the visit",
+      "kh": "រក្សាទុកការពិនិត្យ",
+      "key": "anc.saveVisit",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "scan date",
+      "kh": "ថ្ងៃធ្វើអេកូ",
+      "key": "anc.scanDate",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Send to Pharmacy",
+      "kh": "បញ្ជូនទៅឱសថស្ថាន",
+      "key": "anc.sendPharmacy",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Sign the referral",
+      "kh": "ចុះហត្ថលេខាលើលិខិតបញ្ជូន",
+      "key": "anc.signReferral",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "from the last menstrual period",
+      "kh": "តាមថ្ងៃទី១នៃរដូវចុងក្រោយ",
+      "key": "anc.sourceLmp",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "from the dating ultrasound",
+      "kh": "តាមអេកូសាស្ត្រ",
+      "key": "anc.sourceUltrasound",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "suggested",
+      "kh": "ស្នើ",
+      "key": "anc.suggested",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Temperature",
+      "kh": "សីតុណ្ហភាព",
+      "key": "anc.temperature",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Today's visit",
+      "kh": "ការពិនិត្យថ្ងៃនេះ",
+      "key": "anc.todayVisit",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "To do at this visit",
+      "kh": "ការងារត្រូវធ្វើនៅការពិនិត្យនេះ",
+      "key": "anc.todo",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Treatment given before the referral",
+      "kh": "ការព្យាបាលដែលបានផ្តល់មុនការបញ្ជូន",
+      "key": "anc.treatmentGiven",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Visit",
+      "kh": "ការពិនិត្យលើកទី",
+      "key": "anc.visitOf",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "weeks",
+      "kh": "សប្តាហ៍",
+      "key": "anc.weeks",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "ANC continues at Borkeo Referral Hospital (CPA2) - 8 visits",
+      "kh": "ការពិនិត្យផ្ទៃពោះបន្តនៅមន្ទីរពេទ្យបង្អែកបរកែវ (CPA2) - ៨ដង",
+      "key": "anc.yellowNote",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Delivered",
+      "kh": "បានសម្រាល",
+      "key": "anc.status.delivered",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Referred to CPA3",
+      "kh": "បានបញ្ជូនទៅ CPA3",
+      "key": "anc.status.referred",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Closed",
+      "kh": "បានបិទ",
+      "key": "anc.status.closed",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "normal",
+      "kh": "ធម្មតា",
+      "key": "anc.delivery.normal",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "caesarean",
+      "kh": "វះកាត់",
+      "key": "anc.delivery.caesarean",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "vacuum",
+      "kh": "បូមជប់",
+      "key": "anc.delivery.vacuum",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Record a dose",
+      "kh": "កត់ត្រាការចាក់",
+      "key": "vac.newDose",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Vaccine",
+      "kh": "វ៉ាក់សាំង",
+      "key": "vac.vaccine",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Dose number",
+      "kh": "ដូសទី",
+      "key": "vac.dose",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Date given",
+      "kh": "ថ្ងៃចាក់",
+      "key": "vac.date",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Quantity",
+      "kh": "បរិមាណ",
+      "key": "vac.quantity",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Batch number",
+      "kh": "លេខឡូត៍",
+      "key": "vac.batch",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Injection site",
+      "kh": "កន្លែងចាក់",
+      "key": "vac.site",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Next appointment",
+      "kh": "ថ្ងៃណាត់លើកក្រោយ",
+      "key": "vac.next",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Given by",
+      "kh": "អ្នកចាក់",
+      "key": "vac.by",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Vaccination card",
+      "kh": "ប័ណ្ណចាក់វ៉ាក់សាំង",
+      "key": "vac.card",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "This vaccine and dose number were already given. Record it again?",
+      "kh": "វ៉ាក់សាំង និងដូសនេះបានចាក់រួចហើយ។ កត់ត្រាម្តងទៀតឬ?",
+      "key": "vac.duplicate",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Old ANC form (read only). Use the official ANC record.",
+      "kh": "ទម្រង់ ANC ចាស់ (អានតែប៉ុណ្ណោះ)។ សូមប្រើកំណត់ត្រាការពិនិត្យផ្ទៃពោះមុនសម្រាល។",
+      "key": "anc.oldForm",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Screening result for the Gynecology doctor",
+      "kh": "លទ្ធផលពិនិត្យសម្រាប់វេជ្ជបណ្ឌិតរោគស្ត្រី",
+      "key": "cervix.title",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Result",
+      "kh": "លទ្ធផល",
+      "key": "cervix.result",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "VIA negative",
+      "kh": "VIA អវិជ្ជមាន",
+      "key": "cervix.negative",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "VIA positive",
+      "kh": "VIA វិជ្ជមាន",
+      "key": "cervix.positive",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Suspected cancer",
+      "kh": "សង្ស័យមហារីក",
+      "key": "cervix.suspect",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Send to the Gynecology doctors",
+      "kh": "ផ្ញើទៅវេជ្ជបណ្ឌិតផ្នែករោគស្ត្រី",
+      "key": "cervix.send",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Choose the result.",
+      "kh": "សូមជ្រើសរើសលទ្ធផល។",
+      "key": "cervix.choose",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Sent to the Gynecology doctors.",
+      "kh": "បានផ្ញើទៅវេជ្ជបណ្ឌិតផ្នែករោគស្ត្រី។",
+      "key": "cervix.sent",
+      "source": "docs/translations-needed.csv"
     }
   ]
 }

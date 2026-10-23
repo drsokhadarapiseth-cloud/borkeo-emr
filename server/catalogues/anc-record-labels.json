@@ -1,0 +1,149 @@
+{
+  "source": "Transcribed from the official Ministry of Health ANC record 2026 (borkeo-update-files/anc/moh-2026-pages/page-2.jpg to page-5.jpg). Words that could not be read with certainty are listed in docs/anc-khmer-to-confirm.md.",
+  "title": "កំណត់ត្រាការពិនិត្យផ្ទៃពោះមុនសម្រាល",
+  "colours": { "green": "បៃតង", "yellow": "លឿង", "red": "ក្រហម" },
+  "footer": "ការិយាល័យគិលានុបដ្ឋាក និងឆ្មបនៃនាយកដ្ឋានសេវាសុខភាព ឆ្នាំ២០២៦",
+  "identity": {
+    "name": "ឈ្មោះ៖",
+    "dateOfBirth": "ថ្ងៃខែឆ្នាំកំណើត៖",
+    "age": "អាយុ៖",
+    "gravida": "ចំនួនផ្ទៃពោះទី៖",
+    "births": "សម្រាល៖",
+    "miscarriages": "រលូត៖",
+    "abortions": "រំលូត៖",
+    "lmp": "ថ្ងៃទី១នៃរដូវចុងក្រោយ៖",
+    "edd": "ថ្ងៃខែឆ្នាំសម្រាលរំពឹងទុក៖",
+    "eddUltrasound": "ថ្ងៃខែឆ្នាំសម្រាលរំពឹងទុកតាមអេកូសាស្ត្រ(ត្រីមាសទី១)៖",
+    "height": "កម្ពស់៖",
+    "heightUnit": "ស.ម",
+    "weightBefore": "ទម្ងន់មុនពេលមានផ្ទៃពោះ៖",
+    "bmiBefore": "សន្ទស្សន៍ម៉ាសរាងកាយ(BMI) មុនមានផ្ទៃពោះ៖",
+    "bmiNormal": "(ទម្ងន់ធម្មតា 18.6-24.9)"
+  },
+  "general": {
+    "title": "ប្រវត្តិជំងឺទូទៅ៖",
+    "items": {
+      "diabetes": "មានជំងឺទឹកនោមផ្អែម",
+      "heart": "មានជំងឺបេះដូង",
+      "respiratory": "មានជំងឺផ្លូវដង្ហើម",
+      "transfusion": "ធ្លាប់បញ្ចូលឈាម",
+      "hypertension": "មានជំងឺលើសសម្ពាធឈាមរ៉ាំរ៉ៃ",
+      "accident": "ធ្លាប់មានគ្រោះថ្នាក់ចរាចរណ៍",
+      "thyroid": "ជំងឺក្រពេញទីរ៉ូអ៊ីត"
+    }
+  },
+  "surgery": { "title": "ប្រវត្តិវះកាត់៖", "diagnosis": "រោគវិនិច្ឆ័យ៖", "year": "ឆ្នាំ៖", "place": "ទីកន្លែង៖", "numbers": ["១.", "២.", "៣."] },
+  "allergy": { "title": "ប្រវត្តិអាល្លែកហ្ស៊ីថ្នាំ៖", "drug": "ឈ្មោះថ្នាំ៖", "symptom": "រោគសញ្ញា៖", "numbers": ["១.", "២."] },
+  "family": {
+    "title": "ប្រវត្តិជំងឺក្នុងក្រុមគ្រួសារ៖",
+    "items": {
+      "diabetes": "មានជំងឺទឹកនោមផ្អែម",
+      "heart": "មានជំងឺបេះដូង",
+      "respiratory": "មានជំងឺផ្លូវដង្ហើម",
+      "seizure": "ប្រកាច់",
+      "malformation": "ភាពមិនប្រក្រតី",
+      "hypertension": "មានជំងឺលើសសម្ពាធឈាមរ៉ាំរ៉ៃ",
+      "mental": "ការយឺតយ៉ាវបញ្ញាស្មារតី",
+      "other": "ផ្សេងៗ"
+    }
+  },
+  "gyn": {
+    "title": "ប្រវត្តិរោគស្ត្រី៖",
+    "menses": "- ការមករដូវ៖",
+    "regular": "ទៀងទាត់",
+    "irregular": "មិនទៀងទាត់",
+    "cycle": "វដ្តរៀងរាល់",
+    "day": "ថ្ងៃ",
+    "duration": "ចំនួនថ្ងៃ",
+    "perMonth": "/ប្រចាំខែ",
+    "contraception": "- មធ្យោបាយពន្យាកំណើត",
+    "none": "គ្មាន",
+    "reason": "មូលហេតុ",
+    "yes": "មាន",
+    "art": "- ការបង្កកំណើតដោយជំនួយវេជ្ជសាស្ត្រ ART៖",
+    "otherGyn": "- ប្រវត្តិរោគស្ត្រីផ្សេងៗ៖"
+  },
+  "social": { "title": "ប្រវត្តិសង្គម៖", "smoking": "មានជក់បារី", "alcohol": "ផឹកស្រា", "drugs": "ប្រើប្រាស់សារធាតុញៀន" },
+  "violence": { "title": "កត្តាប្រឈម អំពើហិង្សាពាក់ព័ន្ធសុខភាពបន្តពូជ ផ្លូវភេទ និងយេនឌ័រ៖" },
+  "mouth": { "title": "ពិនិត្យសុខភាពមាត់ ធ្មេញ និងដោះ៖", "stomatitis": "- រលាកមាត់៖", "caries": "- ធ្មេញពុក៖", "breast": "- ដោះ៖" },
+  "anaemia": { "title": "ពិនិត្យភាពស្លេកស្លាំង៖", "eyelid": "- ត្របកភ្នែក៖", "nails": "- ក្រចកដៃ៖", "palms": "- បាតដៃ៖" },
+  "previous": {
+    "title": "ប្រវត្តិមានផ្ទៃពោះលើកមុន",
+    "number": "ល.រ",
+    "date": "កាលបរិច្ឆេទ",
+    "abortionGroup": "រលូត/រំលូត",
+    "under12": "<12 សប្តាហ៍",
+    "over12": ">12 សប្តាហ៍",
+    "motherGroup": "ម្តាយ",
+    "term": "មិនគ្រប់ខែ/គ្រប់ខែ",
+    "deliveryType": "ប្រភេទនៃការសម្រាល",
+    "place": "ទីកន្លែងសម្រាល",
+    "complications": "*ផលវិបាក ពេល និងក្រោយសម្រាល",
+    "healthProblems": "បញ្ហាសុខភាព មុន និងអំឡុងពេលមានផ្ទៃពោះ",
+    "babyGroup": "កូន",
+    "babyOutcome": "រស់/ស្លាប់កើត/កើតស្លាប់",
+    "sex": "ភេទ",
+    "weight": "ទម្ងន់",
+    "babyProblems": "បញ្ហាសុខភាព",
+    "complicationList": [
+      "រហែកទ្វារមាសកម្រិត៣",
+      "បេរីណេមានស្នាមថ្មេរ មានផ្លែ ដុះសាច់/សិរមាន់",
+      "សរសៃឈាមវ៉ែនឡើងប៉ោង",
+      "បម្រុងក្រឡាភ្លើង/ក្រឡាភ្លើង",
+      "ធ្លាប់ប្រកាច់",
+      "សុកពាំងមាត់ស្បូន",
+      "កូនគីឡូធំ (Macrosomia)",
+      "ធ្លាប់ធ្លាក់ឈាមក្រោយសម្រាល",
+      "ធ្លាប់មានកូនកើតមកមានទំងន់ទាបធៀបនឹងអាយុគភ៌",
+      "ផ្សេងៗ"
+    ]
+  },
+  "labs": {
+    "title": "លទ្ធផលមន្ទីរពិសោធន៍",
+    "date": "កាលបរិច្ឆេទ",
+    "hiv": "មេរោគអេដស៍ HIV",
+    "syphilis": "មេរោគស្វាយ Syphilis",
+    "hbsag": "រលាកថ្លើមប្រភេទបេ Ag HBs",
+    "hcv": "រលាកថ្លើមប្រភេទសេ Anti HCV",
+    "redCells": "គ្រាប់ឈាមក្រហម៖",
+    "hb": "- អេម៉ូក្លូប៊ីន Hb",
+    "hct": "- អេម៉ាតូគ្រីត HCT",
+    "plt": "- ផ្លាកែត PLT",
+    "group": "ក្រុមឈាម Group,RH"
+  },
+  "ultrasound": {
+    "title": "លទ្ធផលពិនិត្យអេកូសាស្ត្រ",
+    "columns": [
+      { "key": "date", "kh": "កាលបរិច្ឆេទ", "en": "DATE" },
+      { "key": "ga", "kh": "អាយុគភ៌", "en": "GA" },
+      { "key": "presentation", "kh": "ទម្រង់បង្ហាញ", "en": "Fetal Presentation" },
+      { "key": "bpd", "kh": "ក្បាលកូន", "en": "BPD" },
+      { "key": "placenta", "kh": "ទីតាំងសុក", "en": "Placenta" },
+      { "key": "afi", "kh": "ទឹកភ្លោះ", "en": "AFI" },
+      { "key": "weight", "kh": "ទម្ងន់កូន", "en": "Weight" },
+      { "key": "edd", "kh": "ថ្ងៃខែឆ្នាំសម្រាល", "en": "EDD" },
+      { "key": "other", "kh": "ផ្សេងៗ", "en": "Other" }
+    ]
+  },
+  "visits": {
+    "columns": [
+      { "key": "date", "kh": "ថ្ងៃខែឆ្នាំពិនិត្យ", "en": "DATE" },
+      { "key": "ga", "kh": "អាយុគភ៌/សប្តាហ៍", "en": "GA" },
+      { "key": "uh", "kh": "កម្ពស់ស្បូន", "en": "UH" },
+      { "key": "fp", "kh": "ទម្រង់ទារក", "en": "FP" },
+      { "key": "fhr", "kh": "បេះដូងទារក", "en": "FHR" },
+      { "key": "bp", "kh": "សម្ពាធឈាម-ជីពចរ", "en": "BP&P" },
+      { "key": "weight", "kh": "ទម្ងន់", "en": "Weight" },
+      { "key": "wp", "kh": "ឡើងទម្ងន់", "en": "WP" },
+      { "key": "proteinuria", "kh": "ជាតិប្រៃ", "en": "Proteinuria" },
+      { "key": "glucosuria", "kh": "ជាតិផ្អែម", "en": "Glucosuria" },
+      { "key": "varices", "kh": "ឡើងសរសៃវ៉ែន/ហើម", "en": "Varices" },
+      { "key": "fer", "kh": "ថ្នាំគ្រាប់ជាតិដែក", "en": "Fer" },
+      { "key": "vaccination", "kh": "ចាក់ថ្នាំបង្ការ", "en": "Vaccination" },
+      { "key": "complaint", "kh": "សញ្ញាតម្អូញ", "en": "Chief complain" },
+      { "key": "diagnosis", "kh": "មូលវិចារ (រោគវិនិច្ឆ័យ និងអន្តរាគមន៍)", "en": "Diagnosis and Intervention" },
+      { "key": "appointment", "kh": "ថ្ងៃខែឆ្នាំណាត់ជួបលើកក្រោយ", "en": "Appointment" },
+      { "key": "name", "kh": "ឈ្មោះបុគ្គលិក", "en": "NAME" }
+    ]
+  }
+}

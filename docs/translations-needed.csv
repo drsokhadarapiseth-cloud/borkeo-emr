@@ -304,3 +304,95 @@ safety.doseChild,Child,"Maximum dose warning in the prescription forms (v42.5, d
 safety.weightNeeded,Enter the weight to check the dose,Orange note under a child's medicine when no weight is recorded (v42.5 owner text),public/medication-safety.js,បញ្ចូលទម្ងន់ ដើម្បីពិនិត្យកម្រិតថ្នាំ
 safety.doseProtocol,Protocol:,"Guidance note under a medicine dosed by protocol (v42.5, draft Khmer, owner to review)",public/medication-safety.js,តាមពិធីសារ៖
 safety.doseReasonOnSave,Write the reason to continue above the maximum dose.,"Message when saving a prescription line above the maximum dose without a reason (v42.5, draft Khmer, owner to review)",public/medication-safety.js,សូមសរសេរមូលហេតុ ដើម្បីបន្តលើសកម្រិតថ្នាំអតិបរមា។
+maternal.vaccination,Vaccination,"Triage service choice for the free vaccination by the midwife (v42.6, owner text; listed in docs/anc-khmer-to-confirm.md)",protected/EMR.html; public/emr-patient-record.js,ចាក់វ៉ាក់សាំង
+maternal.queueTitle,Maternal services queue,Midwife menu item and page title (v42.6 owner text),public/nav-config.js; protected/maternal.html,បញ្ជីអ្នកជំងឺសេវាមាតា
+maternal.queuePageTitle,Maternal services queue · Borkeo EMR,Browser tab title of the midwife queue (v42.6),protected/maternal.html,បញ្ជីអ្នកជំងឺសេវាមាតា · Borkeo EMR
+maternal.queueEmpty,No patient waiting.,"Midwife queue when nobody waits (v42.6, draft Khmer, owner to review)",public/maternal.js,មិនមានអ្នកជំងឺរង់ចាំទេ។
+maternal.midwifeOrders,The midwife can order only HBsAg and ultrasound.,"Error when a midwife orders another test (v42.6, draft Khmer, owner to review)",server/routes/paraclinic.mjs,ឆ្មបអាចស្នើតែ HBsAg និងអេកូសាស្ត្រប៉ុណ្ណោះ។
+maternal.triageVitals,Fill every vital sign before sending to ANC.,"Triage error for ANC with a blank value (v42.6, draft Khmer, owner to review)",server/routes/patients.mjs,សូមបំពេញសញ្ញាជីវិតទាំងអស់ មុនបញ្ជូនទៅពិនិត្យផ្ទៃពោះ។
+maternal.midwifeMedicines,The midwife prescribes only the medicines of the maternal services.,"Error when a midwife sends another medicine to Pharmacy (v42.6, draft Khmer, owner to review)",server/routes/patients.mjs,ឆ្មបអាចចេញវេជ្ជបញ្ជាតែឱសថសេវាមាតាប៉ុណ្ណោះ។
+anc.addIron,Add to the prescription,"ANC record, to-do panel: iron / folic acid task (v42.6, draft Khmer, owner to review)",public/anc-record.js,បញ្ចូលក្នុងវេជ្ជបញ្ជា
+anc.allergyLink,Drug allergies are also kept in the structured allergy record (patient banner).,"ANC record page 2, under the drug allergy lines (v42.6, draft Khmer, owner to review)",public/anc-record.js,ប្រវត្តិអាល្លែកហ្ស៊ីថ្នាំក៏ត្រូវកត់ក្នុងកំណត់ត្រាអាលែកហ្ស៊ី (ផ្ទាំងព័ត៌មានអ្នកជំងឺ) ផងដែរ។
+anc.askDoctor,Ask a doctor to order,"ANC record, to-do panel: a test the midwife does not order (v42.6, draft Khmer, owner to review)",public/anc-record.js,ស្នើវេជ្ជបណ្ឌិតឱ្យចេញសំណើ
+anc.auto,automatic,"ANC colour chart: item decided from the data (v42.6, draft Khmer, owner to review)",public/anc-record.js,ស្វ័យប្រវត្តិ
+anc.closeDelivered,"Has the woman delivered? OK = delivered, Cancel = close for another reason","ANC record: closing the record (v42.6, draft Khmer, owner to review)",public/anc-record.js,"ស្ត្រីបានសម្រាលកូនហើយឬនៅ? យល់ព្រម = បានសម្រាល, បោះបង់ = បិទដោយមូលហេតុផ្សេង"
+anc.closeRecord,Close the record,"ANC record button (v42.6, draft Khmer, owner to review)",public/anc-record.js,បិទកំណត់ត្រា
+anc.closeUndone,Close without doing,"ANC record, to-do panel (v42.6, draft Khmer, owner to review)",public/anc-record.js,បិទដោយមិនបានធ្វើ
+anc.colourHistory,Colour changes,"ANC record: history of the colour code (v42.6, draft Khmer, owner to review)",public/anc-record.js,ប្រវត្តិប្តូរកូដពណ៌
+anc.days,days,"ANC prescription (v42.6, draft Khmer, owner to review)",public/anc-record.js,ថ្ងៃ
+anc.enterResult,Enter the result,"ANC record, to-do panel: own rapid test (v42.6, draft Khmer, owner to review)",public/anc-record.js,បញ្ចូលលទ្ធផល
+anc.fromTriage,from Triage,"ANC record: weight before pregnancy taken from Triage (v42.6, draft Khmer, owner to review)",public/anc-record.js,ពីទ្រីយ៉ា
+anc.giveVaccine,Open the vaccination,"ANC record: tetanus vaccine task and link (v42.6, draft Khmer, owner to review)",public/anc-record.js,បើកការចាក់វ៉ាក់សាំង
+anc.greenNote,ANC with the midwife - 4 visits,"ANC record: green colour (v42.6, draft Khmer, owner to review)",public/anc-record.js,ពិនិត្យផ្ទៃពោះជាមួយឆ្មប - ៤ដង
+anc.heightCheck,Height under 145 cm: check,"ANC record: height flag (v42.6, draft Khmer, owner to review)",public/anc-record.js,កម្ពស់ក្រោម ១៤៥ ស.ម៖ សូមពិនិត្យ
+anc.importedHint,Values from Registration and from Triage of this visit; the midwife can correct them (the Triage value stays saved).,"ANC record, today's visit (v42.6, draft Khmer, owner to review)",public/anc-record.js,តម្លៃពីការចុះឈ្មោះ និងពីទ្រីយ៉ានៃការមកលើកនេះ។ ឆ្មបអាចកែបាន (តម្លៃទ្រីយ៉ានៅតែរក្សាទុក)។
+anc.letterDoctor,Referring doctor,"Referral letter to CPA3 (v42.6, draft Khmer, owner to review)",public/anc-referral-letter.mjs,វេជ្ជបណ្ឌិតអ្នកបញ្ជូន
+anc.letterReasons,Reasons (red),"Referral letter to CPA3 (v42.6, draft Khmer, owner to review)",public/anc-referral-letter.mjs,មូលហេតុ (ក្រហម)
+anc.letterResults,Test results,"Referral letter to CPA3 (v42.6, draft Khmer, owner to review)",public/anc-referral-letter.mjs,លទ្ធផលតេស្ត
+anc.letterTitle,Referral letter,"Referral letter to CPA3, title (v42.6, draft Khmer, owner to review)",public/anc-referral-letter.mjs,លិខិតបញ្ជូនអ្នកជំងឺ
+anc.letterTo,To: the provincial referral hospital (CPA3),"Referral letter to CPA3 (v42.6, draft Khmer, owner to review)",public/anc-referral-letter.mjs,ជូនចំពោះ៖ មន្ទីរពេទ្យបង្អែកខេត្ត (CPA3)
+anc.letterTreatment,Treatment given,"Referral letter to CPA3 (v42.6, draft Khmer, owner to review)",public/anc-referral-letter.mjs,ការព្យាបាលដែលបានផ្តល់
+anc.letterVitals,Vital signs,"Referral letter to CPA3 (v42.6, draft Khmer, owner to review)",public/anc-referral-letter.mjs,សញ្ញាជីវិត
+anc.negative,Negative,"ANC rapid test result (v42.6, draft Khmer, owner to review)",public/anc-record.js,អវិជ្ជមាន
+anc.positive,Positive,"ANC rapid test result (v42.6, draft Khmer, owner to review)",public/anc-record.js,វិជ្ជមាន
+anc.nextVisit,Next scheduled visit,"ANC to-do panel (v42.6, draft Khmer, owner to review)",public/anc-record.js,ការពិនិត្យតាមកាលវិភាគលើកក្រោយ
+anc.noRecord,No ANC record for this pregnancy yet.,"ANC record page (v42.6, draft Khmer, owner to review)",public/anc-record.js,មិនទាន់មានកំណត់ត្រាការពិនិត្យផ្ទៃពោះសម្រាប់ផ្ទៃពោះនេះទេ។
+anc.notScheduled,Not a scheduled visit,"ANC to-do panel between scheduled visits (v42.6, draft Khmer, owner to review)",public/anc-record.js,មិនមែនជាការពិនិត្យតាមកាលវិភាគ
+anc.ok,OK,"ANC to-do window button (v42.6, draft Khmer, owner to review)",public/anc-record.js,យល់ព្រម
+anc.open,Open the ANC record,"ANC record page, first visit (v42.6, draft Khmer, owner to review)",public/anc-record.js,បើកកំណត់ត្រាការពិនិត្យផ្ទៃពោះ
+anc.ordered,Sent. The patient pays at the Cashier.,"ANC record after a Laboratory / Imaging order (v42.6, draft Khmer, owner to review)",public/anc-record.js,បានបញ្ជូន។ អ្នកជំងឺបង់ប្រាក់នៅបេឡា។
+anc.orderLab,Send to the Laboratory (pay at the Cashier),"ANC to-do panel: HBsAg (v42.6, draft Khmer, owner to review)",public/anc-record.js,បញ្ជូនទៅមន្ទីរពិសោធន៍ (បង់ប្រាក់នៅបេឡា)
+anc.orderUltrasound,Send to Imaging (pay at the Cashier),"ANC to-do panel: ultrasound (v42.6, draft Khmer, owner to review)",public/anc-record.js,បញ្ជូនទៅផ្នែករូបភាពវេជ្ជសាស្ត្រ (បង់ប្រាក់នៅបេឡា)
+anc.overdue,Overdue from earlier visits,"ANC to-do panel (v42.6, draft Khmer, owner to review)",public/anc-record.js,ការងារលើកមុនដែលមិនទាន់ធ្វើ
+anc.prescription,Prescription (maternal services medicines),"ANC record, today's visit (v42.6, draft Khmer, owner to review)",public/anc-record.js,វេជ្ជបញ្ជា (ឱសថសេវាមាតា)
+anc.printReferral,Print the referral letter,"ANC record button (v42.6, draft Khmer, owner to review)",public/anc-record.js,បោះពុម្ពលិខិតបញ្ជូន
+anc.rapidTests,Rapid tests done by the midwife,"ANC record, today's visit (v42.6, draft Khmer, owner to review)",public/anc-record.js,តេស្តរហ័សដែលឆ្មបធ្វើ
+anc.reason,Reason,"ANC record (v42.6, draft Khmer, owner to review)",public/anc-record.js,មូលហេតុ
+anc.redNote,Refer to the provincial hospital (CPA3) with a referral form signed by a doctor,"ANC record: red colour (v42.6, draft Khmer, owner to review)",public/anc-record.js,បញ្ជូនទៅមន្ទីរពេទ្យខេត្ត (CPA3) ជាមួយលិខិតបញ្ជូនដែលវេជ្ជបណ្ឌិតចុះហត្ថលេខា
+anc.referralPending,Referral waiting for a doctor signature,"ANC record (v42.6, draft Khmer, owner to review)",public/anc-record.js,លិខិតបញ្ជូនកំពុងរង់ចាំហត្ថលេខាវេជ្ជបណ្ឌិត
+anc.reopen,Reopen,"ANC to-do panel (v42.6, draft Khmer, owner to review)",public/anc-record.js,បើកវិញ
+anc.requestReferral,Refer to CPA3 (doctor signs),"ANC record button, red (v42.6, draft Khmer, owner to review)",public/anc-record.js,បញ្ជូនទៅ CPA3 (វេជ្ជបណ្ឌិតចុះហត្ថលេខា)
+anc.saved,Saved.,"ANC record status (v42.6, draft Khmer, owner to review)",public/anc-record.js,បានរក្សាទុក។
+anc.saveRecord,Save the record,"ANC record button (v42.6, draft Khmer, owner to review)",public/anc-record.js,រក្សាទុកកំណត់ត្រា
+anc.saveVisit,Save the visit,"ANC record button (v42.6, draft Khmer, owner to review)",public/anc-record.js,រក្សាទុកការពិនិត្យ
+anc.scanDate,scan date,"ANC record page 2: date of the dating ultrasound (v42.6, draft Khmer, owner to review)",public/anc-record.js,ថ្ងៃធ្វើអេកូ
+anc.sendPharmacy,Send to Pharmacy,"ANC prescription button (v42.6, draft Khmer, owner to review)",public/anc-record.js,បញ្ជូនទៅឱសថស្ថាន
+anc.signReferral,Sign the referral,"ANC record button for the Obstetric / Gynecology doctor (v42.6, draft Khmer, owner to review)",public/anc-record.js,ចុះហត្ថលេខាលើលិខិតបញ្ជូន
+anc.sourceLmp,from the last menstrual period,"ANC record: source of the EDD (v42.6, draft Khmer, owner to review)",public/anc-record.js,តាមថ្ងៃទី១នៃរដូវចុងក្រោយ
+anc.sourceUltrasound,from the dating ultrasound,"ANC record: source of the EDD (v42.6, draft Khmer, owner to review)",public/anc-record.js,តាមអេកូសាស្ត្រ
+anc.suggested,suggested,"ANC record: suggested next appointment (v42.6, draft Khmer, owner to review)",public/anc-record.js,ស្នើ
+anc.temperature,Temperature,"ANC record, today's visit (v42.6, draft Khmer, owner to review)",public/anc-record.js,សីតុណ្ហភាព
+anc.todayVisit,Today's visit,"ANC record (v42.6, draft Khmer, owner to review)",public/anc-record.js,ការពិនិត្យថ្ងៃនេះ
+anc.todo,To do at this visit,"ANC to-do panel title (v42.6, draft Khmer, owner to review)",public/anc-record.js,ការងារត្រូវធ្វើនៅការពិនិត្យនេះ
+anc.treatmentGiven,Treatment given before the referral,"ANC referral (v42.6, draft Khmer, owner to review)",public/anc-record.js,ការព្យាបាលដែលបានផ្តល់មុនការបញ្ជូន
+anc.visitOf,Visit,"ANC to-do panel: visit number (v42.6, draft Khmer, owner to review)",public/anc-record.js,ការពិនិត្យលើកទី
+anc.weeks,weeks,"ANC record: GA (v42.6, draft Khmer, owner to review)",public/anc-record.js,សប្តាហ៍
+anc.yellowNote,ANC continues at Borkeo Referral Hospital (CPA2) - 8 visits,"ANC record: yellow colour (v42.6, draft Khmer, owner to review)",public/anc-record.js,ការពិនិត្យផ្ទៃពោះបន្តនៅមន្ទីរពេទ្យបង្អែកបរកែវ (CPA2) - ៨ដង
+anc.status.delivered,Delivered,"ANC record status (v42.6, draft Khmer, owner to review)",public/anc-record.js,បានសម្រាល
+anc.status.referred,Referred to CPA3,"ANC record status (v42.6, draft Khmer, owner to review)",public/anc-record.js,បានបញ្ជូនទៅ CPA3
+anc.status.closed,Closed,"ANC record status (v42.6, draft Khmer, owner to review)",public/anc-record.js,បានបិទ
+anc.delivery.normal,normal,"ANC previous pregnancies: type of delivery (v42.6, draft Khmer, owner to review)",public/anc-record.js,ធម្មតា
+anc.delivery.caesarean,caesarean,"ANC previous pregnancies: type of delivery (v42.6, draft Khmer, owner to review)",public/anc-record.js,វះកាត់
+anc.delivery.vacuum,vacuum,"ANC previous pregnancies: type of delivery (v42.6, draft Khmer, owner to review)",public/anc-record.js,បូមជប់
+vac.newDose,Record a dose,"Vaccination page (midwife) (v42.6, draft Khmer, owner to review)",public/vaccination.js,កត់ត្រាការចាក់
+vac.vaccine,Vaccine,"Vaccination page (v42.6, draft Khmer, owner to review)",public/vaccination.js,វ៉ាក់សាំង
+vac.dose,Dose number,"Vaccination page (v42.6, draft Khmer, owner to review)",public/vaccination.js,ដូសទី
+vac.date,Date given,"Vaccination page (v42.6, draft Khmer, owner to review)",public/vaccination.js,ថ្ងៃចាក់
+vac.quantity,Quantity,"Vaccination page: amount deducted from stock (v42.6, draft Khmer, owner to review)",public/vaccination.js,បរិមាណ
+vac.batch,Batch number,"Vaccination page (v42.6, draft Khmer, owner to review)",public/vaccination.js,លេខឡូត៍
+vac.site,Injection site,"Vaccination page (v42.6, draft Khmer, owner to review)",public/vaccination.js,កន្លែងចាក់
+vac.next,Next appointment,"Vaccination page (v42.6, draft Khmer, owner to review)",public/vaccination.js,ថ្ងៃណាត់លើកក្រោយ
+vac.reaction,Reaction,"Vaccination page (v42.6, draft Khmer, owner to review)",public/vaccination.js,ប្រតិកម្ម
+vac.by,Given by,"Vaccination card (v42.6, draft Khmer, owner to review)",public/vaccination.js,អ្នកចាក់
+vac.card,Vaccination card,"Vaccination card (v42.6, draft Khmer, owner to review)",public/vaccination.js,ប័ណ្ណចាក់វ៉ាក់សាំង
+vac.duplicate,This vaccine and dose number were already given. Record it again?,"Vaccination warning (v42.6, draft Khmer, owner to review)",public/vaccination.js,វ៉ាក់សាំង និងដូសនេះបានចាក់រួចហើយ។ កត់ត្រាម្តងទៀតឬ?
+anc.oldForm,Old ANC form (read only). Use the official ANC record.,"Old ANC form on the medical record page (v42.6, draft Khmer, owner to review)",public/maternal-emr.js,ទម្រង់ ANC ចាស់ (អានតែប៉ុណ្ណោះ)។ សូមប្រើកំណត់ត្រាការពិនិត្យផ្ទៃពោះមុនសម្រាល។
+cervix.title,Screening result for the Gynecology doctor,"Cervical screening panel for the midwife (v42.6, draft Khmer, owner to review)",public/maternal-emr.js,លទ្ធផលពិនិត្យសម្រាប់វេជ្ជបណ្ឌិតរោគស្ត្រី
+cervix.result,Result,"Cervical screening panel (v42.6, draft Khmer, owner to review)",public/maternal-emr.js,លទ្ធផល
+cervix.note,Note,"Cervical screening panel (v42.6, draft Khmer, owner to review)",public/maternal-emr.js,កំណត់សម្គាល់
+cervix.negative,VIA negative,"Cervical screening result (v42.6, draft Khmer, owner to review)",public/maternal-emr.js,VIA អវិជ្ជមាន
+cervix.positive,VIA positive,"Cervical screening result (v42.6, draft Khmer, owner to review)",public/maternal-emr.js,VIA វិជ្ជមាន
+cervix.suspect,Suspected cancer,"Cervical screening result (v42.6, draft Khmer, owner to review)",public/maternal-emr.js,សង្ស័យមហារីក
+cervix.send,Send to the Gynecology doctors,"Cervical screening panel button (v42.6, draft Khmer, owner to review)",public/maternal-emr.js,ផ្ញើទៅវេជ្ជបណ្ឌិតផ្នែករោគស្ត្រី
+cervix.choose,Choose the result.,"Cervical screening panel (v42.6, draft Khmer, owner to review)",public/maternal-emr.js,សូមជ្រើសរើសលទ្ធផល។
+cervix.sent,Sent to the Gynecology doctors.,"Cervical screening panel (v42.6, draft Khmer, owner to review)",public/maternal-emr.js,បានផ្ញើទៅវេជ្ជបណ្ឌិតផ្នែករោគស្ត្រី។

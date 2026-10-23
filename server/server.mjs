@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v42.5 - Electronic Medical Record System
+// Borkeo EMR v42.6 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -41,6 +41,8 @@ import { mountPatientsRoutes } from './routes/patients.mjs';
 import { mountClinicalRoutes } from './routes/clinical.mjs';
 import { mountClinicalSummaryRoutes } from './routes/clinical-summary.mjs';
 import { mountMedicationSafetyRoutes } from './routes/medication-safety.mjs';
+import { mountMaternalRoutes } from './routes/maternal.mjs';
+import { ensureMaternalSchema } from './maternal.mjs';
 import { mountPeriopFormRoutes } from './routes/periop-forms.mjs';
 import { mountRecordAccessRoutes } from './routes/record-access.mjs';
 import { ensureRecordAccessSchema } from './record-access.mjs';
@@ -155,6 +157,14 @@ const publicFiles = new Map([
   ['/public/medicine-autocomplete.css', ['medicine-autocomplete.css', 'text/css; charset=utf-8']],
   ['/public/medicine-units.js', ['medicine-units.js', 'text/javascript; charset=utf-8']],
   ['/public/medication-routes.js', ['medication-routes.js', 'text/javascript; charset=utf-8']],
+  ['/public/anc-engine.mjs', ['anc-engine.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/anc-referral-letter.mjs', ['anc-referral-letter.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/maternal.js', ['maternal.js', 'text/javascript; charset=utf-8']],
+  ['/public/maternal.css', ['maternal.css', 'text/css; charset=utf-8']],
+  ['/public/anc-record.js', ['anc-record.js', 'text/javascript; charset=utf-8']],
+  ['/public/anc-record.css', ['anc-record.css', 'text/css; charset=utf-8']],
+  ['/public/vaccination.js', ['vaccination.js', 'text/javascript; charset=utf-8']],
+  ['/public/maternal-emr.js', ['maternal-emr.js', 'text/javascript; charset=utf-8']],
   ['/public/medicine-dose-check.js', ['medicine-dose-check.js', 'text/javascript; charset=utf-8']],
   ['/public/clinical-summary.css', ['clinical-summary.css', 'text/css; charset=utf-8']],
   ['/public/clinical-summary.js', ['clinical-summary.js', 'text/javascript; charset=utf-8']],
@@ -292,6 +302,10 @@ const APP_VERSION = (() => {
 const protectedPages = new Map([
   ['/admin/health-facility',['health-facility.html',false]],
   ['/admin/drug-safety',['drug-safety.html',false]],
+  // v42.6: maternal services (midwife queue, official ANC record, vaccination).
+  ['/maternal',['maternal.html',false]],
+  ['/anc-record',['anc-record.html',false]],
+  ['/vaccination',['vaccination.html',false]],
   ['/admin/record-log',['record-log.html',false]],
   ['/admin/interface',['interface-theme.html',false]],
   ['/styleguide', ['styleguide.html', false]],
@@ -505,7 +519,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   // v42.5: one medication route table for every page (new lines: IV, IM, SC and the simple routes).
   html = html.replace('</head>', '<script src="/public/medication-routes.js?v=4250"></script></head>');
   // v42.3: medicine name search in the prescription forms (medical record page only).
-  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/medicine-autocomplete.css?v=4250"><script src="/public/medicine-autocomplete.js?v=4250" defer></script><script src="/public/medicine-dose-check.js?v=4250" defer></script></head>');
+  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/medicine-autocomplete.css?v=4250"><script src="/public/medicine-autocomplete.js?v=4250" defer></script><script src="/public/medicine-dose-check.js?v=4250" defer></script><link rel="stylesheet" href="/public/maternal.css?v=4260"><script src="/public/maternal-emr.js?v=4260" defer></script></head>');
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=3800" defer></script></head>');
   // v41.0: structured allergy record, problem list and nursing demographics (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/clinical-summary.css?v=4100"><script src="/public/clinical-summary.js?v=4100" defer></script><link rel="stylesheet" href="/public/display-rules.css?v=4110"><script src="/public/display-rules.js?v=4110" defer></script><link rel="stylesheet" href="/public/medication-safety.css?v=4120"><script src="/public/medication-safety.js?v=4120" defer></script><link rel="stylesheet" href="/public/periop-forms.css?v=4160"><script src="/public/periop-forms.js?v=4160" defer></script><script src="/public/fluid-balance.js?v=4160" defer></script><script src="/public/early-warning.js?v=4160" defer></script><link rel="stylesheet" href="/public/patient-documents.css?v=4170"><script src="/public/patient-documents.js?v=4170" defer></script></head>');
@@ -1918,6 +1932,7 @@ export function createEmrServer(configOverrides = {}) {
   ensureEditorHistorySchema(database);
   ensureClinicalSummarySchema(database);
   ensureMedicationSafetySchema(database);
+  ensureMaternalSchema(database);
   ensurePeriopSchema(database);
   ensureCriticalEscalationSchema(database);
   ensureRecordAccessSchema(database);
@@ -1952,6 +1967,7 @@ export function createEmrServer(configOverrides = {}) {
   mountClinicalRoutes(router);
   mountClinicalSummaryRoutes(router);
   mountMedicationSafetyRoutes(router);
+  mountMaternalRoutes(router);
   mountPeriopFormRoutes(router);
   mountRecordAccessRoutes(router);
   // POST' && pathname === '/api/finance/complete-payment'

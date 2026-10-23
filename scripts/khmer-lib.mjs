@@ -97,10 +97,18 @@ export function readApprovedChanges(file = approvedChangesPath) {
   return rows;
 }
 
+// v42.6: Khmer copied from the owner's source documents (official Ministry of
+// Health ANC record, colour chart, schedule) is approved in its own file.
+export const approvedSourcePath = path.join(projectRoot, 'docs', 'approved-source-khmer.json');
+
 export function readApprovedNew(file = approvedNewPath) {
-  if (!fs.existsSync(file)) return new Set();
-  const json = JSON.parse(fs.readFileSync(file, 'utf8'));
-  return new Set((json.entries || []).map((entry) => entry.kh));
+  const result = new Set();
+  for (const source of file === approvedNewPath ? [file, approvedSourcePath] : [file]) {
+    if (!fs.existsSync(source)) continue;
+    const json = JSON.parse(fs.readFileSync(source, 'utf8'));
+    for (const entry of json.entries || []) result.add(entry.kh);
+  }
+  return result;
 }
 
 export function checkAgainstBaseline({ baseline, current, approvedChanges, approvedNew }) {

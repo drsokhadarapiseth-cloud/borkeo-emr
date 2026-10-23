@@ -1,3 +1,4 @@
+import { canUseMaternalPatient, maternalOptions } from '../maternal.mjs';
 import { uploadDirectory } from '../config.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -396,11 +397,23 @@ export function mountParaclinicRoutes(router) {
     } = ctx;
     if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
     const role = requireContext(session);
-    if (!['DOCTOR', 'ADMIN', 'VICE_DIRECTOR'].includes(role)) return sendJson(response, 403, { error: 'Only a doctor or administrator can create paraclinic requests.' }, { secure: config.cookieSecure });
+    if (!['DOCTOR', 'ADMIN', 'VICE_DIRECTOR', 'MIDWIFE'].includes(role)) return sendJson(response, 403, { error: 'Only a doctor or administrator can create paraclinic requests.' }, { secure: config.cookieSecure });
     const body = await readJson(request, config.maxClinicalBodyBytes);
     const patientKey = clinicalPatientKey(body?.patientKey);
     const patient = database.findPatient(patientKey);
     if (!patient) return sendJson(response, 404, { error: 'Patient was not found.' }, { secure: config.cookieSecure });
+    // v42.6: the midwife orders only HBsAg from the Laboratory and ultrasound from
+    // Imaging for her maternal-service patients (server/clinical-options.json "maternal").
+    if (role === 'MIDWIFE') {
+      const options = maternalOptions();
+      const modalityRequested = String(body?.modality || '').toUpperCase();
+      const items = Array.isArray(body?.request?.items) ? body.request.items : [];
+      const allowedOrder = modalityRequested === 'LAB'
+        ? items.length > 0 && items.every(item => options.midwifeLabTests.includes(String(item?.code || '').toUpperCase()))
+        : options.midwifeImaging.includes(modalityRequested);
+      if (!canUseMaternalPatient({ ...session, activeRole: role }, patient, sessionWard(session))) return sendJson(response, 403, { error: 'This patient is outside your service.' }, { secure: config.cookieSecure });
+      if (!allowedOrder) return sendJson(response, 403, { error: 'ឆ្មបអាចស្នើតែ HBsAg និងអេកូសាស្ត្រប៉ុណ្ណោះ។' }, { secure: config.cookieSecure });
+    }
     if (!canAccessPatient(database, session, patient) && !['ADMIN', 'VICE_DIRECTOR', 'DOCTOR'].includes(role)) {
       return sendJson(response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
     }
@@ -419,7 +432,7 @@ export function mountParaclinicRoutes(router) {
     const prePaymentReview = role === 'DOCTOR' && patient.service_mode === 'opd' && triageParaclinic && workflowStage === 'PARACLINIC_REVIEW_PENDING' && consultationPaymentRecorded;
     const preConsultOpd = role === 'DOCTOR' && patient.service_mode === 'opd' && triageParaclinic &&
       Boolean(patientData['system:opdPreConsultParaclinicAt']) && !patientData['system:opdConsultedAt'] && ['OPD_PARACLINIC_ORDERING', 'CASHIER_PENDING_PARACLINIC', 'PARACLINIC_RESULTS_PENDING', 'DOCTOR_READY'].includes(workflowStage);
-    const postConsultOpd = ['DOCTOR', 'ADMIN', 'VICE_DIRECTOR'].includes(role) && patient.service_mode === 'opd' && consultationPaymentRecorded && !preConsultOpd && !prePaymentReview;
+    const postConsultOpd = ['DOCTOR', 'ADMIN', 'VICE_DIRECTOR', 'MIDWIFE'].includes(role) && patient.service_mode === 'opd' && consultationPaymentRecorded && !preConsultOpd && !prePaymentReview;
     const opdParaclinicFlow = preConsultOpd || prePaymentReview || postConsultOpd;
     if (patient.service_mode === 'opd' && !opdParaclinicFlow && !consultationPaymentRecorded) {
       return sendJson(response, 409, { error: 'Cashier confirmation of the OPD consultation fee is required before ordering paraclinic services.' }, { secure: config.cookieSecure });
