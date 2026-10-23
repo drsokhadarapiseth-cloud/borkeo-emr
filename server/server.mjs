@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v42.6 - Electronic Medical Record System
+// Borkeo EMR v42.8 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -42,6 +42,9 @@ import { mountClinicalRoutes } from './routes/clinical.mjs';
 import { mountClinicalSummaryRoutes } from './routes/clinical-summary.mjs';
 import { mountMedicationSafetyRoutes } from './routes/medication-safety.mjs';
 import { mountMaternalRoutes } from './routes/maternal.mjs';
+import { NpcaIntegration } from './npca/integration.mjs';
+import { ensureNpcaSchema } from './npca/storage.mjs';
+import { mountNpcaRoutes } from './routes/npca.mjs';
 import { ensureMaternalSchema } from './maternal.mjs';
 import { mountPeriopFormRoutes } from './routes/periop-forms.mjs';
 import { mountRecordAccessRoutes } from './routes/record-access.mjs';
@@ -113,6 +116,11 @@ const dummyPasswordHash = 'scrypt$32768$8$1$MDAwMDAwMDAwMDAwMDAwMA$qM8HKw2pZpspP
 const pharmacySettledCodes=new Set(['INSURANCE','NGO','PAID','NSSF','HEF_EQUITY','HEF_VULNERABLE','EXEMPT','NSSF_OUTSIDE','NSSF_WORKER','NSSF_CIVIL','HEF_POOR','HEF_VULNERABLE_FAMILY','FULL_WAIVER']);
 
 const publicFiles = new Map([
+  ['/public/npca-registration.js', ['npca-registration.js', 'text/javascript; charset=utf-8']],
+  ['/public/npca-forms.js', ['npca-forms.js', 'text/javascript; charset=utf-8']],
+  ['/public/npca-widget.js', ['npca-widget.js', 'text/javascript; charset=utf-8']],
+  ['/public/npca.js', ['npca.js', 'text/javascript; charset=utf-8']],
+  ['/public/npca.css', ['npca.css', 'text/css; charset=utf-8']],
   ['/public/escape-html.js', ['escape-html.js', 'text/javascript; charset=utf-8']],
   ['/public/ipd-transfer.js', ['ipd-transfer.js', 'text/javascript; charset=utf-8']],
   ['/public/ipd-transfer.css', ['ipd-transfer.css', 'text/css; charset=utf-8']],
@@ -300,6 +308,8 @@ const APP_VERSION = (() => {
   catch { return '22.2'; }
 })();
 const protectedPages = new Map([
+  ['/admin/npca', ['npca.html',false]],
+  ['/npca', ['npca.html',false]],
   ['/admin/health-facility',['health-facility.html',false]],
   ['/admin/drug-safety',['drug-safety.html',false]],
   // v42.6: maternal services (midwife queue, official ANC record, vaccination).
@@ -512,7 +522,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   html = html.replace(/(<span\b[^>]*\bdata-app-version\b[^>]*>)[^<]*(<\/span>)/g, (_, open, close) => `${open}v${APP_VERSION}${close}`);
   html = html.replace(/Borkeo EMR v\d+\.\d+/g, `Borkeo EMR v${APP_VERSION}`);
   html = html.replace(/<head\b[^>]*>/i, head => head + '<style>.emr-language-switch, [data-emr-language], #langBtn, .lang-btn, body #emr-site-banner .portal-account-actions .emr-language-switch, #emr-session-control .portal-account-actions .emr-language-switch, .portal-account-actions .emr-language-switch { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; max-width: 0 !important; max-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; position: absolute !important; left: -9999px !important; clip: rect(0,0,0,0) !important; }</style><script src="/public/emr-language-lock.js?v=3760"></script><link rel="stylesheet" href="/public/emr-required-fields.css?v=3770"><script src="/public/emr-required-fields.js?v=3770"></script>');
-  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=3980"><link rel="stylesheet" href="/public/patient-banner.css?v=4100"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=3980" defer></script><script src="/public/app-shell.js?v=3980" defer></script><script src="/public/patient-banner.js?v=4170" defer></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
+  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=3980"><link rel="stylesheet" href="/public/patient-banner.css?v=4100"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><link rel="stylesheet" href="/public/npca.css?v=4280"><script src="/public/npca-widget.js?v=4280" defer></script><script src="/public/npca-forms.js?v=4280" defer></script><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=3980" defer></script><script src="/public/app-shell.js?v=3980" defer></script><script src="/public/patient-banner.js?v=4170" defer></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
   // v42.3: one medication unit table for every page (old Khmer unit labels shown as mg, mL, mcg, g, IU).
   html = html.replace('</head>', '<script src="/public/medicine-units.js?v=4230"></script></head>');
@@ -1933,6 +1943,7 @@ export function createEmrServer(configOverrides = {}) {
   ensureClinicalSummarySchema(database);
   ensureMedicationSafetySchema(database);
   ensureMaternalSchema(database);
+  ensureNpcaSchema(database);
   ensurePeriopSchema(database);
   ensureCriticalEscalationSchema(database);
   ensureRecordAccessSchema(database);
@@ -1955,6 +1966,7 @@ export function createEmrServer(configOverrides = {}) {
   if (config.autoDatabase || config.dataDirectory) createDailyBackup(database, config.databasePath, 14, config.backupDirectory);
   database.deleteExpiredSessions(Date.now());
 
+  const npca = new NpcaIntegration(config.npca, database);
   const router = new Router('emr');
   mountAuthRoutes(router);
   mountAdminRoutes(router);
@@ -1968,6 +1980,7 @@ export function createEmrServer(configOverrides = {}) {
   mountClinicalSummaryRoutes(router);
   mountMedicationSafetyRoutes(router);
   mountMaternalRoutes(router);
+  mountNpcaRoutes(router);
   mountPeriopFormRoutes(router);
   mountRecordAccessRoutes(router);
   // POST' && pathname === '/api/finance/complete-payment'
@@ -2035,7 +2048,7 @@ export function createEmrServer(configOverrides = {}) {
       }
       const ctx = {
         request, response, url, pathname, session, database, config,
-        requestId, logger: reqLogger,
+        requestId, logger: reqLogger, npca,
         sendJson, sendBuffer, readJson, readBinary, audit, sameOrigin, safeTokenEqual,
         sessionRole, sessionWard, requireContext, redirect, sendFile,
         listUsers, buildIdentity, requestIp, genericLoginFailure, landingPathForRole,
@@ -2191,6 +2204,8 @@ export function createEmrServer(configOverrides = {}) {
   server.requestTimeout = 30_000;
   server.headersTimeout = 15_000;
   server.keepAliveTimeout = 5_000;
+  server.once('listening', () => npca.start());
+  server.on('close', () => npca.stop());
   server.on('close', () => diagnosisSearch.close());
   return {
     server,
@@ -2198,6 +2213,7 @@ export function createEmrServer(configOverrides = {}) {
     config,
     persistence,
     recovery,
+    npca,
     access: {
       getUserImagingSubtypes: (userId) => getUserImagingSubtypes(database, userId),
       setUserImagingSubtypes: (userId, subtypes, actorId) => setUserImagingSubtypes(database, userId, subtypes, actorId),

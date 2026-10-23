@@ -1610,6 +1610,316 @@
       "kh": "បានផ្ញើទៅវេជ្ជបណ្ឌិតផ្នែករោគស្ត្រី។",
       "key": "cervix.sent",
       "source": "docs/translations-needed.csv"
+    },
+    {
+      "kh": "កំពុងដំណើរការ",
+      "en": "Processing",
+      "key": "npca"
+    },
+    {
+      "kh": "រង់ចាំការកែបន្ថែម",
+      "en": "Pending",
+      "key": "npca"
+    },
+    {
+      "kh": "បរាជ័យ",
+      "en": "Failed",
+      "key": "npca"
+    },
+    {
+      "kh": "រួចរាល់",
+      "en": "Ready",
+      "key": "npca"
+    },
+    {
+      "kh": "ទាញទិន្នន័យ",
+      "en": "Refresh",
+      "key": "npca"
+    },
+    {
+      "kh": "លេខករណី",
+      "en": "Visit",
+      "key": "npca"
+    },
+    {
+      "kh": "ព័ត៌មាន",
+      "en": "Details",
+      "key": "npca"
+    },
+    {
+      "kh": "សកម្មភាព",
+      "en": "Actions",
+      "key": "npca"
+    },
+    {
+      "kh": "ពិនិត្យ",
+      "en": "Review",
+      "key": "npca"
+    },
+    {
+      "kh": "បញ្ជូនម្តងទៀត",
+      "en": "Submit again",
+      "key": "npca"
+    },
+    {
+      "kh": "សាកល្បងការតភ្ជាប់",
+      "en": "Test connection",
+      "key": "npca"
+    },
+    {
+      "kh": "មិនទាន់បើកការតភ្ជាប់ NPCA ទេ។",
+      "en": "NPCA connection error 296",
+      "key": "npca.296"
+    },
+    {
+      "kh": "សូមបំពេញការកំណត់ NPCA ជាមុន។",
+      "en": "NPCA connection error 297",
+      "key": "npca.297"
+    },
+    {
+      "kh": "មិនអាចភ្ជាប់ NPCA បានទេ។ សូមព្យាយាមម្តងទៀត។",
+      "en": "NPCA connection error 298",
+      "key": "npca.298"
+    },
+    {
+      "kh": "មិនអាចផ្ទៀងផ្ទាត់គណនី NPCA បានទេ។",
+      "en": "NPCA connection error 299",
+      "key": "npca.299"
+    },
+    {
+      "kh": "NPCA បានបដិសេធសំណើ។ សូមពិនិត្យព័ត៌មានលម្អិត។",
+      "en": "NPCA connection error 300",
+      "key": "npca.300"
+    },
+    {
+      "kh": "មិនអាចបំពេញសំណើ NPCA បានទេ។",
+      "en": "NPCA connection error 301",
+      "key": "npca.301"
+    },
+    {
+      "kh": "លេខប័ណ្ណមិនត្រឹមត្រូវ។",
+      "en": "NPCA registration 302",
+      "key": "npca.302"
+    },
+    {
+      "kh": "ទម្រង់ចម្លើយ NPCA មិនត្រឹមត្រូវ។",
+      "en": "NPCA registration 303",
+      "key": "npca.303"
+    },
+    {
+      "kh": "សូមពិនិត្យសិទ្ធិ NPCA ម្តងទៀត។",
+      "en": "NPCA registration 304",
+      "key": "npca.304"
+    },
+    {
+      "kh": "អ្នកជំងឺនេះមិនមានសិទ្ធិទាមទារប្រាក់ NPCA ទេ។",
+      "en": "NPCA registration 305",
+      "key": "npca.305"
+    },
+    {
+      "kh": "សូមកំណត់ប្រភេទបង់ប្រាក់ NPCA ឱ្យត្រឹមត្រូវ។",
+      "en": "NPCA registration 306",
+      "key": "npca.306"
+    },
+    {
+      "kh": "សូមបញ្ជាក់ប្រភេទបណ្ណ និងគម្រោងទូទាត់ជាមួយ NPCA ជាមុន។",
+      "en": "NPCA registration 307",
+      "key": "npca.307"
+    },
+    {
+      "kh": "អត្តសញ្ញាណអ្នកជំងឺមិនត្រូវគ្នានឹងសមាជិកដែលបានជ្រើសរើសទេ។",
+      "en": "NPCA registration 308",
+      "key": "npca.308"
+    },
+    {
+      "kh": "សូមជ្រើសរើសសមាជិកគ្រួសារ",
+      "en": "NPCA registration 309",
+      "key": "npca.309"
+    },
+    {
+      "kh": "រកមិនឃើញអ្នកមានសិទ្ធិទេ។ កុំទាមទារប្រាក់ HEF ឬ NSSF សម្រាប់ករណីនេះ។",
+      "en": "NPCA registration 310",
+      "key": "npca.310"
+    },
+    {
+      "kh": "មានសិទ្ធិ",
+      "en": "NPCA registration 311",
+      "key": "npca.311"
+    },
+    {
+      "kh": "គ្មានសិទ្ធិ",
+      "en": "NPCA registration 312",
+      "key": "npca.312"
+    },
+    {
+      "kh": "បានជ្រើសរើស។ សូមពិនិត្យអត្តសញ្ញាណអ្នកជំងឺ ហើយរក្សាទុកការចុះឈ្មោះ។",
+      "en": "NPCA registration 313",
+      "key": "npca.313"
+    },
+    {
+      "kh": "ពិនិត្យសិទ្ធិ NPCA",
+      "en": "NPCA registration 314",
+      "key": "npca.314"
+    },
+    {
+      "kh": "ខ្មែរ",
+      "en": "NPCA code mapping",
+      "key": "npca.315"
+    },
+    {
+      "kh": "កូដ NPCA មិនត្រឹមត្រូវ។",
+      "en": "NPCA code mapping",
+      "key": "npca.316"
+    },
+    {
+      "kh": "សូមបំពេញ ឬកែព័ត៌មាននេះ៖",
+      "en": "Complete or correct this information",
+      "key": "npca.317"
+    },
+    {
+      "kh": "រកមិនឃើញអ្នកជំងឺ។",
+      "en": "NPCA queue and status 318",
+      "key": "npca.318"
+    },
+    {
+      "kh": "ករណីនេះមិនមែនជាការទាមទារប្រាក់ HEF ឬ NSSF ទេ។",
+      "en": "NPCA queue and status 319",
+      "key": "npca.319"
+    },
+    {
+      "kh": "ករណីនេះបានបញ្ជូនរួច ឬកំពុងដំណើរការ។",
+      "en": "NPCA queue and status 320",
+      "key": "npca.320"
+    },
+    {
+      "kh": "សូមកែព័ត៌មាន មុនបញ្ជូនម្តងទៀត។",
+      "en": "NPCA queue and status 321",
+      "key": "npca.321"
+    },
+    {
+      "kh": "សូមពិនិត្យការកែប្រែព័ត៌មាន ហើយបញ្ជូនម្តងទៀត។",
+      "en": "NPCA queue and status 322",
+      "key": "npca.322"
+    },
+    {
+      "kh": "លទ្ធផលព្យាបាលសម្រាប់ NPCA",
+      "en": "NPCA queue and status 323",
+      "key": "npca.323"
+    },
+    {
+      "kh": "ការបញ្ជូនទិន្នន័យ NPCA",
+      "en": "NPCA queue and status 324",
+      "key": "npca.324"
+    },
+    {
+      "kh": "សូមពិនិត្យព័ត៌មានដែលត្រូវកែ។",
+      "en": "NPCA queue and status 325",
+      "key": "npca.325"
+    },
+    {
+      "kh": "សូមពិនិត្យព័ត៌មាន។",
+      "en": "NPCA queue and status 326",
+      "key": "npca.326"
+    },
+    {
+      "kh": "ទិន្នន័យសម្រាប់ពិនិត្យមុនបញ្ជូន",
+      "en": "NPCA queue and status 327",
+      "key": "npca.327"
+    },
+    {
+      "kh": "មិនទាន់បញ្ជូន",
+      "en": "NPCA queue and status 328",
+      "key": "npca.328"
+    },
+    {
+      "kh": "ការតភ្ជាប់៖",
+      "en": "NPCA queue and status 329",
+      "key": "npca.329"
+    },
+    {
+      "kh": "អាសយដ្ឋាន៖",
+      "en": "NPCA queue and status 330",
+      "key": "npca.330"
+    },
+    {
+      "kh": "កូដមូលដ្ឋាន៖",
+      "en": "NPCA queue and status 331",
+      "key": "npca.331"
+    },
+    {
+      "kh": "ពេលទទួលសោចុងក្រោយ៖",
+      "en": "NPCA queue and status 332",
+      "key": "npca.332"
+    },
+    {
+      "kh": "ផ្គូផ្គងកូដដែល NPCA បានបញ្ជាក់",
+      "en": "NPCA queue and status 333",
+      "key": "npca.333"
+    },
+    {
+      "kh": "ប្រភេទកូដ",
+      "en": "NPCA queue and status 334",
+      "key": "npca.334"
+    },
+    {
+      "kh": "ប្រភេទចូល",
+      "en": "NPCA queue and status 335",
+      "key": "npca.335"
+    },
+    {
+      "kh": "ប្រភេទចេញ",
+      "en": "NPCA queue and status 336",
+      "key": "npca.336"
+    },
+    {
+      "kh": "កូដនៅមន្ទីរពេទ្យ",
+      "en": "NPCA queue and status 337",
+      "key": "npca.337"
+    },
+    {
+      "kh": "កូដ NPCA ដែលបានបញ្ជាក់",
+      "en": "NPCA queue and status 338",
+      "key": "npca.338"
+    },
+    {
+      "kh": "ព័ត៌មានវាយតម្លៃបន្ថែមសម្រាប់ NPCA",
+      "en": "NPCA assessment 339",
+      "key": "npca.339"
+    },
+    {
+      "kh": "ព័ត៌មានបញ្ជូនសម្រាប់ NPCA",
+      "en": "NPCA referral 340",
+      "key": "npca.340"
+    },
+    {
+      "kh": "លេខយោងបញ្ជូន",
+      "en": "NPCA referral 341",
+      "key": "npca.341"
+    },
+    {
+      "kh": "លេខទូរស័ព្ទវេជ្ជបណ្ឌិតបញ្ជូន",
+      "en": "NPCA referral 342",
+      "key": "npca.342"
+    },
+    {
+      "kh": "ឈ្មោះមូលដ្ឋានទទួល",
+      "en": "NPCA referral 343",
+      "key": "npca.343"
+    },
+    {
+      "kh": "កូដមូលដ្ឋានទទួល",
+      "en": "NPCA referral 344",
+      "key": "npca.344"
+    },
+    {
+      "kh": "ប្រភេទមូលដ្ឋានទទួល",
+      "en": "NPCA referral 345",
+      "key": "npca.345"
+    },
+    {
+      "kh": "តំណលិខិតបញ្ជូន",
+      "en": "NPCA referral 346",
+      "key": "npca.346"
     }
   ]
 }

@@ -1,4 +1,6 @@
 import crypto from 'node:crypto';
+import { selectionFor, beneficiaryPayment, saveBeneficiaryLink } from '../npca/beneficiaries.mjs';
+import { mapCode } from '../npca/codes.mjs';
 import { roleCanPage, patientWorkWard, sessionRole } from '../access.mjs';
 import { listAppointments, createAppointment, updateAppointmentStatus } from '../appointments.mjs';
 import { listOrders } from '../paraclinic.mjs';
@@ -385,6 +387,20 @@ export function mountPatientsRoutes(router) {
     const effectiveRoleForMerge = registrationSave ? 'REGISTRATION' : (activeRoleBeforeSave === 'TRIAGE' || triageSave || editorScope === 'triage' ? 'TRIAGE' : RECORD_MANAGEMENT.includes(activeRoleBeforeSave) ? (body.editorScope === 'nursing' ? 'NURSE' : 'DOCTOR') : maternalMidwife ? 'DOCTOR' : activeRoleBeforeSave);
     summary = mergePatientSummaryForRole(existingPatient, submittedSummary, effectiveRoleForMerge);
     const data = mergeRecordDataForRole(existingData, submittedData, effectiveRoleForMerge, Boolean(existingPatient));
+    // NPCA identity is taken only from a recent server-side beneficiary search.
+    for (const key of Object.keys(data)) if (key.startsWith('system:npca')) { delete data[key]; if (key in existingData) data[key]=existingData[key]; }
+    const npcaSelectionId = registrationSave ? submittedData['scope:registration:id:npca_selection'] : '';
+    let npcaPerson = null, npcaPayment = '';
+    if (npcaSelectionId) {
+      npcaPerson = selectionFor(database,npcaSelectionId,session.user_id);
+      npcaPayment = beneficiaryPayment(npcaPerson);
+      if (!npcaPayment) return sendJson(response,400,{error:'សូមបញ្ជាក់ប្រភេទបណ្ណ និងគម្រោងទូទាត់ជាមួយ NPCA ជាមុន។'},{secure:config.cookieSecure});
+      const surname=String(summary.lastName||'').trim(), name=String(summary.firstName||'').trim();
+      if (surname!==String(npcaPerson.surname||'').trim() || name!==String(npcaPerson.name||'').trim() || summary.dateOfBirth!==npcaPerson.birthdate || mapCode('sex',summary.sex)!==mapCode('sex',npcaPerson.sex)) return sendJson(response,400,{error:'អត្តសញ្ញាណអ្នកជំងឺមិនត្រូវគ្នានឹងសមាជិកដែលបានជ្រើសរើសទេ។'},{secure:config.cookieSecure});
+      data['system:npcaSpid']=npcaPerson.spid;data['system:npcaPatientCode']=npcaPerson.patient_code||'';
+      data['system:npcaCards']=JSON.stringify(npcaPerson.benefit_cards||[]);data['system:npcaPaymentType']=npcaPayment;
+    }
+    delete data['scope:registration:id:npca_selection'];
 
     if (registrationSave) {
       data['system:caseType'] = caseTypeFromData(data);
@@ -394,6 +410,7 @@ export function mountPatientsRoutes(router) {
       ensureUniqueRegistrationQueueNumber(database, patientKey, summary.entryDate, queueNumber);
       data['system:registrationQueueNumber'] = queueNumber;
     }
+    const savedAt = Date.now();
     if (activeRoleBeforeSave === 'DOCTOR' && Object.prototype.hasOwnProperty.call(submittedData, 'system:dailyMonitoringRecords')) {
       let doctorDaily = [];
       try {
@@ -401,7 +418,22 @@ export function mountPatientsRoutes(router) {
         const parsedDaily = typeof rawDaily === 'string' ? JSON.parse(rawDaily) : rawDaily;
         if (Array.isArray(parsedDaily)) doctorDaily = parsedDaily;
       } catch { /* Malformed follow-ups cannot replace the doctor's report source. */ }
-      data['system:doctorDailyMedicineOrders'] = JSON.stringify(doctorDaily.slice(0, 500));
+      let previousDaily = [];
+      try { previousDaily=typeof existingData['system:dailyMonitoringRecords']==='string'?JSON.parse(existingData['system:dailyMonitoringRecords']):existingData['system:dailyMonitoringRecords']; } catch {}
+      const priorNotes = Array.isArray(previousDaily) ? previousDaily : [];
+      const clinicalContent = note => { const { npcaSignature, ...content } = note || {}; return JSON.stringify(content); };
+      const npcaSnapshot=signatureSnapshot(database,session,savedAt);
+      const npcaAuthor={userId:npcaSnapshot.userId,signerName:npcaSnapshot.signerName,displayName:npcaSnapshot.displayName,role:npcaSnapshot.role,signedAt:npcaSnapshot.signedAt};
+      doctorDaily = doctorDaily.map(note => {
+        if(!note||typeof note!=='object'||Array.isArray(note))return note;
+        const previous=priorNotes.find(old=>old&&String(old.id||old.dtVal)===String(note.id||note.dtVal));
+        const { npcaSignature, ...content }=note;
+        return {...content,...(previous&&clinicalContent(previous)===clinicalContent(note)
+          ? previous.npcaSignature ? {npcaSignature:previous.npcaSignature}:{}
+          : {npcaSignature:npcaAuthor})};
+      });
+      data['system:dailyMonitoringRecords'] = JSON.stringify(doctorDaily);
+      data['system:doctorDailyMedicineOrders'] = JSON.stringify(doctorDaily.slice(0,500));
     }
     if (existingPatient?.service_mode === 'opd') {
       const latestRx = database.sqlite.prepare(`SELECT dispensed_at FROM pharmacy_prescriptions
@@ -431,7 +463,6 @@ export function mountPatientsRoutes(router) {
       existingDischarge && typeof existingDischarge === 'object';
     const hasOpdDischarge = existingPatient?.service_mode === 'opd' && Boolean(existingData['system:opdDischarge']?.dispensedAt);
     summary.dischargeDate = hasFormalDischarge || hasOpdDischarge ? existingPatient.discharge_date : '';
-    const savedAt = Date.now();
 
     if (registrationSave) {
       if (visitSourceKey) data['system:previousPatientKey'] = visitSourceKey;
@@ -535,6 +566,11 @@ export function mountPatientsRoutes(router) {
         id: crypto.randomUUID(), patientKey, summary, data,
         userId: session.user_id, savedAt,
       });
+      if (npcaPerson) saveBeneficiaryLink(database,patientKey,npcaPerson,npcaPayment,session.user_id);
+      else if (registrationSave && existingPatient && (
+        summary.firstName!==existingPatient.first_name || summary.lastName!==existingPatient.last_name || summary.sex!==existingPatient.sex || summary.dateOfBirth!==existingPatient.date_of_birth || summary.equityCard!==existingPatient.equity_card ||
+        String(data['scope:registration:id:web_nssf']||'')!==String(existingData['scope:registration:id:web_nssf']||'')
+      )) database.sqlite.prepare('UPDATE npca_patient_links SET eligible=0 WHERE patient_key=?').run(patientKey);
       saveEditorHistory(database, {
         patientKey, role: activeClinicalRole, editorScope, userId: session.user_id,
         editorName: String(session.display_name || session.username || ''), savedAt,
