@@ -3406,7 +3406,7 @@ index 0000000..0700fba
 +print('Extracted the three original NPCA workbooks to server/npca/standards.json')
 diff --git a/scripts/build-v428-update.mjs b/scripts/build-v428-update.mjs
 new file mode 100644
-index 0000000..38cc727
+index 0000000..442ea5b
 --- /dev/null
 +++ b/scripts/build-v428-update.mjs
 @@ -0,0 +1,83 @@
@@ -3427,7 +3427,7 @@ index 0000000..38cc727
 +  const blob=git(['show','8c92552:'+file]);if(blob.status!==0)throw Error('Cannot read committed baseline '+file+': '+blob.stderr);
 +  const destination=path.join(base,file);fs.mkdirSync(path.dirname(destination),{recursive:true});fs.writeFileSync(destination,blob.stdout);
 +}
-+const previous=fs.readFileSync('Borkeo-EMR-v42.7.0-update.txt','utf8').split('FULL UNIFIED DIFF\n')[1];
++const previous=fs.readFileSync('Borkeo-EMR-v42.7.0-update.txt','utf8').replace(/\r\n/g,'\n').split('FULL UNIFIED DIFF\n')[1];
 +if(!previous)throw Error('Missing approved v42.7 patch.');
 +const applied=git(['apply','--no-index','--ignore-space-change','-'],{cwd:base,input:previous});
 +if(applied.status!==0)throw Error('Cannot reconstruct v42.7: '+applied.stderr);
