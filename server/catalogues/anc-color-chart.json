@@ -1,0 +1,554 @@
+{
+ "source": "Transcribed from the Ministry of Health ANC package 2026 (pages 6-8). Khmer text copied from the official pages; owner must confirm before release.",
+ "title": "ចំណាត់ថ្នាក់កូដពណ៌សម្រាប់ការពិនិត្យផ្ទៃពោះមុនសម្រាល",
+ "levels": {
+  "green": "សញ្ញាធម្មតា",
+  "yellow": "សញ្ញាប្រឈម",
+  "red": "សញ្ញាគ្រោះថ្នាក់"
+ },
+ "resultRule": "The highest level of any item wins (red > yellow > green). Green only when no yellow or red item is present.",
+ "sections": [
+  {
+   "key": "general",
+   "kh": "លក្ខខណ្ឌសុខភាពទូទៅ",
+   "items": [
+    {
+     "key": "age_normal",
+     "level": "green",
+     "kh": "អាយុ៖ 20 - 34ឆ្នាំ",
+     "auto": {
+      "field": "age",
+      "min": 20,
+      "max": 34
+     }
+    },
+    {
+     "key": "height_normal",
+     "level": "green",
+     "kh": "កម្ពស់ស្ត្រី> 150 សម",
+     "auto": {
+      "field": "heightCm",
+      "gt": 150
+     }
+    },
+    {
+     "key": "bmi_normal",
+     "level": "green",
+     "kh": "BMI ធម្មតា (18.5-24.9)",
+     "auto": {
+      "field": "prePregnancyBmi",
+      "min": 18.5,
+      "max": 24.9
+     }
+    },
+    {
+     "key": "no_chronic",
+     "level": "green",
+     "kh": "មិនមានជំងឺប្រចាំកាយ",
+     "auto": null
+    },
+    {
+     "key": "age_risk",
+     "level": "yellow",
+     "kh": "អាយុ<18ឆ្នាំ និង> 35ឆ្នាំ",
+     "auto": {
+      "field": "age",
+      "outside": [
+       20,
+       34
+      ],
+      "note": "Ages 18-19 and 35 are not in the green group, so they count as yellow (owner decision pending)."
+     }
+    },
+    {
+     "key": "height_risk",
+     "level": "yellow",
+     "kh": "កម្ពស់ <145–150សម",
+     "auto": {
+      "field": "heightCm",
+      "max": 150,
+      "note": "Below 145 cm is not stated on the chart; treated as yellow and flagged for owner."
+     }
+    },
+    {
+     "key": "bmi_risk",
+     "level": "yellow",
+     "kh": "BMI > 25 – 29.9",
+     "auto": {
+      "field": "prePregnancyBmi",
+      "min": 25,
+      "max": 29.9,
+      "alsoUnder": 18.5,
+      "note": "BMI under 18.5 is not on the chart; treated as yellow and flagged for owner."
+     }
+    },
+    {
+     "key": "bp_risk",
+     "level": "yellow",
+     "kh": "លើសសម្ពាធឈាម (>140/90mmHg",
+     "auto": {
+      "field": "bp",
+      "systolicMin": 140,
+      "diastolicMin": 90,
+      "belowSevere": true
+     }
+    },
+    {
+     "key": "diabetes",
+     "level": "yellow",
+     "kh": "ជំងឺទឹកនោមផ្អែម",
+     "auto": null
+    },
+    {
+     "key": "bmi_high",
+     "level": "red",
+     "kh": "BMI >30",
+     "auto": {
+      "field": "prePregnancyBmi",
+      "gt": 30
+     }
+    },
+    {
+     "key": "thyroid",
+     "level": "red",
+     "kh": "ជំងឺពកក Hyper/hypothyroidism",
+     "auto": null
+    },
+    {
+     "key": "asthma",
+     "level": "red",
+     "kh": "ជំងឺហឺត",
+     "auto": null
+    },
+    {
+     "key": "diabetes_complicated",
+     "level": "red",
+     "kh": "ជំងឺទឹកនោមផ្អែម + ផលវិបាក",
+     "auto": null
+    },
+    {
+     "key": "bp_severe",
+     "level": "red",
+     "kh": "លើសសម្ពាធឈាមធ្ងន់ធ្ងរ",
+     "auto": {
+      "field": "bp",
+      "systolicMin": 160,
+      "diastolicMin": 110,
+      "note": "Cut-off 160/110 is the usual international definition of severe hypertension; owner to confirm."
+     }
+    },
+    {
+     "key": "anaemia_severe",
+     "level": "red",
+     "kh": "ស្លេកស្លាំងធ្ងន់ធ្ងរ (Hb<7g/dL)",
+     "auto": {
+      "field": "hb",
+      "lt": 7
+     }
+    },
+    {
+     "key": "heart",
+     "level": "red",
+     "kh": "ជំងឺបេះដូង",
+     "auto": null
+    },
+    {
+     "key": "kidney",
+     "level": "red",
+     "kh": "ជំងឺតំរងនោមធ្ងន់ធ្ងរ",
+     "auto": null
+    },
+    {
+     "key": "epilepsy",
+     "level": "red",
+     "kh": "Epilepsy non controlled",
+     "auto": null
+    },
+    {
+     "key": "transfusion",
+     "level": "red",
+     "kh": "ធ្លាប់បញ្ចូលឈាម",
+     "auto": null
+    }
+   ]
+  },
+  {
+   "key": "obstetric_history",
+   "kh": "ប្រវត្តិផ្នែកសម្ភព",
+   "items": [
+    {
+     "key": "births_normal",
+     "level": "green",
+     "kh": "ចំនួនសម្រាល ≤3ដង",
+     "auto": {
+      "field": "births",
+      "max": 3
+     }
+    },
+    {
+     "key": "no_abortion",
+     "level": "green",
+     "kh": "ចំនួនរំលូត/រលូត: គ្មាន",
+     "auto": {
+      "field": "abortionsMiscarriages",
+      "max": 0
+     }
+    },
+    {
+     "key": "interval_ok",
+     "level": "green",
+     "kh": "គម្លាតពីសម្រាលកូនលើកចុងក្រោយ > 2ឆ្នាំ",
+     "auto": {
+      "field": "monthsSinceLastBirth",
+      "gt": 24
+     }
+    },
+    {
+     "key": "abortion_1",
+     "level": "yellow",
+     "kh": "ចំនួនរំលូត ≥ 1ដង",
+     "auto": {
+      "field": "abortionsMiscarriages",
+      "min": 1
+     }
+    },
+    {
+     "key": "csection_1",
+     "level": "yellow",
+     "kh": "សម្រាលកូនដោយវះកាត់ (C-section: 1)",
+     "auto": {
+      "field": "caesareans",
+      "equals": 1
+     }
+    },
+    {
+     "key": "vacuum",
+     "level": "yellow",
+     "kh": "សម្រាលដោយបូមជប់",
+     "auto": null
+    },
+    {
+     "key": "tear_3",
+     "level": "yellow",
+     "kh": "រហែកទ្វារមាសកម្រិត៣",
+     "auto": null
+    },
+    {
+     "key": "perineum",
+     "level": "yellow",
+     "kh": "ប៉េរីណេមានស្នាមថ្មេរ មានផ្លែ ដុះសាច់/សិរមាន់",
+     "auto": null
+    },
+    {
+     "key": "varices",
+     "level": "yellow",
+     "kh": "សរសៃឈាមវ៉ែនឡើងប៉ោង",
+     "auto": null
+    },
+    {
+     "key": "malformed_baby",
+     "level": "yellow",
+     "kh": "កូនមិនគ្រប់លក្ខណៈ",
+     "auto": null
+    },
+    {
+     "key": "stillbirth",
+     "level": "yellow",
+     "kh": "ទារកស្លាប់ក្នុងផ្ទៃ (Stillbirth)",
+     "auto": null
+    },
+    {
+     "key": "pph",
+     "level": "yellow",
+     "kh": "ធ្លាក់ឈាមក្រោយសម្រាល (PPH)",
+     "auto": null
+    },
+    {
+     "key": "preeclampsia_moderate",
+     "level": "yellow",
+     "kh": "លើសសម្ពាធឈាម/បម្រុងក្រឡាភ្លើងកម្រិតមធ្យម",
+     "auto": null
+    },
+    {
+     "key": "previa_history",
+     "level": "yellow",
+     "kh": "សុកពាំងមាត់ស្បូន",
+     "auto": null
+    },
+    {
+     "key": "preterm",
+     "level": "yellow",
+     "kh": "សម្រាលកូនមិនគ្រប់ខែ",
+     "auto": null
+    },
+    {
+     "key": "second_trimester_loss",
+     "level": "yellow",
+     "kh": "ប្រវត្តិរលូតកូនត្រីមាសទី២",
+     "auto": null
+    },
+    {
+     "key": "low_birth_weight",
+     "level": "yellow",
+     "kh": "ប្រវត្តិទារកទម្ងន់តិច",
+     "auto": null
+    },
+    {
+     "key": "many_children",
+     "level": "yellow",
+     "kh": "មានកូនច្រើនដង (≥5)",
+     "auto": {
+      "field": "births",
+      "min": 4,
+      "note": "4 births is in no group on the chart; treated as yellow. 5 or more is red (see red list). Owner to confirm."
+     }
+    },
+    {
+     "key": "interval_short",
+     "level": "yellow",
+     "kh": "គម្លាតពីសម្រាលកូនលើកចុងក្រោយ <2ឆ្នាំ",
+     "auto": {
+      "field": "monthsSinceLastBirth",
+      "max": 24
+     }
+    },
+    {
+     "key": "csection_2",
+     "level": "red",
+     "kh": "ធ្លាប់វះកាត់កូន ≥2ដង",
+     "auto": {
+      "field": "caesareans",
+      "min": 2
+     }
+    },
+    {
+     "key": "stillbirth_neonatal_death",
+     "level": "red",
+     "kh": "ប្រវត្តិទារកស្លាប់ក្នុងផ្ទៃ/ ទារកកើតស្លាប់",
+     "auto": null
+    },
+    {
+     "key": "grand_multipara",
+     "level": "red",
+     "kh": "សម្រាលកូនច្រើនដង (≥5)",
+     "auto": {
+      "field": "births",
+      "min": 5
+     }
+    },
+    {
+     "key": "preterm_36",
+     "level": "red",
+     "kh": "ប្រវត្តិសម្រាលកូនមិនគ្រប់ខែ <36សប្តាហ៍",
+     "auto": null
+    },
+    {
+     "key": "pph_severe",
+     "level": "red",
+     "kh": "ប្រវត្តិធ្លាក់ឈាមក្រោយសម្រាល តម្រូវឱ្យដាក់បញ្ចូលឈាម និងធ្វើអន្តរាគមន៍សង្គ្រោះ",
+     "auto": null
+    },
+    {
+     "key": "miscarriage_3",
+     "level": "red",
+     "kh": "ប្រវត្តិរលូតកូន≥3ដង",
+     "auto": {
+      "field": "miscarriages",
+      "min": 3
+     }
+    },
+    {
+     "key": "preeclampsia_history",
+     "level": "red",
+     "kh": "បម្រុងក្រឡាភ្លើង ក្រឡាភ្លើង",
+     "auto": null
+    },
+    {
+     "key": "seizure",
+     "level": "red",
+     "kh": "ធ្លាប់ប្រកាច់",
+     "auto": null
+    }
+   ]
+  },
+  {
+   "key": "current_pregnancy",
+   "kh": "ផ្ទៃពោះបច្ចុប្បន្ន",
+   "items": [
+    {
+     "key": "singleton",
+     "level": "green",
+     "kh": "គភ៌កូនមួយ (singleton)",
+     "auto": null
+    },
+    {
+     "key": "normal_course",
+     "level": "green",
+     "kh": "ដំណើរការធម្មតានៃការមានផ្ទៃពោះបច្ចុប្បន្ន",
+     "auto": null
+    },
+    {
+     "key": "bp_normal",
+     "level": "green",
+     "kh": "សម្ពាធឈាមធម្មតា (< 140/90 mmHg)",
+     "auto": {
+      "field": "bp",
+      "systolicMax": 139,
+      "diastolicMax": 89
+     }
+    },
+    {
+     "key": "twins_y",
+     "level": "yellow",
+     "kh": "គភ៌កូនភ្លោះ",
+     "auto": null
+    },
+    {
+     "key": "uterus_large",
+     "level": "yellow",
+     "kh": "កម្ពស់ស្បូនធំជាងអាយុគភ៌",
+     "auto": null
+    },
+    {
+     "key": "malpresentation",
+     "level": "yellow",
+     "kh": "ទម្រង់ទារកមិនធម្មតា (អាយុគភ៌≥36សប្តាហ៍)",
+     "auto": null
+    },
+    {
+     "key": "prom",
+     "level": "yellow",
+     "kh": "បែកស្រោមទឹកភ្លោះមុនឈឺពោះ",
+     "auto": null
+    },
+    {
+     "key": "severe_preeclampsia",
+     "level": "red",
+     "kh": "បម្រុងក្រឡាភ្លើងធ្ងន់ធ្ងរ/ក្រឡាភ្លើង",
+     "auto": null
+    },
+    {
+     "key": "placenta_previa",
+     "level": "red",
+     "kh": "សុកពាំងមាត់ស្បូន (Placenta previa)",
+     "auto": null
+    },
+    {
+     "key": "abruption",
+     "level": "red",
+     "kh": "របើកសុកមុនកំណត់ (Placenta abruption)",
+     "auto": null
+    },
+    {
+     "key": "fetal_distress",
+     "level": "red",
+     "kh": "ទារកក្នុងផ្ទៃខ្សោយ",
+     "auto": null
+    },
+    {
+     "key": "amniotic_fluid",
+     "level": "red",
+     "kh": "ទឹកភ្លោះច្រើន/តិច",
+     "auto": null
+    },
+    {
+     "key": "fgr",
+     "level": "red",
+     "kh": "ទារកក្នុងផ្ទៃលូតលាស់យឺត",
+     "auto": null
+    },
+    {
+     "key": "post_term",
+     "level": "red",
+     "kh": "គភ៌លើសខែ",
+     "auto": {
+      "field": "gaWeeks",
+      "min": 41,
+      "note": "Post-term threshold 41 weeks (page 8)."
+     }
+    },
+    {
+     "key": "twins_r",
+     "level": "red",
+     "kh": "គភ៌កូនភ្លោះ",
+     "auto": null
+    },
+    {
+     "key": "malformation",
+     "level": "red",
+     "kh": "ទារកក្នុងផ្ទៃមិនគ្រប់លក្ខណៈ Fetal malformation by ultrasound",
+     "auto": null
+    },
+    {
+     "key": "reduced_movement",
+     "level": "red",
+     "kh": "ចលនាទារកក្នុងផ្ទៃថយចុះ (<10ដង ក្នុងរយៈពេល2ម៉ោង ចាប់ពីអាយុគភ៌ 28សប្តាហ៍)",
+     "auto": null
+    }
+   ]
+  },
+  {
+   "key": "laboratory",
+   "kh": "មន្ទីរពិសោធន៍",
+   "items": [
+    {
+     "key": "infections_negative",
+     "level": "green",
+     "kh": "អវិជ្ជមានជំងឺ អេដស៍ ស្វាយ ថ្លើម",
+     "auto": {
+      "field": "hiv_syphilis_hbsag",
+      "allNegative": true
+     }
+    },
+    {
+     "key": "hb_normal",
+     "level": "green",
+     "kh": "ស្លេកស្លាំងកម្រិតស្រាល (Hb ≥10 g/dl)",
+     "auto": {
+      "field": "hb",
+      "min": 10
+     }
+    },
+    {
+     "key": "hb_moderate",
+     "level": "yellow",
+     "kh": "ស្លេកស្លាំងកម្រិតមធ្យម (Hb: 7-9.9g/dl)",
+     "auto": {
+      "field": "hb",
+      "min": 7,
+      "max": 9.9
+     }
+    },
+    {
+     "key": "not_tested",
+     "level": "yellow",
+     "kh": "មិនធ្លាប់តេស្ត HIV / Syphilis / Hepatitis B",
+     "auto": {
+      "field": "hiv_syphilis_hbsag",
+      "anyMissing": true
+     }
+    },
+    {
+     "key": "infection_positive",
+     "level": "red",
+     "kh": "វិជ្ជមានជំងឺ អេដស៍ ស្វាយ ថ្លើម",
+     "auto": {
+      "field": "hiv_syphilis_hbsag",
+      "anyPositive": true
+     }
+    },
+    {
+     "key": "rh_negative",
+     "level": "red",
+     "kh": "រេស៊ុស Rhesus Negative",
+     "auto": {
+      "field": "rhesus",
+      "equals": "negative"
+     }
+    }
+   ]
+  }
+ ],
+ "twinsNote": "Twins appear in both yellow and red on the official chart; the EMR uses red (highest level).",
+ "footer": "គណៈកម្មាធិការជាតិពិនិត្យមរណភាពមាតា និងទារកជុំវិញកំណើត និងការឆ្លើយតប"
+}

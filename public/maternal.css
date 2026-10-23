@@ -1,0 +1,9 @@
+/* v42.6 - Maternal services queue (protected/maternal.html); the table look comes from opd-queue.css. */
+.maternal-page tr[data-service="vaccination"] .queue-number { background: #e0f2fe; color: #075985; }
+.maternal-page tr[data-service="anc"] .queue-number { background: #fce7f3; color: #9d174d; }
+/* v42.6 - on the medical record page: cervical screening result, old ANC form notice. */
+.cervix-result-panel { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding: 12px 14px; margin-bottom: 14px; border: 2px solid #be185d; border-radius: 10px; background: #fdf2f8; }
+.cervix-result-panel h3 { width: 100%; margin: 0; font-size: 16px; }
+.cervix-result-panel select, .cervix-result-panel input, .cervix-result-panel button { font: inherit; padding: 6px 10px; border-radius: 8px; border: 1px solid #be185d; }
+.cervix-result-panel button { background: #be185d; color: #ffffff; cursor: pointer; }
+.anc-old-notice { padding: 8px 12px; border-radius: 8px; background: #fef9c3; color: #854d0e; font-weight: 700; }

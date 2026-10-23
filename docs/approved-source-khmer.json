@@ -1,0 +1,1115 @@
+{
+  "note": "Khmer copied from the owner's source documents (not UI text written for the EMR): the official Ministry of Health ANC record, colour chart and visit schedule (v42.6), and owner defaults given in an update prompt. npm run check:khmer accepts these strings; words that could not be read with certainty are listed in docs/anc-khmer-to-confirm.md.",
+  "entries": [
+    {
+      "kh": "ចំណាត់ថ្នាក់កូដពណ៌សម្រាប់ការពិនិត្យផ្ទៃពោះមុនសម្រាល",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សញ្ញាធម្មតា",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សញ្ញាប្រឈម",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សញ្ញាគ្រោះថ្នាក់",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "លក្ខខណ្ឌសុខភាពទូទៅ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អាយុ៖ 20 - 34ឆ្នាំ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "កម្ពស់ស្ត្រី",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "150 សម",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "BMI ធម្មតា (18.5-24.9)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "មិនមានជំងឺប្រចាំកាយ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "18ឆ្នាំ និង",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "35ឆ្នាំ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "145–150សម",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "លើសសម្ពាធឈាម (",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ជំងឺពកក Hyper/hypothyroidism",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ជំងឺហឺត",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ជំងឺទឹកនោមផ្អែម + ផលវិបាក",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "លើសសម្ពាធឈាមធ្ងន់ធ្ងរ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ស្លេកស្លាំងធ្ងន់ធ្ងរ (Hb",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ជំងឺតំរងនោមធ្ងន់ធ្ងរ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ប្រវត្តិផ្នែកសម្ភព",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ចំនួនសម្រាល ≤3ដង",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ចំនួនរំលូត/រលូត: គ្មាន",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "គម្លាតពីសម្រាលកូនលើកចុងក្រោយ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "2ឆ្នាំ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ចំនួនរំលូត ≥ 1ដង",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សម្រាលកូនដោយវះកាត់ (C-section: 1)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ប៉េរីណេមានស្នាមថ្មេរ មានផ្លែ ដុះសាច់/សិរមាន់",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សរសៃឈាមវ៉ែនឡើងប៉ោង",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ទារកស្លាប់ក្នុងផ្ទៃ (Stillbirth)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ធ្លាក់ឈាមក្រោយសម្រាល (PPH)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "លើសសម្ពាធឈាម/បម្រុងក្រឡាភ្លើងកម្រិតមធ្យម",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សុកពាំងមាត់ស្បូន",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ប្រវត្តិរលូតកូនត្រីមាសទី២",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ប្រវត្តិទារកទម្ងន់តិច",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "មានកូនច្រើនដង (≥5)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ធ្លាប់វះកាត់កូន ≥2ដង",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ប្រវត្តិទារកស្លាប់ក្នុងផ្ទៃ/ ទារកកើតស្លាប់",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សម្រាលកូនច្រើនដង (≥5)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ប្រវត្តិសម្រាលកូនមិនគ្រប់ខែ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "36សប្តាហ៍",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ប្រវត្តិធ្លាក់ឈាមក្រោយសម្រាល តម្រូវឱ្យដាក់បញ្ចូលឈាម និងធ្វើអន្តរាគមន៍សង្គ្រោះ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ប្រវត្តិរលូតកូន≥3ដង",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "បម្រុងក្រឡាភ្លើង ក្រឡាភ្លើង",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ផ្ទៃពោះបច្ចុប្បន្ន",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "គភ៌កូនមួយ (singleton)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ដំណើរការធម្មតានៃការមានផ្ទៃពោះបច្ចុប្បន្ន",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សម្ពាធឈាមធម្មតា (",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "គភ៌កូនភ្លោះ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "កម្ពស់ស្បូនធំជាងអាយុគភ៌",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ទម្រង់ទារកមិនធម្មតា (អាយុគភ៌≥36សប្តាហ៍)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "បែកស្រោមទឹកភ្លោះមុនឈឺពោះ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "បម្រុងក្រឡាភ្លើងធ្ងន់ធ្ងរ/ក្រឡាភ្លើង",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សុកពាំងមាត់ស្បូន (Placenta previa)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "របើកសុកមុនកំណត់ (Placenta abruption)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ទារកក្នុងផ្ទៃខ្សោយ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ទឹកភ្លោះច្រើន/តិច",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ទារកក្នុងផ្ទៃលូតលាស់យឺត",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "គភ៌លើសខែ",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ទារកក្នុងផ្ទៃមិនគ្រប់លក្ខណៈ Fetal malformation by ultrasound",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ចលនាទារកក្នុងផ្ទៃថយចុះ (",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "10ដង ក្នុងរយៈពេល2ម៉ោង ចាប់ពីអាយុគភ៌ 28សប្តាហ៍)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អវិជ្ជមានជំងឺ អេដស៍ ស្វាយ ថ្លើម",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ស្លេកស្លាំងកម្រិតស្រាល (Hb ≥10 g/dl)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ស្លេកស្លាំងកម្រិតមធ្យម (Hb: 7-9.9g/dl)",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "មិនធ្លាប់តេស្ត HIV / Syphilis / Hepatitis B",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "វិជ្ជមានជំងឺ អេដស៍ ស្វាយ ថ្លើម",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "រេស៊ុស Rhesus Negative",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "គណៈកម្មាធិការជាតិពិនិត្យមរណភាពមាតា និងទារកជុំវិញកំណើត និងការឆ្លើយតប",
+      "key": "file:server/catalogues/anc-color-chart.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "*** តាមដាន វាយតម្លៃ កំណត់កូដពណ៌ និងបញ្ជូនស្ត្រីទៅមូលដ្ឋានសុខាភិបាលដែលមានកម្រិតខ្ពស់ជាង",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "កាលវិភាគការពិនិត្យផ្ទៃពោះមុនសម្រាល · កូដពណ៌បៃតង៖ សញ្ញាធម្មតា",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "*អាចបន្ថែមទៅតាមកម្រិតមូលដ្ឋានសុខាភិបាល",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "12 សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "កំណត់ត្រាការពិនិត្យផ្ទៃពោះ",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សៀវភៅសុខភាពមាតា",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សៀវភៅការថែទាំមុនសម្រាល",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ប្រព័ន្ធឌីជីថល",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "CBC (យ៉ាងហោច Hb)",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ក្រុមឈាម រេស៊ុស",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ប្រូតេអ៊ីន និងជាតិស្ករក្នុងទឹកនោម",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ថ្លឹងទម្ងន់",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "វាស់កម្ពស់",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "សន្ទស្សន៍ម៉ាសរាងកាយ (BMI)",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ស្តាប់បេះដូងកូន",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ភាពស្លេកស្លាំង",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ពិនិត្យសុដន់",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ពិនិត្យសុខភាពមាត់ ធ្មេញ (បើសិនមូលដ្ឋានសុខាភិបាលអាចធ្វើបាន)",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "កំណត់កាលបរិច្ឆេទសម្រាល និងវាស់កម្រាស់កញ្ចឹងកកូន (១១-១៣សប្តាហ៍)",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ផ្តល់ថ្នាំគ្រាប់ជាតិដែក/អាស៊ីតហ្វូលិក",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ សារៈសំខាន់ និងពេលវេលា ANC ការលូតលាស់របស់គភ៌ ការប្រែប្រួលរាងកាយម្តាយ",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "20-24 សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "*ប្រសិនបើមិនមានឯកសារលើកមុន ត្រូវបង្កើតឯកសារលើកនេះ",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ថ្លឹងទម្ងន់ (ការកើនទម្ងន់ផ្អែកលើ BMI ស្ត្រីមានផ្ទៃពោះ)",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "វាស់កម្ពស់ស្បូន",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ទម្រង់កូន",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ពិនិត្យការលូតលាស់ និងលក្ខណៈរបស់ទារក",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ផ្តល់វ៉ាក់សាំងតេតាណូស",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ អាហារូបត្ថម្ភ ការថែទាំ អនាម័យ និងសញ្ញាគ្រោះថ្នាក់ក្រោយសម្រាល",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "30-32 សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ពិនិត្យទម្រង់ទារក ការលូតលាស់ ទឹកភ្លោះ ទីតាំងសុក ភាពមិនប្រក្រតីរបស់ទារក",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ សញ្ញាគ្រោះថ្នាក់ សញ្ញាឈឺពោះ ត្រៀមជុំវិញកំណើត បំបៅដោះកូន",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "36-38 សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "*ការពិនិត្យបន្ថែមយោងទៅតាមស្ថានភាពសុខភាពមាតា និងទារក",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ សញ្ញាគ្រោះថ្នាក់ (ពិសេសការតាមដានការបម្រះទារកក្នុងផ្ទៃ) ការថែទាំទារក អាហារូបត្ថម្ភ និងវ៉ាក់សាំងទារក",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "*ប្រសិនបើស្ត្រីមិនឈឺពោះ ត្រូវមកពិនិត្យវិញនៅអាយុគភ៌មិនលើសពី ៤០សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "កាលវិភាគការពិនិត្យផ្ទៃពោះមុនសម្រាល · កូដពណ៌លឿង៖ សញ្ញាប្រឈម និងកូដពណ៌ក្រហម៖ សញ្ញាគ្រោះថ្នាក់",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "*ការពិនិត្យអមវេជ្ជសាស្ត្របន្ថែមយោងទៅតាមស្ថានភាពសុខភាពមាតា និងទារក",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ សារៈសំខាន់ និងពេលវេលា ANC",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "20-22 សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ ការលូតលាស់របស់គភ៌ ការប្រែប្រួលរាងកាយម្តាយ",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "26 សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ជាតិស្ករក្នុងឈាម OGTT",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ អាហារូបត្ថម្ភ",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "28-30 សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ សញ្ញាគ្រោះថ្នាក់",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "32-34 សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "CBC (លើកទី២)",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ សញ្ញាឈឺពោះសម្រាល និងផែនការត្រៀមជុំវិញកំណើត",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "36 សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ ការថែទាំ អនាម័យ និងសញ្ញាគ្រោះថ្នាក់ក្រោយសម្រាល និងការបំបៅដោះកូន",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "38 សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "ពិនិត្យឈាមត្រៀមសម្រាល",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ ការថែទាំទារក អាហារូបត្ថម្ភ និងវ៉ាក់សាំងទារក",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "40 សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "*ការគ្រប់គ្រងគភ៌លើសខែ",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "៤១សប្តាហ៍",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "អប់រំ សញ្ញាគ្រោះថ្នាក់ (ពិសេសការតាមដានការបម្រះទារកក្នុងផ្ទៃ)",
+      "key": "file:server/catalogues/anc-visit-schedule.json",
+      "source": "v42.6 owner's ANC files (borkeo-update-files/anc, Ministry of Health 2026), copied unchanged"
+    },
+    {
+      "kh": "មិនមានតេស្ត",
+      "key": "file:server/clinical-options.json",
+      "source": "v42.6 owner defaults (PROMPT-2): task close reasons"
+    },
+    {
+      "kh": "អ្នកជំងឺបដិសេធ",
+      "key": "file:server/clinical-options.json",
+      "source": "v42.6 owner defaults (PROMPT-2): task close reasons"
+    },
+    {
+      "kh": "ធ្វើរួចនៅកន្លែងផ្សេង",
+      "key": "file:server/clinical-options.json",
+      "source": "v42.6 owner defaults (PROMPT-2): task close reasons"
+    },
+    {
+      "kh": "កំណត់ត្រាការពិនិត្យផ្ទៃពោះមុនសម្រាល",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "បៃតង",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "លឿង",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ក្រហម",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ការិយាល័យគិលានុបដ្ឋាក និងឆ្មបនៃនាយកដ្ឋានសេវាសុខភាព ឆ្នាំ២០២៦",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ថ្ងៃខែឆ្នាំកំណើត៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ចំនួនផ្ទៃពោះទី៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "សម្រាល៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "រលូត៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "រំលូត៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ថ្ងៃទី១នៃរដូវចុងក្រោយ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ថ្ងៃខែឆ្នាំសម្រាលរំពឹងទុក៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ថ្ងៃខែឆ្នាំសម្រាលរំពឹងទុកតាមអេកូសាស្ត្រ(ត្រីមាសទី១)៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "កម្ពស់៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ស.ម",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ទម្ងន់មុនពេលមានផ្ទៃពោះ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "សន្ទស្សន៍ម៉ាសរាងកាយ(BMI) មុនមានផ្ទៃពោះ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "(ទម្ងន់ធម្មតា 18.6-24.9)",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ប្រវត្តិជំងឺទូទៅ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "មានជំងឺលើសសម្ពាធឈាមរ៉ាំរ៉ៃ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ជំងឺក្រពេញទីរ៉ូអ៊ីត",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ប្រវត្តិវះកាត់៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ឆ្នាំ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ទីកន្លែង៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "៣.",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ប្រវត្តិអាល្លែកហ្ស៊ីថ្នាំ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ឈ្មោះថ្នាំ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ប្រវត្តិជំងឺក្នុងក្រុមគ្រួសារ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ភាពមិនប្រក្រតី",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ការយឺតយ៉ាវបញ្ញាស្មារតី",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ប្រវត្តិរោគស្ត្រី៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- ការមករដូវ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ទៀងទាត់",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "មិនទៀងទាត់",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "វដ្តរៀងរាល់",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "/ប្រចាំខែ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- មធ្យោបាយពន្យាកំណើត",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- ការបង្កកំណើតដោយជំនួយវេជ្ជសាស្ត្រ ART៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- ប្រវត្តិរោគស្ត្រីផ្សេងៗ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ប្រវត្តិសង្គម៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "មានជក់បារី",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ប្រើប្រាស់សារធាតុញៀន",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "កត្តាប្រឈម អំពើហិង្សាពាក់ព័ន្ធសុខភាពបន្តពូជ ផ្លូវភេទ និងយេនឌ័រ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ពិនិត្យសុខភាពមាត់ ធ្មេញ និងដោះ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- រលាកមាត់៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- ធ្មេញពុក៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- ដោះ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ពិនិត្យភាពស្លេកស្លាំង៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- ត្របកភ្នែក៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- ក្រចកដៃ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- បាតដៃ៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ប្រវត្តិមានផ្ទៃពោះលើកមុន",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "រលូត/រំលូត",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "មិនគ្រប់ខែ/គ្រប់ខែ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ប្រភេទនៃការសម្រាល",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ទីកន្លែងសម្រាល",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "*ផលវិបាក ពេល និងក្រោយសម្រាល",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "បញ្ហាសុខភាព មុន និងអំឡុងពេលមានផ្ទៃពោះ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "រស់/ស្លាប់កើត/កើតស្លាប់",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "បញ្ហាសុខភាព",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "បេរីណេមានស្នាមថ្មេរ មានផ្លែ ដុះសាច់/សិរមាន់",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "កូនគីឡូធំ (Macrosomia)",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ធ្លាប់មានកូនកើតមកមានទំងន់ទាបធៀបនឹងអាយុគភ៌",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "មេរោគអេដស៍ HIV",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "មេរោគស្វាយ Syphilis",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "រលាកថ្លើមប្រភេទបេ Ag HBs",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "រលាកថ្លើមប្រភេទសេ Anti HCV",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "គ្រាប់ឈាមក្រហម៖",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- អេម៉ូក្លូប៊ីន Hb",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- អេម៉ាតូគ្រីត HCT",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "- ផ្លាកែត PLT",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ក្រុមឈាម Group,RH",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "លទ្ធផលពិនិត្យអេកូសាស្ត្រ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ទម្រង់បង្ហាញ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ក្បាលកូន",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ទីតាំងសុក",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ទឹកភ្លោះ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ទម្ងន់កូន",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ថ្ងៃខែឆ្នាំសម្រាល",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ថ្ងៃខែឆ្នាំពិនិត្យ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "អាយុគភ៌/សប្តាហ៍",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ទម្រង់ទារក",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "បេះដូងទារក",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "សម្ពាធឈាម-ជីពចរ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ជាតិប្រៃ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ជាតិផ្អែម",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ឡើងសរសៃវ៉ែន/ហើម",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ថ្នាំគ្រាប់ជាតិដែក",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ចាក់ថ្នាំបង្ការ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "សញ្ញាតម្អូញ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "មូលវិចារ (រោគវិនិច្ឆ័យ និងអន្តរាគមន៍)",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    },
+    {
+      "kh": "ថ្ងៃខែឆ្នាំណាត់ជួបលើកក្រោយ",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v42.6 transcribed from the official ANC record images (moh-2026-pages 2-5); uncertain words in docs/anc-khmer-to-confirm.md"
+    }
+  ]
+}

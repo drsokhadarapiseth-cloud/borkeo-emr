@@ -85,7 +85,7 @@ Password, Log Out and the department navigation bar must stay usable.
  2  Two-step prescription picker: generic name, then CMS code /     Tested (v44.2.0)
     form / strength; filter by age, sex, pregnancy, service;
     adult and per-kg child max-dose warnings; IV, IM, SC, PO routes.
- 3  Midwife services: 2026 ANC record (pages 2-5), GA/EDD from LMP  Waiting
+ 3  Midwife services: 2026 ANC record (pages 2-5), GA/EDD from LMP  Tested (v44.3.0)
     with ultrasound override, midwife queue, vaccinations,
     CPA3 referral letters.
  4  NPCA beneficiary check, barcode registration cards, sticker     Waiting

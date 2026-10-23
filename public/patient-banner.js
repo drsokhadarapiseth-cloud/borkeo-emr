@@ -316,8 +316,30 @@
     `;
     banner.querySelectorAll('[data-banner-details-toggle]').forEach(button => button.addEventListener('click', toggleBannerDetails));
     renderBannerDetails(banner, info);
+    decorateAncBadge(banner);
     // The chart tabs stick just under the banner, whatever its height (v41.0).
     document.documentElement.style.setProperty('--emr-banner-live-height', `${Math.round(banner.getBoundingClientRect().height) || 76}px`);
+  }
+
+  // v42.6: colour of the open ANC record (official Ministry of Health colour code).
+  const ancBadgeCache = new Map();
+  const ANC_COLOUR_KH = { green: 'បៃតង', yellow: 'លឿង', red: 'ក្រហម' };
+  const ANC_COLOUR_EN = { green: 'green', yellow: 'yellow', red: 'red' };
+  function decorateAncBadge(banner) {
+    const key = activePatient?.patientKey || window.getLoadedEmrPatient?.()?.patientKey || '';
+    if (!key) return;
+    const paint = (colour) => {
+      const host = banner.querySelector('.emr-banner-badges');
+      if (!colour || !host || host.querySelector('.anc-colour-badge')) return;
+      const word = window.getBorkeoLanguage?.() === 'en' ? ANC_COLOUR_EN[colour] : ANC_COLOUR_KH[colour];
+      host.insertAdjacentHTML('beforeend', `<span class="emr-banner-badge anc-colour-badge anc-${escapeHtml(colour)}">ANC · ${escapeHtml(word || colour)}</span>`);
+    };
+    if (ancBadgeCache.has(key)) { paint(ancBadgeCache.get(key)); return; }
+    ancBadgeCache.set(key, '');
+    fetch(`/api/anc/badge?patientKey=${encodeURIComponent(key)}`, { credentials: 'same-origin', cache: 'no-store' })
+      .then((response) => (response.ok ? response.json() : {}))
+      .then((body) => { ancBadgeCache.set(key, body.colour || ''); paint(body.colour || ''); })
+      .catch(() => {});
   }
 
   // v41.6: Early Warning Score from public/early-warning.js (medical record page only).

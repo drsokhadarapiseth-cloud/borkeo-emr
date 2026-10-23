@@ -1,0 +1,30 @@
+Borkeo EMR - update package (2026-10-23)
+
+WHAT IS IN THIS PACKAGE
+  PROMPT-1-medicine-list-and-dose-check.md   medicine search (2 steps), adult/child/female filter, units, route, 3 rows, dose check
+  PROMPT-2-midwife-services-and-ANC.md       midwife queue, official ANC record + colour code + visit schedule, PNC, family planning,
+                                             cervical screening, vaccination, safe abortion to Gynecology
+  PROMPT-3-hosting-cloudflare.md             GitHub safety + remote access through Cloudflare (data stays in the hospital)
+  borkeo-update-files/medicines.json         704 medicine lines with age / sex / unit information
+  borkeo-update-files/dose-limits-draft.json maximum doses (adult and child) - DRAFT until approved
+  borkeo-update-files/Borkeo-max-dose-table-DRAFT.xlsx   the same table for the Head of Pharmacy and the Director
+  borkeo-update-files/anc/                   official ANC chart and schedules (JSON) + the official pages as images
+
+BEFORE YOU START
+  1. Copy the whole Borkeo EMR folder to a safe place (backup).
+  2. Make sure the Superuser update (v42.1.0) has finished: package.json shows "version": "42.1.0".
+  3. Delete these OLD files from the project folder (they are replaced by this package):
+       Borkeo-medicine-list-prompt.md, medicines.json, medicine-autocomplete.js, Borkeo-hosting-github-prompt.md (if not run yet)
+  4. Unzip this package INTO the project folder (next to package.json).
+
+RUN ONE PROMPT AT A TIME (VS Code -> Terminal -> New Terminal)
+  Step 1:  claude "Read the file PROMPT-1-medicine-list-and-dose-check.md in this folder and do everything it says, phase by phase."
+           Wait until it gives the final report. Test the EMR. Then:
+  Step 2:  claude "Read the file PROMPT-2-midwife-services-and-ANC.md in this folder and do everything it says, phase by phase."
+           Wait for the final report. Test. Then (only when you have a domain name):
+  Step 3:  claude "Read the file PROMPT-3-hosting-cloudflare.md in this folder and do everything it says, phase by phase."
+  The first time it asks to run npm commands, choose "Yes, and don't ask again".
+
+AFTER STEP 1
+  The dose check only uses lines APPROVED inside the EMR (Administration -> Drug safety tables) by the Head of Pharmacy or the Director.
+  Until they approve, no dose alert appears.

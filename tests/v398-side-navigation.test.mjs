@@ -24,7 +24,8 @@ const EXPECTED = [
   { role: 'DOCTOR', ward: 'medicine', user: 'doctor_medicine', items: ['home', 'medical-record', 'departments', 'patient-list', 'ward-medicines'] },
   { role: 'NURSE', ward: 'opd', user: 'nurse_opd', items: ['patient-list', 'opd-handoff'] },
   { role: 'NURSE', ward: 'medicine', user: 'nurse_medicine', items: ['departments', 'patient-list', 'ward-medicines'] },
-  { role: 'MIDWIFE', ward: 'obstetric', user: 'nurse_obstetric', items: ['departments', 'patient-list', 'ward-medicines'] },
+  // v42.6: the midwife's maternal services queue.
+  { role: 'MIDWIFE', ward: 'obstetric', user: 'nurse_obstetric', items: ['maternal-queue', 'departments', 'patient-list', 'ward-medicines'] },
   { role: 'CHIEF_WARD', ward: 'medicine', items: ['departments', 'patient-list', 'ward-medicines'] },
   { role: 'WARD_HEAD', ward: 'surgery', items: ['departments', 'patient-list', 'ward-medicines'] },
   { role: 'LAB', ward: '', user: 'lab', items: ['patient-list', 'lab', 'lab-materials'] },

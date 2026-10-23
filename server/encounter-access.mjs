@@ -1,4 +1,4 @@
-import { canAccessPatient, sessionRole, sessionWard } from './access.mjs';
+import { canAccessPatient, sessionRole, sessionWard, MATERNAL_OPD_CODES, GYNECOLOGY_OPD_CODES } from './access.mjs';
 
 export const RECORD_MANAGEMENT = ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'];
 const parse = value => { try { return JSON.parse(value || '{}'); } catch { return {}; } };
@@ -39,7 +39,13 @@ export function correctionGrant(db, actor, patient, scope) {
 export function encounterAccess(db, session, patient, requestedScope = '') {
   const role = sessionRole(session), ward = sessionWard(session);
   const management = RECORD_MANAGEMENT.includes(role);
+  // v42.6: the midwife writes the OPD forms of the maternal services (PNC, family
+  // planning, cervical screening); the Gynecology ward sees safe-abortion outpatients.
+  const service = String(patient?.department_code || '').toLowerCase();
+  const maternalMidwife = role === 'MIDWIFE' && patient?.service_mode === 'opd' && MATERNAL_OPD_CODES.has(service);
+  const gynecologyOutpatient = ['DOCTOR','CHIEF_WARD'].includes(role) && ward === 'gynecology' && patient?.service_mode === 'opd' && GYNECOLOGY_OPD_CODES.has(service);
   let view = role === 'REGISTRATION' ? 'register' : role === 'TRIAGE' ? 'triage' :
+    maternalMidwife || gynecologyOutpatient ? 'opd' :
     ['NURSE','MIDWIFE'].includes(role) ? 'nursing' : ward === 'opd' ? 'opd' : 'medical';
   const ownScope = view === 'register' ? 'registration' : view === 'triage' ? 'triage' : view === 'nursing' ? 'nursing' : 'medical';
   const scope = management ? (requestedScope || 'medical') : ownScope;
@@ -49,7 +55,7 @@ export function encounterAccess(db, session, patient, requestedScope = '') {
   const validScope = !requestedScope || ['registration','triage','medical','nursing'].includes(requestedScope);
   const canView = validScope && permitted && (!patient || canAccessPatient(db, session, patient));
   const state = encounterClosed(db, patient);
-  const mismatch = clinical && patient && ['DOCTOR','CHIEF_WARD'].includes(role) &&
+  const mismatch = clinical && patient && ['DOCTOR','CHIEF_WARD'].includes(role) && !gynecologyOutpatient &&
     (ward === 'opd' ? patient.service_mode !== 'opd' : patient.service_mode !== 'ipd');
   const clinicalScope = scope === 'medical' || scope === 'nursing';
   const grant = patient && clinicalScope && state.discharged ? correctionGrant(db, session, patient, scope) : '';

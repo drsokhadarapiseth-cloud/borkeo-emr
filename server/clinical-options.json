@@ -226,5 +226,59 @@
         "level": "low"
       }
     ]
+  },
+  "maternal": {
+    "note": "v42.6 maternal services and the official ANC record (Ministry of Health 2026). Owner defaults; change here. Colour chart and visit schedule: server/catalogues/anc-color-chart.json and anc-visit-schedule.json.",
+    "paidServiceCodes": [
+      "anc",
+      "pnc",
+      "family-planning",
+      "cervix-screening"
+    ],
+    "freeServiceCodes": [
+      "vaccination"
+    ],
+    "gynecologyOutpatientCodes": [
+      "safe-abortion"
+    ],
+    "midwifeLabTests": [
+      "HBSAG"
+    ],
+    "midwifeImaging": [
+      "ULTRASOUND"
+    ],
+    "midwifeMedicines": [
+      "Ferrous salt",
+      "Ferrous salt + folic acid",
+      "Folic acid",
+      "Mebendazole",
+      "Calcium"
+    ],
+    "ironPrescriptionMedicine": "Ferrous salt + folic acid",
+    "tetanusVaccineName": "Tetanus toxoid vaccine",
+    "datingUltrasoundMaxWeeks": 14,
+    "datingUltrasoundMaxDifferenceDays": 7,
+    "prePregnancyWeightFromTriageMaxWeeks": 12,
+    "singleWeekVisitTolerance": 1,
+    "heightCheckBelowCm": 145,
+    "levelOverrides": {
+      "twins_y": "red"
+    },
+    "taskCloseReasons": [
+      "មិនមានតេស្ត",
+      "អ្នកជំងឺបដិសេធ",
+      "ធ្វើរួចនៅកន្លែងផ្សេង",
+      "ផ្សេងៗ"
+    ],
+    "cervicalResultWard": "gynecology",
+    "cervicalResultRole": "DOCTOR",
+    "referralSignRoles": [
+      "DOCTOR",
+      "CHIEF_WARD"
+    ],
+    "referralSignWards": [
+      "obstetric",
+      "gynecology"
+    ]
   }
 }

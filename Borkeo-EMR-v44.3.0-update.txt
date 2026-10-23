@@ -1,0 +1,240 @@
+================================================================================
+Borkeo EMR Update Note: Version 44.3.0
+Update plan #3: midwife services and the official 2026 ANC record
+================================================================================
+
+Date: 2026-10-24
+Previous Version: 44.2.0
+New Version: 44.3.0
+Source: re-applies the v42.6.0 work (commit 8c92552) on top of v44.2.0.
+Patient data: not touched. Database changes are additive only; nothing removed.
+
+Verified in a disposable copy with synthetic data:
+- npm test: 946 / 946 pass.
+- npm run check:khmer: passes.
+- Every account signs in and opens its page in demo mode (34 accounts),
+  hospital mode (24 accounts, password 1234) and online mode (Superuser with
+  SUPERUSER_PASSWORD, all 65 role/ward choices). Same result as v44.2.0.
+1. WHAT WAS WRONG
+--------------------------------------------------------------------------------
+a) ANC, PNC, family planning and cervical screening were OPD doctor consultations;
+   the midwife did not have her own maternal services queue. The vaccination
+   service was missing. Safe abortion was in OPD instead of the Gynecology ward.
+b) The ANC form (#sub_anc) did not match the official 2026 ANC record pages 2-5;
+   it had no colour code, no visit schedule, no auto-fill from Triage, no GA
+   from the LMP, no link between the rapid-test results and the lab table, and
+   it created one record per visit instead of one per pregnancy.
+c) The midwife had no inbox and no way to send a cervical result to a doctor.
+
+--------------------------------------------------------------------------------
+2. WHAT CHANGED
+--------------------------------------------------------------------------------
+a) Routing: ANC (anc), PNC (pnc), family planning (family-planning) and cervical
+   screening (cervix-screening) go Registration -> Triage -> Cashier -> midwife
+   queue. Vaccination (vaccination) goes Triage -> midwife directly (free, no
+   Cashier). Safe abortion (safe-abortion) goes to the Gynecology ward queue
+   instead of the OPD doctor; the old safe abortion forms stay readable. Reports
+   count all of them as OPD services.
+b) New page "បញ្ជីអ្នកជំងឺសេវាមាតា" (maternal services queue, /maternal-queue) for
+   MIDWIFE of the Obstetric ward (public/nav-config.js group care, server/
+   access.mjs roleCanPage): today's paid ANC / PNC / family planning / cervical
+   screening patients and vaccination patients, with a call button like the OPD
+   queue. Opening a patient opens the right form. Real midwife accounts and the
+   Superuser switched to Midwife both see it.
+c) Official ANC record (/anc-record, protected/anc-record.html, public/
+   anc-record.js) one per pregnancy, linked to the patient's Health ID, opened
+   at the first ANC visit and reused at every visit until delivery, referral to
+   CPA3 or closing. The old ANC form opens read-only with a link to the new
+   record. Saved values never move: the old records stay exactly as they were.
+
+   Pages 2-5 of the 2026 official record (same order, same Khmer labels, same
+   tables): identity, LMP, EDD (LMP + 280 days), EDD by first-trimester
+   ultrasound, height, weight and BMI before pregnancy; general, surgical, drug
+   allergy (linked to the EMR's structured allergy record), family,
+   gynaecological and social history; risk factors; mouth and teeth check;
+   anaemia check; previous pregnancies table with the 10 complications of the
+   page-2 footnote; lab results table by date (HIV, Syphilis, HBsAg, Anti HCV,
+   Hb, HCT, PLT, Group/RH, 3 free rows); ultrasound table (DATE, GA, presenta-
+   tion, BPD, placenta, AFI, weight, EDD, other); visit table (DATE, GA, UH,
+   FP, FHR, BP&P, Weight, WP, Proteinuria, Glucosuria, Varices, Fer, Vaccina-
+   tion, Chief complaint, Diagnosis and intervention, Appointment, NAME).
+
+   Khmer labels from server/catalogues/anc-record-labels.json (transcribed
+   exactly from the page images; uncertain words are listed in docs/
+   anc-khmer-to-confirm.md for the owner to check against the paper record).
+
+   Print pages 2-5 in the official A4 landscape layout with the colour box
+   ticked (public/anc-record.css print rules).
+d) Auto-fill (always editable by the midwife; the original values are saved and
+   never overwritten): name, date of birth and age from Registration; weight,
+   height, BP, pulse, temperature and SpO2 from the Triage of the same visit;
+   BMI, weight gain, GA and EDD calculated; midwife name from the login; tetanus
+   vaccination from the vaccination page (TT1 / TT2 appears in the visit table
+   when the patient is pregnant). Released Laboratory results fill the lab table
+   and released Imaging reports the ultrasound table; the midwife's own rapid
+   tests (HIV, syphilis, Hb) are typed in the visit form and also appear in the
+   lab table.
+e) GA and EDD: from the LMP (EDD = LMP + 280 days). A dating ultrasound before
+   14 weeks whose EDD differs by more than 7 days from the LMP EDD is used
+   instead; the source is always shown (public/anc-engine.mjs).
+f) Colour code from server/catalogues/anc-color-chart.json (copied unchanged
+   from borkeo-update-files/anc/, 69 items in 4 sections): the "auto" items
+   decide from the data (age, height, BMI, BP, previous pregnancies, Hb,
+   syphilis, HIV, twins), the others are tick boxes by the midwife. The highest
+   level wins (red > yellow > green); the result is re-checked at every visit
+   and every save. The official boxes បៃតង / លឿង / ក្រហម show at the top of the
+   record and as a badge in the patient banner on every page; every colour
+   change is kept with its date, reasons and the midwife who saved it.
+g) Visit schedule from server/catalogues/anc-visit-schedule.json (copied
+   unchanged from borkeo-update-files/anc/, green 4 visits page 7, yellow and
+   red 8 visits page 8): which visit this is by GA and colour, its tasks
+   (records, lab, exam, ultrasound, care) as check items, overdue tasks from
+   earlier visits in red, and "មិនមែនជាការពិនិត្យតាមកាលវិភាគ" / "Not a scheduled
+   visit" between the visits. The to-do list is a side panel always visible and
+   also opens once when the record opens.
+
+   A task acts: the midwife's own tests (HIV, syphilis, Hb, urine) open the
+   result field; HBsAg / OGTT / CBC / ultrasound create the paraclinic order
+   (patient pays at the Cashier and the order goes to the Laboratory or
+   Imaging); iron and folic acid add the prescription; tetanus vaccine opens
+   the vaccination entry (free, direct, the dose also appears in the visit
+   table). A task can be closed undone only with a reason: មិនមានតេស្ត /
+   អ្នកជំងឺបដិសេធ / ធ្វើរួចនៅកន្លែងផ្សេង / ផ្សេងៗ (text).
+
+   Next appointment: suggested from the date of the next scheduled visit for
+   the colour; the midwife can change it.
+h) Yellow shows "ANC continues at Borkeo Referral Hospital (CPA2), 8 visits".
+   Red shows the referral button: a DOCTOR or CHIEF_WARD of Obstetric or
+   Gynecology signs it with the existing e-signature; the referral letter prints
+   (public/anc-referral-letter.mjs: letterhead, patient, GA, colour and red
+   reasons, vital signs, test results, treatment given, referring doctor
+   signature line); the visit is marked "referred to CPA3" for reports. The
+   layout is kept easy to replace by the official form later (the owner will
+   upload it).
+i) Midwife permissions: she opens and saves the forms of these patients
+   (server/encounter-access.mjs: canOpenRecord, canSaveRecord by service code);
+   orders HBsAg from the Laboratory and ultrasound from Imaging and nothing else
+   (server/routes/paraclinic.mjs: MIDWIFE allowed for HBsAg and ultrasound
+   orders only); prescribes only ferrous salt, ferrous salt + folic acid, folic
+   acid, mebendazole, calcium and the vaccines of the vaccination service (the
+   medicine search is filtered by role and service for MIDWIFE in public/
+   medicine-autocomplete.js and checked on the server in server/
+   pharmacy-prescriptions.mjs). The list of allowed medicines is in
+   server/clinical-options.json midwifeAllowedMedicines and is easy to change.
+j) Vaccination page (/vaccination, protected/vaccination.html, public/
+   vaccination.js) for all ages, free: the vaccine is chosen from the medicine
+   list lines marked vaccine (no filter; the national schedule vaccines are in
+   the list), with dose number, date, batch number, injection site, next
+   appointment and reaction. Each dose is deducted from stock (server/
+   maternal.mjs: same stock movement as a dispensed medicine, reference = the
+   vaccination id); the same vaccine and dose number twice gives a warning.
+   Tetanus given to a pregnant woman also appears in the visit table of her ANC
+   record (the TT1 and TT2 dose numbers). Vaccination history per Health ID with
+   the next appointment; a vaccination card section prints.
+k) Cervical screening: the midwife saves the result in the OPD consultation
+   (server/routes/patients.mjs checks the role, no other role can use this
+   endpoint) and it is sent as a staff message to the Gynecology ward doctors'
+   inbox (existing staff messages) with the patient link; the doctor's
+   acknowledgement completes the message. The send button no longer needs the
+   required fields of the whole OPD consultation to be filled first: it saves
+   nothing into the record (data-required-bypass in public/maternal-emr.js), it
+   checks its own result field, and the server checks the role before accepting
+   the save.
+l) Safe abortion is billed under the Gynecology ward (server/finance.mjs
+   departmentForServiceCode: safe-abortion -> gynecology). Old safe abortion
+   records stay readable.
+m) Defaults the owner may change later are kept together in server/
+   clinical-options.json (chart gaps for age 18-19 and 35, height under 145 cm,
+   BMI under 18.5, BP, number of births, twins as red; the visit window of
+   +/- 1 week for the single-week visits 26, 36, 38 and 40; the paid and free
+   service codes; the midwife's medicines).
+n) Khmer: the record, colour chart and visit schedule text is copied from
+   borkeo-update-files/anc/ and never retyped from memory; the words that could
+   not be read with certainty on the page images are listed for the owner in
+   docs/anc-khmer-to-confirm.md. Other new texts are in docs/
+   translations-needed.csv marked "draft Khmer, owner to review".
+
+Checked in a test copy with synthetic patients only, in Microsoft Edge
+(tests/v426-midwife-anc-browser.mjs): a green pregnancy (4 visits; HBsAg and
+ultrasound orders; iron prescription; task closed with a reason; tetanus in the
+vaccination page and in the visit table), a yellow pregnancy (40-year-old, BMI
+17.5, OGTT task at 26 weeks, next appointment, CPA2 8-visit message), a red
+pregnancy (Hb 6.0, twins ticked, BP 165/112, previous two caesareans; doctor-
+signed referral letter). A cervical screening message sent to the Gynecology
+doctors, a vaccination deducting stock (warning when the same dose was typed
+twice), a safe abortion patient in the Gynecology ward queue. The old ANC form
+opens read-only with "កំណត់ចំណាំ៖ Open the new ANC record" and the link. Real
+staff menus are otherwise unchanged.
+npm test: 946 of 946 pass. npm run check:khmer passes.
+
+--------------------------------------------------------------------------------
+3. FILES
+--------------------------------------------------------------------------------
+New:
+  protected/anc-record.html         the official ANC record page (pages 2-5)
+  public/anc-record.js, .css        ANC record logic, colour, schedule, print
+  public/anc-engine.mjs             GA, EDD, auto-fill (no page code)
+  public/anc-referral-letter.mjs    CPA3 referral letter (replaceable layout)
+  protected/maternal.html           midwife maternal services queue page
+  public/maternal.js, .css          the queue (call button, counters)
+  public/maternal-emr.js            cervical screening send (required bypass)
+  protected/vaccination.html        vaccination page (all ages, free)
+  public/vaccination.js             vaccination form, stock deduction warning
+  server/maternal.mjs               midwife queue, ANC record save, vaccination
+  server/routes/maternal.mjs        ANC record endpoints, queue, vaccination
+  server/catalogues/anc-color-chart.json       colour-code chart (69 items)
+  server/catalogues/anc-visit-schedule.json    green 4 visits, yellow/red 8
+  server/catalogues/anc-record-labels.json     official Khmer labels (pages 2-5)
+  docs/anc-khmer-to-confirm.md      uncertain words for the owner to check
+  docs/approved-source-khmer.json   exact copy of borkeo-update-files approved
+  tests/v426-midwife-anc.test.mjs   new tests (10 checks)
+  tests/v426-midwife-anc-browser.mjs   explicit browser check (green/yellow/red)
+Changed:
+  public/emr-patient-record.js      midwife triage choices (ANC, PNC, family
+                                    planning, cervical, vaccination, safe
+                                    abortion), old ANC form read-only with link
+  public/nav-config.js              maternal services queue page, care group
+  public/patient-banner.js, .css    colour badge (green/yellow/red) for ANC
+  server/access.mjs                 MIDWIFE can open the maternal queue,
+                                    ANC record, vaccination
+  server/encounter-access.mjs       MIDWIFE can open and save by service code
+  server/routes/paraclinic.mjs      MIDWIFE orders: HBsAg and ultrasound only
+  server/routes/patients.mjs        cervical result save (MIDWIFE role check)
+  server/routes/queue.mjs           midwife queue excludes vaccination (free)
+  server/finance.mjs                safe abortion billed under Gynecology
+  server/pharmacy-prescriptions.mjs MIDWIFE medicine filter check on server
+  server/server.mjs                 serves the new files, maternal routes,
+                                    version comment v44.3
+  server/clinical-options.json      chart gaps, visit window, midwife medicines
+  public/new-text-data.js, public/emr-language-data.js, docs/translations-
+  needed.csv, docs/approved-new-khmer.json, docs/khmer-baseline.json
+                                    Khmer texts (534 new approved keys)
+  scripts/khmer-lib.mjs             accepts approved-source-khmer.json
+  protected/EMR.html                cervical OPD section text
+  public/login.html                 version v44.3
+  package.json, CHANGELOG.md        version 44.3.0
+  tests/accessibility-quality-smoke.test.mjs, tests/v398-side-navigation.test.mjs
+                                    expect 44.3.0
+
+--------------------------------------------------------------------------------
+4. INSTALLATION (one step at a time)
+--------------------------------------------------------------------------------
+The files are already updated in this folder. If you use this folder as is,
+only steps 1 to 4 are needed.
+
+Step 1: Close the EMR server window (or press Ctrl + C in it).
+Step 2: Double-click "Start-Borkeo-WiFi.bat". At the first start the new tables
+        (ANC pregnancy record, ANC visit tasks) are added to the database. No
+        patient data and no old ANC form is touched.
+Step 3: In the browser press Ctrl + F5 once. Triage now offers ANC, PNC, family
+        planning, cervical screening, vaccination and safe abortion.
+Step 4: Log in as the midwife (or as the Superuser and switch to Midwife). The
+        new menu item "បញ្ជីអ្នកជំងឺសេវាមាតា" appears. Open a patient and the
+        official ANC record opens; the to-do side panel shows the tasks of the
+        current visit.
+
+For Antigravity: this folder already contains the update. To get it on another
+computer, run "git pull" in the project folder, then the steps above, then
+"npm test" and "npm run check:khmer". The full code change is the Git commit
+"v44.3.0" on master (git show v44.3.0 or git log).
+================================================================================

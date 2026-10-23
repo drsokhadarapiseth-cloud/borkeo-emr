@@ -91,6 +91,8 @@ export const FINANCE_DEPARTMENTS = Object.freeze([
   { code:'tb', labelKh:'ផ្នែកជំងឺរបេង', labelEn:'Tuberculosis' },
   { code:'infectious', labelKh:'ផ្នែកជំងឺឆ្លង', labelEn:'Infectious Diseases' },
   { code:'gyneco-obstetric', labelKh:'ផ្នែករោគស្ត្រី និងសម្ភព', labelEn:'Gynecology–Obstetric' },
+  // v42.6: safe abortion is a Gynecology ward service.
+  { code:'gynecology', labelKh:'ផ្នែករោគស្ត្រី', labelEn:'Gynecology' },
   { code:'lab', labelKh:'មន្ទីរពិសោធន៍', labelEn:'Laboratory' },
   { code:'imaging', labelKh:'រូបភាពវេជ្ជសាស្ត្រ', labelEn:'Imaging' },
 ]);
@@ -568,6 +570,12 @@ export function ensureFinanceSchema(database) {
     // admission fee; its stable code keeps prior invoices and references intact.
     sqlite.prepare("UPDATE finance_service_catalog SET name_kh='សម្រាកពេទ្យផ្នែកកុមារ',name_en='Pediatric ward inpatient fee',department_code='pediatric',unit_label='admission',updated_at=? WHERE code='IPD_CHILD_UNDER_7_DAYS'").run(now);
     sqlite.prepare('INSERT INTO finance_catalog_migrations (code,applied_at) VALUES (?,?)').run('OFFICIAL_FEES_V162',now);
+  }
+  // v42.6: safe abortion moved from OPD to the Gynecology ward; its fees are billed under Gynecology.
+  if (!sqlite.prepare("SELECT 1 FROM finance_catalog_migrations WHERE code='SAFE_ABORTION_GYNECOLOGY_V426'").get()) {
+    const now=Date.now();
+    sqlite.prepare("UPDATE finance_service_catalog SET department_code='gynecology',updated_at=? WHERE code IN ('GO_VACUUM_ABORTION','GO_MEDICAL_ABORTION')").run(now);
+    sqlite.prepare('INSERT INTO finance_catalog_migrations (code,applied_at) VALUES (?,?)').run('SAFE_ABORTION_GYNECOLOGY_V426',now);
   }
   if (!sqlite.prepare("SELECT 1 FROM finance_exchange_rates WHERE status='APPROVED' LIMIT 1").get()) {
     const admin=sqlite.prepare("SELECT id FROM users WHERE role='ADMIN' ORDER BY created_at LIMIT 1").get();
