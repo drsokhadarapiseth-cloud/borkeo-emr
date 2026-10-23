@@ -7,14 +7,36 @@
 //   an allergy, duplicate, interaction or maximum-dose warning (audited).
 // - Drug interaction and maximum-dose tables: edited by administrators only and
 //   empty until a doctor-approved list is entered (docs/clinical-review.md).
+// v42.5 - Maximum-dose table from the Essential Medicines List (dose key per
+//   medicine and route, adult and child limits, per kg): the draft table
+//   (server/catalogues/dose-limits-draft.json) is loaded once, line by line,
+//   into drug_max_doses; a line already in the table is never overwritten.
+//   Administrators edit values; the Head of Pharmacy (PHARMACY) or the Director
+//   approves or rejects each line. Only approved lines are used by the check.
 import crypto from 'node:crypto';
+import fs from 'node:fs';
 import { signatureSnapshot } from './esign.mjs';
 
 export const MAR_WRITE_ROLES = new Set(['NURSE', 'MIDWIFE']);
 export const MAR_STATUSES = ['given', 'held', 'refused'];
-export const OVERRIDE_ROLES = new Set(['DOCTOR']);
+// v42.5: midwives prescribe in the maternal services and get the same warnings.
+export const OVERRIDE_ROLES = new Set(['DOCTOR', 'MIDWIFE']);
 export const DRUG_SAFETY_EDIT_ROLES = new Set(['ADMIN']);
-export const DRUG_SAFETY_VIEW_ROLES = new Set(['ADMIN', 'DIRECTOR', 'VICE_DIRECTOR', 'DOCTOR', 'PHARMACY']);
+export const DRUG_SAFETY_APPROVE_ROLES = new Set(['PHARMACY', 'DIRECTOR']);
+export const DRUG_SAFETY_VIEW_ROLES = new Set(['ADMIN', 'DIRECTOR', 'VICE_DIRECTOR', 'DOCTOR', 'PHARMACY', 'MIDWIFE']);
+export const DOSE_LIMIT_TYPES = ['check', 'protocol', 'none'];
+export const DOSE_LIMIT_STATUSES = ['draft', 'approved', 'rejected'];
+// Additive columns of drug_max_doses (v42.5). max_per_dose / max_per_day stay the adult limits.
+const DOSE_LIMIT_COLUMNS = [
+  ['dose_key', 'TEXT'], ['route', "TEXT NOT NULL DEFAULT ''"], ['type', "TEXT NOT NULL DEFAULT 'check'"],
+  ['component', "TEXT NOT NULL DEFAULT ''"],
+  ['adult_max_per_dose_per_kg', 'REAL'], ['adult_max_per_day_per_kg', 'REAL'],
+  ['child_max_per_dose_per_kg', 'REAL'], ['child_max_per_day_per_kg', 'REAL'],
+  ['child_max_per_dose', 'REAL'], ['child_max_per_day', 'REAL'],
+  // Lines entered before v42.5 were entered by an administrator as an approved list.
+  ['status', "TEXT NOT NULL DEFAULT 'approved'"], ['approved_by', 'TEXT'], ['approved_at', 'INTEGER'],
+  ['source', "TEXT NOT NULL DEFAULT ''"],
+];
 export const WARNING_KINDS = ['allergy', 'duplicate', 'interaction', 'max-dose'];
 
 export function ensureMedicationSafetySchema(database) {
@@ -41,7 +63,57 @@ export function ensureMedicationSafetySchema(database) {
   CREATE TABLE IF NOT EXISTS drug_max_doses (
     id TEXT PRIMARY KEY, drug TEXT NOT NULL, max_per_dose REAL, max_per_day REAL, unit TEXT NOT NULL DEFAULT '',
     note TEXT NOT NULL DEFAULT '', updated_by_name TEXT NOT NULL, updated_at INTEGER NOT NULL
+  ) STRICT;
+  CREATE TABLE IF NOT EXISTS drug_dose_unconverted (
+    dose_key TEXT NOT NULL, label TEXT NOT NULL, unit TEXT NOT NULL, count INTEGER NOT NULL DEFAULT 1,
+    last_at INTEGER NOT NULL, last_by_name TEXT NOT NULL DEFAULT '', PRIMARY KEY (dose_key, label, unit)
   ) STRICT;`);
+  const existing = new Set(database.sqlite.prepare('PRAGMA table_info(drug_max_doses)').all().map((column) => column.name));
+  for (const [name, type] of DOSE_LIMIT_COLUMNS) {
+    if (!existing.has(name)) database.sqlite.exec(`ALTER TABLE drug_max_doses ADD COLUMN ${name} ${type}`);
+  }
+  database.sqlite.exec('CREATE UNIQUE INDEX IF NOT EXISTS drug_max_doses_dose_key_idx ON drug_max_doses(dose_key) WHERE dose_key IS NOT NULL');
+  seedDoseLimits(database);
+}
+
+let draftTable = null;
+export function doseLimitsDraft() {
+  if (!draftTable) draftTable = JSON.parse(fs.readFileSync(new URL('./catalogues/dose-limits-draft.json', import.meta.url), 'utf8'));
+  return draftTable;
+}
+
+const limitNumber = (value) => (value === null || value === undefined || value === '' || !Number.isFinite(Number(value)) || Number(value) <= 0 ? null : Number(value));
+
+// Adds the draft lines that are not in the table yet (by dose key). Lines
+// already there (changed, approved or rejected) are never touched.
+export function seedDoseLimits(database, table = doseLimitsDraft()) {
+  const known = new Set(database.sqlite.prepare('SELECT dose_key FROM drug_max_doses WHERE dose_key IS NOT NULL').all().map((row) => row.dose_key));
+  const missing = (table.items || []).filter((item) => item?.doseKey && !known.has(item.doseKey));
+  if (!missing.length) return 0;
+  const insert = database.sqlite.prepare(`INSERT INTO drug_max_doses (id,drug,max_per_dose,max_per_day,unit,note,updated_by_name,updated_at,
+    dose_key,route,type,component,adult_max_per_dose_per_kg,adult_max_per_day_per_kg,child_max_per_dose_per_kg,child_max_per_day_per_kg,
+    child_max_per_dose,child_max_per_day,status,source) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'draft',?)`);
+  let added = 0;
+  const now = Date.now();
+  database.sqlite.exec('BEGIN');
+  try {
+    for (const item of missing) {
+      if (known.has(item.doseKey)) continue;
+      const adult = item.adult || {}, child = item.child || {};
+      insert.run(crypto.randomUUID(), String(item.medicine || item.doseKey), limitNumber(adult.maxPerDose), limitNumber(adult.maxPerDay),
+        String(item.unit || ''), String(item.note || ''), 'Borkeo draft table', now, item.doseKey, String(item.route || ''),
+        DOSE_LIMIT_TYPES.includes(item.type) ? item.type : 'check', String(item.component || ''),
+        limitNumber(adult.maxPerDosePerKg), limitNumber(adult.maxPerDayPerKg), limitNumber(child.maxPerDosePerKg), limitNumber(child.maxPerDayPerKg),
+        limitNumber(child.maxPerDose), limitNumber(child.maxPerDay), 'dose-limits-draft.json');
+      known.add(item.doseKey);
+      added += 1;
+    }
+    database.sqlite.exec('COMMIT');
+  } catch (error) {
+    database.sqlite.exec('ROLLBACK');
+    throw error;
+  }
+  return added;
 }
 
 function text(value, max, label, required = false) {
@@ -136,10 +208,68 @@ export function drugSafetyTables(database) {
     interactions: database.sqlite.prepare('SELECT * FROM drug_interactions ORDER BY drug_a, drug_b').all().map((row) => ({
       id: row.id, drugA: row.drug_a, drugB: row.drug_b, severity: row.severity, note: row.note, updatedBy: row.updated_by_name, updatedAt: row.updated_at,
     })),
-    maxDoses: database.sqlite.prepare('SELECT * FROM drug_max_doses ORDER BY drug').all().map((row) => ({
-      id: row.id, drug: row.drug, maxPerDose: row.max_per_dose, maxPerDay: row.max_per_day, unit: row.unit, note: row.note, updatedBy: row.updated_by_name, updatedAt: row.updated_at,
+    maxDoses: database.sqlite.prepare('SELECT * FROM drug_max_doses ORDER BY drug, route').all().map(maxDoseFromRow),
+    unconverted: database.sqlite.prepare('SELECT * FROM drug_dose_unconverted ORDER BY last_at DESC LIMIT 200').all().map((row) => ({
+      doseKey: row.dose_key, label: row.label, unit: row.unit, count: row.count, lastAt: row.last_at, lastBy: row.last_by_name,
     })),
   };
+}
+
+function maxDoseFromRow(row) {
+  return {
+    id: row.id, drug: row.drug, doseKey: row.dose_key || '', route: row.route || '', type: row.type || 'check', component: row.component || '',
+    maxPerDose: row.max_per_dose, maxPerDay: row.max_per_day, unit: row.unit, note: row.note,
+    adult: { maxPerDose: row.max_per_dose, maxPerDay: row.max_per_day, maxPerDosePerKg: row.adult_max_per_dose_per_kg, maxPerDayPerKg: row.adult_max_per_day_per_kg },
+    child: { maxPerDosePerKg: row.child_max_per_dose_per_kg, maxPerDayPerKg: row.child_max_per_day_per_kg, maxPerDose: row.child_max_per_dose, maxPerDay: row.child_max_per_day },
+    status: row.status || 'approved', approvedBy: row.approved_by || '', approvedAt: row.approved_at || null,
+    updatedBy: row.updated_by_name, updatedAt: row.updated_at,
+  };
+}
+
+// Administrator changes the values of one line. A changed line goes back to
+// draft: it is used again only after the Head of Pharmacy or the Director approves it.
+export function updateMaxDose(database, session, id, body) {
+  const row = database.sqlite.prepare('SELECT * FROM drug_max_doses WHERE id=?').get(String(id || ''));
+  if (!row) return null;
+  const adult = body?.adult || {}, child = body?.child || {};
+  const type = text(body?.type ?? row.type ?? 'check', 20, 'Type');
+  if (!DOSE_LIMIT_TYPES.includes(type)) throw new Error('Type is invalid.');
+  const values = {
+    maxPerDose: amount(adult.maxPerDose, 'Maximum per dose'), maxPerDay: amount(adult.maxPerDay, 'Maximum per day'),
+    adultDoseKg: amount(adult.maxPerDosePerKg, 'Maximum per kg per dose'), adultDayKg: amount(adult.maxPerDayPerKg, 'Maximum per kg per day'),
+    childDoseKg: amount(child.maxPerDosePerKg, 'Child maximum per kg per dose'), childDayKg: amount(child.maxPerDayPerKg, 'Child maximum per kg per day'),
+    childDose: amount(child.maxPerDose, 'Child maximum per dose'), childDay: amount(child.maxPerDay, 'Child maximum per day'),
+    unit: text(body?.unit ?? row.unit, 40, 'Unit'), note: text(body?.note ?? row.note, 1000, 'Note'),
+    component: text(body?.component ?? row.component ?? '', 200, 'Component'),
+  };
+  database.sqlite.prepare(`UPDATE drug_max_doses SET max_per_dose=?, max_per_day=?, adult_max_per_dose_per_kg=?, adult_max_per_day_per_kg=?,
+    child_max_per_dose_per_kg=?, child_max_per_day_per_kg=?, child_max_per_dose=?, child_max_per_day=?, unit=?, note=?, component=?, type=?,
+    status='draft', approved_by=NULL, approved_at=NULL, updated_by_name=?, updated_at=? WHERE id=?`)
+    .run(values.maxPerDose, values.maxPerDay, values.adultDoseKg, values.adultDayKg, values.childDoseKg, values.childDayKg,
+      values.childDose, values.childDay, values.unit, values.note, values.component, type, staffName(session), Date.now(), row.id);
+  return maxDoseFromRow(database.sqlite.prepare('SELECT * FROM drug_max_doses WHERE id=?').get(row.id));
+}
+
+// Head of Pharmacy or Director: approve or reject one line (name and time kept).
+export function reviewMaxDose(database, session, id, decision) {
+  const status = decision === 'approve' ? 'approved' : decision === 'reject' ? 'rejected' : '';
+  if (!status) throw new Error('Decision is invalid.');
+  const result = database.sqlite.prepare('UPDATE drug_max_doses SET status=?, approved_by=?, approved_at=? WHERE id=?')
+    .run(status, staffName(session), Date.now(), String(id || ''));
+  if (result.changes !== 1) return null;
+  return maxDoseFromRow(database.sqlite.prepare('SELECT * FROM drug_max_doses WHERE id=?').get(String(id)));
+}
+
+// A prescribed dose that could not be converted to the unit of the limit
+// (shown to the pharmacist on the drug safety page).
+export function recordUnconvertedDose(database, session, body) {
+  const doseKey = text(body?.doseKey, 200, 'Dose key', true);
+  const label = text(body?.label, 600, 'Medicine', true);
+  const unit = text(body?.unit, 40, 'Unit');
+  database.sqlite.prepare(`INSERT INTO drug_dose_unconverted (dose_key,label,unit,count,last_at,last_by_name) VALUES (?,?,?,1,?,?)
+    ON CONFLICT(dose_key,label,unit) DO UPDATE SET count=count+1, last_at=excluded.last_at, last_by_name=excluded.last_by_name`)
+    .run(doseKey, label, unit, Date.now(), staffName(session));
+  return { doseKey, label, unit };
 }
 
 export function addInteraction(database, session, body) {
@@ -162,7 +292,8 @@ export function addMaxDose(database, session, body) {
   };
   if (values.maxPerDose === null && values.maxPerDay === null) throw new Error('Enter a maximum per dose or per day.');
   const id = crypto.randomUUID();
-  database.sqlite.prepare('INSERT INTO drug_max_doses (id,drug,max_per_dose,max_per_day,unit,note,updated_by_name,updated_at) VALUES (?,?,?,?,?,?,?,?)')
+  // v42.5: a new line is a draft until the Head of Pharmacy or the Director approves it.
+  database.sqlite.prepare("INSERT INTO drug_max_doses (id,drug,max_per_dose,max_per_day,unit,note,updated_by_name,updated_at,status) VALUES (?,?,?,?,?,?,?,?,'draft')")
     .run(id, values.drug, values.maxPerDose, values.maxPerDay, values.unit, values.note, staffName(session), Date.now());
   return { id, ...values };
 }
@@ -170,5 +301,8 @@ export function addMaxDose(database, session, body) {
 export function removeDrugSafetyRow(database, table, id) {
   const name = table === 'interactions' ? 'drug_interactions' : table === 'max-doses' ? 'drug_max_doses' : '';
   if (!name) return false;
-  return database.sqlite.prepare(`DELETE FROM ${name} WHERE id=?`).run(String(id || '')).changes === 1;
+  // v42.5: lines of the Essential Medicines List table (dose key) are rejected, not
+  // deleted, so that the draft table never adds them again.
+  const keep = name === 'drug_max_doses' ? ' AND dose_key IS NULL' : '';
+  return database.sqlite.prepare(`DELETE FROM ${name} WHERE id=?${keep}`).run(String(id || '')).changes === 1;
 }

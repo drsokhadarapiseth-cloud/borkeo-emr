@@ -14,7 +14,8 @@ export const approvedNewPath = path.join(projectRoot, 'docs', 'approved-new-khme
 
 const KHMER = /[ក-៿᧠-᧿]/;
 const EXTENSIONS = new Set(['.html', '.js', '.mjs', '.css', '.json']);
-const SKIP_DIRS = new Set(['node_modules', 'data', 'docs', 'backups', '.git']);
+// borkeo-update-files: the owner's input files for an update (not served; copied into server/).
+const SKIP_DIRS = new Set(['node_modules', 'data', 'docs', 'backups', '.git', 'borkeo-update-files']);
 const SKIP_DIR_PATTERN = /^(\.validation-|_backup_)/;
 // Splits a line at quotes, tag brackets and ${ } template placeholders.
 const DELIMITERS = /["'`<>]|\$\{|\}/;
@@ -79,14 +80,19 @@ export function stripSectionNumber(text) {
 export const INTERNATIONAL_UNITS = new Set(['mg', 'mL', 'mcg', 'g', 'IU']);
 
 // Reads the "| file | line | before | after |" table in docs/khmer-approved-changes.md.
+// v42.5: rows under a "## ... (owner's order)" heading are changes the owner
+// ordered in an approved update prompt (ordered: true): the "before" text may
+// disappear when the "after" text is in the project.
 export function readApprovedChanges(file = approvedChangesPath) {
   if (!fs.existsSync(file)) return [];
   const rows = [];
+  let ordered = false;
   for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+    if (line.startsWith('#')) { ordered = /\(owner's order\)/.test(line); continue; }
     if (!line.trim().startsWith('|')) continue;
     const cells = line.trim().replace(/^\||\|$/g, '').split('|').map((cell) => cell.replace(EDGE_SPACE, ''));
     if (cells.length < 4 || !hasKhmer(cells[2])) continue;
-    rows.push({ file: cells[0], line: cells[1], before: cells[2], after: cells[3] });
+    rows.push({ file: cells[0], line: cells[1], before: cells[2], after: cells[3], ordered });
   }
   return rows;
 }
@@ -109,6 +115,7 @@ export function checkAgainstBaseline({ baseline, current, approvedChanges, appro
     const change = changes.get(text);
     if (change && change.after === stripSectionNumber(text) && now.has(change.after)) continue;
     if (change && INTERNATIONAL_UNITS.has(change.after)) continue;
+    if (change && change.ordered && (now.has(change.after) || !hasKhmer(change.after))) continue;
     const where = baseline.filter((item) => item.text === text).map((item) => `${item.file}:${item.line}`).slice(0, 3).join(', ');
     problems.push(`CHANGED OR REMOVED (${missing} of ${count}): "${text}" (was at ${where})`);
   }

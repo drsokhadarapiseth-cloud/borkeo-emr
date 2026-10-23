@@ -83,7 +83,9 @@ test('v41.2 MAR, prescribing overrides and drug safety tables: roles, reasons, n
 
     // Drug safety tables start empty; administrators edit; doctors read.
     const tables = await (await fetch(origin + '/api/drug-safety', { headers: doctor })).json();
-    assert.deepEqual([tables.interactions, tables.maxDoses, tables.canEdit], [[], [], false]);
+    // v42.5: the Essential Medicines List maximum doses are loaded as drafts (not used until approved).
+    assert.deepEqual([tables.interactions, tables.maxDoses.filter((row) => !row.doseKey), tables.canEdit], [[], [], false]);
+    assert.ok(tables.maxDoses.length > 0 && tables.maxDoses.every((row) => row.status === 'draft'));
     assert.equal((await fetch(origin + '/api/drug-safety', { headers: nurse })).status, 403);
     assert.equal((await post(doctor, '/api/drug-safety/interactions', { drugA: 'Warfarin', drugB: 'Aspirin' })).status, 403);
     assert.equal((await post(admin, '/api/drug-safety/interactions', { drugA: 'Warfarin', drugB: 'warfarin' })).status, 400);
@@ -127,11 +129,14 @@ test('the chart, the prescriptions and the record stay as they were', () => {
   // The old tick no longer changes the cell by itself: the click is captured and opens the form.
   assert.match(source, /event\.target\.closest\?\.\('#sub_nursing \.nursing-med-dose-check'\)/);
   assert.match(source, /event\.preventDefault\(\);\s*event\.stopImmediatePropagation\(\);/);
-  // Warnings only for doctors, on the medical record page.
-  assert.match(source, /if \(role\(\) !== 'DOCTOR'\) return;/);
-  assert.match(source, /if \(field && field\.closest\('#page3'\)\) checkPrescription\(field\);/);
+  // Warnings only for prescribers (v42.5: doctors and midwives), on the medical record page
+  // (v42.5: discharge medicines included).
+  assert.match(source, /const PRESCRIBERS = \['DOCTOR', 'MIDWIFE'\];/);
+  assert.match(source, /if \(!isPrescriber\(\)\) return;/);
+  assert.match(source, /if \(field && \(field\.closest\('#page3'\) \|\| field\.closest\('#emr-discharge-rx-body'\)\)\) checkPrescription\(field\);/);
   // The EMR page loads the script; the admin page has a menu entry with a translation key.
   assert.match(read('server/server.mjs'), /medication-safety\.js\?v=4120/);
   assert.match(read('public/nav-config.js'), /id: 'admin-drug-safety'.*newTextKey: 'nav\.drugSafety'/);
-  assert.match(read('server/access.mjs'), /if \(pathname === '\/admin\/drug-safety'\) return \['ADMIN','DIRECTOR','VICE_DIRECTOR'\]\.includes\(role\);/);
+  // v42.5: the Head of Pharmacy approves the maximum doses on this page.
+  assert.match(read('server/access.mjs'), /if \(pathname === '\/admin\/drug-safety'\) return \['ADMIN','DIRECTOR','VICE_DIRECTOR','PHARMACY'\]\.includes\(role\);/);
 });

@@ -50,7 +50,7 @@ test('v12.0 medicine type-ahead includes common oral and parenteral drugs', () =
   const labels = JSON.parse(fs.readFileSync(path.join(root, 'server', 'catalogues', 'medicines-eml-2024.json'), 'utf8')).map(item => item.label);
   assert.doesNotMatch(html, /meds_list/);
   assert.match(html, /<input type="text" autocomplete="off" class="rx-select \$\{prefix\}-name"/);
-  for (const name of ['Paracetamol (acetaminophen)-Tablet-500 mg', 'Ceftriaxone-Powder for injection-1 g', 'Hyoscine butylbromide-Injection-20 mg/mL']) {
+  for (const name of ['Paracetamol-Tablet-500 mg', 'Ceftriaxone-Powder for injection-1 g', 'Hyoscine butylbromide-Injection-20 mg/mL']) {
     assert.ok(labels.some(label => label.includes(name)), name);
   }
 });

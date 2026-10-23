@@ -1207,6 +1207,13 @@
       setStatus('error', routeError);
       return false;
     }
+    // v42.5: a line above the maximum dose needs the written reason before saving.
+    const doseError = activeEditorScope() === 'medical'
+      ? window.EmrMedicationSafety?.validateDoses('#opd_rx_tbody tr.orx-main-row, #rx_tbody tr.rx-main-row, #rx_protocol_tbody tr.protocol-main-row') : '';
+    if (doseError) {
+      setStatus('error', doseError);
+      return false;
+    }
     const validation = validatePatient(context, options);
     if (validation) {
       setStatus('error', validation);

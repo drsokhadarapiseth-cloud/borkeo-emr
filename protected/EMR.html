@@ -13190,7 +13190,7 @@
                                         onchange="handleMedicationQuickChange(this)"></td>
                                 <td><input type="number" min="0" class="rx-num-input mrx-d" value="1"
                                         oninput="handleMedicationQuickChange(this)"></td>
-                                <td><input type="text" class="rx-num-input mrx-total rx-total-view" readonly value="0">
+                                <td><input type="text" class="rx-num-input mrx-total rx-total-view" readonly value="">
                                 </td>
                                 <td><input type="text" class="rx-select mrx-note" placeholder="សម្គាល់..."></td>
                                 <td><button class="btn-red" onclick="removeMonRxRow(this)"><i
@@ -17842,23 +17842,12 @@ aHRtbD4K
             return graphCells || 16;
         }
 
+        // v42.5: one route table for every page (public/medication-routes.js).
+        // New lines offer IV, IM, SC and the other simple routes; the old values
+        // (iv_fluid, antibiotic_iv, antibiotic_im, injection_unspecified) are
+        // kept for saved lines (legacy) and shown as IV / IM.
         function getMedicationRouteDefinitions() {
-            return [
-                { value: 'iv_fluid', priority: 1, khmer: 'សារធាតុរាវតាមសរសៃឈាម (IV)', english: 'IV fluid' },
-                { value: 'antibiotic_iv', priority: 2, khmer: 'អង់ទីប៊ីយ៉ូទិកតាមសរសៃឈាម (IV)', english: 'Antibiotic IV' },
-                { value: 'antibiotic_im', priority: 2, khmer: 'អង់ទីប៊ីយ៉ូទិកចាក់សាច់ដុំ (IM)', english: 'Antibiotic IM' },
-                { value: 'other_iv', priority: 3, khmer: 'ថ្នាំផ្សេងតាមសរសៃឈាម (IV)', english: 'Other medicine IV' },
-                { value: 'other_im', priority: 3, khmer: 'ថ្នាំផ្សេងចាក់សាច់ដុំ (IM)', english: 'Other medicine IM' },
-                { value: 'subcutaneous', priority: 3.5, khmer: 'ចាក់ក្រោមស្បែក (SC)', english: 'Subcutaneous (SC)' },
-                { value: 'injection_unspecified', priority: 3.5, khmer: 'ចាក់ (ត្រូវបញ្ជាក់ផ្លូវ)', english: 'Injection (route needed)' },
-                { value: 'po', priority: 4, khmer: 'លេប (PO)', english: 'Oral (PO)' },
-                { value: 'topical', priority: 4.5, khmer: 'លាប', english: 'Topical' },
-                { value: 'drops', priority: 4.5, khmer: 'បន្តក់', english: 'Drops' },
-                { value: 'inhaled', priority: 4.5, khmer: 'ស្រូប', english: 'Inhaled' },
-                { value: 'vaginal', priority: 5, khmer: 'តាមទ្វារមាស', english: 'Vaginal' },
-                { value: 'rectal', priority: 5, khmer: 'តាមទ្វារធំ (PR)', english: 'Rectal (PR)' },
-                { value: 'sublingual', priority: 5, khmer: 'ក្រោមអណ្តាត (SL)', english: 'Sublingual (SL)' }
-            ];
+            return window.BorkeoMedicationRoutes.definitions();
         }
 
         function normalizeMedicationRoute(value) {
@@ -17900,11 +17889,25 @@ aHRtbD4K
             return getMedicationRouteDefinition(value).priority;
         }
 
+        // v42.5: nursing chart order. New IV / IM lines use one route value, so
+        // IV fluids (list group 25) and antibacterials (ATC J01) chosen from the
+        // Essential Medicines List keep their place before the other injections.
+        function getMedicationOrderPriority(order) {
+            var priority = getMedicationRoutePriority(order && order.route);
+            var route = normalizeMedicationRoute(order && order.route);
+            if ((route === 'other_iv' || route === 'other_im') && window.BorkeoMedicine && window.BorkeoMedicine.ready()) {
+                var item = window.BorkeoMedicine.lookup(order.name, order.cmsCode);
+                if (item && route === 'other_iv' && /^25\./.test(item.group || '')) return 1;
+                if (item && /^J01/.test(item.atc || '')) return 2;
+            }
+            return priority;
+        }
+
         function getNursingMedicationRouteLabel(value) {
             var route = normalizeMedicationRoute(value);
             var khmer = currentLang === 'khmer';
             var labels = {
-                iv_fluid: khmer ? 'IV សារធាតុរាវ' : 'IV fluid',
+                iv_fluid: 'IV',
                 antibiotic_iv: 'IV', antibiotic_im: 'IM', other_iv: 'IV', other_im: 'IM',
                 subcutaneous: 'SC', injection_unspecified: khmer ? 'ចាក់ (ត្រូវបញ្ជាក់ផ្លូវ)' : 'Injection (route needed)', po: 'PO',
                 vaginal: khmer ? 'តាមទ្វារមាស' : 'Vaginal', rectal: 'PR', sublingual: 'SL',
@@ -17926,6 +17929,8 @@ aHRtbD4K
             blankRoute.textContent = currentLang === 'khmer' ? '-- ជ្រើស --' : '-- Select --';
             select.appendChild(blankRoute);
             getMedicationRouteDefinitions().forEach(function (definition) {
+                // v42.5: old route values are shown only on the saved line that uses them.
+                if (definition.legacy && definition.value !== selected) return;
                 var option = document.createElement('option');
                 option.value = definition.value;
                 option.textContent = definition[currentLang === 'khmer' ? 'khmer' : 'english'];
@@ -17954,9 +17959,17 @@ aHRtbD4K
             return nameInput && nameInput.dataset.cmsCode ? nameInput.dataset.cmsCode : '';
         }
 
+        // v42.5: the reason written to continue above a maximum dose
+        // (public/medication-safety.js) is saved with the line (doseOverrideReason).
+        function medicationDoseReason(row, prefix) {
+            var nameInput = row ? row.querySelector('.' + prefix + '-name') : null;
+            return nameInput && nameInput.dataset.doseReason ? nameInput.dataset.doseReason : '';
+        }
+
         function restoreMedicationCmsCode(row, prefix, med) {
             var nameInput = row ? row.querySelector('.' + prefix + '-name') : null;
             if (nameInput && med && med.cmsCode) nameInput.dataset.cmsCode = String(med.cmsCode);
+            if (nameInput && med && med.doseOverrideReason) nameInput.dataset.doseReason = String(med.doseOverrideReason);
         }
 
         // v42.3: a row with a medicine name must have a route before saving.
@@ -18246,7 +18259,8 @@ aHRtbD4K
             } else {
                 total = dose * getMedicationDailyFrequency(mainRow) * days;
             }
-            totalField.value = total ? String(Math.round(total * 100) / 100) : '0';
+            // v42.5: no number of medicine yet: the total stays empty (never 0 or NaN).
+            totalField.value = total && isFinite(total) ? String(Math.round(total * 100) / 100) : '';
         }
 
         function formatMedicationScheduleLabel(scheduleType, qHours, language) {
@@ -18380,6 +18394,8 @@ aHRtbD4K
                     if (prefix === 'prx') order.doseAmount = value('dose');
                     var cmsCode = medicationCmsCode(row, prefix);
                     if (cmsCode) order.cmsCode = cmsCode;
+                    var doseReason = medicationDoseReason(row, prefix);
+                    if (doseReason) order.doseOverrideReason = doseReason;
                     return order;
                 }).filter(Boolean);
         };
@@ -18454,6 +18470,8 @@ aHRtbD4K
                 }, getMedicationTimingData(row, ''));
                 var cmsCode = medicationCmsCode(row, 'orx');
                 if (cmsCode) order.cmsCode = cmsCode;
+                var doseReason = medicationDoseReason(row, 'orx');
+                if (doseReason) order.doseOverrideReason = doseReason;
                 return order;
             }).filter(Boolean);
         };
@@ -18761,7 +18779,7 @@ aHRtbD4K
             });
 
             orders.sort(function (first, second) {
-                var priorityDifference = getMedicationRoutePriority(first.route) - getMedicationRoutePriority(second.route);
+                var priorityDifference = getMedicationOrderPriority(first) - getMedicationOrderPriority(second);
                 if (priorityDifference) return priorityDifference;
                 var nameDifference = first.name.localeCompare(second.name, undefined, { sensitivity: 'base', numeric: true });
                 if (nameDifference) return nameDifference;
@@ -21455,7 +21473,7 @@ aHRtbD4K
                     <input type="datetime-local" class="med-effective-at" style="display:none;" onchange="handleMedicationQuickChange(this)">
                 </td>
                 <td><input type="number" min="0" class="rx-num-input ${prefix}-d" ${isOpd ? '' : 'value="1"'} oninput="handleMedicationQuickChange(this)"></td>
-                <td><input type="text" class="rx-num-input ${prefix}-total rx-total-view" readonly value="0"></td>
+                <td><input type="text" class="rx-num-input ${prefix}-total rx-total-view" readonly value=""></td>
                 <td><input type="text" class="rx-select ${prefix}-note" placeholder="${isMonitoring ? 'សម្គាល់...' : '...'}"></td>
                 <td class="no-print"><button class="btn-red" onclick="${removeHandler}"><i class="fa-solid fa-minus"></i></button></td>
             `;
@@ -21934,6 +21952,8 @@ aHRtbD4K
             var dateDisplay = dtVal ? dtVal.replace('T', ' ') : '29-08-2026 21:24';
 
             if (!restoring && window.validateMedicationRoutes('#mon_rx_tbody tr.mrx-main-row, #mon_rx_protocol_tbody tr.protocol-main-row')) return false;
+            // v42.5: a line above the maximum dose needs the written reason before saving.
+            if (!restoring && window.EmrMedicationSafety && window.EmrMedicationSafety.validateDoses('#mon_rx_tbody tr.mrx-main-row, #mon_rx_protocol_tbody tr.protocol-main-row')) return false;
 
             var rxHtml = '';
             var medications = [];
@@ -21965,6 +21985,8 @@ aHRtbD4K
                     }, timing);
                     var cmsCode = medicationCmsCode(row, prefix);
                     if (cmsCode) medication.cmsCode = cmsCode;
+                    var doseReason = medicationDoseReason(row, prefix);
+                    if (doseReason) medication.doseOverrideReason = doseReason;
                     medications.push(medication);
 
                     var freqArr = [];
