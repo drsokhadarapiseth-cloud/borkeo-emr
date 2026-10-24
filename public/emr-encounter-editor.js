@@ -47,12 +47,20 @@
     if(!bar && !report){
       bar=document.createElement('div');bar.className='emr-encounter-toolbar no-print';bar.dataset.emrTransient='';
       bar.innerHTML='<button type="button" data-editor-toggle data-required-bypass></button><button type="button" data-editor-cancel data-required-bypass>បោះបង់ការកែប្រែ</button><button type="button" data-editor-print data-required-bypass>បោះពុម្ព</button><span data-editor-status role="status"></span>';
-      page.after(bar);
+      const regActionBar = current === 'register' ? (root.querySelector('.action-bar') || document.getElementById('reg_action_bar') || document.querySelector('#sub_reg .action-bar')) : null;
+      if (regActionBar) {
+        regActionBar.prepend(bar);
+      } else {
+        page.after(bar);
+      }
       bar.querySelector('[data-editor-toggle]').onclick=toggle;
       bar.querySelector('[data-editor-cancel]').onclick=()=>{if(confirm('តើបោះបង់ការកែប្រែដែលមិនទាន់រក្សាទុកឬ?')){const url=new URL(location.href);url.searchParams.set('mode','view');url.searchParams.delete('edit');location.assign(url)}};
       const printButton=bar.querySelector('[data-editor-print]');
       if(current==='register')printButton.remove();
       else printButton.onclick=()=>window.printEmrReport?.({selectors:['#'+root.id],title:document.title});
+    } else if (bar && current === 'register') {
+      const regActionBar = root.querySelector('.action-bar') || document.getElementById('reg_action_bar') || document.querySelector('#sub_reg .action-bar');
+      if (regActionBar && !regActionBar.contains(bar)) regActionBar.prepend(bar);
     }
     const locked=report || !editing;
     root.querySelectorAll('input,select,textarea,button').forEach(field=>{

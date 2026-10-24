@@ -22,9 +22,9 @@ test('v43.3: Version consistency across package.json, server.mjs, and login.html
   const serverCode = read('server/server.mjs');
   const loginHtml = read('public/login.html');
 
-  assert.equal(pkg.version, '44.7.0', 'package.json version must be 44.7.0');
-  assert.match(serverCode, /Borkeo EMR v44\.7/, 'server.mjs must declare v44.7');
-  assert.match(loginHtml, /data-app-version[^>]*>v44\.7<\/span>/, 'login.html must display v44.7');
+  assert.equal(pkg.version, '44.8.0', 'package.json version must be 44.8.0');
+  assert.match(serverCode, /Borkeo EMR v44.8/, 'server.mjs must declare v44.8');
+  assert.match(loginHtml, /data-app-version[^>]*>v44.8<\/span>/, 'login.html must display v44.8');
 });
 
 test('v43.3: Modern consultation workspace presentation assets exist and are registered in server.mjs', () => {

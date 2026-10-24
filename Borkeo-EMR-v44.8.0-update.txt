@@ -1,0 +1,56 @@
+================================================================================
+Borkeo EMR Update Note: Version 44.8.0
+Update plan #8: Save and Send to Triage on the same row
+================================================================================
+
+Date: 2026-10-24
+Previous Version: 44.7.0
+New Version: 44.8.0
+Source: re-applies the v43.5.0 work (commit f266bfb) on top of v44.7.0.
+Patient data: not touched. No database change.
+
+Verified in a disposable copy with synthetic data:
+- npm test: 985 / 985 pass.
+- npm run check:khmer: passes.
+- Every account signs in and opens its page in demo mode (34 accounts),
+  hospital mode (24 accounts, password 1234) and online mode (Superuser with
+  SUPERUSER_PASSWORD, all 65 role/ward choices). Same result as v44.7.0.
+
+--------------------------------------------------------------------------------
+1. WHAT WAS WRONG
+--------------------------------------------------------------------------------
+On the registration form the «បញ្ជូនទៅផ្នែកទ្រីយ៉ា» button was at the bottom of
+the card, but the «រក្សាទុក» button was in a separate box below the whole page.
+
+--------------------------------------------------------------------------------
+2. WHAT CHANGED
+--------------------------------------------------------------------------------
+- «រក្សាទុក» and «បញ្ជូនទៅផ្នែកទ្រីយ៉ា» now sit side by side in one row at the
+  bottom of the registration form (#reg_action_bar).
+- When an existing patient is edited, «បោះបង់ការកែប្រែ» and the save status
+  appear in the same row.
+- The row is hidden when printing. Saving, storage keys and print forms are
+  unchanged. v43.4 (which hid navigation by mistake) is NOT applied.
+
+--------------------------------------------------------------------------------
+3. FILES
+--------------------------------------------------------------------------------
+  public/emr-encounter-editor.js, public/emr-encounter-editor.css
+  protected/EMR.html, docs/ui-43.5.md
+  tests/v435-registration-same-row-actions.test.mjs (new)
+  package.json, public/login.html, server/server.mjs, CHANGELOG.md   version 44.8.0
+  tests/accessibility-quality-smoke.test.mjs,
+  tests/v432-modern-consultation-workspace.test.mjs                  version checks
+
+--------------------------------------------------------------------------------
+4. INSTALLATION (one step at a time)
+--------------------------------------------------------------------------------
+Step 1: Close the EMR server window (or press Ctrl + C in it).
+Step 2: In the project folder run: git pull
+Step 3: Double-click "Start-Borkeo-WiFi.bat" (or run npm start).
+Step 4: In the browser press Ctrl + F5 once, sign in as registration and open
+        the registration form: both buttons are in one row at the bottom.
+
+For Antigravity: this folder already contains the update. The full code change
+is the Git commit "v44.8.0" on master (git log).
+================================================================================

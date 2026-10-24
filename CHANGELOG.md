@@ -1,5 +1,11 @@
 # Borkeo EMR Changelog
 
+## v44.8.0 - Unified same-row registration action bar
+
+- Unify the «រក្សាទុក» (Save) button and «បញ្ជូនទៅផ្នែកទ្រីយ៉ា» (Send to Triage) button in the same clean row at the bottom of the registration form (`#sub_reg`).
+- Eliminate detached floating boxes below the card; encounter toolbar now mounts directly inside `#reg_action_bar` with coherent styling, status updates, and cancellation handling.
+- Preserve 100% of data persistence, frozen storage keys, and authentic hospital paper printing templates.
+
 ## v44.7.0 - Consultation workspace (compact layout, modern consultation cards, integrated view switcher; re-applies v43.1, v43.2, v43.3)
 - 3 View Modes with instant switching: «ទម្រង់រួមបញ្ចូលគ្នា» (Integrated Form - default), «ទម្រង់សង្ខេប» (Modern Compact View), and «ទម្រង់ពិស្ដារពេញលេញ» (Full Classic Form View).
 - In Integrated View: Modern card displays at top, with TB Screening Matrix (ការពិនិត្យស្វែងរកជំងឺរបេង), ICD-10 multi-diagnosis picker, full medication prescription table (តារាងវេជ្ជបញ្ជាឱសថ), paraclinic investigation builder, and doctor e-signature embedded seamlessly below with unified rounded card styling.
