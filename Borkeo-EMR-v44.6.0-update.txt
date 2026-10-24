@@ -1,0 +1,49 @@
+================================================================================
+Borkeo EMR Update Note: Version 44.6.0
+Update plan #6: role-based access for laboratory, imaging and clinical wards
+================================================================================
+
+Date: 2026-10-24
+Previous Version: 44.5.0
+New Version: 44.6.0
+Source: re-applies the v43.0.0 work (commit 1e3f06d) on top of v44.5.0.
+Patient data: not touched. No database change.
+
+Verified in a disposable copy with synthetic data:
+- npm test: 976 / 976 pass (includes the new tests/access-audit.test.mjs).
+- npm run check:khmer: passes.
+- Every account signs in and opens its page in demo mode (34 accounts),
+  hospital mode (24 accounts, password 1234) and online mode (Superuser with
+  SUPERUSER_PASSWORD, all 65 role/ward choices). Same result as v44.5.0.
+
+1. WHAT WAS WRONG
+--------------------------------------------------------------------------------
+Some laboratory, imaging and attachment requests were checked only by role, not
+by the ward or service the user is working in. A doctor could read or create
+orders for a patient of another ward by calling the server directly.
+
+--------------------------------------------------------------------------------
+2. WHAT CHANGED
+--------------------------------------------------------------------------------
+a) Paraclinic orders and attachments (lab, imaging) are checked against the
+   active role AND the active ward/service on the server. A refused request
+   changes nothing.
+b) A doctor orders for patients of the ward chosen in "switch role / ward".
+   To order for another ward, switch to that ward first (Superuser and
+   management roles keep their existing access).
+c) docs/access-audit.md and scripts/write-access-audit.mjs: an inventory of
+   the 15 built-in roles, their pages and server modules.
+d) Pages, menus, landing pages, log out and switch role are unchanged.
+
+--------------------------------------------------------------------------------
+3. INSTALLATION (one step at a time)
+--------------------------------------------------------------------------------
+Step 1: Close the EMR server window (or press Ctrl + C in it).
+Step 2: In the project folder run: git pull
+Step 3: Double-click "Start-Borkeo-WiFi.bat".
+Step 4: In the browser press Ctrl + F5 once and sign in.
+
+For Antigravity: this folder already contains the update. The full code change
+is the Git commit "v44.6.0" on master (git log). Run "npm test" and
+"npm run check:khmer" after pulling.
+================================================================================

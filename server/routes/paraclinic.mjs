@@ -414,7 +414,7 @@ export function mountParaclinicRoutes(router) {
       if (!canUseMaternalPatient({ ...session, activeRole: role }, patient, sessionWard(session))) return sendJson(response, 403, { error: 'This patient is outside your service.' }, { secure: config.cookieSecure });
       if (!allowedOrder) return sendJson(response, 403, { error: 'ឆ្មបអាចស្នើតែ HBsAg និងអេកូសាស្ត្រប៉ុណ្ណោះ។' }, { secure: config.cookieSecure });
     }
-    if (!canAccessPatient(database, session, patient) && !['ADMIN', 'VICE_DIRECTOR', 'DOCTOR'].includes(role)) {
+    if (!canAccessPatient(database, session, patient) && !['ADMIN', 'VICE_DIRECTOR'].includes(role)) {
       return sendJson(response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
     }
     if (['DOCTOR', 'CHIEF_WARD', ...RECORD_MANAGEMENT].includes(role)) {
@@ -566,7 +566,8 @@ export function mountParaclinicRoutes(router) {
     const order = getOrder(database, match[1]);
     if (!order) return sendJson(response, 404, { error: 'Request not found.' }, { secure: config.cookieSecure });
     const patient = database.findPatient(order.patientKey);
-    const allowed = orderActorAllowed(role, order.modality) || role === 'DOCTOR' || (patient && canAccessPatient(database, session, patient));
+    const allowed = orderActorAllowed(role, order.modality) ||
+      (!['LAB', 'IMAGING'].includes(role) && patient && canAccessPatient(database, session, patient));
     if (!allowed) return sendJson(response, 403, { error: 'You cannot view this request.' }, { secure: config.cookieSecure });
     return sendJson(response, 200, { order }, { secure: config.cookieSecure });
   });
@@ -775,7 +776,8 @@ export function mountParaclinicRoutes(router) {
     const attachment = getAttachment(database, match[1]);
     if (!attachment) return sendJson(response, 404, { error: 'Attachment not found.' }, { secure: config.cookieSecure });
     const patient = database.findPatient(attachment.patient_key);
-    const allowed = orderActorAllowed(role, attachment.modality) || (patient && canAccessPatient(database, session, patient));
+    const allowed = orderActorAllowed(role, attachment.modality) ||
+      (!['LAB', 'IMAGING'].includes(role) && patient && canAccessPatient(database, session, patient));
     if (!allowed) return sendJson(response, 403, { error: 'You cannot view this attachment.' }, { secure: config.cookieSecure });
     return sendFile(response, attachment.storage_path, attachment.content_type, { secure: config.cookieSecure }, false);
   });

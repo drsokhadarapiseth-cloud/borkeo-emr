@@ -91,7 +91,7 @@ Password, Log Out and the department navigation bar must stay usable.
  4  NPCA beneficiary check, barcode registration cards, sticker     Tested (v44.4.0)
     sheets.
  5  Session recovery when doctors and nurses switch wards.          Tested (v44.5.0)
- 6  Role-based access for laboratory, imaging and clinical wards.   Waiting
+ 6  Role-based access for laboratory, imaging and clinical wards.   Tested (v44.6.0)
  7  Consultation workspace: desktop/phone layouts, vitals cards,    Waiting
     HPI and examination cards, quick diagnosis search, plan
     checklist, switch between 3 views.

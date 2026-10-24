@@ -1,0 +1,893 @@
+Borkeo EMR 43.0.0 - Scoped paraclinic access and role audit
+Baseline: 42.9.0, ba812ed. Apply only to this baseline; preserve later work.
+
+This is an incremental master-task update. The whole master task is NOT
+complete. See docs/ai-handoff/TASKS.md for exact remaining requirements.
+
+Behavior: remove doctor bypasses for cross-service paraclinic order reads and
+creation. Enforce specialist modality restrictions on direct order and attachment
+reads. Retain existing patient-access, emergency/transfer exceptions, own-service
+care and explicit multi-ward context selection. No new role/account permissions.
+Source inventory and synthetic all-role API/menu/browser tests included.
+No migration, clinical-data edits or runtime dependencies.
+
+INSTALLATION - VS CODE DIRECTLY OR OPTIONAL PATCH, one step at a time
+The working project already has these edits. Do not apply the patch twice.
+1. Stop the local server and use the existing hospital backup procedure.
+2. If updating another 42.9 copy, review its changes against ba812ed; apply only
+   to its listed code/doc/test files. Never overwrite .env, .gitignore, databases,
+   uploads, backups, credentials or unrelated local work.
+3. Run npm test and npm run check:khmer in a disposable synthetic copy.
+4. Restart with the existing launcher and refresh the browser. Verify own-service
+   orders and denied cross-service direct access. Deployment is separately gated.
+
+VALIDATION AND LIMITATIONS
+See docs/ai-handoff/TEST_RESULTS.md and docs/access-audit.md. Full action/save/
+reopen/print audit and maternal context/routing changes remain unfinished.
+No print action visually verified. No live NPCA verification/transmission.
+Rollback: restore only these source files from baseline; no database rollback.
+
+SHA-256 FILE MANIFEST (bytes in the prepared Windows workspace)
+9a1a39f1ed2f822d575f68b60e8179dc1292a7651a4c786e8b9fbc31374a2326  CHANGELOG.md
+61a94052fba8654fe9b65eef85b584bedf95925f127180edd6e40ee013eeb84f  package.json
+8d0abc9a6064d46f4e913f139ee02eff1ea2895b24e526c772f06dc6d379a0d9  public/login.html
+77cfc2f1c1559b16a17fb02f5af11450f5a4884d5265d09a50b395ff0ae59837  server/server.mjs
+334e759debd3364b78270aebe41e5a1b0dab90174ec9bbb230c88b83c04e118f  server/routes/paraclinic.mjs
+5e0cd7c6d568ca5f7fb13b84828b20ef96c0a2f3cdf59237bc4d246628a8e225  tests/accessibility-quality-smoke.test.mjs
+1270708214d83050bd89c131df28199488a65f9608003bf6674b27e4d9886aa0  tests/v309-release-catchup.test.mjs
+6fb04e6fda910c7c28991b7350860d4c237f076dd1ee55f5709cf934e255c568  tests/access-audit.test.mjs
+c66af41e92cf202a315c821463e9a8763dacdba6dfd4d25b3a640763ba926ce1  tests/access-audit-browser.mjs
+8b3cd293e81b01696d33fac30c83955e5821159d62afc57658d8ed7417e9bcd4  tests/helpers/access-audit-contexts.mjs
+2c71efeac29ba5eb809ff5f5505a4cf351285ad989baa06d40ef7a40d67c3877  scripts/write-access-audit.mjs
+f16fedc5e2aa7f8f847fd5c1163455d8a183abf6050607a55dae447915368a8c  docs/access-audit.md
+603813213b567834c3640e8fb43759019aeef78c7136eeaf697b35fd6a6f4fc7  scripts/build-v430-update.mjs
+934d8d439fae868d93249b12d990c2651a74fe78c552129dfe88cd6669168156  docs/ai-handoff/STATUS.md
+0c28a2137c7c2b9e7317c76e4571c94a4e1cdf2fe3a522551ffc1392a512b110  docs/ai-handoff/TASKS.md
+1eb8f5da5c40c3417ca31cca25fdded6cefc29f9b0e0814cc57a5ffa7b69bb1a  docs/ai-handoff/DECISIONS.md
+56b2ff7eb268aa95ea5106b1057e1e1e3aa5aad57d63f8878008d7158d985036  docs/ai-handoff/TEST_RESULTS.md
+955a766f29fbda776a68cde6fee9a82cffd4638f6705ee873cac0e4eb5b298d8  docs/ai-handoff/CHANGES.md
+
+BEGIN BORKEO 43.0.0 UNIFIED PATCH
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 49efc4e..ac6d9dc 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,3 +1,10 @@
++## v43.0.0 - Scoped paraclinic access and role audit
++
++- Enforce existing patient access for doctors creating or directly reading laboratory/imaging orders; keep Obstetric and Gynecology active contexts separate.
++- Match direct specialist order and attachment reads to the modality restrictions already used by their worklists.
++- Add synthetic cross-service, multi-ward selection, attachment and all-role menu/API regressions; inventory role contexts, 37 protected pages and API modules in docs/access-audit.md.
++- Preserve existing emergency/transfer exceptions, permissions, clinical/financial logic and stored data. No migration. Broader master-task workflows and full action/print verification remain pending in docs/ai-handoff.
++
+ ## v42.9.0 - Login and work-context recovery
+ 
+ - Disable work-context submission until the session is loaded; offer an explicit retry after network/server failures.
+diff --git a/package.json b/package.json
+index 604b4b3..3bc9c71 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "borkeo-emr",
+-  "version": "42.9.0",
++  "version": "43.0.0",
+   "private": true,
+   "type": "module",
+   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",
+diff --git a/public/login.html b/public/login.html
+index 0137f12..a58ce5a 100644
+--- a/public/login.html
++++ b/public/login.html
+@@ -34,7 +34,7 @@
+         </div>
+         <div class="header-meta">
+           <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
+-          <span class="login-build-version" data-app-version data-language-exclude>v42.9</span>
++          <span class="login-build-version" data-app-version data-language-exclude>v43.0</span>
+         </div>
+       </header>
+ 
+@@ -108,7 +108,7 @@
+ 
+         <aside class="info-panel" aria-label="ព័ត៌មានប្រព័ន្ធ">
+           <div class="info-card accent">
+-            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v42.9</span></h3>
++            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v43.0</span></h3>
+             <p>គណនីសាកល្បងចូលបានដោយគ្មានពាក្យសម្ងាត់។ ប្រើតែទិន្នន័យសាកល្បងប៉ុណ្ណោះ។</p>
+           </div>
+           <div class="info-card">
+diff --git a/server/server.mjs b/server/server.mjs
+index 2d07ecd..62ba62f 100644
+--- a/server/server.mjs
++++ b/server/server.mjs
+@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
+ import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
+ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
+ import { createDiagnosisSearch } from './icd10.mjs';
+-// Borkeo EMR v42.9 - Electronic Medical Record System
++// Borkeo EMR v43.0 - Electronic Medical Record System
+ import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
+ import {validateAddressHierarchy} from './gazetteer.mjs';
+ import {validateCambodianPhone} from './cambodia-phone.mjs';
+diff --git a/server/routes/paraclinic.mjs b/server/routes/paraclinic.mjs
+index 5a1612b..35820f8 100644
+--- a/server/routes/paraclinic.mjs
++++ b/server/routes/paraclinic.mjs
+@@ -414,7 +414,7 @@ export function mountParaclinicRoutes(router) {
+       if (!canUseMaternalPatient({ ...session, activeRole: role }, patient, sessionWard(session))) return sendJson(response, 403, { error: 'This patient is outside your service.' }, { secure: config.cookieSecure });
+       if (!allowedOrder) return sendJson(response, 403, { error: 'ឆ្មបអាចស្នើតែ HBsAg និងអេកូសាស្ត្រប៉ុណ្ណោះ។' }, { secure: config.cookieSecure });
+     }
+-    if (!canAccessPatient(database, session, patient) && !['ADMIN', 'VICE_DIRECTOR', 'DOCTOR'].includes(role)) {
++    if (!canAccessPatient(database, session, patient) && !['ADMIN', 'VICE_DIRECTOR'].includes(role)) {
+       return sendJson(response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
+     }
+     if (['DOCTOR', 'CHIEF_WARD', ...RECORD_MANAGEMENT].includes(role)) {
+@@ -566,7 +566,8 @@ export function mountParaclinicRoutes(router) {
+     const order = getOrder(database, match[1]);
+     if (!order) return sendJson(response, 404, { error: 'Request not found.' }, { secure: config.cookieSecure });
+     const patient = database.findPatient(order.patientKey);
+-    const allowed = orderActorAllowed(role, order.modality) || role === 'DOCTOR' || (patient && canAccessPatient(database, session, patient));
++    const allowed = orderActorAllowed(role, order.modality) ||
++      (!['LAB', 'IMAGING'].includes(role) && patient && canAccessPatient(database, session, patient));
+     if (!allowed) return sendJson(response, 403, { error: 'You cannot view this request.' }, { secure: config.cookieSecure });
+     return sendJson(response, 200, { order }, { secure: config.cookieSecure });
+   });
+@@ -775,7 +776,8 @@ export function mountParaclinicRoutes(router) {
+     const attachment = getAttachment(database, match[1]);
+     if (!attachment) return sendJson(response, 404, { error: 'Attachment not found.' }, { secure: config.cookieSecure });
+     const patient = database.findPatient(attachment.patient_key);
+-    const allowed = orderActorAllowed(role, attachment.modality) || (patient && canAccessPatient(database, session, patient));
++    const allowed = orderActorAllowed(role, attachment.modality) ||
++      (!['LAB', 'IMAGING'].includes(role) && patient && canAccessPatient(database, session, patient));
+     if (!allowed) return sendJson(response, 403, { error: 'You cannot view this attachment.' }, { secure: config.cookieSecure });
+     return sendFile(response, attachment.storage_path, attachment.content_type, { secure: config.cookieSecure }, false);
+   });
+diff --git a/tests/accessibility-quality-smoke.test.mjs b/tests/accessibility-quality-smoke.test.mjs
+index dfcd942..eb704b4 100644
+--- a/tests/accessibility-quality-smoke.test.mjs
++++ b/tests/accessibility-quality-smoke.test.mjs
+@@ -17,11 +17,11 @@ test('Phase 8: Version consistency across package.json, server.mjs, and login.ht
+   const serverCode = read('server/server.mjs');
+   const loginHtml = read('public/login.html');
+ 
+-  assert.equal(pkg.version, '42.9.0', 'package.json version must be 42.9.0');
++  assert.equal(pkg.version, '43.0.0', 'package.json version must be 43.0.0');
+   assert.match(serverCode, /Borkeo EMR v(?:39\.[6-9]|4[0-9]\.[0-9])/, 'server.mjs must declare v39.6 or above');
+   assert.match(serverCode, /design-system\.css\?v=3970/, 'server.mjs must inject design-system.css with v=3970');
+   assert.match(serverCode, /worklists-feedback\.css\?v=3970/, 'server.mjs must inject worklists-feedback.css with v=3970');
+-  assert.match(loginHtml, /data-app-version[^>]*>v42\.9<\/span>/, 'login.html must display v42.9');
++  assert.match(loginHtml, /data-app-version[^>]*>v43\.0<\/span>/, 'login.html must display v43.0');
+ });
+ 
+ test('Phase 8: Complete presentation-layer suite of assets is present and registered', () => {
+diff --git a/tests/v309-release-catchup.test.mjs b/tests/v309-release-catchup.test.mjs
+index 7a54331..7978681 100644
+--- a/tests/v309-release-catchup.test.mjs
++++ b/tests/v309-release-catchup.test.mjs
+@@ -21,7 +21,7 @@ test('photo persistence reports its new version; stale saves and another ward ca
+  const origin='http://127.0.0.1:32719';const app=createEmrServer({demoMode:true,host:'127.0.0.1',port:32719,appOrigin:origin,databasePath:':memory:',autoDatabase:false,nodeEnv:'test'});await new Promise(r=>app.server.listen(32719,'127.0.0.1',r));
+  try {
+   async function login(username){const r=await fetch(origin+'/api/auth/login',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({username})});assert.equal(r.status,200);const Cookie=r.headers.get('set-cookie').split(';')[0];const me=await(await fetch(origin+'/api/auth/me',{headers:{Cookie}})).json();return {Cookie,Origin:origin,'Content-Type':'application/json','X-CSRF-Token':me.csrfToken}}
+-  const admin=await login('admin'),doctor=await login('doctor_medicine'),nurse=await login('nurse_medicine');
++  const admin=await login('admin'),doctor=await login('doctor_surgery'),otherDoctor=await login('doctor_medicine'),nurse=await login('nurse_medicine');
+   const call=(path,method,headers,body)=>fetch(origin+path,{method,headers,body:JSON.stringify(body)});
+   const key='case:CATCHUP309',summary={caseNumber:'CATCHUP309',healthId:'PATIENT-309',fullName:'Original Requisition Patient',sex:'ប្រុស',age:'35',dateOfBirth:'1991-03-04',departmentCode:'surgery',departmentNameKh:'វះកាត់',serviceMode:'ipd',entryDate:new Date().toISOString().slice(0,10)};
+   let r=await call('/api/patient-record','PUT',admin,{patientKey:key,summary,data:{'scope:registration:id:web_village':'Original Village'}});assert.equal(r.status,200);let version=(await r.json()).patient.version;
+@@ -30,8 +30,9 @@ test('photo persistence reports its new version; stale saves and another ward ca
+   r=await call('/api/patient-photo','POST',admin,{patientKey:key,photo,expectedVersion:version});assert.equal(r.status,200);const saved=await r.json();assert.equal(saved.patientVersion,version+1);
+   r=await call('/api/patient-photo','POST',admin,{patientKey:key,photo,expectedVersion:version});assert.equal(r.status,409);
+   r=await call('/api/patient-record','PUT',admin,{patientKey:key,summary,expectedVersion:saved.patientVersion,data:{'scope:medical:id:emr_pmrs_ipd_diagnosis':'Follow-up diagnosis'}});assert.equal(r.status,200,await r.clone().text());
++  r=await call('/api/paraclinic/orders','POST',otherDoctor,{patientKey:key,modality:'LAB',request:{items:[{code:'HGB'}]}});assert.equal(r.status,403,'a doctor in another ward cannot create the order');
+   r=await call('/api/paraclinic/orders','POST',doctor,{patientKey:key,modality:'LAB',request:{items:[{code:'HGB'}],clinicalInfo:'Original diagnosis',patientSnapshot:{fullName:'FORGED'},requesterSignature:{signerName:'FORGED'}}});assert.equal(r.status,201,await r.clone().text());const order=(await r.json()).order;
+-  assert.equal(order.request.patientSnapshot.fullName,summary.fullName);assert.equal(order.request.patientSnapshot.dateOfBirth,summary.dateOfBirth);assert.equal(order.request.patientSnapshot.village,'Original Village');assert.equal(order.request.requesterSignature.username,'doctor_medicine');assert.ok(order.request.requesterSignature.signatureDataUrl);
++  assert.equal(order.request.patientSnapshot.fullName,summary.fullName);assert.equal(order.request.patientSnapshot.dateOfBirth,summary.dateOfBirth);assert.equal(order.request.patientSnapshot.village,'Original Village');assert.equal(order.request.requesterSignature.username,'doctor_surgery');assert.ok(order.request.requesterSignature.signatureDataUrl);
+   r=await call('/api/lab-catalog/HGB','PATCH',admin,{active:false});assert.equal(r.status,200);
+   r=await call('/api/paraclinic/orders','POST',doctor,{patientKey:key,modality:'LAB',request:{items:[{code:'HGB'},{code:'GLU'}]}});assert.equal(r.status,400,'must reject the whole unavailable selection instead of silently removing HGB');
+   r=await call('/api/imaging-catalog/CT','PATCH',admin,{active:false});assert.equal(r.status,200);
+diff --git a/tests/access-audit.test.mjs b/tests/access-audit.test.mjs
+new file mode 100644
+index 0000000..c906022
+--- /dev/null
++++ b/tests/access-audit.test.mjs
+@@ -0,0 +1,140 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import crypto from 'node:crypto';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import vm from 'node:vm';
++import { createEmrServer } from '../server/server.mjs';
++import { setUserAccess } from '../server/access.mjs';
++import { createOrder, listOrders, addAttachment } from '../server/paraclinic.mjs';
++import { accessContexts } from './helpers/access-audit-contexts.mjs';
++
++test('active Obstetric and Gynecology contexts scope direct order reads and writes', async () => {
++  const app = createEmrServer({ demoMode: true, databasePath: ':memory:', port: 0, host: '127.0.0.1', appOrigin: 'http://127.0.0.1:0', nodeEnv: 'test', npca: { enabled: false } });
++  try {
++    const identities = [
++      ['obstetric-doctor', 'DOCTOR', 'obstetric'], ['gynecology-doctor', 'DOCTOR', 'gynecology'],
++      ['both-doctor', 'DOCTOR', 'obstetric'], ['ward-nurse', 'NURSE', 'gynecology'],
++      ['lab-staff', 'LAB', ''], ['imaging-staff', 'IMAGING', ''], ['audit-admin', 'ADMIN', ''],
++    ];
++    for (const [id, role, ward] of identities) {
++      app.database.createUser({ id, username: id, displayName: 'Synthetic audit staff', role, passwordHash: 'synthetic-unused', createdAt: Date.now() });
++      setUserAccess(app.database, id, [role], id === 'both-doctor' ? ['obstetric', 'gynecology'] : ward ? [ward] : []);
++    }
++    const patient = ward => {
++      const patientKey = `case:SYNTHETIC-AUDIT-${ward}`;
++      app.database.upsertPatient({ id: crypto.randomUUID(), patientKey, userId: 'audit-admin', savedAt: Date.now(),
++        summary: { caseNumber: `SYNTHETIC-AUDIT-${ward}`, healthId: `SYNTHETIC-${ward}`, firstName: 'Synthetic', lastName: 'Audit', fullName: 'Synthetic Audit', sex: 'F', age: '25', dateOfBirth: '', phone: '', equityCard: '', paymentType: 'CASH', departmentCode: ward, departmentNameKh: '', departmentNameEn: ward, serviceMode: 'ipd', entryDate: new Date().toISOString().slice(0,10), dischargeDate: '' },
++        data: { 'system:currentWardCode': ward },
++      });
++      return patientKey;
++    };
++    const gynecology = patient('gynecology'), obstetric = patient('obstetric');
++    const order = key => createOrder(app.database, { patientKey: key, modality: 'LAB', request: { items: [{ code: 'CBC' }] }, userId: 'audit-admin', role: 'ADMIN', ward: '' });
++    const gynOrder = order(gynecology), obsOrder = order(obstetric);
++    await new Promise(resolve => app.server.listen(0, '127.0.0.1', resolve));
++    const origin = `http://127.0.0.1:${app.server.address().port}`;
++    app.config.appOrigin = origin;
++    const login = async username => {
++      const r = await fetch(origin + '/api/auth/login', { method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json' }, body: JSON.stringify({ username }) });
++      assert.equal(r.status, 200);
++      const Cookie = r.headers.get('set-cookie').split(';')[0];
++      const me = await (await fetch(origin + '/api/auth/me', { headers: { Cookie } })).json();
++      return { Cookie, Origin: origin, 'Content-Type': 'application/json', 'X-CSRF-Token': me.csrfToken };
++    };
++    const request = async (headers, method, url, body) => {
++      const response = await fetch(origin + url, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
++      return { status: response.status, body: await response.json() };
++    };
++    const staff = {};
++    for (const [id] of identities) staff[id] = await login(id);
++    const obs = staff['obstetric-doctor'], gyn = staff['gynecology-doctor'];
++    const listed = await request(obs, 'GET', '/api/paraclinic/orders');
++    assert.equal(listed.status, 200);
++    assert.ok(listed.body.orders.every(o => o.patientKey !== gynecology));
++    const create = { patientKey: gynecology, modality: 'XRAY', request: { examination: 'Synthetic audit' } };
++    const count = listOrders(app.database).length;
++    const crossRead = await request(obs, 'GET', `/api/paraclinic/orders/${gynOrder.id}`);
++    const crossWrite = await request(obs, 'POST', '/api/paraclinic/orders', create);
++    assert.deepEqual({ read: crossRead.status, write: crossWrite.status }, { read: 403, write: 403 }, 'direct reads/writes must match list scope');
++    assert.equal((await request(gyn, 'GET', `/api/paraclinic/orders/${obsOrder.id}`)).status, 403);
++    assert.equal((await request(gyn, 'GET', `/api/paraclinic/orders/${gynOrder.id}`)).status, 200);
++    assert.equal((await request(obs, 'GET', `/api/paraclinic/orders/${obsOrder.id}`)).status, 200);
++    assert.equal(listOrders(app.database).length, count, 'denied write has no side effects');
++    assert.equal((await request(gyn, 'POST', '/api/paraclinic/orders', create)).status, 201, 'own-service prescribing retained');
++    const imageOrder = listOrders(app.database).find(o => o.modality === 'XRAY');
++    for (const [headers, allowed, denied] of [
++      [staff['lab-staff'], gynOrder, imageOrder], [staff['imaging-staff'], imageOrder, gynOrder],
++    ]) {
++      assert.equal((await request(headers, 'GET', `/api/paraclinic/orders/${allowed.id}`)).status, 200);
++      assert.equal((await request(headers, 'GET', `/api/paraclinic/orders/${denied.id}`)).status, 403, 'modality restriction also applies to direct IDs');
++    }
++    // A synthetic attachment path outside all hospital upload directories.
++    const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'borkeo-audit-attachment-'));
++    const storagePath = path.join(directory, 'synthetic.txt');
++    fs.writeFileSync(storagePath, 'Synthetic access-audit attachment');
++    const attachments = [gynOrder, imageOrder].map(o => addAttachment(app.database, o.id, { filename: 'synthetic.txt', contentType: 'text/plain', storagePath, userId: 'audit-admin' }));
++    for (const [name, index, expected] of [['lab-staff', 0, 200], ['lab-staff', 1, 403], ['imaging-staff', 0, 403], ['imaging-staff', 1, 200], ['obstetric-doctor', 0, 403], ['gynecology-doctor', 0, 200]]) {
++      const r = await fetch(origin + `/api/paraclinic/attachments/${attachments[index].id}`, { headers: staff[name] });
++      assert.equal(r.status, expected, `${name} attachment ${index}`);
++      const content = await r.text();
++      if (expected === 200) assert.equal(content, 'Synthetic access-audit attachment');
++    }
++    assert.equal((await request(staff['ward-nurse'], 'POST', '/api/paraclinic/orders', { ...create, request: { examination: 'Nurse denied' } })).status, 403);
++    assert.equal((await request(staff['audit-admin'], 'GET', `/api/paraclinic/orders/${gynOrder.id}`)).status, 200);
++    const both = staff['both-doctor'];
++    assert.equal((await request(both, 'POST', '/api/auth/context', { role: 'DOCTOR', wardCode: 'obstetric' })).status, 200);
++    assert.equal((await request(both, 'GET', `/api/paraclinic/orders/${gynOrder.id}`)).status, 403, 'assigned to both still requires explicit active context');
++    assert.equal((await request(both, 'POST', '/api/auth/context', { role: 'DOCTOR', wardCode: 'gynecology' })).status, 200);
++    assert.equal((await request(both, 'GET', `/api/paraclinic/orders/${gynOrder.id}`)).status, 200);
++    assert.equal((await request(both, 'GET', `/api/paraclinic/orders/${obsOrder.id}`)).status, 403);
++  } finally {
++    if (app.server.listening) await new Promise(resolve => app.server.close(resolve));
++    app.database.close();
++  }
++});
++
++test('all 15 active roles: context, landing, visible menu links and privileged read APIs', async () => {
++  const app = createEmrServer({ demoMode: true, databasePath: ':memory:', port: 0, host: '127.0.0.1', appOrigin: 'http://127.0.0.1:0', nodeEnv: 'test', npca: { enabled: false } });
++  try {
++    const context = vm.createContext({ URL, URLSearchParams });
++    vm.runInContext(fs.readFileSync(new URL('../public/nav-config.js', import.meta.url), 'utf8'), context);
++    const nav = context.EmrNavConfig;
++    assert.equal(new Set(accessContexts.map(c => c.role)).size, 15);
++    await new Promise(resolve => app.server.listen(0, '127.0.0.1', resolve));
++    const origin = `http://127.0.0.1:${app.server.address().port}`;
++    app.config.appOrigin = origin;
++    for (const { id, role, ward, landing } of accessContexts) {
++      app.database.createUser({ id, username: id, displayName: 'Synthetic role audit', role, passwordHash: 'synthetic-unused', createdAt: Date.now() });
++      setUserAccess(app.database, id, [role], ward ? [ward] : []);
++      const login = await fetch(origin + '/api/auth/login', { method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json' }, body: JSON.stringify({ username: id }) });
++      assert.equal(login.status, 200, `${role}@${ward} login`);
++      const Cookie = login.headers.get('set-cookie').split(';')[0];
++      const me = await (await fetch(origin + '/api/auth/me', { headers: { Cookie } })).json();
++      assert.equal(me.user.activeRole, role);
++      assert.equal(me.user.activeWard?.code || '', ward);
++      const root = await fetch(origin + '/', { headers: { Cookie }, redirect: 'manual' });
++      assert.equal(root.status, 302);
++      assert.equal(root.headers.get('location'), landing, `${role}@${ward} landing`);
++      await root.text();
++      for (const item of nav.visibleGroups(me.user).flatMap(g => g.items)) {
++        const response = await fetch(origin + item.href, { headers: { Cookie }, redirect: 'manual' });
++        assert.equal(response.status, 200, `${role}@${ward} visible ${item.href}`);
++        await response.text();
++      }
++      for (const [url, allowed] of [
++        ['/api/admin/users', ['ADMIN', 'DIRECTOR', 'VICE_DIRECTOR']],
++        ['/api/finance/expenses', ['ADMIN', 'DIRECTOR', 'VICE_DIRECTOR', 'ACCOUNTANT']],
++        ['/api/npca/mappings', ['ADMIN', 'DIRECTOR']],
++      ]) {
++        const response = await fetch(origin + url, { headers: { Cookie } });
++        assert.equal(response.status, allowed.includes(role) ? 200 : 403, `${role}@${ward} ${url}`);
++        await response.text();
++      }
++    }
++  } finally {
++    if (app.server.listening) await new Promise(resolve => app.server.close(resolve));
++    app.database.close();
++  }
++});
+diff --git a/tests/access-audit-browser.mjs b/tests/access-audit-browser.mjs
+new file mode 100644
+index 0000000..8d80b1e
+--- /dev/null
++++ b/tests/access-audit-browser.mjs
+@@ -0,0 +1,40 @@
++// Explicit browser check: node --test tests/access-audit-browser.mjs
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { createEmrServer } from '../server/server.mjs';
++import { setUserAccess } from '../server/access.mjs';
++import { openBrowser } from './helpers/context-browser.mjs';
++import { accessContexts } from './helpers/access-audit-contexts.mjs';
++
++test('all roles mount their authorized menus and landing pages in Chromium', { timeout: 240000 }, async () => {
++  const app = createEmrServer({ demoMode: true, databasePath: ':memory:', port: 0, host: '127.0.0.1', appOrigin: 'http://127.0.0.1:0', nodeEnv: 'test', npca: { enabled: false } });
++  let browser;
++  try {
++    await new Promise(resolve => app.server.listen(0, '127.0.0.1', resolve));
++    const origin = `http://127.0.0.1:${app.server.address().port}`;
++    app.config.appOrigin = origin;
++    browser = await openBrowser();
++    for (const { id, role, ward, landing } of accessContexts) {
++      app.database.createUser({ id, username: id, displayName: 'Synthetic role audit', role, passwordHash: 'synthetic-unused', createdAt: Date.now() });
++      setUserAccess(app.database, id, [role], ward ? [ward] : []);
++      const response = await fetch(origin + '/api/auth/login', { method: 'POST', headers: { Origin: origin, 'Content-Type': 'application/json' }, body: JSON.stringify({ username: id }) });
++      assert.equal(response.status, 200);
++      const rawCookie = response.headers.get('set-cookie').split(';')[0];
++      const equal = rawCookie.indexOf('=');
++      await browser.send('Network.clearBrowserCookies');
++      await browser.send('Network.setCookie', { name: rawCookie.slice(0, equal), value: rawCookie.slice(equal + 1), url: origin, httpOnly: true });
++      await browser.send('Page.navigate', { url: origin + '/' });
++      await browser.waitFor(`window.emrSession?.user?.username === ${JSON.stringify(id)} && document.querySelector('[data-nav-id]')`, `${role}@${ward} landing/menu`);
++      assert.equal(await browser.evaluate('location.pathname+location.search'), landing, `${role}@${ward}`);
++      const menu = await browser.evaluate(`({actual:Array.from(document.querySelectorAll('[data-nav-id]')).map(a=>a.dataset.navId),expected:EmrNavConfig.visibleItemIds(emrSession.user)})`);
++      assert.deepEqual(menu.actual, menu.expected, `${role}@${ward} rendered menu`);
++      const adminStatus = await browser.evaluate("fetch('/api/admin/users').then(r=>r.status)");
++      assert.equal(adminStatus, ['ADMIN', 'DIRECTOR', 'VICE_DIRECTOR'].includes(role) ? 200 : 403);
++    }
++    assert.deepEqual(browser.state.errors, []);
++  } finally {
++    browser?.close();
++    if (app.server.listening) await new Promise(resolve => app.server.close(resolve));
++    app.database.close();
++  }
++});
+diff --git a/tests/helpers/access-audit-contexts.mjs b/tests/helpers/access-audit-contexts.mjs
+new file mode 100644
+index 0000000..d2ef428
+--- /dev/null
++++ b/tests/helpers/access-audit-contexts.mjs
+@@ -0,0 +1,11 @@
++// Source-backed existing permissions, not a proposal to grant new access.
++export const accessContexts = [
++  ['ADMIN', '', '/home'], ['DIRECTOR', '', '/home'], ['VICE_DIRECTOR', '', '/billing'],
++  ['REGISTRATION', '', '/emr?view=register'], ['TRIAGE', '', '/triage'],
++  ['DOCTOR', 'opd', '/home'], ['DOCTOR', 'medicine', '/home'],
++  ['DOCTOR', 'obstetric', '/home'], ['DOCTOR', 'gynecology', '/home'],
++  ['NURSE', 'opd', '/opd-paraclinic-nurse'], ['NURSE', 'medicine', '/departments'],
++  ['MIDWIFE', 'obstetric', '/departments'], ['CHIEF_WARD', 'medicine', '/ward-medicines'],
++  ['WARD_HEAD', 'medicine', '/ward-medicines'], ['LAB', '', '/lab'], ['IMAGING', '', '/imaging'],
++  ['PHARMACY', '', '/home'], ['ACCOUNTANT', '', '/billing'], ['CLERK', '', '/billing'],
++].map(([role, ward, landing], index) => ({ role, ward, landing, id: `synthetic-access-${index}` }));
+diff --git a/scripts/write-access-audit.mjs b/scripts/write-access-audit.mjs
+new file mode 100644
+index 0000000..1de9e7b
+--- /dev/null
++++ b/scripts/write-access-audit.mjs
+@@ -0,0 +1,123 @@
++// Read-only source inventory; never reads staff/patient databases or .env.
++import fs from 'node:fs';
++import path from 'node:path';
++import vm from 'node:vm';
++import { fileURLToPath } from 'node:url';
++import { ROLES, WARDS, roleRequiresWard, roleWardAllowed, roleCanPage } from '../server/access.mjs';
++import { accessContexts } from '../tests/helpers/access-audit-contexts.mjs';
++
++const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
++const read = name => fs.readFileSync(path.join(root, name), 'utf8');
++const sandbox = vm.createContext({ URL, URLSearchParams });
++vm.runInContext(read('public/nav-config.js'), sandbox);
++const nav = sandbox.EmrNavConfig;
++const server = read('server/server.mjs');
++const pages = [...server.slice(server.indexOf('const protectedPages = new Map'), server.indexOf('const clinicalWriteRoles')).matchAll(/\['(\/[^']+)'\s*,\s*\[/g)].map(m => m[1]);
++const roleRows = ROLES.map(role => {
++  const wards = roleRequiresWard(role) ? WARDS.filter(w => roleWardAllowed(role, w.code)).map(w => w.code).join(', ') : 'No ward context';
++  return `| ${role} | ${wards} |`;
++});
++const contextRows = accessContexts.map(({ role, ward, landing }) => {
++  const user = { activeRole: role, activeWard: ward ? { code: ward } : null };
++  const menu = nav.visibleGroups(user).flatMap(group => group.items).map(item => `[${item.labelEn}](${item.href})`).join('; ');
++  return `| ${role}@${ward || '-'} | ${landing} | ${menu} |`;
++});
++const pageRows = pages.map(page => `| ${page} | ${ROLES.filter(role => roleCanPage(role, page)).join(', ')} |`);
++const modules = fs.readdirSync(path.join(root, 'server/routes')).filter(f => f.endsWith('.mjs')).sort().map(file => {
++  const source = read(`server/routes/${file}`);
++  const count = [...source.matchAll(/router\.(?:get|post|put|patch|delete)\(/g)].length;
++  const guards = ['requireContext', 'canAccessPatient', 'requireSession', 'sessionRole', 'orderActorAllowed', 'canUseMaternalPatient', 'encounterAccess'].filter(name => source.includes(name));
++  return `| server/routes/${file} | ${count} | ${guards.join(', ') || 'Inspect module-specific guards'} |`;
++});
++const output = `# Role and action access audit
++
++Audit baseline: 42.9.0, ba812ed. First fixes prepared as 43.0.0.
++Reproduce the source inventory with: node scripts/write-access-audit.mjs.
++Source inventory is not proof that every action works. Test evidence is in
++docs/ai-handoff/TEST_RESULTS.md; unfinished work stays in TASKS.md.
++
++## Policy and service boundaries
++
++- Sources: AGENTS.md, master sections 3/3A/7/8, server/access.mjs,
++  public/nav-config.js, server/server.mjs, and the modular API guards below.
++- Combined Obstetric/Gynecology doctor access was CANCELLED. Assignment to
++  multiple wards requires an explicit active context. No account/role grants
++  or clinical thresholds changed in this increment.
++- Existing patient-access emergency and transfer exceptions are retained.
++- The following table lists eligible contexts, not grants to every staff member.
++  Actual selectable contexts are intersected with assigned roles and wards.
++- Inventory covers built-in roles. Hospital-specific custom role definitions
++  and live assignments were not read; do not infer their authorization.
++
++| Role | Eligible ward contexts |
++|---|---|
++${roleRows.join('\n')}
++
++## Representative landing and menu matrix
++
++Synthetic coverage: all 15 built-in roles in 19 representative contexts.
++API tests check each visible menu destination and allow/deny results for user
++administration, accounting expenses and NPCA mapping reads. Chromium checks
++rendered menus and landing pages separately. This is not a save/reopen audit of
++every button on these pages. Query-specific specialist workflows remain below.
++
++| Active context | Server landing | Default visible navigation |
++|---|---|---|
++${contextRows.join('\n')}
++
++## Protected-page inventory
++
++Role-only source policy below; additional patient/ward guards still apply.
++Server special cases: IPD transfer is OPD-doctor only; paraclinic handoff is
++OPD-nurse only. Home redirects some roles to their landing. Cashier/accountant
++EMR requests redirect to Billing; Triage EMR requests select its triage view.
++Patient-linked EMR access additionally uses encounterAccess. Navigation settings
++can hide/reorder entries; they cannot grant access. Specialist routes such as
++NPCA/ANC/vaccination may be reached from patient actions instead of the sidebar.
++
++| Page | roleCanPage allows |
++|---|---|
++${pageRows.join('\n')}
++
++## Important action checks and evidence
++
++| Area | Existing authorization and verification |
++|---|---|
++| Login/context | Prior 42.9 recovery tests; this audit exercises synthetic login/cookies/context/landing with NPCA disabled. |
++| User accounts | GET /api/admin/users: ADMIN, DIRECTOR, VICE_DIRECTOR; all other built-in roles denied. |
++| Accounting | GET /api/finance/expenses: management and ACCOUNTANT; other roles denied. No calculations changed. |
++| NPCA configuration | GET /api/npca/mappings: ADMIN, DIRECTOR; other roles denied; no remote calls/transmissions. |
++| Patient/clinical forms | Existing canAccessPatient and encounterAccess; full forms/save/reopen audit remains unfinished. |
++| Lab/imaging orders | Ward doctors create/read only accessible patients; nurses do not gain ordering rights. Specialist reads respect modality. |
++| Lab/imaging attachments | Same-service ward readers retained; specialist direct downloads respect modality; synthetic file tests verify contents. |
++| Prescribing/dispensing | Existing maternal and IPD regression tests retained. Comprehensive QD task remains unfinished. |
++| Beds and doctor alerts | Existing workflows inventoried; required new durable Gynecology workflow remains GYN-01/02. |
++| Print/download | Synthetic attachment downloads tested. No print/PDF action visually verified by this increment. |
++| Other actions | Search/filter/save/reopen, notifications, queue transitions, all-role workflow and print inventory still require audit. |
++
++## Findings
++
++| ID | Reproduction, cause and fix |
++|---|---|
++| ACCESS-F01 | Obstetric doctor list hides Gynecology order, but GET order/id returned200. Cause: unconditional DOCTOR bypass. Removed it; direct reads use existing patient access. |
++| ACCESS-F02 | Obstetric doctor POST order for Gynecology patient returned201. Cause: DOCTOR exempted from patient check. Removed exemption; denied requests have no order side effects. |
++| ACCESS-F03 | LAB/IMAGING worklists restrict modality; direct order/attachment fallback used their global patient access. Specialist direct reads now use orderActorAllowed; matched modality retained. |
++| ACCESS-O01 | MIDWIFE currently restricted to Obstetric in backend/context UI. Approved Gynecology context still requires ROLE-01 implementation; no silent grants. |
++| ACCESS-O02 | Maternal patientFor/referral signer shortcuts need focused service/recipient review under ROLE-01. Do not remove legitimate referred-care access or claim separation complete. |
++| ACCESS-O03 | Full page/action save/reopen, per-ward customizations, all prints and remaining API endpoints not yet exhaustively exercised. |
++
++Tests: tests/access-audit.test.mjs, tests/access-audit-browser.mjs and existing
++v162/v426 regressions. Current results and revision are recorded in checkpoints.
++
++## API module inventory
++
++Counts are source declarations, not a claim of endpoint-by-endpoint verification.
++Main server legacy handlers, generated regex actions and middleware require
++additional review. Presence of a guard name alone is not proof of enforcement.
++
++| Module | Route declarations | Guard references to inspect |
++|---|---|---|
++${modules.join('\n')}
++`;
++fs.writeFileSync(path.join(root, 'docs/access-audit.md'), output);
++console.log(`Wrote inventory: ${ROLES.length} roles, ${pages.length} protected pages, ${accessContexts.length} contexts.`);
+diff --git a/docs/access-audit.md b/docs/access-audit.md
+new file mode 100644
+index 0000000..e876128
+--- /dev/null
++++ b/docs/access-audit.md
+@@ -0,0 +1,171 @@
++# Role and action access audit
++
++Audit baseline: 42.9.0, ba812ed. First fixes prepared as 43.0.0.
++Reproduce the source inventory with: node scripts/write-access-audit.mjs.
++Source inventory is not proof that every action works. Test evidence is in
++docs/ai-handoff/TEST_RESULTS.md; unfinished work stays in TASKS.md.
++
++## Policy and service boundaries
++
++- Sources: AGENTS.md, master sections 3/3A/7/8, server/access.mjs,
++  public/nav-config.js, server/server.mjs, and the modular API guards below.
++- Combined Obstetric/Gynecology doctor access was CANCELLED. Assignment to
++  multiple wards requires an explicit active context. No account/role grants
++  or clinical thresholds changed in this increment.
++- Existing patient-access emergency and transfer exceptions are retained.
++- The following table lists eligible contexts, not grants to every staff member.
++  Actual selectable contexts are intersected with assigned roles and wards.
++- Inventory covers built-in roles. Hospital-specific custom role definitions
++  and live assignments were not read; do not infer their authorization.
++
++| Role | Eligible ward contexts |
++|---|---|
++| ADMIN | No ward context |
++| REGISTRATION | No ward context |
++| TRIAGE | No ward context |
++| DOCTOR | emergency, icu, medicine, surgery, pediatric, gynecology, obstetric, tb, infectious, ncu, opd |
++| NURSE | emergency, icu, medicine, surgery, pediatric, gynecology, tb, infectious, ncu, opd |
++| MIDWIFE | obstetric |
++| LAB | No ward context |
++| IMAGING | No ward context |
++| PHARMACY | No ward context |
++| ACCOUNTANT | No ward context |
++| CLERK | No ward context |
++| DIRECTOR | No ward context |
++| VICE_DIRECTOR | No ward context |
++| CHIEF_WARD | emergency, icu, medicine, surgery, pediatric, gynecology, obstetric, tb, infectious, ncu |
++| WARD_HEAD | emergency, icu, medicine, surgery, pediatric, gynecology, obstetric, tb, infectious, ncu |
++
++## Representative landing and menu matrix
++
++Synthetic coverage: all 15 built-in roles in 19 representative contexts.
++API tests check each visible menu destination and allow/deny results for user
++administration, accounting expenses and NPCA mapping reads. Chromium checks
++rendered menus and landing pages separately. This is not a save/reopen audit of
++every button on these pages. Query-specific specialist workflows remain below.
++
++| Active context | Server landing | Default visible navigation |
++|---|---|---|
++| ADMIN@- | /home | [Home and reports](/home); [Wards and beds](/departments); [Patient list](/patient-list); [Laboratory](/lab); [Medical imaging](/imaging); [OPD dispensing](/pharmacy/opd); [Daily ward medicines](/ward-medicines); [Medicine list](/pharmacy/medicines); [Billing](/billing); [Expenses](/expenses); [Cash flow](/finance); [Requests](/requests); [User accounts](/admin/users); [Name and logo](/admin/organization); [Health facility](/admin/health-facility); [Record view log](/admin/record-log); [Drug safety tables](/admin/drug-safety); [Interface design](/admin/interface); [Styleguide](/styleguide) |
++| DIRECTOR@- | /home | [Home and reports](/home); [Wards and beds](/departments); [Patient list](/patient-list); [Laboratory](/lab); [Medical imaging](/imaging); [OPD dispensing](/pharmacy/opd); [Daily ward medicines](/ward-medicines); [Medicine list](/pharmacy/medicines); [Billing](/billing); [Expenses](/expenses); [Cash flow](/finance); [Requests](/requests); [User accounts](/admin/users); [Name and logo](/admin/organization); [Health facility](/admin/health-facility); [Record view log](/admin/record-log); [Drug safety tables](/admin/drug-safety); [Interface design](/admin/interface); [Styleguide](/styleguide) |
++| VICE_DIRECTOR@- | /billing | [Home and reports](/home); [Wards and beds](/departments); [Patient list](/patient-list); [Laboratory](/lab); [Medical imaging](/imaging); [OPD dispensing](/pharmacy/opd); [Daily ward medicines](/ward-medicines); [Medicine list](/pharmacy/medicines); [Billing](/billing); [Expenses](/expenses); [Cash flow](/finance); [Requests](/requests); [User accounts](/admin/users); [Name and logo](/admin/organization); [Health facility](/admin/health-facility); [Record view log](/admin/record-log); [Drug safety tables](/admin/drug-safety); [Interface design](/admin/interface); [Styleguide](/styleguide) |
++| REGISTRATION@- | /emr?view=register | [Register patient](/emr?view=register); [Patient list](/patient-list); [Appointments](/patient-list?view=appointments) |
++| TRIAGE@- | /triage | [Triage queue](/triage); [Patient list](/patient-list); [Open queue display](/queue-display?service=TRIAGE) |
++| DOCTOR@opd | /home | [OPD queue](/opd-queue); [Patient list](/patient-list); [Transfer and discharge](/ipd-transfer); [Open queue display](/queue-display?service=OPD) |
++| DOCTOR@medicine | /home | [Home and reports](/home); [Medical record](/emr); [Wards and beds](/departments); [Patient list](/patient-list); [Daily ward medicines](/ward-medicines) |
++| DOCTOR@obstetric | /home | [Home and reports](/home); [Medical record](/emr); [Wards and beds](/departments); [Patient list](/patient-list); [Daily ward medicines](/ward-medicines) |
++| DOCTOR@gynecology | /home | [Home and reports](/home); [Safe abortion](/maternal?kind=gynecology); [Medical record](/emr); [Wards and beds](/departments); [Patient list](/patient-list); [Daily ward medicines](/ward-medicines) |
++| NURSE@opd | /opd-paraclinic-nurse | [Patient list](/patient-list); [Paraclinic handoffs](/opd-paraclinic-nurse) |
++| NURSE@medicine | /departments | [Wards and beds](/departments); [Patient list](/patient-list); [Daily ward medicines](/ward-medicines) |
++| MIDWIFE@obstetric | /departments | [Maternal services queue](/maternal); [Wards and beds](/departments); [Patient list](/patient-list); [Daily ward medicines](/ward-medicines) |
++| CHIEF_WARD@medicine | /ward-medicines | [Wards and beds](/departments); [Patient list](/patient-list); [Daily ward medicines](/ward-medicines) |
++| WARD_HEAD@medicine | /ward-medicines | [Wards and beds](/departments); [Patient list](/patient-list); [Daily ward medicines](/ward-medicines) |
++| LAB@- | /lab | [Patient list](/patient-list); [Laboratory](/lab); [Laboratory materials](/lab/materials) |
++| IMAGING@- | /imaging | [Patient list](/patient-list); [Medical imaging](/imaging); [Films and materials](/imaging/films) |
++| PHARMACY@- | /home | [Patient list](/patient-list); [OPD dispensing](/pharmacy/opd); [Daily ward medicines](/ward-medicines); [Medicine list](/pharmacy/medicines); [Open queue display](/pharmacy/display) |
++| ACCOUNTANT@- | /billing | [Patient list](/patient-list); [Billing](/billing); [Expenses](/expenses) |
++| CLERK@- | /billing | [Patient list](/patient-list); [Billing](/billing) |
++
++## Protected-page inventory
++
++Role-only source policy below; additional patient/ward guards still apply.
++Server special cases: IPD transfer is OPD-doctor only; paraclinic handoff is
++OPD-nurse only. Home redirects some roles to their landing. Cashier/accountant
++EMR requests redirect to Billing; Triage EMR requests select its triage view.
++Patient-linked EMR access additionally uses encounterAccess. Navigation settings
++can hide/reorder entries; they cannot grant access. Specialist routes such as
++NPCA/ANC/vaccination may be reached from patient actions instead of the sidebar.
++
++| Page | roleCanPage allows |
++|---|---|
++| /admin/npca | ADMIN, DIRECTOR |
++| /npca | ADMIN, ACCOUNTANT, CLERK, DIRECTOR |
++| /admin/health-facility | ADMIN, DIRECTOR, VICE_DIRECTOR |
++| /admin/drug-safety | ADMIN, PHARMACY, DIRECTOR, VICE_DIRECTOR |
++| /maternal | ADMIN, DOCTOR, MIDWIFE, DIRECTOR, VICE_DIRECTOR, CHIEF_WARD |
++| /anc-record | ADMIN, DOCTOR, NURSE, MIDWIFE, DIRECTOR, VICE_DIRECTOR, CHIEF_WARD |
++| /vaccination | ADMIN, DOCTOR, NURSE, MIDWIFE, DIRECTOR, VICE_DIRECTOR, CHIEF_WARD |
++| /admin/record-log | ADMIN, DIRECTOR, VICE_DIRECTOR |
++| /admin/interface | ADMIN, DIRECTOR, VICE_DIRECTOR |
++| /styleguide | ADMIN, DIRECTOR, VICE_DIRECTOR |
++| /home | ADMIN, REGISTRATION, TRIAGE, DOCTOR, NURSE, MIDWIFE, LAB, IMAGING, PHARMACY, ACCOUNTANT, CLERK, DIRECTOR, VICE_DIRECTOR, CHIEF_WARD, WARD_HEAD |
++| /emr | ADMIN, REGISTRATION, TRIAGE, DOCTOR, NURSE, MIDWIFE, DIRECTOR, VICE_DIRECTOR, CHIEF_WARD |
++| /print-preview | ADMIN, REGISTRATION, TRIAGE, DOCTOR, NURSE, MIDWIFE, LAB, IMAGING, PHARMACY, ACCOUNTANT, CLERK, DIRECTOR, VICE_DIRECTOR, CHIEF_WARD, WARD_HEAD |
++| /pmrs-import | ADMIN, DOCTOR, DIRECTOR, VICE_DIRECTOR |
++| /ward-medicines | ADMIN, DOCTOR, NURSE, MIDWIFE, PHARMACY, DIRECTOR, VICE_DIRECTOR, CHIEF_WARD, WARD_HEAD |
++| /requests | ADMIN, REGISTRATION, TRIAGE, DOCTOR, NURSE, MIDWIFE, LAB, IMAGING, PHARMACY, ACCOUNTANT, CLERK, DIRECTOR, VICE_DIRECTOR, CHIEF_WARD, WARD_HEAD |
++| /opd-queue | ADMIN, TRIAGE, DOCTOR, DIRECTOR, VICE_DIRECTOR |
++| /opd-paraclinic-nurse | ADMIN, NURSE, DIRECTOR, VICE_DIRECTOR |
++| /ipd-transfer | ADMIN, DOCTOR, DIRECTOR, VICE_DIRECTOR |
++| /pharmacy/opd | ADMIN, PHARMACY, DIRECTOR, VICE_DIRECTOR |
++| /pharmacy/display | ADMIN, PHARMACY, DIRECTOR, VICE_DIRECTOR |
++| /pharmacy/medicines | ADMIN, PHARMACY, DIRECTOR, VICE_DIRECTOR |
++| /lab/materials | ADMIN, LAB, DIRECTOR, VICE_DIRECTOR |
++| /queue-display | ADMIN, TRIAGE, DOCTOR, NURSE, MIDWIFE, DIRECTOR, VICE_DIRECTOR |
++| /patient-list | ADMIN, REGISTRATION, TRIAGE, DOCTOR, NURSE, MIDWIFE, LAB, IMAGING, PHARMACY, ACCOUNTANT, CLERK, DIRECTOR, VICE_DIRECTOR, CHIEF_WARD, WARD_HEAD |
++| /record-viewer | ADMIN, DIRECTOR, VICE_DIRECTOR |
++| /departments | ADMIN, DOCTOR, NURSE, MIDWIFE, DIRECTOR, VICE_DIRECTOR, CHIEF_WARD, WARD_HEAD |
++| /triage | ADMIN, TRIAGE, DIRECTOR, VICE_DIRECTOR |
++| /context | ADMIN, REGISTRATION, TRIAGE, DOCTOR, NURSE, MIDWIFE, LAB, IMAGING, PHARMACY, ACCOUNTANT, CLERK, DIRECTOR, VICE_DIRECTOR, CHIEF_WARD, WARD_HEAD |
++| /admin/users | ADMIN, DIRECTOR, VICE_DIRECTOR |
++| /admin/organization | ADMIN, DIRECTOR, VICE_DIRECTOR |
++| /lab | ADMIN, LAB, DIRECTOR, VICE_DIRECTOR |
++| /imaging | ADMIN, IMAGING, DIRECTOR, VICE_DIRECTOR |
++| /imaging/films | ADMIN, IMAGING, DIRECTOR, VICE_DIRECTOR |
++| /billing | ADMIN, ACCOUNTANT, CLERK, DIRECTOR, VICE_DIRECTOR |
++| /expenses | ADMIN, ACCOUNTANT, DIRECTOR, VICE_DIRECTOR |
++| /finance | ADMIN, DIRECTOR, VICE_DIRECTOR |
++
++## Important action checks and evidence
++
++| Area | Existing authorization and verification |
++|---|---|
++| Login/context | Prior 42.9 recovery tests; this audit exercises synthetic login/cookies/context/landing with NPCA disabled. |
++| User accounts | GET /api/admin/users: ADMIN, DIRECTOR, VICE_DIRECTOR; all other built-in roles denied. |
++| Accounting | GET /api/finance/expenses: management and ACCOUNTANT; other roles denied. No calculations changed. |
++| NPCA configuration | GET /api/npca/mappings: ADMIN, DIRECTOR; other roles denied; no remote calls/transmissions. |
++| Patient/clinical forms | Existing canAccessPatient and encounterAccess; full forms/save/reopen audit remains unfinished. |
++| Lab/imaging orders | Ward doctors create/read only accessible patients; nurses do not gain ordering rights. Specialist reads respect modality. |
++| Lab/imaging attachments | Same-service ward readers retained; specialist direct downloads respect modality; synthetic file tests verify contents. |
++| Prescribing/dispensing | Existing maternal and IPD regression tests retained. Comprehensive QD task remains unfinished. |
++| Beds and doctor alerts | Existing workflows inventoried; required new durable Gynecology workflow remains GYN-01/02. |
++| Print/download | Synthetic attachment downloads tested. No print/PDF action visually verified by this increment. |
++| Other actions | Search/filter/save/reopen, notifications, queue transitions, all-role workflow and print inventory still require audit. |
++
++## Findings
++
++| ID | Reproduction, cause and fix |
++|---|---|
++| ACCESS-F01 | Obstetric doctor list hides Gynecology order, but GET order/id returned200. Cause: unconditional DOCTOR bypass. Removed it; direct reads use existing patient access. |
++| ACCESS-F02 | Obstetric doctor POST order for Gynecology patient returned201. Cause: DOCTOR exempted from patient check. Removed exemption; denied requests have no order side effects. |
++| ACCESS-F03 | LAB/IMAGING worklists restrict modality; direct order/attachment fallback used their global patient access. Specialist direct reads now use orderActorAllowed; matched modality retained. |
++| ACCESS-O01 | MIDWIFE currently restricted to Obstetric in backend/context UI. Approved Gynecology context still requires ROLE-01 implementation; no silent grants. |
++| ACCESS-O02 | Maternal patientFor/referral signer shortcuts need focused service/recipient review under ROLE-01. Do not remove legitimate referred-care access or claim separation complete. |
++| ACCESS-O03 | Full page/action save/reopen, per-ward customizations, all prints and remaining API endpoints not yet exhaustively exercised. |
++
++Tests: tests/access-audit.test.mjs, tests/access-audit-browser.mjs and existing
++v162/v426 regressions. Current results and revision are recorded in checkpoints.
++
++## API module inventory
++
++Counts are source declarations, not a claim of endpoint-by-endpoint verification.
++Main server legacy handlers, generated regex actions and middleware require
++additional review. Presence of a guard name alone is not proof of enforcement.
++
++| Module | Route declarations | Guard references to inspect |
++|---|---|---|
++| server/routes/admin.mjs | 28 | requireContext, sessionRole |
++| server/routes/auth.mjs | 9 | sessionRole |
++| server/routes/clinical-summary.mjs | 3 | requireContext, canAccessPatient |
++| server/routes/clinical.mjs | 28 | requireContext, canAccessPatient, sessionRole |
++| server/routes/finance.mjs | 46 | requireContext, canAccessPatient, sessionRole |
++| server/routes/maternal.mjs | 10 | requireContext, canAccessPatient, canUseMaternalPatient |
++| server/routes/medication-safety.mjs | 7 | requireContext, canAccessPatient |
++| server/routes/messages.mjs | 9 | requireContext, sessionRole |
++| server/routes/npca.mjs | 12 | canAccessPatient, requireSession, sessionRole |
++| server/routes/paraclinic.mjs | 24 | requireContext, canAccessPatient, sessionRole, orderActorAllowed, canUseMaternalPatient, encounterAccess |
++| server/routes/patients.mjs | 16 | requireContext, canAccessPatient, sessionRole, encounterAccess |
++| server/routes/periop-forms.mjs | 2 | requireContext, canAccessPatient |
++| server/routes/pharmacy.mjs | 13 | requireContext, sessionRole |
++| server/routes/queue.mjs | 7 | requireContext, canAccessPatient, canUseMaternalPatient, encounterAccess |
++| server/routes/record-access.mjs | 6 | requireContext, canAccessPatient |
+diff --git a/scripts/build-v430-update.mjs b/scripts/build-v430-update.mjs
+new file mode 100644
+index 0000000..fd521a8
+--- /dev/null
++++ b/scripts/build-v430-update.mjs
+@@ -0,0 +1,85 @@
++// Explicit, non-sensitive release allowlist; no patient paths or environment files.
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import crypto from 'node:crypto';
++import { fileURLToPath } from 'node:url';
++import { spawnSync } from 'node:child_process';
++
++const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
++const baseline = 'ba812ed';
++const files = [
++  'CHANGELOG.md', 'package.json', 'public/login.html', 'server/server.mjs',
++  'server/routes/paraclinic.mjs', 'tests/accessibility-quality-smoke.test.mjs',
++  'tests/v309-release-catchup.test.mjs',
++  'tests/access-audit.test.mjs', 'tests/access-audit-browser.mjs',
++  'tests/helpers/access-audit-contexts.mjs', 'scripts/write-access-audit.mjs',
++  'docs/access-audit.md', 'scripts/build-v430-update.mjs',
++  ...['STATUS', 'TASKS', 'DECISIONS', 'TEST_RESULTS', 'CHANGES'].map(name => `docs/ai-handoff/${name}.md`),
++];
++const git = (args, options = {}) => spawnSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, ...options });
++const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'borkeo-430-patch-base-'));
++let patch = '';
++const manifest = [];
++for (const file of files) {
++  const current = path.join(root, file);
++  const old = path.join(temporary, file);
++  const original = git(['show', `${baseline}:${file}`]);
++  const existed = original.status === 0;
++  if (existed) {
++    fs.mkdirSync(path.dirname(old), { recursive: true });
++    fs.writeFileSync(old, original.stdout);
++  }
++  const diff = git(['diff', '--no-index', '--ignore-space-at-eol', '--', existed ? old.replaceAll('\\', '/') : '/dev/null', current.replaceAll('\\', '/')]);
++  if (diff.status === 0) continue;
++  if (diff.status !== 1) throw new Error(`Cannot build patch for ${file}: ${diff.stderr}`);
++  const lines = diff.stdout.replace(/\r\n/g, '\n').split('\n');
++  lines[0] = `diff --git a/${file} b/${file}`;
++  const hunk = lines.findIndex(line => line.startsWith('@@'));
++  for (let index = 1; index < hunk; index++) {
++    if (lines[index].startsWith('--- ')) lines[index] = existed ? `--- a/${file}` : '--- /dev/null';
++    if (lines[index].startsWith('+++ ')) lines[index] = `+++ b/${file}`;
++  }
++  patch += lines.join('\n');
++  manifest.push(`${crypto.createHash('sha256').update(fs.readFileSync(current)).digest('hex')}  ${file}`);
++}
++const checked = git(['apply', '--reverse', '--check', '--ignore-space-change', '-'], { input: patch });
++if (checked.status !== 0) throw new Error(`Reverse patch validation failed: ${checked.stderr}`);
++const forward = git(['apply', '--check', '--ignore-space-change', '-'], { cwd: temporary, input: patch });
++if (forward.status !== 0) throw new Error(`Baseline patch validation failed: ${forward.stderr}`);
++const header = `Borkeo EMR 43.0.0 - Scoped paraclinic access and role audit
++Baseline: 42.9.0, ${baseline}. Apply only to this baseline; preserve later work.
++
++This is an incremental master-task update. The whole master task is NOT
++complete. See docs/ai-handoff/TASKS.md for exact remaining requirements.
++
++Behavior: remove doctor bypasses for cross-service paraclinic order reads and
++creation. Enforce specialist modality restrictions on direct order and attachment
++reads. Retain existing patient-access, emergency/transfer exceptions, own-service
++care and explicit multi-ward context selection. No new role/account permissions.
++Source inventory and synthetic all-role API/menu/browser tests included.
++No migration, clinical-data edits or runtime dependencies.
++
++INSTALLATION - VS CODE DIRECTLY OR OPTIONAL PATCH, one step at a time
++The working project already has these edits. Do not apply the patch twice.
++1. Stop the local server and use the existing hospital backup procedure.
++2. If updating another 42.9 copy, review its changes against ${baseline}; apply only
++   to its listed code/doc/test files. Never overwrite .env, .gitignore, databases,
++   uploads, backups, credentials or unrelated local work.
++3. Run npm test and npm run check:khmer in a disposable synthetic copy.
++4. Restart with the existing launcher and refresh the browser. Verify own-service
++   orders and denied cross-service direct access. Deployment is separately gated.
++
++VALIDATION AND LIMITATIONS
++See docs/ai-handoff/TEST_RESULTS.md and docs/access-audit.md. Full action/save/
++reopen/print audit and maternal context/routing changes remain unfinished.
++No print action visually verified. No live NPCA verification/transmission.
++Rollback: restore only these source files from baseline; no database rollback.
++
++SHA-256 FILE MANIFEST (bytes in the prepared Windows workspace)
++${manifest.join('\n')}
++
++BEGIN BORKEO 43.0.0 UNIFIED PATCH
++`;
++fs.writeFileSync(path.join(root, 'Borkeo-EMR-v43.0.0-update.txt'), header + patch + 'END BORKEO 43.0.0 UNIFIED PATCH\n');
++console.log(`Built combined update: ${manifest.length} files; baseline and reverse patch checks passed.`);
+diff --git a/docs/ai-handoff/STATUS.md b/docs/ai-handoff/STATUS.md
+index 487d27c..428448c 100644
+--- a/docs/ai-handoff/STATUS.md
++++ b/docs/ai-handoff/STATUS.md
+@@ -1,12 +1,13 @@
+ # Status
+-Updated: 2026-10-24, Asia/Phnom_Penh. One active writer.
+-Objective: BORKEO_EMR_MASTER_TASK.txt, incremental implementation with preserved data/work.
+-Actual baseline: 42.8.0; branch master; startup commit 107ed3a. Current released version: 42.9.0. Folder label 42.3.0 is stale.
+-Repository: startup tracked tree clean; user-owned untracked files preserved (CHANGES.md). Release changes limited to login/context recovery, synthetic test isolation, metadata, delivery and handoff. No migrations.
+-Completed: read complete master prompt/AGENTS; created five checkpoints; reconciled Git/source. Fixed context null-session bootstrap, explicit retry, expired/account-changed sessions, refreshed CSRF and safe Khmer failures. Chromium synthetic login/context/recovery/denied ward/landing verified; targeted auth/CSRF passed. Existing demo assertions now seed in memory.
+-Verified 42.9 increment: full npm test 974/974 PASS; Khmer PASS; explicit Chromium PASS; forward and reverse combined-patch checks PASS. Release code commit c858abe2b51bda86bc59738c1657f542dc9cac12 was pushed successfully to origin/master. Any following handoff-only commit records this publication; inspect git log on resume.
+-Limitations: deployment screenshot and origin/network evidence unavailable; no claim that the reported deployment fault is resolved. No print/PDF visual check in this increment. Remaining clinical/routing/ANC/QD/print/NPCA requirements are TODO, not assumed covered by old releases.
+-Next EXACT action: continue ACCESS-01. Read public/nav-config.js, roleCanPage/canAccessPatient/roleWardAllowed in server/access.mjs and route guards; inventory active roles, service contexts, landing pages and important actions in a source-backed matrix, then exercise authorized/denied API and browser paths with synthetic fixtures. Preserve verified 42.9 recovery behavior.
+-After this increment: ACCESS-01 role/action audit using public/nav-config.js, server/access.mjs and modular route guards; then ROLE-01. Known mismatch: roleWardAllowed and context.js currently restrict MIDWIFE to Obstetric only. Do not grant unassigned wards or combine doctor contexts.
+-No application/test processes intentionally left running; prior headless Edge instances closed. Synthetic browser profiles and logs remain in TEMP only.
+-Resume instruction: Read master, AGENTS and all five handoff files; reconcile git status/diff and latest commit, then resume the exact next action above. Preserve all existing changes. User already authorized routine implementation/testing.
++Updated: 2026-10-24, Asia/Phnom_Penh. One active writer; direct project edits, no Antigravity needed.
++Objective: continue BORKEO_EMR_MASTER_TASK.txt incrementally while preserving data and existing work.
++Current resume baseline: package42.9.0, master, ba812ed; startup tracked tree clean. Original master baseline was42.8.0 at107ed3a. Folder label42.3.0 is stale. Prepared increment43.0.0.
++Completed prior increment:42.9 login/context recovery,974/974 tests, Khmer and Chromium PASS; pushed c858abe/ba812ed. Historical evidence retained in TEST_RESULTS/CHANGES.
++Current phase: ACCESS-01. Inventoried15 built-in roles,19 representative contexts,37 protected pages, API modules and important action guards in docs/access-audit.md. Confirmed42.9 doctor bypass returned200 for cross-service order read and201 for creation despite scoped list. Removed those endpoint bypasses; direct LAB/IMAGING order/attachment reads now respect worklist modality restrictions. Existing emergency/transfer policy remains unchanged.
++Verified targeted:13/13 audit/IPD/maternal tests;1/1 Chromium test checks all15 roles/19 contexts rendered landings/menus and admin API allow-deny. Corrected legacy v309 positive fixture to use Surgery doctor for Surgery order; added Medicine denial; targeted6/6 PASS. No runtime edits after initial targeted/browser checks beyond version metadata.
++Verified43.0 increment: final npm test976/976 PASS (112.86s); Khmer PASS; targeted13/13 and corrected6/6 PASS; all-role Chromium1/1 PASS. Combined update builder checks forward/reverse patches against ba812ed. Publication pending final safe review.
++Next EXACT action: review explicit safe stage list and publish verified43.0 increment; record release commit/remote result, then continue ACCESS-01C.
++Next implementation: ACCESS-01C full action audit remains unfinished. Inspect maternal patientFor/referral signer shortcuts with authorized referral/service routing, then remaining action guards/save-reopen. ROLE-01 must enable assigned Gynecology midwife context without combining doctor services; no silent grants. Subsequent ANC/QD/print/NPCA tasks remain in TASKS.
++Limitations: deployment-specific screenshot network cause unconfirmed; no print/PDF visually verified in this increment; live/custom hospital role assignments not read. No NPCA remote calls/real-patient transmission/deployment authorized.
++Data/work: all original untracked user files preserved; no .env/live databases/uploads/backups read/copied/modified. No schema migration. No intentionally running test/server sessions; final suite and headless Edge finished. Synthetic profiles/attachment fixtures/logs remain in TEMP.
++Resume: Read master, AGENTS and all five handoff files; reconcile git status/diff/log, then continue the exact next action. Routine implementation/testing already authorized. Do not reset existing work.
+diff --git a/docs/ai-handoff/TASKS.md b/docs/ai-handoff/TASKS.md
+index d16cbfa..729f525 100644
+--- a/docs/ai-handoff/TASKS.md
++++ b/docs/ai-handoff/TASKS.md
+@@ -3,7 +3,7 @@ Source requirements: BORKEO_EMR_MASTER_TASK.txt sections 1-10 and acceptance lis
+ - CONT-01 VERIFIED: create five checkpoints and reconcile baseline.
+ - AUTH-01 VERIFIED: local login/context network recovery, cookie persistence, fresh CSRF, session expiry/account change and safe Khmer errors; synthetic Chromium/API coverage with NPCA disabled. Deployment fault is separate AUTH-02.
+ - AUTH-02 TODO: obtain actual deployment request URL/status/origin/proxy/browser evidence for the reported screenshot; do not equate local reproduction with production resolution. Continue ACCESS-01 independently.
+-- ACCESS-01 TODO: inventory all roles, contexts, navigation/actions and authorized/denied direct API matrix; audit findings with reproductions.
++- ACCESS-01 IN_PROGRESS: inventory all roles, contexts, navigation/actions and authorized/denied direct API matrix; audit findings with reproductions.
+ - ROLE-01 TODO: separate Obstetric/Gynecology doctors; explicit authorized midwife contexts; clinical routing and distinct miscarriage diagnoses.
+ - GYN-01 TODO: nursing assessment then valid bed placement; durable doctor task, explicit acknowledgement and service scoping.
+ - GYN-02 TODO: retries/restarts/unassigned doctors/transfers/audit and urgent escalation before bed; reconcile later placement.
+@@ -20,3 +20,8 @@ Source requirements: BORKEO_EMR_MASTER_TASK.txt sections 1-10 and acceptance lis
+ - RELEASE-02 TODO: bump visible/package version once for completed approved update; combined Antigravity update with manifest; safe staged review, verified commit/push; installation guidance.
+ 
+ - REL429-01 VERIFIED: 42.8.0 -> 42.9.0 local recovery increment; full 974/974 tests, Khmer and Chromium pass; combined patch reverse/forward checks pass. Code commit c858abe2b51bda86bc59738c1657f542dc9cac12 pushed to origin/master; publication VERIFIED. RELEASE-01/02 above refer to full master acceptance, still TODO.
++
++- ACCESS-01A VERIFIED: built-in role/context/menu/page/API-module source inventory in docs/access-audit.md;15roles/19contexts representative HTTP and Chromium checks. Live custom assignments intentionally not inspected.
++- ACCESS-01B VERIFIED: focused doctor cross-service order read/create and specialist direct order/attachment modality fixes; targeted tests pass. Preserve emergency/transfer exceptions and explicit multi-ward selection.
++- ACCESS-01C TODO: remaining action/endpoint review, forms/search/filter/save/reopen, maternal referral signer scoping, notifications, specialist pages and full print inventory/visual verification. Parent ACCESS-01 remains IN_PROGRESS.
++- REL430-01 IMPLEMENTED_UNVERIFIED:43.0 incremental access fixes VERIFIED(full976/976,Khmer,Chromium,patch checks PASS); publication pending. Parent ACCESS-01/remaining master tasks remain unfinished.
+diff --git a/docs/ai-handoff/DECISIONS.md b/docs/ai-handoff/DECISIONS.md
+index a42c741..12f3f4f 100644
+--- a/docs/ai-handoff/DECISIONS.md
++++ b/docs/ai-handoff/DECISIONS.md
+@@ -9,3 +9,9 @@ Observed context.js: bootstrap catch displays raw error; form stays usable with
+ 2026-10-24: Fixed pre-existing release-test dependence on ignored data/demo.sqlite by invoking existing synthetic seedDemoPatients with an in-memory database inside each affected test. Assertions retained. This is a permanent test-isolation fix, not injecting fixtures to mask a production failure.
+ 
+ Task scope for this increment: AUTH-01 local recovery and isolated regression infrastructure. A deployment-specific failed fetch can originate outside this source and remains unconfirmed without deployment network/origin evidence; do not label that root cause fixed. Existing backend roles/CSRF rules remain authoritative and unchanged.
++
++2026-10-24 08:44:46 +07:00 audit decision: preserve existing canAccessPatient policy including emergency/transfer exceptions. Remove endpoint-specific doctor bypasses rather than invent broader role restrictions. Inspect modality-specific direct reads against existing LAB/IMAGING list restrictions. Continue using direct VS Code edits; combined update is an optional delivery artifact, no Antigravity required.
++
++ACCESS-F02 test correction: v309 used an unrelated ward doctor for a Surgery order. Approved cross-service restriction takes precedence; use Surgery doctor for positive snapshot test and assert Medicine doctor denied. Preserve patient/photo/snapshot assertions and server-owned attribution.
++
++Version43.0.0 follows the requested decimal minor sequence:42.9->43.0. No patient/service assignments were migrated or granted; only paraclinic endpoint bypasses removed. ACCESS-01 remains partial despite all-role representative coverage. Specialist download checks now match existing worklist modality policy.
+diff --git a/docs/ai-handoff/TEST_RESULTS.md b/docs/ai-handoff/TEST_RESULTS.md
+index ee1f6ae..cf1713a 100644
+--- a/docs/ai-handoff/TEST_RESULTS.md
++++ b/docs/ai-handoff/TEST_RESULTS.md
+@@ -17,3 +17,13 @@ Final npm run check:khmer PASS after registry/CSV corrections. No clinical sourc
+ 2026-10-24 08:22 +07:00 FINAL: npm test PASS: 974 tests, 974 pass, 0 fail, 0 skipped (129.86 seconds). Disposable changed copy only; final runtime files version 42.9.0. npm run check:khmer PASS. Explicit Chromium test PASS 1/1. Combined update generated with 22-file manifest; reverse check against current files PASS and forward git apply --check against disposable 42.8 baseline PASS. No print/PDF output visually verified. No production NPCA or patient transmission.
+ 
+ 2026-10-24 publication: reviewed staged 23-file allowlist; no patient databases/uploads/backups/password CSV/.env/.gitignore included. git commit succeeded: c858abe2b51bda86bc59738c1657f542dc9cac12. git push origin master PASS: 107ed3a..c858abe. Final source verification remains valid; subsequent changes are handoff/update-document snapshots only. Unified diff context lines contain intentional single-space blank context markers; git whitespace warnings on those lines are patch syntax, not source whitespace regressions.
++
++2026-10-24 ACCESS-01 reproduction: node --test tests/access-audit.test.mjs FAIL against unchanged 42.9 runtime in disposable tracked-source copy, synthetic accounts/in-memory DB/NPCA disabled. Obstetric doctor direct read of Gynecology order returned200 and cross-service creation returned201, expected403; list correctly hid the same patient. Both bypasses confirmed. Source now removes unconditional doctor bypass and aligns direct LAB/IMAGING order/attachment reads with existing modality worklists; unverified until retest.
++
++ACCESS-01 targeted result: node --test tests/access-audit.test.mjs tests/v162-ipd-paraclinic-workflow.test.mjs tests/v426-midwife-anc.test.mjs PASS13/13 in disposable copy (6.52s). Covers 15 roles/19contexts, all default visible menu destinations, root landings, admin/expense/NPCA read allow-deny, cross-service order read/create, explicit both-ward doctor selection, denied-write no side effects, specialist order/attachment modality and same-service downloads. Existing IPD/maternal workflows pass. Chromium node --test tests/access-audit-browser.mjs PASS1/1 (32.57s), all15roles/19contexts rendered landing/menu checks and admin API allow-deny, zero uncaught exceptions. NPCA disabled; synthetic fixtures only. Browser code behavior tested before version-only43.0 metadata bump; functional guards unchanged afterward. Full43.0 suite pending.
++
++First full43.0 run found existing v309 snapshot regression using Medicine doctor to order for a Surgery inpatient. That success depended on the reproduced cross-ward bypass. Updated fixture to use assigned Surgery doctor for snapshot assertions, retained all snapshot/catalog assertions, and added explicit Medicine doctor403 check. No permission exception restored. Targeted rerun pending.
++
++2026-10-24 full43.0 first run:976 tests,975 pass,1 fail,113.57s (only v309 unauthorized doctor expectation). Corrected v309 plus audit targeted6/6 PASS. Final npm test running session42181; final Khmer PASS. Builder source checks forward application in reconstructed ba812ed source subset and reverse check in current workspace; PASS. No print/PDF visual verification or live NPCA call.
++
++2026-10-24 08:56 +07 FINAL43.0: npm test PASS976/976,0failed/0skipped,112.86s in disposable synthetic source copy. npm run check:khmer PASS. Targeted13/13 and corrected6/6 PASS; explicit Chromium1/1 PASS(all15roles/19contexts,32.57s). Forward/reverse combined-patch checks PASS. Runtime/test sources unchanged since passing final test snapshot; remaining edits are checkpoint/delivery-only. No print/PDF visually verified; no live NPCA calls/transmission.
+diff --git a/docs/ai-handoff/CHANGES.md b/docs/ai-handoff/CHANGES.md
+index 3e494a8..b6a37e0 100644
+--- a/docs/ai-handoff/CHANGES.md
++++ b/docs/ai-handoff/CHANGES.md
+@@ -14,3 +14,11 @@ Release metadata updated consistently to 42.9.0 (package/login/server header and
+ Additional release files: CHANGELOG.md, package.json, public/login.html, server/server.mjs, tests/accessibility-quality-smoke.test.mjs and tests/v399-password-change-loop.test.mjs (release metadata/cache expectation), docs/translations-needed.csv (new retry-label provenance). Fixes to translation insertion order/CSV are recorded in TEST_RESULTS. No unrelated source edits.
+ 
+ Release 42.9.0 code committed as c858abe2b51bda86bc59738c1657f542dc9cac12 and pushed to origin/master. Patient data and all initial user-owned untracked files remain excluded. Next phase ACCESS-01; full master task remains incomplete. Handoff/publication records and combined-update snapshot refreshed after push; no runtime source edits.
++
++2026-10-24 08:44:46 +07:00 resume baseline ba812ed, version42.9.0. No live data/.env touched. No background process started. Prior untracked files preserved. Planned scope: access matrix, focused paraclinic permission regression fix/tests, release/checkpoint records.
++
++ACCESS-01: tests/access-audit.test.mjs added for cross-service direct reads/writes, no side effects on denial, own-service access and explicit multi-ward doctor context switch. server/routes/paraclinic.mjs aligns create/read/attachment permissions with existing patient and modality policies. No schema or data migration.
++
++Added docs/access-audit.md and scripts/write-access-audit.mjs: reproducible source inventory of15 built-in roles,19 representative contexts,37protected pages and API-module counts, with explicit incomplete-action boundaries/findings. Added tests/access-audit-browser.mjs and tests/helpers/access-audit-contexts.mjs. Metadata advances42.9->43.0 per decimal minor-step rule; public/login.html/server header/package/version smoke agree. scripts/build-v430-update.mjs prepares one safe allowlisted update from ba812ed. No new UI strings/dependencies/data migrations. Headless Edge test completed and closed; synthetic test logs/profile/attachment fixtures remain in TEMP.
++
++Updated tests/v309-release-catchup.test.mjs to order with Surgery context for its Surgery fixture, plus explicit cross-ward Medicine denial. No runtime-source changes after initial targeted/browser passes.
+END BORKEO 43.0.0 UNIFIED PATCH
