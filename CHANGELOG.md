@@ -1,3 +1,9 @@
+## 43.6.0 - Patient list age display refinement (age only, no date of birth)
+
+- Refine the patient list table so that the Age column displays only the age badge (e.g. `7 ឆ្នាំ`, `71 ឆ្នាំ`), omitting the date of birth (DOB) string.
+- Provide a resilient fallback in `ageLabel()` to compute patient age from date of birth when `patient.age` is blank.
+- Preserve 100% of data persistence, frozen storage keys, and Khmer-only interface text.
+
 ## 43.5.0 - Unified same-row registration action bar
 
 - Unify the «រក្សាទុក» (Save) button and «បញ្ជូនទៅផ្នែកទ្រីយ៉ា» (Send to Triage) button in the same clean row at the bottom of the registration form (`#sub_reg`).
