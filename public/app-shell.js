@@ -412,11 +412,21 @@
       </div>
 
       <div class="emr-topbar-center">
-        <button type="button" class="emr-topbar-search-trigger" id="emr-global-search-trigger" aria-label="ស្វែងរកអ្នកជំងឺ (Ctrl+K)">
-          <svg aria-hidden="true"><use href="/public/icons.svg#icon-search"></use></svg>
-          <span class="emr-topbar-search-text">ស្វែងរកអ្នកជំងឺ (ឈ្មោះ, លេខកូដ, ទូរស័ព្ទ)...</span>
+        <div class="emr-topbar-search-wrap" id="emr-topbar-search-wrap">
+          <svg class="emr-search-icon" aria-hidden="true"><use href="/public/icons.svg#icon-search"></use></svg>
+          <input type="search" class="emr-topbar-search-input" id="emr-global-search-input"
+            placeholder="ស្វែងរកអ្នកជំងឺ (ឈ្មោះ, លេខកូដ, ទូរស័ព្ទ)..."
+            autocomplete="off" spellcheck="false"
+            aria-label="ស្វែងរកអ្នកជំងឺ (Ctrl+K)">
           <kbd class="emr-search-kbd">Ctrl K</kbd>
-        </button>
+          <div class="emr-topbar-search-dropdown" id="emr-topbar-search-dropdown" hidden>
+            <div class="emr-search-dropdown-list" id="emr-search-dropdown-list"></div>
+            <div class="emr-search-dropdown-footer" id="emr-search-dropdown-footer">
+              <span><strong>↑↓</strong> ផ្លាស់ទី · <strong>Enter</strong> បើក · <strong>Esc</strong> បិទ</span>
+              <span id="emr-search-dropdown-count">០ លទ្ធផល</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="emr-topbar-right">
@@ -884,12 +894,29 @@
       closeUserMenu();
       showContextNotice(t('switching'), false);
       try {
-        const res = await fetch('/api/auth/context', {
+        let currentCsrf = window.emrSession?.csrfToken || session.csrfToken;
+        let res = await fetch('/api/auth/context', {
           method: 'POST',
           credentials: 'same-origin',
-          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': session.csrfToken },
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': currentCsrf },
           body: JSON.stringify({ role: nextRole, wardCode: nextWard })
         });
+        if (res.status === 403) {
+          const meRes = await fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' });
+          if (meRes.ok) {
+            const meData = await meRes.json();
+            if (meData.csrfToken) {
+              session.csrfToken = meData.csrfToken;
+              if (window.emrSession) window.emrSession.csrfToken = meData.csrfToken;
+              res = await fetch('/api/auth/context', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': meData.csrfToken },
+                body: JSON.stringify({ role: nextRole, wardCode: nextWard })
+              });
+            }
+          }
+        }
         const result = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(result.error || t('switchFailed'));
         const me = await fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' });
@@ -1007,8 +1034,132 @@
     window.addEventListener('offline', updateOnlineStatus);
     updateOnlineStatus();
 
-    // Command Palette Logic
+    // Topbar Inline Search & Instant Dropdown Logic
+    const searchInput = document.getElementById('emr-global-search-input');
+    const searchDropdown = document.getElementById('emr-topbar-search-dropdown');
+    const searchList = document.getElementById('emr-search-dropdown-list');
+    const searchCount = document.getElementById('emr-search-dropdown-count');
+    let inlineSelectedIndex = 0;
+    let inlineFiltered = [];
+    let inlineDebounceTimer = null;
+
+    function renderInlineResults(patients) {
+      inlineFiltered = patients;
+      inlineSelectedIndex = 0;
+      if (!patients.length) {
+        searchList.innerHTML = '<div class="emr-search-dropdown-empty">មិនមានអ្នកជំងឺដែលត្រូវគ្នានឹងការស្វែងរកទេ។</div>';
+        if (searchCount) searchCount.textContent = '០ លទ្ធផល';
+        searchDropdown.hidden = false;
+        return;
+      }
+      if (searchCount) searchCount.textContent = `${patients.length} លទ្ធផល`;
+      searchList.innerHTML = patients.slice(0, 15).map((p, idx) => {
+        const idText = p.healthId || p.caseNumber || p.patientKey || '';
+        const dept = WARD_LABELS[p.departmentCode] || p.departmentNameKh || p.departmentCode || '';
+        const statusClass = p.serviceMode === 'ipd' ? 'status-ipd' : 'status-opd';
+        const statusText = p.serviceMode === 'ipd' ? 'សម្រាកពេទ្យ' : 'ពិគ្រោះក្រៅ';
+        return `
+          <a href="/emr?patientKey=${encodeURIComponent(p.patientKey)}" class="emr-search-dropdown-item ${idx === 0 ? 'is-selected' : ''}" data-idx="${idx}">
+            <div class="patient-main">
+              <span class="patient-name">${escapeHtml(p.fullName || p.name || 'គ្មានឈ្មោះ')}</span>
+              <span class="patient-meta">
+                <span>លេខ: <strong>${escapeHtml(idText)}</strong></span>
+                ${p.age ? `<span>អាយុ: ${escapeHtml(p.age)}</span>` : ''}
+                ${p.sex ? `<span>ភេទ: ${escapeHtml(p.sex)}</span>` : ''}
+                ${dept ? `<span>ផ្នែក: ${escapeHtml(dept)}</span>` : ''}
+              </span>
+            </div>
+            <div>
+              <span class="emr-badge ${statusClass}">${escapeHtml(statusText)}</span>
+            </div>
+          </a>
+        `;
+      }).join('');
+      searchDropdown.hidden = false;
+    }
+
+    const closeInlineSearch = () => {
+      if (searchDropdown) searchDropdown.hidden = true;
+    };
+
+    if (searchInput) {
+      searchInput.addEventListener('focus', async () => {
+        await fetchPatientsList();
+        const q = (searchInput.value || '').trim().toLowerCase();
+        if (q) {
+          const all = await fetchPatientsList();
+          const matches = all.filter(p => {
+            const name = String(p.fullName || p.name || '').toLowerCase();
+            const healthId = String(p.healthId || '').toLowerCase();
+            const caseNo = String(p.caseNumber || '').toLowerCase();
+            const phone = String(p.phone || '').toLowerCase();
+            return name.includes(q) || healthId.includes(q) || caseNo.includes(q) || phone.includes(q);
+          });
+          renderInlineResults(matches);
+        }
+      });
+
+      searchInput.addEventListener('input', () => {
+        clearTimeout(inlineDebounceTimer);
+        inlineDebounceTimer = setTimeout(async () => {
+          const q = (searchInput.value || '').trim().toLowerCase();
+          if (!q) {
+            closeInlineSearch();
+            return;
+          }
+          const all = await fetchPatientsList();
+          const matches = all.filter(p => {
+            const name = String(p.fullName || p.name || '').toLowerCase();
+            const healthId = String(p.healthId || '').toLowerCase();
+            const caseNo = String(p.caseNumber || '').toLowerCase();
+            const phone = String(p.phone || '').toLowerCase();
+            return name.includes(q) || healthId.includes(q) || caseNo.includes(q) || phone.includes(q);
+          });
+          renderInlineResults(matches);
+        }, 120);
+      });
+
+      searchInput.addEventListener('keydown', (e) => {
+        if (searchDropdown.hidden) return;
+        const items = searchList.querySelectorAll('.emr-search-dropdown-item');
+        if (!items.length) return;
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          items[inlineSelectedIndex]?.classList.remove('is-selected');
+          inlineSelectedIndex = (inlineSelectedIndex + 1) % items.length;
+          items[inlineSelectedIndex]?.classList.add('is-selected');
+          items[inlineSelectedIndex]?.scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          items[inlineSelectedIndex]?.classList.remove('is-selected');
+          inlineSelectedIndex = (inlineSelectedIndex - 1 + items.length) % items.length;
+          items[inlineSelectedIndex]?.classList.add('is-selected');
+          items[inlineSelectedIndex]?.scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          const selected = searchList.querySelector('.emr-search-dropdown-item.is-selected');
+          if (selected) window.location.href = selected.href;
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          closeInlineSearch();
+          searchInput.blur();
+        }
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#emr-topbar-search-wrap')) {
+        closeInlineSearch();
+      }
+    });
+
+    // Command Palette fallback
     const openPalette = async () => {
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.select();
+        return;
+      }
       paletteBackdrop.classList.add('is-open');
       const input = document.getElementById('emr-palette-input');
       input.value = '';
@@ -1021,12 +1172,10 @@
       paletteBackdrop.classList.remove('is-open');
     };
 
-    document.getElementById('emr-global-search-trigger')?.addEventListener('click', openPalette);
     mobileNav.addEventListener('click', (e) => {
       if (e.target.closest('#emr-mobile-search-btn')) openPalette();
     });
     document.getElementById('emr-palette-close')?.addEventListener('click', closePalette);
-
     paletteBackdrop.addEventListener('click', (e) => {
       if (e.target === paletteBackdrop) closePalette();
     });
@@ -1179,12 +1328,29 @@
         const submit = e.currentTarget.querySelector('button[type=submit]');
         submit.disabled = true;
         try {
-          const res = await fetch('/api/auth/context', {
+          let currentCsrf = window.emrSession?.csrfToken || session.csrfToken;
+          let res = await fetch('/api/auth/context', {
             method: 'POST',
             credentials: 'same-origin',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': session.csrfToken },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': currentCsrf },
             body: JSON.stringify({ role: roleSelect.value, wardCode: wardSelect.hidden ? '' : wardSelect.value })
           });
+          if (res.status === 403) {
+            const meRes = await fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' });
+            if (meRes.ok) {
+              const meData = await meRes.json();
+              if (meData.csrfToken) {
+                session.csrfToken = meData.csrfToken;
+                if (window.emrSession) window.emrSession.csrfToken = meData.csrfToken;
+                res = await fetch('/api/auth/context', {
+                  method: 'POST',
+                  credentials: 'same-origin',
+                  headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': meData.csrfToken },
+                  body: JSON.stringify({ role: roleSelect.value, wardCode: wardSelect.hidden ? '' : wardSelect.value })
+                });
+              }
+            }
+          }
           const result = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(result.error || t('switchFailed'));
           window.location.assign(result.landingPath || '/home');
@@ -1197,10 +1363,14 @@
 
     // Global Keyboard Navigation
     document.addEventListener('keydown', (e) => {
-      // Ctrl+K or Cmd+K: Open Palette
+      // Ctrl+K or Cmd+K: Focus Inline Search
       if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
         e.preventDefault();
-        if (paletteBackdrop.classList.contains('is-open')) {
+        const inlineInput = document.getElementById('emr-global-search-input');
+        if (inlineInput) {
+          inlineInput.focus();
+          inlineInput.select();
+        } else if (paletteBackdrop.classList.contains('is-open')) {
           closePalette();
         } else {
           openPalette();
@@ -1208,8 +1378,13 @@
         return;
       }
 
-      // Escape: Close any open modal
+      // Escape: Close any open modal or dropdown
       if (e.key === 'Escape') {
+        const dropdown = document.getElementById('emr-topbar-search-dropdown');
+        if (dropdown && !dropdown.hidden) {
+          dropdown.hidden = true;
+          return;
+        }
         if (paletteBackdrop.classList.contains('is-open')) {
           closePalette();
           return;

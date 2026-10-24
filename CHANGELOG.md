@@ -1,5 +1,11 @@
 # Borkeo EMR Changelog
 
+## v45.0.0 - Top bar inline patient search with instant dropdown & CSRF auto-recovery
+
+- Transform the top bar search from a button modal trigger into a direct inline search input (`#emr-global-search-input`).
+- Provide an attached instant dropdown (`#emr-topbar-search-dropdown`) displaying matching patients directly beneath the top bar as the user types, with keyboard navigation (↑/↓/Enter/Esc) and zero modal panel popups.
+- Implement automated CSRF token re-fetch and retry on 403 response in both Superuser type switching (`emr-user-type-form`) and normal context switching (`switchContext`), eliminating "Security token is invalid" errors.
+
 ## v44.9.0 - Patient list age display refinement (age only, no date of birth)
 
 - Refine the patient list table so that the Age column displays only the age badge (e.g. `7 ឆ្នាំ`, `71 ឆ្នាំ`), omitting the date of birth (DOB) string.

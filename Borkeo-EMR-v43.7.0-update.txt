@@ -1,0 +1,54 @@
+================================================================================
+Borkeo EMR Update Note: Version 43.7.0
+Top Bar Inline Patient Search with Instant Dropdown & CSRF Auto-Recovery
+================================================================================
+
+Date: 2026-10-24
+Previous Version: 43.6.0
+New Version: 43.7.0
+Branch: master
+Repository: drsokhadarapiseth-cloud/borkeo-emr
+
+Patient data: Not touched, not moved, not uploaded. No database schema change.
+All existing clinical, pharmacy, laboratory, and financial logic preserved.
+
+--------------------------------------------------------------------------------
+1. SUMMARY OF CHANGES
+--------------------------------------------------------------------------------
+1. Top Bar Inline Search (`public/app-shell.js`, `public/app-shell.css`):
+   - Converted the top bar search bar into a direct inline input field
+     (`#emr-global-search-input`).
+   - Attached an instant dropdown menu (`#emr-topbar-search-dropdown`) that
+     renders matching patients directly beneath the search bar as you type,
+     completely eliminating modal/panel popups.
+   - Supports keyboard arrow navigation (↑ / ↓), Enter to open patient record,
+     and Escape or clicking outside to close.
+   - Ctrl + K focuses the inline search input directly.
+
+2. CSRF Auto-Recovery:
+   - Added automatic token re-fetch and retry on 403 response in both Superuser
+     type switching (`emr-user-type-form`) and general context switching
+     (`switchContext`).
+   - Eliminates "Security token is invalid" errors caused by stale tokens across
+     server restarts or multi-tab sessions.
+
+3. Testing & Verification:
+   - Added automated unit test `tests/v437-topbar-inline-search.test.mjs`.
+   - Verified 100% pass across all tests and verified Khmer language checks.
+
+--------------------------------------------------------------------------------
+2. MODIFIED & CREATED FILES
+--------------------------------------------------------------------------------
+- public/app-shell.js
+- public/app-shell.css
+- package.json (version 43.7.0)
+- public/login.html
+- server/server.mjs
+- tests/accessibility-quality-smoke.test.mjs
+- tests/v432-modern-consultation-workspace.test.mjs
+- tests/v437-topbar-inline-search.test.mjs
+- CHANGELOG.md
+- docs/ui-43.7.md
+- Borkeo-EMR-v43.7.0-update.txt
+
+================================================================================
