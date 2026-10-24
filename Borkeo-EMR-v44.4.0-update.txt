@@ -6,8 +6,10 @@ Update plan #4: NPCA beneficiary check and automatic registration cards
 Date: 2026-10-24
 Previous Version: 44.3.0
 New Version: 44.4.0
-Source: re-applies the v42.8.0 work (commit 98198b0) on top of v44.3.0.
-Patient data: not touched. Database changes are additive only; nothing removed.
+Source: re-applies the v42.7.0 / v42.8.0 work (commits 98198b0 and 107ed3a) on
+top of v44.3.0.
+Patient data: not touched, and no real patient data is sent anywhere. Database
+changes are additive only; nothing removed. No new runtime packages.
 
 Verified in a disposable copy with synthetic data:
 - npm test: 966 / 966 pass.
@@ -15,15 +17,44 @@ Verified in a disposable copy with synthetic data:
 - Every account signs in and opens its page in demo mode (34 accounts),
   hospital mode (24 accounts, password 1234) and online mode (Superuser with
   SUPERUSER_PASSWORD, all 65 role/ward choices). Same result as v44.3.0.
-1. Use the current v42.7.0 project as the base. Stop the server and back up the
-   hospital database using the existing backup procedure.
-2. Apply the unified diff below to the listed code files only. Never replace
-   data/, patient databases, backups, uploads, .env, or .gitignore.
-3. Read docs/npca/INTEGRATION.md. Add NPCA settings from .env.example to the
-   existing local .env, preserving unrelated settings. Leave NPCA_ENABLED=false.
-4. Restart with Start-Borkeo-WiFi.bat and refresh the browser.
-For Antigravity: this folder already contains the update. To get it on another
-computer, run "git pull" in the project folder, then the steps above, then
-"npm test" and "npm run check:khmer". The full code change is the Git commit
-"v44.4.0" on master (git show v44.4.0 or git log).
+
+--------------------------------------------------------------------------------
+1. WHAT WAS WRONG
+--------------------------------------------------------------------------------
+The EMR had no NPCA beneficiary identity link, no clinical visit export, no
+certification submission queue and no processing status. Registration cards
+and sticker sheets had to be made by hand.
+
+--------------------------------------------------------------------------------
+2. WHAT CHANGED
+--------------------------------------------------------------------------------
+a) Registration cards: an automatic card with barcode / QR for each registered
+   patient, and printable sticker sheets.
+b) NPCA (v1.4) integration, OFF by default (NPCA_ENABLED=false):
+   - configurable settings and OAuth token handling;
+   - verified beneficiary selection at Registration;
+   - official Excel code mappings; visit builder with local validation;
+   - a durable submission queue with retries and reconciliation;
+   - status polling and review pages; record and Billing status badges;
+   - optional clinical assessment / referral fields.
+   Unknown mappings or missing clinical data block a claim; nothing is sent.
+c) Stock and financial calculations are unchanged.
+d) Details: docs/npca/INTEGRATION.md, OPEN-QUESTIONS.md, VERIFICATION.md.
+
+--------------------------------------------------------------------------------
+3. INSTALLATION (one step at a time)
+--------------------------------------------------------------------------------
+Step 1: Close the EMR server window (or press Ctrl + C in it), and make a
+        database backup with the usual backup button or script.
+Step 2: In the project folder run: git pull
+Step 3: Double-click "Start-Borkeo-WiFi.bat", then press Ctrl + F5 once in
+        the browser.
+Step 4: Leave NPCA_ENABLED=false. Turn it on only after NPCA answers
+        docs/npca/OPEN-QUESTIONS.md and supplies test credentials; test with
+        synthetic patients and the local mock first.
+
+For Antigravity: this folder already contains the update. On another computer
+run "git pull", then the steps above, then "npm test" and
+"npm run check:khmer". The full code change is the Git commit "v44.4.0" on
+master (see git log).
 ================================================================================
