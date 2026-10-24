@@ -1,5 +1,15 @@
 # Borkeo EMR Changelog
 
+## v44.1.0 (Update plan #1: online hosting and production security, re-applied on the v42.3.0 baseline)
+- Re-applies the v42.4 hosting work on top of v42.3.0. .gitignore is kept exactly as the owner set it (it already blocks .env, data/*.sqlite*, data/backups/, data/uploads/ and the password CSV).
+- Production only (NODE_ENV=production or EMR_MODE=production): Superuser password from SUPERUSER_PASSWORD (12+ characters, never logged, changes only when the setting changes). Without it only the Superuser account is disabled; the server still starts and other accounts sign in. No shared-password (1234) ward accounts are created online; the log warns about active accounts still using 1234. The login page hides the account list and quick login (no new text).
+- DATA_DIR keeps the database, patient uploads and backups in one permanent folder; without it the hospital computer keeps today's locations.
+- TRUST_PROXY=true reads the client address from X-Forwarded-For (last entry) for login lockout and audit logs.
+- GET /api/health ({"ok":true}, no login, no patient data). Admin, Vice Director and Director can list and download backups (GET /api/admin/backups, /api/admin/backups/latest; audited).
+- New files: Dockerfile, .dockerignore, .env.example, docs/DEPLOY.md, tests/v424-hosting.test.mjs.
+- Hospital computer (normal npm start): unchanged, including Superuser / 1234 and every ward account.
+- Tests 924/924; npm run check:khmer passes; every valid role and ward signs in and opens its landing page in demo, hospital and online mode (synthetic in-memory data).
+
 ## v42.3.0 (Medicine names from the Cambodia Essential Medicines List)
 - Every medicine name box in the prescription forms (OPD, IPD admission, IPD protocol rows, daily note, discharge medicines) searches the Cambodia Essential Medicines List, 10th edition (2023-2024, 704 medicines) after 2 letters. The search matches the name, the CMS code, the form and the strength; arrow keys, Enter and Esc work; the "no match" text is Khmer. A choice is filled as "CMS code-Name-Form-Strength" (without the code when the list has none). Free text is still allowed. The old short meds_list type-ahead was removed.
 - The list is served to logged-in staff (GET /api/medicines/catalogue, from server/catalogues/medicines-eml-2024.json) and searched in the browser (public/medicine-autocomplete.js and .css; no npm package, no server search while typing).

@@ -1,10 +1,10 @@
-import { ensureSuperuser } from './superuser.mjs';
+import { ensureSuperuser, countDefaultPasswordAccounts } from './superuser.mjs';
 import {createHefLookup,HEF_LOOKUP_ROLES} from './hef-lookup.mjs';
 import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v42.3 - Electronic Medical Record System
+// Borkeo EMR v44.1 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -450,7 +450,15 @@ function notifyTriageReferral(database, session, patient) {
   send(wardCode, wardCode === 'obstetric' ? 'MIDWIFE' : 'NURSE');
 }
 
+// v42.4: behind a hosting proxy (TRUST_PROXY=true) the client address is the
+// last address in X-Forwarded-For (added by the proxy itself; earlier entries
+// can be sent by the client). Login lockout, the audit log and the record view
+// log all use this address. Without TRUST_PROXY the header is ignored.
 function requestIp(request) {
+  if (request.borkeoTrustProxy) {
+    const forwarded = String(request.headers['x-forwarded-for'] || '').split(',').map(part => part.trim()).filter(Boolean);
+    if (forwarded.length) return forwarded[forwarded.length - 1];
+  }
   return request.socket.remoteAddress ?? 'unknown';
 }
 
@@ -1880,8 +1888,14 @@ export function createEmrServer(configOverrides = {}) {
   ensureAccessSchema(database);
   ensureESignSchema(database);
   if (config.demoMode) ensureDemoAccounts(database);
-  else ensureDefaultWardUsers(database);
-  ensureSuperuser(database);
+  // v42.4: an online server never creates the shared-password (1234) ward accounts;
+  // the Superuser (SUPERUSER_PASSWORD) creates the real staff accounts.
+  else if (!config.isProduction) ensureDefaultWardUsers(database);
+  ensureSuperuser(database, Date.now(), { production: config.isProduction, password: config.superuserPassword });
+  if (config.isProduction) {
+    const defaults = countDefaultPasswordAccounts(database);
+    if (defaults) defaultLogger.warn(`${defaults} active account(s) still use the default password. Change them before staff use this server.`);
+  }
   ensureParaclinicSchema(database);
   ensureFinanceSchema(database);
   ensureInvoiceEditSchema(database);
@@ -1917,7 +1931,7 @@ export function createEmrServer(configOverrides = {}) {
   if (recovery.patients) ensureOpdQueueSchema(database);
   ensureOpdReceiptDischarges(database);
   seedExistingRequests(database);
-  if (config.autoDatabase) createDailyBackup(database, config.databasePath);
+  if (config.autoDatabase || config.dataDirectory) createDailyBackup(database, config.databasePath, 14, config.backupDirectory);
   database.deleteExpiredSessions(Date.now());
 
   const router = new Router('emr');
@@ -1977,12 +1991,17 @@ export function createEmrServer(configOverrides = {}) {
   // system:ipdDischargeSummary
 
   const server = http.createServer(async (request, response) => {
+    request.borkeoTrustProxy = config.trustProxy === true;
     const requestId = crypto.randomUUID();
     response.setHeader('X-Request-ID', requestId);
     const reqLogger = defaultLogger.child({ requestId });
     try {
       const url = new URL(request.url ?? '/', config.appOrigin);
       const pathname = decodeURIComponent(url.pathname);
+      // v42.4: health check for the hosting platform (no login, no patient data).
+      if (request.method === 'GET' && pathname === '/api/health') {
+        return sendJson(response, 200, { ok: true }, { secure: config.cookieSecure });
+      }
       const session = sessionFor(request, database);
       if (session && session.must_change_password === 1 && !['/api/auth/change-password', '/api/auth/logout', '/api/auth/me', '/api/auth/context'].includes(pathname)) {
         if (pathname.startsWith('/api/')) {
@@ -2193,6 +2212,7 @@ export async function startServer() {
     console.log(`DEMO: username-only accounts, localhost only. Demo data: ${application.config.databasePath}`);
     console.log('Demo usernames: admin, registration, triage, doctor_medicine, pharmacy.');
   }
+  if (application.config.dataDirectory) console.log(`Persistent EMR data (DATA_DIR): ${application.config.dataDirectory}`);
   if (application.config.autoDatabase) {
     console.log(`Persistent EMR data: ${application.config.databasePath}`);
     if (application.persistence.sourcePath) console.log(`Initial database recovered from: ${application.persistence.sourcePath}`);
@@ -2206,7 +2226,7 @@ export async function startServer() {
     try { escalateCriticalResults(application.database, clinicalOptions().criticalEscalation); } catch (error) { console.error('Critical result escalation failed:', error.message); }
   }, 60_000);
   escalation.unref();
-  const backupScheduler = startBackupScheduler(application.database, application.config);
+  const backupScheduler = startBackupScheduler(application.database, application.config, { backupDirectory: application.config.backupDirectory || undefined });
   const stop = () => application.server.close(() => {
     backupScheduler.stop();
     application.database.close();

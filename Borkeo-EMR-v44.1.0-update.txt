@@ -1,0 +1,89 @@
+================================================================================
+Borkeo EMR Update Note: Version 44.1.0
+Update plan #1: online hosting (Docker / Railway) and production security
+================================================================================
+
+Date: 2026-10-24
+Previous Version: 42.3.0 (restored baseline)
+New Version: 44.1.0
+Patient data: not touched. No database table change. .gitignore unchanged.
+
+--------------------------------------------------------------------------------
+1. WHAT CHANGED
+--------------------------------------------------------------------------------
+a) Online hosting files: Dockerfile, .dockerignore, .env.example (template,
+   no real secrets), docs/DEPLOY.md (Railway step by step).
+b) DATA_DIR: one permanent folder for the database (DATA_DIR/emr.sqlite),
+   patient uploads (DATA_DIR/uploads) and backups (DATA_DIR/backups).
+   Not set = today's locations on the hospital computer.
+c) Online only (NODE_ENV=production or EMR_MODE=production):
+   - Superuser password comes from SUPERUSER_PASSWORD (at least 12
+     characters). It is never logged and changes only when the setting
+     changes. If it is missing or too short, only the Superuser account is
+     turned off; the server still starts and all other staff can sign in.
+   - The shared 1234 ward accounts are not created. The log warns how many
+     active accounts still use 1234.
+   - The login page hides the account list and quick role picker.
+d) TRUST_PROXY=true: behind Railway, login lockout and the audit log record
+   the user's real address.
+e) GET /api/health returns {"ok":true} (no login, no patient data).
+f) Admin, Vice Director and Director can list and download database backups
+   (GET /api/admin/backups and /api/admin/backups/latest). Every download is
+   written to the audit log.
+g) Version 44.1.0 in package.json, the login page and server.mjs.
+
+--------------------------------------------------------------------------------
+2. WHAT DID NOT CHANGE (HOSPITAL COMPUTER)
+--------------------------------------------------------------------------------
+A normal "npm start" or Start-Borkeo-WiFi.bat is not online mode:
+- Superuser still signs in with 1234; all ward accounts keep working.
+- The login page still shows the account list.
+- Database, uploads and backups stay in the same folders.
+- All roles, screens, clinical, pharmacy, laboratory and finance logic are
+  unchanged.
+
+--------------------------------------------------------------------------------
+3. FILES
+--------------------------------------------------------------------------------
+New:      .dockerignore, .env.example, Dockerfile, docs/DEPLOY.md,
+          tests/v424-hosting.test.mjs, Borkeo-EMR-v44.1.0-update.txt
+Changed:  package.json, CHANGELOG.md, Update-V44.0.txt (status of #1),
+          public/login.html, public/login.js, scripts/backup-database.mjs,
+          server/config.mjs, server/persistent-data.mjs, server/server.mjs,
+          server/superuser.mjs, server/routes/admin.mjs, auth.mjs,
+          finance.mjs, messages.mjs, paraclinic.mjs, record-access.mjs,
+          tests/accessibility-quality-smoke.test.mjs
+Not changed: .gitignore, data/ (patient and demo databases)
+
+--------------------------------------------------------------------------------
+4. VERIFICATION (disposable copy, synthetic data)
+--------------------------------------------------------------------------------
+- npm test: 924 / 924 passing (9 new hosting tests).
+- npm run check:khmer: passing (no new Khmer text).
+- Role check, in-memory databases:
+  - Demo mode: all 34 demo accounts sign in and open their landing page.
+  - Hospital mode: all 24 accounts sign in with 1234 and open their page.
+  - Online mode: Superuser signs in with the strong SUPERUSER_PASSWORD
+    and switches into every valid role and ward; 1234 is refused (401).
+  - Role/ward pairs the hospital does not use (Midwife outside Obstetric,
+    Nurse in Obstetric, Ward Head / Chief Ward in OPD) are refused on
+    purpose, exactly as in v42.3.0.
+- Not checked: visual look of every screen in a browser.
+
+--------------------------------------------------------------------------------
+5. INSTALLATION (ONE STEP AT A TIME)
+--------------------------------------------------------------------------------
+Step 1. Stop the running Borkeo EMR server (close its window or Ctrl+C).
+Step 2. In the project folder run:  git pull
+Step 3. Run:  npm test      (expect 924 passing)
+Step 4. Start again as usual:  npm start   (or Start-Borkeo-WiFi.bat)
+Step 5. Sign in and check the login page shows v44.1.
+
+For Antigravity: open this file from the project folder and ask it to
+confirm the files in section 3 match; no code needs to be pasted.
+
+Online server (optional, later): follow docs/DEPLOY.md. Set
+SUPERUSER_PASSWORD (12+ characters), APP_ORIGIN, COOKIE_SECURE=true,
+TRUST_PROXY=true and DATA_DIR=/data on the host. Do not move the hospital
+database online without approval.
+================================================================================

@@ -1,3 +1,4 @@
+import { uploadDirectory } from '../config.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -168,7 +169,7 @@ export function mountMessagesRoutes(router) {
     if (!extension) return sendJson(response, 415, { error: 'Allowed attachments: PDF, JPG, PNG, TXT, DOC and DOCX.' }, { secure: config.cookieSecure });
     const bytes = await readBinary(request, 12 * 1024 * 1024);
     if (!bytes.length) return sendJson(response, 400, { error: 'Attachment is empty.' }, { secure: config.cookieSecure });
-    const uploadRoot = path.join(path.dirname(config.databasePath), 'uploads', 'messages', message.id);
+    const uploadRoot = uploadDirectory(config, 'messages', message.id);
     fs.mkdirSync(uploadRoot, { recursive: true });
     const storagePath = path.join(uploadRoot, `${crypto.randomUUID()}${extension}`);
     fs.writeFileSync(storagePath, bytes, { flag: 'wx' });

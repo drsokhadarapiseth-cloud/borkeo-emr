@@ -80,7 +80,7 @@ Every update must keep all user roles working: banner, Switch Role, Change
 Password, Log Out and the department navigation bar must stay usable.
 
  #  Update                                                         Status
- 1  Cloud deployment: Docker/Railway, DATA_DIR, Superuser password  Waiting
+ 1  Cloud deployment: Docker/Railway, DATA_DIR, Superuser password  Tested (v44.1.0)
     from server setting, shared 1234 passwords off in production.
  2  Two-step prescription picker: generic name, then CMS code /     Waiting
     form / strength; filter by age, sex, pregnancy, service;
