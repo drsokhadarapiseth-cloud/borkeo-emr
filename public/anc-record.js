@@ -329,13 +329,10 @@ function renderTasks(status) {
     <p class="anc-task-visit">${esc(header)}</p>${next ? `<p class="anc-task-next">${esc(next)}</p>` : ''}
     ${status.tasks.length ? `<ul class="anc-task-list">${status.tasks.map((task) => taskItem(stateOf(task))).join('')}</ul>` : ''}
     ${status.overdue.length ? `<h3 class="anc-overdue-title">${esc(t('anc.overdue', 'Overdue from earlier visits'))}</h3><ul class="anc-task-list">${status.overdue.map((task) => taskItem(stateOf(task), true)).join('')}</ul>` : ''}`;
-  host.innerHTML = html;
-  if (!tasksShown && data.pregnancy?.status === 'open') {
-    tasksShown = true;
-    const dialog = $('anc-tasks-dialog');
-    dialog.innerHTML = `<div class="anc-dialog-body">${html}</div><div class="anc-actions"><button type="button" data-dialog-close>${esc(t('anc.ok', 'OK'))}</button></div>`;
-    dialog.showModal();
-  }
+  const wasClosed = host.querySelector('details')?.open === false;
+  host.innerHTML = `<details class="anc-task-disclosure"${wasClosed ? '' : ' open'}><summary>${esc(t('anc.todo', 'To do at this visit'))}</summary><div>${html}</div></details>`;
+  // v43.1: tasks stay inline; opening a patient never launches a blocking modal.
+  tasksShown = true;
 }
 
 // ---------------------------------------------------------------- render all

@@ -1,3 +1,7 @@
+## 43.1.0 - Compact clinical workspace
+
+Shared navy/teal navigation, compact safety-aware patient header, expandable details and inline collapsible ANC tasks. Existing role permissions, clinical data and paper templates preserved. See docs/ui-43.1.md for validation and browser limitations.
+
 ## v43.0.0 - Scoped paraclinic access and role audit
 
 - Enforce existing patient access for doctors creating or directly reading laboratory/imaging orders; keep Obstetric and Gynecology active contexts separate.
