@@ -21,6 +21,14 @@
                 if (['opd', 'opd-paraclinic', 'medical', 'daily', 'nursing', 'discharge', 'triage'].indexOf(directView) !== -1) {
                     document.documentElement.classList.add('bed-direct-view', 'bed-direct-' + directView);
                     document.documentElement.setAttribute('data-direct-clinical-view', directView);
+                } else if (directView === 'register' || directView === 'registration') {
+                    document.documentElement.classList.add('registration-user', 'on-registration-page', 'bed-direct-register');
+                    document.documentElement.setAttribute('data-direct-view', 'register');
+                }
+                var role = String(sessionStorage.getItem('borkeo-active-role') || '').toUpperCase();
+                if (role === 'REGISTRATION') {
+                    document.documentElement.classList.add('registration-user', 'on-registration-page');
+                    document.documentElement.setAttribute('data-user-role', 'REGISTRATION');
                 }
             } catch (error) {
                 // Normal Registration/Triage workflow remains unchanged.
@@ -72,6 +80,35 @@
         html.triage-restricted #page2 {
             display: block !important;
             animation: none !important;
+        }
+        /* v43.4: Hide clinical top sections (banner, chart tabs, summary cards, breadcrumbs) for registration user & registration view */
+        html.registration-user #emr-persistent-patient-banner,
+        html.registration-user #emr-chart-tabs-wrapper,
+        html.registration-user #emr-summary-dashboard-panel,
+        html.registration-user .emr-breadcrumbs-container,
+        html.registration-user #emr-consultation-workspace,
+        html.registration-user .step-wrapper,
+        html.registration-user .dashboard-header,
+        html.bed-direct-register #emr-persistent-patient-banner,
+        html.bed-direct-register #emr-chart-tabs-wrapper,
+        html.bed-direct-register #emr-summary-dashboard-panel,
+        html.bed-direct-register .emr-breadcrumbs-container,
+        html.bed-direct-register #emr-consultation-workspace,
+        html.bed-direct-register .step-wrapper,
+        html.bed-direct-register .dashboard-header,
+        html[data-user-role="REGISTRATION"] #emr-persistent-patient-banner,
+        html[data-user-role="REGISTRATION"] #emr-chart-tabs-wrapper,
+        html[data-user-role="REGISTRATION"] #emr-summary-dashboard-panel,
+        html[data-user-role="REGISTRATION"] .emr-breadcrumbs-container,
+        html[data-user-role="REGISTRATION"] #emr-consultation-workspace,
+        html[data-user-role="REGISTRATION"] .step-wrapper,
+        html[data-user-role="REGISTRATION"] .dashboard-header,
+        html.on-registration-page #emr-persistent-patient-banner,
+        html.on-registration-page #emr-chart-tabs-wrapper,
+        html.on-registration-page #emr-summary-dashboard-panel,
+        html.on-registration-page .emr-breadcrumbs-container,
+        html.on-registration-page #emr-consultation-workspace {
+            display: none !important;
         }
     </style>
 
@@ -17454,6 +17491,11 @@ aHRtbD4K
 
             var stepEl = document.getElementById('btn_page' + pageNumber);
             if (stepEl) stepEl.classList.add('active');
+            if (pageNumber === 1) {
+                document.documentElement.classList.add('on-registration-page');
+            } else {
+                document.documentElement.classList.remove('on-registration-page');
+            }
             if (pageNumber === 1 || pageNumber === 2) {
                 if (typeof syncFields === 'function') syncFields();
             }

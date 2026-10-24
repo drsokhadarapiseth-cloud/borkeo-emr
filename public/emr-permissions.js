@@ -53,8 +53,19 @@
   function applyTopLevel(role) {
     const b1 = document.getElementById('btn_page1');
     const b2 = document.getElementById('btn_page2');
-    const b3 = document.getElementById('btn_page3');
-    if (role === 'REGISTRATION') { hide(b1,false); hide(b2,true); hide(b3,true); }
+    if (role === 'REGISTRATION') {
+      document.documentElement.classList.add('registration-user', 'on-registration-page');
+      document.documentElement.setAttribute('data-user-role', 'REGISTRATION');
+      if (document.body) document.body.classList.add('registration-user');
+      hide(b1,false); hide(b2,true); hide(b3,true);
+      hide(document.querySelector('.step-wrapper'),true);
+      hide(document.querySelector('.dashboard-header'),true);
+      hide(document.getElementById('emr-persistent-patient-banner'),true);
+      hide(document.getElementById('emr-chart-tabs-wrapper'),true);
+      hide(document.getElementById('emr-summary-dashboard-panel'),true);
+      hide(document.getElementById('emr-consultation-workspace'),true);
+      hide(document.querySelector('.emr-breadcrumbs-container'),true);
+    }
     else if (role === 'TRIAGE') {
       document.documentElement.classList.add('triage-restricted');
       document.documentElement.classList.remove('bed-direct-opd', 'bed-direct-medical', 'bed-direct-nursing', 'bed-direct-daily', 'bed-direct-discharge');

@@ -344,8 +344,16 @@
     }
 
     // 2. Breadcrumbs
+    const activeRole = String(user?.activeRole || '').toUpperCase();
+    const isRegisterUser = activeRole === 'REGISTRATION' ||
+      new URLSearchParams(window.location.search).get('view') === 'register' ||
+      new URLSearchParams(window.location.search).get('view') === 'registration' ||
+      document.documentElement.classList.contains('registration-user') ||
+      document.documentElement.classList.contains('on-registration-page') ||
+      document.documentElement.classList.contains('bed-direct-register');
+
     const breadcrumbItems = getBreadcrumbs();
-    if (breadcrumbItems.length > 1 && mainContent && !mainContent.querySelector(':scope > .emr-breadcrumbs-container')) {
+    if (!isRegisterUser && breadcrumbItems.length > 1 && mainContent && !mainContent.querySelector(':scope > .emr-breadcrumbs-container')) {
       const bcContainer = document.createElement('div');
       bcContainer.className = 'emr-breadcrumbs-container';
       bcContainer.innerHTML = `

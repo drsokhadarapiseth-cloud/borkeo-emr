@@ -236,8 +236,22 @@
     };
   }
 
+  function isRegistrationUser() {
+    const role = String(window.emrSession?.user?.activeRole || window.userRole || sessionStorage.getItem('borkeo-active-role') || '').toUpperCase();
+    if (role === 'REGISTRATION') return true;
+    const view = new URLSearchParams(window.location.search).get('view');
+    if (view === 'register' || view === 'registration') return true;
+    if (document.documentElement.classList.contains('registration-user') || document.body?.classList.contains('registration-user') || document.documentElement.classList.contains('on-registration-page') || document.documentElement.classList.contains('bed-direct-register')) return true;
+    return false;
+  }
+
   // Render the sticky patient banner into container
   function renderPatientBanner(info) {
+    if (isRegistrationUser()) {
+      const banner = document.getElementById('emr-persistent-patient-banner');
+      if (banner) banner.remove();
+      return;
+    }
     let banner = document.getElementById('emr-persistent-patient-banner');
     if (!banner) {
       banner = document.createElement('section');
@@ -676,6 +690,13 @@
   // Setup the Chart Tabs on EMR.html filtered by active user role
   function setupChartTabs(patient) {
     if (window.location.pathname !== '/emr') return;
+    if (isRegistrationUser()) {
+      const tabsContainer = document.getElementById('emr-chart-tabs-wrapper');
+      if (tabsContainer) tabsContainer.remove();
+      const dash = document.getElementById('emr-summary-dashboard-panel');
+      if (dash) dash.remove();
+      return;
+    }
 
     const currentRole = String(window.emrSession?.user?.activeRole || window.userRole || '').toUpperCase();
     const allowed = getAllowedTabsForRole(currentRole);

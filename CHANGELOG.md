@@ -1,3 +1,9 @@
+## 43.4.0 - Clean registration interface (suppression of clinical top sections)
+
+- Hide all clinical top sections (breadcrumbs, persistent patient banner, chart tabs, summary dashboard cards, consultation cards) for registration users (`REGISTRATION` role) and registration views (`/emr?view=register` / Page 1 `#sub_reg`).
+- Registration staff see only the clean Patient Registration Form («ទម្រង់ចុះឈ្មោះអ្នកជំងឺ») right at the top of the screen without clinical distraction or layout clutter.
+- Maintain complete data preservation, frozen storage keys, and authentic hospital paper print templates.
+
 ## 43.3.0 - Integrated clinical consultation and legacy form workspace
 
 Seamlessly integrates the modern consultation workspace (vitals metric cards, HPI/PE, quick diagnosis & treatment plan, actions, tasks checklist) with the detailed clinical hospital forms:

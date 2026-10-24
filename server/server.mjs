@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v43.3 - Electronic Medical Record System
+// Borkeo EMR v43.4 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -535,8 +535,8 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=3800" defer></script></head>');
   // v41.0: structured allergy record, problem list and nursing demographics (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/clinical-summary.css?v=4100"><script src="/public/clinical-summary.js?v=4100" defer></script><link rel="stylesheet" href="/public/display-rules.css?v=4110"><script src="/public/display-rules.js?v=4110" defer></script><link rel="stylesheet" href="/public/medication-safety.css?v=4120"><script src="/public/medication-safety.js?v=4120" defer></script><link rel="stylesheet" href="/public/periop-forms.css?v=4160"><script src="/public/periop-forms.js?v=4160" defer></script><script src="/public/fluid-balance.js?v=4160" defer></script><script src="/public/early-warning.js?v=4160" defer></script><link rel="stylesheet" href="/public/patient-documents.css?v=4170"><script src="/public/patient-documents.js?v=4170" defer></script></head>');
-  // v43.3: modern clinical consultation workspace and integrated patient record (EMR.html only).
-  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-consultation-workspace.css?v=4330"><script src="/public/emr-consultation-workspace.js?v=4330" defer></script></head>');
+  // v43.4: modern clinical consultation workspace and integrated patient record (EMR.html only).
+  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-consultation-workspace.css?v=4340"><script src="/public/emr-consultation-workspace.js?v=4340" defer></script></head>');
   html = html.replace('</head>', `<meta name="borkeo-version" content="${APP_VERSION}"></head>`);
   // New text without approved Khmer is highlighted unless SHOW_UNTRANSLATED=0 (public/new-text.js).
   const showUntranslated = globalThis.process?.env?.SHOW_UNTRANSLATED === '0' ? '0' : '1';

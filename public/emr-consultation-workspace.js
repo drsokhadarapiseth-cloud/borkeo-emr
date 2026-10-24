@@ -12,7 +12,17 @@
   const VIEW_MODE_KEY = 'borkeo_consultation_view_mode';
   let currentViewMode = 'integrated';
 
+  function isRegistrationUser() {
+    const role = String(window.emrSession?.user?.activeRole || window.userRole || sessionStorage.getItem('borkeo-active-role') || '').toUpperCase();
+    if (role === 'REGISTRATION') return true;
+    const view = new URLSearchParams(window.location.search).get('view');
+    if (view === 'register' || view === 'registration') return true;
+    if (document.documentElement.classList.contains('registration-user') || document.body?.classList.contains('registration-user') || document.documentElement.classList.contains('on-registration-page') || document.documentElement.classList.contains('bed-direct-register')) return true;
+    return false;
+  }
+
   function isConsultationActive() {
+    if (isRegistrationUser()) return false;
     return window.location.pathname === '/emr' && Boolean(document.getElementById('sub_opd'));
   }
 

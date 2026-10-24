@@ -17,14 +17,14 @@ function read(relPath) {
   return fs.readFileSync(path.join(rootDir, relPath), 'utf8');
 }
 
-test('v43.3: Version consistency across package.json, server.mjs, and login.html', () => {
+test('v43.4: Version consistency across package.json, server.mjs, and login.html', () => {
   const pkg = JSON.parse(read('package.json'));
   const serverCode = read('server/server.mjs');
   const loginHtml = read('public/login.html');
 
-  assert.equal(pkg.version, '43.3.0', 'package.json version must be 43.3.0');
-  assert.match(serverCode, /Borkeo EMR v43\.3/, 'server.mjs must declare v43.3');
-  assert.match(loginHtml, /data-app-version[^>]*>v43\.3<\/span>/, 'login.html must display v43.3');
+  assert.equal(pkg.version, '43.4.0', 'package.json version must be 43.4.0');
+  assert.match(serverCode, /Borkeo EMR v43\.4/, 'server.mjs must declare v43.4');
+  assert.match(loginHtml, /data-app-version[^>]*>v43\.4<\/span>/, 'login.html must display v43.4');
 });
 
 test('v43.3: Modern consultation workspace presentation assets exist and are registered in server.mjs', () => {
@@ -36,9 +36,8 @@ test('v43.3: Modern consultation workspace presentation assets exist and are reg
 
   const serverCode = read('server/server.mjs');
   assert.ok(serverCode.includes('emr-consultation-workspace.css'), 'server.mjs must reference emr-consultation-workspace.css');
-  assert.ok(serverCode.includes('emr-consultation-workspace.js'), 'server.mjs must reference emr-consultation-workspace.js');
-  assert.match(serverCode, /emr-consultation-workspace\.css\?v=4330/, 'server.mjs must inject stylesheet with cache buster v=4330');
-  assert.match(serverCode, /emr-consultation-workspace\.js\?v=4330/, 'server.mjs must inject script with cache buster v=4330');
+  assert.match(serverCode, /emr-consultation-workspace\.css\?v=43[3-4]0/, 'server.mjs must inject stylesheet with cache buster');
+  assert.match(serverCode, /emr-consultation-workspace\.js\?v=43[3-4]0/, 'server.mjs must inject script with cache buster');
 });
 
 test('v43.3: All presentation-layer inputs declare data-emr-transient to protect frozen storage keys', () => {

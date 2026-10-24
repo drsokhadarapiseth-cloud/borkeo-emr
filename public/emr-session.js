@@ -183,8 +183,12 @@
 
   try {
     const session = await loadSession(); if (!session) return;
-    current = session; csrfToken = session.csrfToken;
     if (session.user.activeRole==='DIRECTOR') document.body.classList.add('emr-director-view');
+    if (session.user.activeRole==='REGISTRATION') {
+      document.body.classList.add('registration-user');
+      document.documentElement.classList.add('registration-user', 'on-registration-page');
+      document.documentElement.setAttribute('data-user-role', 'REGISTRATION');
+    }
     window.emrSession = { user: session.user, csrfToken };
     const invoiceStyle=document.createElement('link');invoiceStyle.rel='stylesheet';invoiceStyle.href='/public/staff-invoices.css?v=1840';document.head.append(invoiceStyle);
     const invoiceScript=document.createElement('script');invoiceScript.src='/public/staff-invoices.js?v=1880';invoiceScript.defer=true;document.head.append(invoiceScript);
