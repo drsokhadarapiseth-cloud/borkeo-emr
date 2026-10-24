@@ -3435,6 +3435,191 @@
       "kh": "ទម្រង់ការពិនិត្យកាយសម្បទារទារកទើបកើត ១ខែ ដល់ ៥ឆ្នាំ",
       "key": "npca.source",
       "source": "NPCA v1.4 original Excel workbooks"
+    },
+    {
+      "kh": "ការពិនិត្យព្យាបាល",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ការងារត្រូវបំពេញ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "បានបំពេញ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "មិនទាន់បំពេញ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "មិនទាន់កត់ត្រា",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "បានកត់ត្រា",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ប្រវត្តិអាឡែកស៊ី",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ការពិនិត្យរាងកាយ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ប្រវត្តិឫសគល់រោគ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ហេតុផលមកពេទ្យ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "សញ្ញាសំខាន់",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "សម្ពាធឈាម (mmHg)",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ចង្វាក់បេះដូង (ដង/នាទី)",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "សីតុណ្ហភាព (°C)",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "អុកស៊ីសែនក្នុងឈាម (SpO2, %)",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ដង្ហើម (ដង/នាទី)",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "NPCA (ថ្នាក់លើខំអនុវត្តអន្តរជាតិ)",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "សកម្មភាពផ្សេងៗ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ទិន្នន័យទូទៅ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ការបញ្ជូន/សុខាភិបាល",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ថ្នាំព្យាបាល",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ប្រវត្តិវេជ្ជសាស្ត្រ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "មិនទាន់កត់ត្រាអាឡែកស៊ី",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "បោះពុម្ភទម្រង់ពិគ្រោះក្រៅ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ព័ត៌មានបន្ថែម",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ទម្រង់ពិនិត្យព្យាបាល",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "សូមបញ្ចូលហេតុផលមកពិនិត្យ ឬរោគសញ្ញាសំខាន់...",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ប្រវត្តិជំងឺ និងការវិវត្តនៃរោគសញ្ញា...",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "លទ្ធផលនៃការពិនិត្យរាងកាយតាមប្រព័ន្ធសរីរាង្គ...",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "1. រោគវិនិច្ឆ័យចម្បង\n2. រោគវិនិច្ឆ័យបន្ទាប់បន្សំ...",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "1. រោគវិនិច្ឆ័យចម្បង&#10;2. រោគវិនិច្ឆ័យបន្ទាប់បន្សំ...",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "1. បញ្ជាវិភាគបន្ថែម\n2. ឱសថព្យាបាល\n3. ការណែនាំ និងការតាមដាន...",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "1. បញ្ជាវិភាគបន្ថែម&#10;2. ឱសថព្យាបាល&#10;3. ការណែនាំ និងការតាមដាន...",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ការបញ្ជាក់សេវាបង់ប្រាក់គ្លីនិក NPCA",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "បញ្ជូនទៅសម្រាកពេទ្យ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "អុកស៊ីសែនក្នុងឈាម",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ដង្ហើម",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.2 owner mockup requested strings"
     }
   ]
 }

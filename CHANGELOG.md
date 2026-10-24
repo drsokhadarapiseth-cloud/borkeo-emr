@@ -1,3 +1,7 @@
+## 43.2.0 - Modern patient record consultation workspace
+
+Modern clinical consultation workspace matching requested UI design: 2-column consultation interface with chief complaint, vital signs metric cards, HPI, physical exam, diagnosis, treatment plan, NPCA certification toggle, and action buttons. Interactive tasks checklist widget tracking real-time documentation completion. Patient banner and 6 record navigation tabs. All existing clinical data, frozen storage keys, and paper printout templates preserved. See docs/ui-43.2.md for details.
+
 ## 43.1.0 - Compact clinical workspace
 
 Shared navy/teal navigation, compact safety-aware patient header, expandable details and inline collapsible ANC tasks. Existing role permissions, clinical data and paper templates preserved. See docs/ui-43.1.md for validation and browser limitations.
