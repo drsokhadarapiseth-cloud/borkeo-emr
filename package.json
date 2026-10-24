@@ -1,6 +1,6 @@
 {
   "name": "borkeo-emr",
-  "version": "44.0.0",
+  "version": "42.3.0",
   "private": true,
   "type": "module",
   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",
@@ -11,7 +11,7 @@
     "start": "node server/server.mjs",
     "start:wifi": "node scripts/start-wifi.mjs",
     "set-all-passwords": "node scripts/set-all-passwords.mjs",
-    "test": "node --test --test-concurrency=4 tests/*.test.mjs",
+    "test": "node --test tests/*.test.mjs",
     "check:khmer": "node scripts/check-khmer.mjs",
     "khmer:accept": "node scripts/extract-khmer.mjs",
     "translations:apply": "node scripts/apply-translations.mjs",

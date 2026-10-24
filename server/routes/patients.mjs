@@ -1,6 +1,4 @@
 import crypto from 'node:crypto';
-import { selectionFor, beneficiaryPayment, saveBeneficiaryLink } from '../npca/beneficiaries.mjs';
-import { mapCode } from '../npca/codes.mjs';
 import { roleCanPage, patientWorkWard, sessionRole } from '../access.mjs';
 import { listAppointments, createAppointment, updateAppointmentStatus } from '../appointments.mjs';
 import { listOrders } from '../paraclinic.mjs';
@@ -17,10 +15,9 @@ import { syncClinicalRequests } from '../requests.mjs';
 import { ensureAdmissionMovement, recordBedAssignment, recordMovement } from '../daily-report.mjs';
 import { patientBill } from '../finance.mjs';
 import { queueCashierPayment } from '../invoice-edits.mjs';
-import { encounterAccess, assertEncounterWrite, consumeCorrection, RECORD_MANAGEMENT, isOpdHistoryReader } from '../encounter-access.mjs';
+import { encounterAccess, assertEncounterWrite, consumeCorrection, RECORD_MANAGEMENT } from '../encounter-access.mjs';
 import { allergyAlert, patientRef } from '../clinical-summary.mjs';
 import { logFromContext } from '../record-access.mjs';
-import { isFreeMaternalService, isGynecologyOutpatient, isMaternalService, maternalOptions } from '../maternal.mjs';
 
 const caseTypeFromData = dataValue => {
   const hasNew = dataValue?.['scope:registration:id:emr_pmrs_case_new'] === true || dataValue?.['scope:registration:id:emr_pmrs_case_new'] === 'true';
@@ -105,24 +102,22 @@ export function mountPatientsRoutes(router) {
 
   // 5. GET /api/record-viewer
   router.get('/api/record-viewer', async (ctx) => {
-    const { response, session, database, config, sendJson, url, requireContext, clinicalPatientKey, parseStoredJson, patientRecordResponse, buildIpdDischargeSummary, patientDataVisibleForRole, paymentStatusForPatient } = ctx;
+    const { response, session, database, config, sendJson, url, requireContext, clinicalPatientKey, parseStoredJson, patientRecordResponse, buildIpdDischargeSummary } = ctx;
     if (!session) return sendJson(response, 401, { error: 'សូមចូលគណនីជាមុន។' }, { secure: config.cookieSecure });
     const row = database.findPatient(clinicalPatientKey(url.searchParams.get('patientKey')));
     if (!row) return sendJson(response, 404, { error: 'រកមិនឃើញកំណត់ត្រាអ្នកជំងឺ។' }, { secure: config.cookieSecure });
     const role = requireContext(session);
-    if (!RECORD_MANAGEMENT.includes(role) && role !== 'TRIAGE' && !isOpdHistoryReader(session)) return sendJson(response, 403, { error: 'ទំព័រនេះសម្រាប់គណៈគ្រប់គ្រងប៉ុណ្ណោះ។' }, { secure: config.cookieSecure });
-    const rows = String(row.health_id || '').trim() ? database.sqlite.prepare('SELECT * FROM patient_records WHERE trim(health_id)=trim(?) COLLATE NOCASE ORDER BY entry_date DESC,created_at DESC,patient_key DESC').all(row.health_id) : [row];
+    if (!RECORD_MANAGEMENT.includes(role)) return sendJson(response, 403, { error: 'ទំព័រនេះសម្រាប់គណៈគ្រប់គ្រងប៉ុណ្ណោះ។' }, { secure: config.cookieSecure });
+    const rows = row.health_id ? database.sqlite.prepare('SELECT * FROM patient_records WHERE health_id=? COLLATE NOCASE ORDER BY entry_date DESC,created_at DESC').all(row.health_id) : [row];
     const encounters = rows.map(record => {
       const data = parseStoredJson(record.record_json);
       return {
-        patient: { ...patientRecordResponse(record, true), data: patientDataVisibleForRole(data, role),
-          paymentStatus: paymentStatusForPatient(database, record.patient_key), recordAccess: encounterAccess(database, session, record) },
-        orders: role === 'TRIAGE' ? [] : listOrders(database, { patientKey: record.patient_key }),
-        resume: role !== 'TRIAGE' && record.service_mode === 'ipd' ? buildIpdDischargeSummary(database, record, data, data['system:discharge'] || {}) : null
+        patient: patientRecordResponse(record, true),
+        orders: listOrders(database, { patientKey: record.patient_key }),
+        resume: record.service_mode === 'ipd' ? buildIpdDischargeSummary(database, record, data, data['system:discharge'] || {}) : null
       };
     });
-    logFromContext(ctx, row, 'open', 'visit history');
-    return sendJson(response, 200, { encounters, scope: role === 'TRIAGE' ? 'triage' : 'medical' }, { secure: config.cookieSecure });
+    return sendJson(response, 200, { encounters }, { secure: config.cookieSecure });
   });
 
   // 6. GET /api/patients
@@ -162,7 +157,7 @@ export function mountPatientsRoutes(router) {
     if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
     const patientKey = clinicalPatientKey(url.searchParams.get('patientKey'));
     let patient = database.findPatient(patientKey);
-    if (patient && !canAccessPatient(database, session, patient) && !(url.searchParams.get('readOnly') === '1' && isOpdHistoryReader(session))) {
+    if (patient && !canAccessPatient(database, session, patient)) {
       return sendJson(response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
     }
     const role = sessionRole(session);
@@ -353,7 +348,7 @@ export function mountPatientsRoutes(router) {
     if (existingPatient && activeRoleBeforeSave === 'DOCTOR' && existingPatient.service_mode === 'opd') {
       const workflowStage = String(existingData['system:workflowStage'] || '');
       const isOpdClinicalSave = body.editorScope === 'medical' || body.editorScope === 'opd' || body.submitOpdPrescription === true || body.markMedicalComplete === true || Object.keys(submittedData).some(key => key.startsWith('scope:medical:') || key.startsWith('system:opdMedications')) || submittedData['system:medicalRecordCompleted'] === true;
-      if (isOpdClinicalSave && !editAccess?.correctionId && (!['DOCTOR_READY', 'IN_CONSULTATION'].includes(workflowStage) || !opdConsultationPaymentConfirmed(database, existingPatient))) {
+      if (isOpdClinicalSave && (!['DOCTOR_READY', 'IN_CONSULTATION'].includes(workflowStage) || !opdConsultationPaymentConfirmed(database, existingPatient))) {
         return sendJson(response, 409, { error: 'The OPD consultation fee must be confirmed by Cashier before the patient can meet the doctor.' }, { secure: config.cookieSecure });
       }
     }
@@ -384,25 +379,9 @@ export function mountPatientsRoutes(router) {
     const editorScope = RECORD_MANAGEMENT.includes(activeClinicalRole) && ['registration', 'triage', 'medical', 'nursing'].includes(body.editorScope)
       ? body.editorScope : '';
     const triageSave = !(body.editOnly === true && existingData['system:triageStatus'] === 'COMPLETED') && (body.triageSave === true || activeClinicalRole === 'TRIAGE' || editorScope === 'triage');
-    // v42.6: the midwife writes the OPD forms of the maternal services (PNC, family planning, cervical screening).
-    const maternalMidwife = activeRoleBeforeSave === 'MIDWIFE' && Boolean(existingPatient) && isMaternalService(existingPatient);
-    const effectiveRoleForMerge = registrationSave ? 'REGISTRATION' : (activeRoleBeforeSave === 'TRIAGE' || triageSave || editorScope === 'triage' ? 'TRIAGE' : RECORD_MANAGEMENT.includes(activeRoleBeforeSave) ? (body.editorScope === 'nursing' ? 'NURSE' : 'DOCTOR') : maternalMidwife ? 'DOCTOR' : activeRoleBeforeSave);
+    const effectiveRoleForMerge = registrationSave ? 'REGISTRATION' : (activeRoleBeforeSave === 'TRIAGE' || triageSave || editorScope === 'triage' ? 'TRIAGE' : RECORD_MANAGEMENT.includes(activeRoleBeforeSave) ? (body.editorScope === 'nursing' ? 'NURSE' : 'DOCTOR') : activeRoleBeforeSave);
     summary = mergePatientSummaryForRole(existingPatient, submittedSummary, effectiveRoleForMerge);
     const data = mergeRecordDataForRole(existingData, submittedData, effectiveRoleForMerge, Boolean(existingPatient));
-    // NPCA identity is taken only from a recent server-side beneficiary search.
-    for (const key of Object.keys(data)) if (key.startsWith('system:npca')) { delete data[key]; if (key in existingData) data[key]=existingData[key]; }
-    const npcaSelectionId = registrationSave ? submittedData['scope:registration:id:npca_selection'] : '';
-    let npcaPerson = null, npcaPayment = '';
-    if (npcaSelectionId) {
-      npcaPerson = selectionFor(database,npcaSelectionId,session.user_id);
-      npcaPayment = beneficiaryPayment(npcaPerson);
-      if (!npcaPayment) return sendJson(response,400,{error:'សូមបញ្ជាក់ប្រភេទបណ្ណ និងគម្រោងទូទាត់ជាមួយ NPCA ជាមុន។'},{secure:config.cookieSecure});
-      const surname=String(summary.lastName||'').trim(), name=String(summary.firstName||'').trim();
-      if (surname!==String(npcaPerson.surname||'').trim() || name!==String(npcaPerson.name||'').trim() || summary.dateOfBirth!==npcaPerson.birthdate || mapCode('sex',summary.sex)!==mapCode('sex',npcaPerson.sex)) return sendJson(response,400,{error:'អត្តសញ្ញាណអ្នកជំងឺមិនត្រូវគ្នានឹងសមាជិកដែលបានជ្រើសរើសទេ។'},{secure:config.cookieSecure});
-      data['system:npcaSpid']=npcaPerson.spid;data['system:npcaPatientCode']=npcaPerson.patient_code||'';
-      data['system:npcaCards']=JSON.stringify(npcaPerson.benefit_cards||[]);data['system:npcaPaymentType']=npcaPayment;
-    }
-    delete data['scope:registration:id:npca_selection'];
 
     if (registrationSave) {
       data['system:caseType'] = caseTypeFromData(data);
@@ -412,7 +391,6 @@ export function mountPatientsRoutes(router) {
       ensureUniqueRegistrationQueueNumber(database, patientKey, summary.entryDate, queueNumber);
       data['system:registrationQueueNumber'] = queueNumber;
     }
-    const savedAt = Date.now();
     if (activeRoleBeforeSave === 'DOCTOR' && Object.prototype.hasOwnProperty.call(submittedData, 'system:dailyMonitoringRecords')) {
       let doctorDaily = [];
       try {
@@ -420,22 +398,7 @@ export function mountPatientsRoutes(router) {
         const parsedDaily = typeof rawDaily === 'string' ? JSON.parse(rawDaily) : rawDaily;
         if (Array.isArray(parsedDaily)) doctorDaily = parsedDaily;
       } catch { /* Malformed follow-ups cannot replace the doctor's report source. */ }
-      let previousDaily = [];
-      try { previousDaily=typeof existingData['system:dailyMonitoringRecords']==='string'?JSON.parse(existingData['system:dailyMonitoringRecords']):existingData['system:dailyMonitoringRecords']; } catch {}
-      const priorNotes = Array.isArray(previousDaily) ? previousDaily : [];
-      const clinicalContent = note => { const { npcaSignature, ...content } = note || {}; return JSON.stringify(content); };
-      const npcaSnapshot=signatureSnapshot(database,session,savedAt);
-      const npcaAuthor={userId:npcaSnapshot.userId,signerName:npcaSnapshot.signerName,displayName:npcaSnapshot.displayName,role:npcaSnapshot.role,signedAt:npcaSnapshot.signedAt};
-      doctorDaily = doctorDaily.map(note => {
-        if(!note||typeof note!=='object'||Array.isArray(note))return note;
-        const previous=priorNotes.find(old=>old&&String(old.id||old.dtVal)===String(note.id||note.dtVal));
-        const { npcaSignature, ...content }=note;
-        return {...content,...(previous&&clinicalContent(previous)===clinicalContent(note)
-          ? previous.npcaSignature ? {npcaSignature:previous.npcaSignature}:{}
-          : {npcaSignature:npcaAuthor})};
-      });
-      data['system:dailyMonitoringRecords'] = JSON.stringify(doctorDaily);
-      data['system:doctorDailyMedicineOrders'] = JSON.stringify(doctorDaily.slice(0,500));
+      data['system:doctorDailyMedicineOrders'] = JSON.stringify(doctorDaily.slice(0, 500));
     }
     if (existingPatient?.service_mode === 'opd') {
       const latestRx = database.sqlite.prepare(`SELECT dispensed_at FROM pharmacy_prescriptions
@@ -465,6 +428,7 @@ export function mountPatientsRoutes(router) {
       existingDischarge && typeof existingDischarge === 'object';
     const hasOpdDischarge = existingPatient?.service_mode === 'opd' && Boolean(existingData['system:opdDischarge']?.dispensedAt);
     summary.dischargeDate = hasFormalDischarge || hasOpdDischarge ? existingPatient.discharge_date : '';
+    const savedAt = Date.now();
 
     if (registrationSave) {
       if (visitSourceKey) data['system:previousPatientKey'] = visitSourceKey;
@@ -481,12 +445,6 @@ export function mountPatientsRoutes(router) {
       }
     } else if (triageSave) {
       if (!summary.departmentCode || !summary.serviceMode) badRequest('Select a receiving ward/service before completing triage.');
-      // v42.6: the official ANC record imports every Triage value; none may be blank.
-      if (String(summary.departmentCode).toLowerCase() === 'anc') {
-        const missing = ['p2_weight', 'p2_height', 'p2_bp_sys', 'p2_bp_dia', 'p2_pulse', 'p2_temp', 'p2_spo2']
-          .filter(key => !String(data[`scope:triage:id:${key}`] ?? '').trim());
-        if (missing.length) return sendJson(response, 400, { error: 'សូមបំពេញសញ្ញាជីវិតទាំងអស់ មុនបញ្ជូនទៅពិនិត្យផ្ទៃពោះ។', missing }, { secure: config.cookieSecure });
-      }
       data['system:signature:triage'] = JSON.stringify(signatureSnapshot(database, session, savedAt));
       data['system:triageStatus'] = 'COMPLETED';
       const paraclinicRequested = submittedData['scope:triage:id:triage_paraclinic'] === true || submittedData['scope:triage:id:triage_paraclinic'] === 'true';
@@ -517,7 +475,7 @@ export function mountPatientsRoutes(router) {
         if (existingData['system:triageCompletedAt']) data['system:triageCompletedAt'] = existingData['system:triageCompletedAt'];
         data['system:triageUpdatedAt'] = savedAt;
       }
-    } else if (activeClinicalRole === 'DOCTOR' || editorScope === 'medical' || maternalMidwife) {
+    } else if (activeClinicalRole === 'DOCTOR' || editorScope === 'medical') {
       const doctorSig = JSON.stringify(signatureSnapshot(database, session, savedAt));
       data['system:signature:medical'] = doctorSig;
       const subTab = String(body.clinicalSubTab || '').toLowerCase();
@@ -536,7 +494,7 @@ export function mountPatientsRoutes(router) {
     } else if (activeClinicalRole === 'NURSE' || activeClinicalRole === 'MIDWIFE' || editorScope === 'nursing') {
       data['system:signature:nursing'] = JSON.stringify(signatureSnapshot(database, session, savedAt));
     }
-    if (!editAccess?.correctionId && activeClinicalRole === 'DOCTOR' && existingPatient?.service_mode === 'opd' && data['system:opdConsultedAt']) {
+    if (activeClinicalRole === 'DOCTOR' && existingPatient?.service_mode === 'opd' && data['system:opdConsultedAt']) {
       const currentBill = patientBill(database, patientKey);
       const outstanding = Number(currentBill?.summary?.KHR?.balance || 0) + Number(currentBill?.summary?.USD?.balance || 0);
       if (outstanding > 0 && currentBill?.invoice?.id) {
@@ -549,16 +507,7 @@ export function mountPatientsRoutes(router) {
     }
     let prescriptionSnapshot = null;
     if (body.submitOpdPrescription === true) {
-      if (editAccess?.correctionId) return sendJson(response, 403, { error: 'ការកែតម្រូវកំណត់ត្រាមិនអាចបញ្ជូនវេជ្ជបញ្ជាថ្មីបានទេ។' }, { secure: config.cookieSecure });
-      if (activeClinicalRole !== 'DOCTOR' && !maternalMidwife) return sendJson(response, 403, { error: 'Only the prescribing doctor can submit an OPD prescription.' }, { secure: config.cookieSecure });
-      // v42.6: the midwife prescribes only the medicines of the maternal services.
-      if (maternalMidwife) {
-        const allowed = maternalOptions().midwifeMedicines.map(name => name.toLowerCase());
-        let rows = [];
-        try { rows = JSON.parse(data['system:opdMedications'] || '[]'); } catch { rows = []; }
-        const refused = (Array.isArray(rows) ? rows : []).filter(row => row?.name && !allowed.some(name => String(row.name).toLowerCase().replace(/^[a-z]{2}\d{4}(?:,\s*[a-z]{2}\d{4})*-/, '').startsWith(`${name}-`) || String(row.name).toLowerCase() === name));
-        if (refused.length) return sendJson(response, 403, { error: 'ឆ្មបអាចចេញវេជ្ជបញ្ជាតែឱសថសេវាមាតាប៉ុណ្ណោះ។', refused: refused.map(row => row.name) }, { secure: config.cookieSecure });
-      }
+      if (activeClinicalRole !== 'DOCTOR') return sendJson(response, 403, { error: 'Only the prescribing doctor can submit an OPD prescription.' }, { secure: config.cookieSecure });
       try { prescriptionSnapshot = prepareOpdPrescription(data, summary, JSON.parse(data['system:signature:medical'])); }
       catch (error) { return sendJson(response, 400, { error: error.message }, { secure: config.cookieSecure }); }
     }
@@ -569,11 +518,6 @@ export function mountPatientsRoutes(router) {
         id: crypto.randomUUID(), patientKey, summary, data,
         userId: session.user_id, savedAt,
       });
-      if (npcaPerson) saveBeneficiaryLink(database,patientKey,npcaPerson,npcaPayment,session.user_id);
-      else if (registrationSave && existingPatient && (
-        summary.firstName!==existingPatient.first_name || summary.lastName!==existingPatient.last_name || summary.sex!==existingPatient.sex || summary.dateOfBirth!==existingPatient.date_of_birth || summary.equityCard!==existingPatient.equity_card ||
-        String(data['scope:registration:id:web_nssf']||'')!==String(existingData['scope:registration:id:web_nssf']||'')
-      )) database.sqlite.prepare('UPDATE npca_patient_links SET eligible=0 WHERE patient_key=?').run(patientKey);
       saveEditorHistory(database, {
         patientKey, role: activeClinicalRole, editorScope, userId: session.user_id,
         editorName: String(session.display_name || session.username || ''), savedAt,
@@ -588,14 +532,7 @@ export function mountPatientsRoutes(router) {
           existingData['system:triageSaved']
         )
       );
-      if (triageSave && !wasTransferredBefore && patient.service_mode === 'opd' && isFreeMaternalService(patient)) {
-        // v42.6: vaccination is free: straight to the midwife, no Cashier.
-        data['system:workflowStage'] = 'DOCTOR_READY';
-        data['system:maternalFreeService'] = true;
-        delete data['system:cashierQueueRequest'];
-        database.sqlite.prepare('UPDATE patient_records SET record_json=?,updated_at=? WHERE patient_key=?').run(JSON.stringify(data), savedAt, patientKey);
-        patient = database.findPatient(patientKey);
-      } else if (triageSave && !wasTransferredBefore && patient.service_mode === 'opd') {
+      if (triageSave && !wasTransferredBefore && patient.service_mode === 'opd') {
         const consultationCharge = addCatalogCharge(database, patientKey, 'OPD_CONSULT', session.user_id, `CARE_ROUTE:${patientKey}:OPD`, 'Automatically added when Triage selected OPD');
         const consultationBill = patientBill(database, patientKey, consultationCharge.invoiceId);
         const balance = Number(consultationBill?.summary?.KHR?.balance || 0) + Number(consultationBill?.summary?.USD?.balance || 0);
@@ -606,8 +543,7 @@ export function mountPatientsRoutes(router) {
             delete data['system:cashierQueueRequest'];
           } else {
             data['system:workflowStage'] = 'CASHIER_PENDING_OPD';
-            // v42.6: safe abortion is billed under the Gynecology ward.
-            data['system:cashierQueueRequest'] = { invoiceId: consultationCharge.invoiceId, sentAt: savedAt, sentBy: session.user_id, wardCode: isGynecologyOutpatient(patient) ? 'gynecology' : 'opd', source: 'TRIAGE_OPD_CONSULTATION' };
+            data['system:cashierQueueRequest'] = { invoiceId: consultationCharge.invoiceId, sentAt: savedAt, sentBy: session.user_id, wardCode: 'opd', source: 'TRIAGE_OPD_CONSULTATION' };
             queueCashierPayment(database, patientKey, data['system:cashierQueueRequest']);
           }
         } else {
@@ -620,7 +556,7 @@ export function mountPatientsRoutes(router) {
       }
       if (triageSave && !wasTransferredBefore && patient.service_mode === 'opd') {
         opdReferral = referToOpd(database, patientKey, savedAt);
-      } else if (!editAccess?.correctionId && patient.service_mode === 'opd' && (activeClinicalRole === 'DOCTOR' || editorScope === 'medical')) {
+      } else if (patient.service_mode === 'opd' && (activeClinicalRole === 'DOCTOR' || editorScope === 'medical')) {
         updateOpdQueueStatus(database, patientKey, 'IN_CONSULTATION', savedAt);
         if (!data['system:encounterId']) {
           const now = new Date(savedAt);

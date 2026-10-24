@@ -53,26 +53,15 @@
   function applyTopLevel(role) {
     const b1 = document.getElementById('btn_page1');
     const b2 = document.getElementById('btn_page2');
-    if (role === 'REGISTRATION') {
-      document.documentElement.classList.add('registration-user');
-      document.documentElement.setAttribute('data-user-role', 'REGISTRATION');
-      if (document.body) document.body.classList.add('registration-user');
-      hide(b1,false); hide(b2,true); hide(b3,true);
-      hide(document.querySelector('.step-wrapper'),false);
-      hide(document.querySelector('.dashboard-header'),false);
-      hide(document.getElementById('emr-persistent-patient-banner'),true);
-      hide(document.getElementById('emr-chart-tabs-wrapper'),true);
-      hide(document.getElementById('emr-summary-dashboard-panel'),true);
-      hide(document.getElementById('emr-consultation-workspace'),true);
-      hide(document.querySelector('.emr-breadcrumbs-container'),true);
-    }
+    const b3 = document.getElementById('btn_page3');
+    if (role === 'REGISTRATION') { hide(b1,false); hide(b2,true); hide(b3,true); }
     else if (role === 'TRIAGE') {
       document.documentElement.classList.add('triage-restricted');
       document.documentElement.classList.remove('bed-direct-opd', 'bed-direct-medical', 'bed-direct-nursing', 'bed-direct-daily', 'bed-direct-discharge');
       document.documentElement.classList.add('bed-direct-view', 'bed-direct-triage');
       hide(b1,true); hide(b2,false); hide(b3,true);
       hide(document.querySelector('.step-wrapper'),true);
-      hide(document.querySelector('.dashboard-header'),false);
+      hide(document.querySelector('.dashboard-header'),true);
       const p1 = document.getElementById('page1');
       const p3 = document.getElementById('page3');
       if (p1) { p1.classList.remove('active'); p1.hidden = true; }
@@ -91,18 +80,7 @@
       window.switchPage?.(3);
       window.switchOpdTab?.('nursing');
     }
-    else if (['DOCTOR','ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(role)) {
-      document.documentElement.classList.remove('registration-user', 'on-registration-page', 'triage-restricted');
-      if (document.body) document.body.classList.remove('registration-user');
-      hide(b1,false); hide(b2,false); hide(b3,false);
-      hide(document.querySelector('.step-wrapper'),false);
-      hide(document.querySelector('.dashboard-header'),false);
-      hide(document.getElementById('emr-persistent-patient-banner'),false);
-      hide(document.getElementById('emr-chart-tabs-wrapper'),false);
-      hide(document.getElementById('emr-summary-dashboard-panel'),false);
-      hide(document.getElementById('emr-consultation-workspace'),false);
-      hide(document.querySelector('.emr-breadcrumbs-container'),false);
-    }
+    else if (['DOCTOR','ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(role)) { hide(b1,false); hide(b2,false); hide(b3,false); }
   }
 
   function applyReadPermissions(role) {
@@ -115,8 +93,7 @@
     const requestedView = new URLSearchParams(location.search).get('view') || '';
     const prePaymentParaclinicReview = requestedView === 'opd-paraclinic';
     const opdStage = String(loadedPatient?.workflowStage || '');
-    const approvedCorrection = Boolean(loadedPatient?.recordAccess?.correctionId && loadedPatient.recordAccess.canEdit);
-    const opdLockedForCashier = role === 'DOCTOR' && String(loadedPatient?.serviceMode || '').toLowerCase() === 'opd' && !['DOCTOR_READY','IN_CONSULTATION'].includes(opdStage) && !approvedCorrection;
+    const opdLockedForCashier = role === 'DOCTOR' && String(loadedPatient?.serviceMode || '').toLowerCase() === 'opd' && !['DOCTOR_READY','IN_CONSULTATION'].includes(opdStage);
     const outpatient = document.getElementById('sub_opd');
     const medical = document.getElementById('sub_ipd');
     const nursing = document.getElementById('sub_nursing');

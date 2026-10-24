@@ -21,14 +21,6 @@
                 if (['opd', 'opd-paraclinic', 'medical', 'daily', 'nursing', 'discharge', 'triage'].indexOf(directView) !== -1) {
                     document.documentElement.classList.add('bed-direct-view', 'bed-direct-' + directView);
                     document.documentElement.setAttribute('data-direct-clinical-view', directView);
-                } else if (directView === 'register' || directView === 'registration') {
-                    document.documentElement.classList.add('registration-user', 'on-registration-page', 'bed-direct-register');
-                    document.documentElement.setAttribute('data-direct-view', 'register');
-                }
-                var role = String(sessionStorage.getItem('borkeo-active-role') || '').toUpperCase();
-                if (role === 'REGISTRATION') {
-                    document.documentElement.classList.add('registration-user', 'on-registration-page');
-                    document.documentElement.setAttribute('data-user-role', 'REGISTRATION');
                 }
             } catch (error) {
                 // Normal Registration/Triage workflow remains unchanged.
@@ -80,22 +72,6 @@
         html.triage-restricted #page2 {
             display: block !important;
             animation: none !important;
-        }
-        /* v43.4: Hide clinical top sections (banner, chart tabs, summary cards, breadcrumbs) for registration user & registration view */
-        html.registration-user #emr-persistent-patient-banner,
-        html.registration-user #emr-chart-tabs-wrapper,
-        html.registration-user #emr-summary-dashboard-panel,
-        html.registration-user .emr-breadcrumbs-container,
-        html.bed-direct-register #emr-persistent-patient-banner,
-        html.bed-direct-register #emr-chart-tabs-wrapper,
-        html.bed-direct-register #emr-summary-dashboard-panel,
-        html.bed-direct-register .emr-breadcrumbs-container,
-        html[data-user-role="REGISTRATION"] #emr-persistent-patient-banner,
-        html[data-user-role="REGISTRATION"] #emr-chart-tabs-wrapper,
-        html[data-user-role="REGISTRATION"] #emr-summary-dashboard-panel,
-        html[data-user-role="REGISTRATION"] .emr-breadcrumbs-container,
-        html.on-registration-page #emr-persistent-patient-banner {
-            display: none !important;
         }
     </style>
 
@@ -6084,7 +6060,6 @@
                                         id="web_health_id" oninput="syncFields()" style="flex:1;"><button type="button" class="btn-primary" id="btn_print_patient_card" onclick="openPatientCardPrintModal()" title="បោះពុម្ពប័ណ្ណអ្នកជំងឺ" style="white-space:nowrap; padding:8px 12px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:4px; background:#0284c7; color:#fff; border:none; border-radius:6px; cursor:pointer;" data-emr-transient data-emr-no-auto-index><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg> <span>បោះពុម្ពប័ណ្ណ</span></button></div></div>
 
                                 <!-- Cards Group (Directly below Case Number & Health ID) -->
-                                <div class="input-group" style="grid-column: span 12;" data-emr-transient><button id="npca-lookup-button" type="button" data-emr-no-auto-index data-emr-transient>ពិនិត្យសិទ្ធិ NPCA</button><p id="npca-registration-status" role="status" aria-live="polite"></p><div id="npca-beneficiaries" class="npca-results"></div></div><input type="hidden" id="npca_selection" data-emr-no-auto-index>
                                 <div class="input-group" style="grid-column: span 6;"><label data-key="equity_card">ប័ណ្ណមូលនិធិសមធម៌</label><div class="hef-lookup-row"><input
                                         type="text" class="modern-input" id="web_equity" oninput="syncFields()" inputmode="numeric" autocomplete="off"><button id="hef_lookup_button" type="button" class="btn-green">ផ្ទៀងផ្ទាត់ HEF</button></div><div id="hef_lookup_status" class="hef-lookup-status" role="status" aria-live="polite" data-language-exclude></div><input type="hidden" id="web_hef_verification" data-emr-no-auto-index></div>
                                 <div class="input-group" style="grid-column: span 6;"><label data-key="nssf_card">លេខប័ណ្ណ ប.ស.ស.</label><div class="hef-lookup-row"><input
@@ -6579,7 +6554,7 @@
                         </form>
                     </dialog>
 
-                    <div class="action-bar" id="reg_action_bar">
+                    <div class="action-bar">
                         <button type="button" class="btn-next" onclick="savePatientRecord({ transferToTriage: true, allowMissingDepartment: true })" data-key="btn_next">បញ្ជូនទៅផ្នែកទ្រីយ៉ា</button>
                     </div>
                 </div>
@@ -7038,7 +7013,6 @@
                             <option value="safe" data-key="opt_safe_abortion" data-hef-code="RH-Del">រំលូតកូនដោយសុវត្ថិភាព</option>
                             <option value="cervix" data-key="opt_cervix_screening" data-hef-code="RH-Gyn1">ពិនិត្យមហារីកមាត់ស្បូន</option>
                             <option value="std" data-key="opt_std" data-hef-code="RH-STI">ជំងឺកាមរោគ (STD)</option>
-                            <option value="vaccination" data-key="opt_vaccination">ចាក់វ៉ាក់សាំង</option>
                         </select>
                     </td>
                     <td style="border: none; padding: 2px 5px;">
@@ -13216,7 +13190,7 @@
                                         onchange="handleMedicationQuickChange(this)"></td>
                                 <td><input type="number" min="0" class="rx-num-input mrx-d" value="1"
                                         oninput="handleMedicationQuickChange(this)"></td>
-                                <td><input type="text" class="rx-num-input mrx-total rx-total-view" readonly value="">
+                                <td><input type="text" class="rx-num-input mrx-total rx-total-view" readonly value="0">
                                 </td>
                                 <td><input type="text" class="rx-select mrx-note" placeholder="សម្គាល់..."></td>
                                 <td><button class="btn-red" onclick="removeMonRxRow(this)"><i
@@ -15783,7 +15757,7 @@ aHRtbD4K
                 refer_sign: "សញ្ញាតម្អូញចម្បង",
                 dept_maternity: "ផ្នែកសម្ភព", dept_oi: "ផ្នែក (OI/ART)", dept_ped: "ផ្នែកជំងឺកុមារ", dept_ncd: "ផ្នែកទឹកនោមផ្អែម/លើសឈាម", dept_dental: "ផ្នែកធ្មេញ",
                 dept_mental: "ផ្នែកសុខភាពផ្លូវចិត្ត", dept_physio: "ផ្នែកព្យាបាលដោយចលនា", dept_ent: "ផ្នែក ច្រមុះ ត្រចៀក បំពង់ក", dept_gen: "ពិនិត្យជំងឺទូទៅ", dept_opd: "ផ្នែកពិគ្រោះក្រៅ", dept_other: "ផ្សេងៗ",
-                opt_gen: "ផ្នែកជំងឺទូទៅ", opt_er: "ផ្នែកសង្គ្រោះបន្ទាន់", opt_surg: "ផ្នែកវះកាត់", opt_gyn: "ផ្នែករោគស្ត្រី", opt_maternity: "ផ្នែកសម្ភព", opt_ped2: "ផ្នែកជំងឺកុមារ", opt_tb: "ផ្នែកជំងឺរបេង", opt_infectious: "ផ្នែកជំងឺឆ្លង", opt_eyecare: "មណ្ឌលថែទាំភ្នែក", opt_anc: "ពិនិត្យផ្ទៃពោះ (ANC)", opt_pnc: "ថែទាំក្រោយសម្រាល (PNC)", opt_family_planning: "ពន្យាកំណើត", opt_safe_abortion: "រំលូតកូនដោយសុវត្ថិភាព", opt_cervix_screening: "ពិនិត្យមហារីកមាត់ស្បូន", opt_std: "ជំងឺកាមរោគ (STD)", opt_vaccination: "ចាក់វ៉ាក់សាំង",
+                opt_gen: "ផ្នែកជំងឺទូទៅ", opt_er: "ផ្នែកសង្គ្រោះបន្ទាន់", opt_surg: "ផ្នែកវះកាត់", opt_gyn: "ផ្នែករោគស្ត្រី", opt_maternity: "ផ្នែកសម្ភព", opt_ped2: "ផ្នែកជំងឺកុមារ", opt_tb: "ផ្នែកជំងឺរបេង", opt_infectious: "ផ្នែកជំងឺឆ្លង", opt_eyecare: "មណ្ឌលថែទាំភ្នែក", opt_anc: "ពិនិត្យផ្ទៃពោះ (ANC)", opt_pnc: "ថែទាំក្រោយសម្រាល (PNC)", opt_family_planning: "ពន្យាកំណើត", opt_safe_abortion: "រំលូតកូនដោយសុវត្ថិភាព", opt_cervix_screening: "ពិនិត្យមហារីកមាត់ស្បូន", opt_std: "ជំងឺកាមរោគ (STD)",
                 alert_no_er: "សុំទោស! អ្នកមិនអាចបញ្ជូនអ្នកជំងឺទៅ «បន្ទប់សង្គ្រោះបន្ទាន់» បានទេ ប្រសិនបើគ្មានរោគសញ្ញាអាទិភាព (សញ្ញាពណ៌ក្រហម ឬ លឿង)។",
                 stage1_title: "កម្រិតជ្រើសរើសជំងឺទី១", airway: "ផ្លូវខ្យល់ និងការដកដង្ហើម",
                 s1_breath1: "មិនអាចនិយាយជាប្រយោគបាន ឬមានសញ្ញាពិបាកដកដង្ហើម", s1_breath2: "ឡើងស្វាយនៅលើបបូរមាត់", s1_breath3: "កម្រិតអុកស៊ីហ្សែនក្នុងឈាម ≤ ៩០%", spo2_label: "កំហាប់ O2 ក្នុងឈាម<br>(SPO2:%)",
@@ -15852,7 +15826,7 @@ aHRtbD4K
                 refer_sign: "Chief Complaint",
                 dept_maternity: "Maternity", dept_oi: "OI/ART", dept_ped: "Pediatrics", dept_ncd: "Diabetes/Hypertension", dept_dental: "Dental",
                 dept_mental: "Mental Health", dept_physio: "Physiotherapy", dept_ent: "ENT (Ear, Nose, Throat)", dept_gen: "General Checkup", dept_opd: "Outpatient (OPD)", dept_other: "Other",
-                opt_gen: "Medicine", opt_er: "Emergency", opt_surg: "Surgery", opt_gyn: "Gynecology", opt_maternity: "Maternity", opt_ped2: "Pediatric", opt_tb: "Tuberculosis (TB)", opt_infectious: "Infectious Diseases Ward", opt_eyecare: "Eye Care Service", opt_anc: "Antenatal Care (ANC)", opt_pnc: "Postnatal Care (PNC)", opt_family_planning: "Family Planning / Contraception", opt_safe_abortion: "Safe Abortion", opt_cervix_screening: "Cervical Cancer Screening", opt_std: "Sexually Transmitted Diseases (STD)", opt_vaccination: "Vaccination",
+                opt_gen: "Medicine", opt_er: "Emergency", opt_surg: "Surgery", opt_gyn: "Gynecology", opt_maternity: "Maternity", opt_ped2: "Pediatric", opt_tb: "Tuberculosis (TB)", opt_infectious: "Infectious Diseases Ward", opt_eyecare: "Eye Care Service", opt_anc: "Antenatal Care (ANC)", opt_pnc: "Postnatal Care (PNC)", opt_family_planning: "Family Planning / Contraception", opt_safe_abortion: "Safe Abortion", opt_cervix_screening: "Cervical Cancer Screening", opt_std: "Sexually Transmitted Diseases (STD)",
                 alert_no_er: "Sorry! You cannot admit to the Emergency Room without priority signs (Red or Yellow alert).",
                 stage1_title: "Stage 1 Triage", airway: "Airway & Breathing",
                 s1_breath1: "Unable to speak in sentences or respiratory distress", s1_breath2: "Cyanosis on lips", s1_breath3: "Blood Oxygen ≤ 90%", spo2_label: "Blood Oxygen<br>(SPO2:%)",
@@ -17478,11 +17452,6 @@ aHRtbD4K
 
             var stepEl = document.getElementById('btn_page' + pageNumber);
             if (stepEl) stepEl.classList.add('active');
-            if (pageNumber === 1) {
-                document.documentElement.classList.add('on-registration-page');
-            } else {
-                document.documentElement.classList.remove('on-registration-page');
-            }
             if (pageNumber === 1 || pageNumber === 2) {
                 if (typeof syncFields === 'function') syncFields();
             }
@@ -17873,12 +17842,23 @@ aHRtbD4K
             return graphCells || 16;
         }
 
-        // v42.5: one route table for every page (public/medication-routes.js).
-        // New lines offer IV, IM, SC and the other simple routes; the old values
-        // (iv_fluid, antibiotic_iv, antibiotic_im, injection_unspecified) are
-        // kept for saved lines (legacy) and shown as IV / IM.
         function getMedicationRouteDefinitions() {
-            return window.BorkeoMedicationRoutes.definitions();
+            return [
+                { value: 'iv_fluid', priority: 1, khmer: 'សារធាតុរាវតាមសរសៃឈាម (IV)', english: 'IV fluid' },
+                { value: 'antibiotic_iv', priority: 2, khmer: 'អង់ទីប៊ីយ៉ូទិកតាមសរសៃឈាម (IV)', english: 'Antibiotic IV' },
+                { value: 'antibiotic_im', priority: 2, khmer: 'អង់ទីប៊ីយ៉ូទិកចាក់សាច់ដុំ (IM)', english: 'Antibiotic IM' },
+                { value: 'other_iv', priority: 3, khmer: 'ថ្នាំផ្សេងតាមសរសៃឈាម (IV)', english: 'Other medicine IV' },
+                { value: 'other_im', priority: 3, khmer: 'ថ្នាំផ្សេងចាក់សាច់ដុំ (IM)', english: 'Other medicine IM' },
+                { value: 'subcutaneous', priority: 3.5, khmer: 'ចាក់ក្រោមស្បែក (SC)', english: 'Subcutaneous (SC)' },
+                { value: 'injection_unspecified', priority: 3.5, khmer: 'ចាក់ (ត្រូវបញ្ជាក់ផ្លូវ)', english: 'Injection (route needed)' },
+                { value: 'po', priority: 4, khmer: 'លេប (PO)', english: 'Oral (PO)' },
+                { value: 'topical', priority: 4.5, khmer: 'លាប', english: 'Topical' },
+                { value: 'drops', priority: 4.5, khmer: 'បន្តក់', english: 'Drops' },
+                { value: 'inhaled', priority: 4.5, khmer: 'ស្រូប', english: 'Inhaled' },
+                { value: 'vaginal', priority: 5, khmer: 'តាមទ្វារមាស', english: 'Vaginal' },
+                { value: 'rectal', priority: 5, khmer: 'តាមទ្វារធំ (PR)', english: 'Rectal (PR)' },
+                { value: 'sublingual', priority: 5, khmer: 'ក្រោមអណ្តាត (SL)', english: 'Sublingual (SL)' }
+            ];
         }
 
         function normalizeMedicationRoute(value) {
@@ -17920,25 +17900,11 @@ aHRtbD4K
             return getMedicationRouteDefinition(value).priority;
         }
 
-        // v42.5: nursing chart order. New IV / IM lines use one route value, so
-        // IV fluids (list group 25) and antibacterials (ATC J01) chosen from the
-        // Essential Medicines List keep their place before the other injections.
-        function getMedicationOrderPriority(order) {
-            var priority = getMedicationRoutePriority(order && order.route);
-            var route = normalizeMedicationRoute(order && order.route);
-            if ((route === 'other_iv' || route === 'other_im') && window.BorkeoMedicine && window.BorkeoMedicine.ready()) {
-                var item = window.BorkeoMedicine.lookup(order.name, order.cmsCode);
-                if (item && route === 'other_iv' && /^25\./.test(item.group || '')) return 1;
-                if (item && /^J01/.test(item.atc || '')) return 2;
-            }
-            return priority;
-        }
-
         function getNursingMedicationRouteLabel(value) {
             var route = normalizeMedicationRoute(value);
             var khmer = currentLang === 'khmer';
             var labels = {
-                iv_fluid: 'IV',
+                iv_fluid: khmer ? 'IV សារធាតុរាវ' : 'IV fluid',
                 antibiotic_iv: 'IV', antibiotic_im: 'IM', other_iv: 'IV', other_im: 'IM',
                 subcutaneous: 'SC', injection_unspecified: khmer ? 'ចាក់ (ត្រូវបញ្ជាក់ផ្លូវ)' : 'Injection (route needed)', po: 'PO',
                 vaginal: khmer ? 'តាមទ្វារមាស' : 'Vaginal', rectal: 'PR', sublingual: 'SL',
@@ -17960,8 +17926,6 @@ aHRtbD4K
             blankRoute.textContent = currentLang === 'khmer' ? '-- ជ្រើស --' : '-- Select --';
             select.appendChild(blankRoute);
             getMedicationRouteDefinitions().forEach(function (definition) {
-                // v42.5: old route values are shown only on the saved line that uses them.
-                if (definition.legacy && definition.value !== selected) return;
                 var option = document.createElement('option');
                 option.value = definition.value;
                 option.textContent = definition[currentLang === 'khmer' ? 'khmer' : 'english'];
@@ -17990,17 +17954,9 @@ aHRtbD4K
             return nameInput && nameInput.dataset.cmsCode ? nameInput.dataset.cmsCode : '';
         }
 
-        // v42.5: the reason written to continue above a maximum dose
-        // (public/medication-safety.js) is saved with the line (doseOverrideReason).
-        function medicationDoseReason(row, prefix) {
-            var nameInput = row ? row.querySelector('.' + prefix + '-name') : null;
-            return nameInput && nameInput.dataset.doseReason ? nameInput.dataset.doseReason : '';
-        }
-
         function restoreMedicationCmsCode(row, prefix, med) {
             var nameInput = row ? row.querySelector('.' + prefix + '-name') : null;
             if (nameInput && med && med.cmsCode) nameInput.dataset.cmsCode = String(med.cmsCode);
-            if (nameInput && med && med.doseOverrideReason) nameInput.dataset.doseReason = String(med.doseOverrideReason);
         }
 
         // v42.3: a row with a medicine name must have a route before saving.
@@ -18290,8 +18246,7 @@ aHRtbD4K
             } else {
                 total = dose * getMedicationDailyFrequency(mainRow) * days;
             }
-            // v42.5: no number of medicine yet: the total stays empty (never 0 or NaN).
-            totalField.value = total && isFinite(total) ? String(Math.round(total * 100) / 100) : '';
+            totalField.value = total ? String(Math.round(total * 100) / 100) : '0';
         }
 
         function formatMedicationScheduleLabel(scheduleType, qHours, language) {
@@ -18425,8 +18380,6 @@ aHRtbD4K
                     if (prefix === 'prx') order.doseAmount = value('dose');
                     var cmsCode = medicationCmsCode(row, prefix);
                     if (cmsCode) order.cmsCode = cmsCode;
-                    var doseReason = medicationDoseReason(row, prefix);
-                    if (doseReason) order.doseOverrideReason = doseReason;
                     return order;
                 }).filter(Boolean);
         };
@@ -18501,8 +18454,6 @@ aHRtbD4K
                 }, getMedicationTimingData(row, ''));
                 var cmsCode = medicationCmsCode(row, 'orx');
                 if (cmsCode) order.cmsCode = cmsCode;
-                var doseReason = medicationDoseReason(row, 'orx');
-                if (doseReason) order.doseOverrideReason = doseReason;
                 return order;
             }).filter(Boolean);
         };
@@ -18810,7 +18761,7 @@ aHRtbD4K
             });
 
             orders.sort(function (first, second) {
-                var priorityDifference = getMedicationOrderPriority(first) - getMedicationOrderPriority(second);
+                var priorityDifference = getMedicationRoutePriority(first.route) - getMedicationRoutePriority(second.route);
                 if (priorityDifference) return priorityDifference;
                 var nameDifference = first.name.localeCompare(second.name, undefined, { sensitivity: 'base', numeric: true });
                 if (nameDifference) return nameDifference;
@@ -21504,7 +21455,7 @@ aHRtbD4K
                     <input type="datetime-local" class="med-effective-at" style="display:none;" onchange="handleMedicationQuickChange(this)">
                 </td>
                 <td><input type="number" min="0" class="rx-num-input ${prefix}-d" ${isOpd ? '' : 'value="1"'} oninput="handleMedicationQuickChange(this)"></td>
-                <td><input type="text" class="rx-num-input ${prefix}-total rx-total-view" readonly value=""></td>
+                <td><input type="text" class="rx-num-input ${prefix}-total rx-total-view" readonly value="0"></td>
                 <td><input type="text" class="rx-select ${prefix}-note" placeholder="${isMonitoring ? 'សម្គាល់...' : '...'}"></td>
                 <td class="no-print"><button class="btn-red" onclick="${removeHandler}"><i class="fa-solid fa-minus"></i></button></td>
             `;
@@ -21983,8 +21934,6 @@ aHRtbD4K
             var dateDisplay = dtVal ? dtVal.replace('T', ' ') : '29-08-2026 21:24';
 
             if (!restoring && window.validateMedicationRoutes('#mon_rx_tbody tr.mrx-main-row, #mon_rx_protocol_tbody tr.protocol-main-row')) return false;
-            // v42.5: a line above the maximum dose needs the written reason before saving.
-            if (!restoring && window.EmrMedicationSafety && window.EmrMedicationSafety.validateDoses('#mon_rx_tbody tr.mrx-main-row, #mon_rx_protocol_tbody tr.protocol-main-row')) return false;
 
             var rxHtml = '';
             var medications = [];
@@ -22016,8 +21965,6 @@ aHRtbD4K
                     }, timing);
                     var cmsCode = medicationCmsCode(row, prefix);
                     if (cmsCode) medication.cmsCode = cmsCode;
-                    var doseReason = medicationDoseReason(row, prefix);
-                    if (doseReason) medication.doseOverrideReason = doseReason;
                     medications.push(medication);
 
                     var freqArr = [];
@@ -23103,7 +23050,7 @@ function updateOtherIdPreview() {
     <script src="/public/patient-photo.js?v=3450"></script>
     <script src="/public/cambodia-phone.js?v=3710"></script>
     <script src="/public/emr-inpatient-workflow.js?v=3730"></script>
-    <script src="/public/emr-patient-record.js?v=4270"></script>
+    <script src="/public/emr-patient-record.js?v=3730"></script>
     <script src="/public/paraclinic.js?v=3720"></script>
     <script src="/public/emr-session.js?v=1970"></script>
     <script src="/public/emr-permissions.js?v=3710"></script>
@@ -23111,7 +23058,6 @@ function updateOtherIdPreview() {
     <script src="/public/ward-services.js?v=16200"></script>
     <script src="/public/cambodia-address.js?v=3310"></script>
 <script src="/public/hef-lookup.js?v=3310"></script>
-<script src="/public/npca-registration.js?v=4280"></script>
 <script src="/public/nssf-lookup.js?v=3440"></script>
 <script src="/public/nationalities.js?v=3740"></script>
     <script src="/public/chief-complaint-tags.js?v=32100"></script>
@@ -23284,7 +23230,7 @@ if (typeof window !== 'undefined') window.QRCode = QRCode;
             </button>
         </div>
     </dialog>
-    <script src="/public/patient-card-print.js?v=4270"></script>
+    <script src="/public/patient-card-print.js?v=3530"></script>
 </body>
 
 </html>

@@ -254,18 +254,12 @@
       .catch((error) => window.alert(error.message));
   }
 
-  // ===================== 2. Prescribing warnings (doctors, midwives) =====================
-  // v42.5: the discharge medicines are checked too, and the dose, unit and
-  // schedule boxes start the check (the hidden slot fields never fire it).
-  const NAME = '.rx-name, .prx-name, .mrx-name, .mprx-name, .orx-name, #emr-discharge-rx-body [data-med="name"]';
-  const DOSE = '.rx-dose, .prx-dose, .mrx-dose, .mprx-dose, .orx-dose, .rx-unit, .prx-unit, .mrx-unit, .mprx-unit, .orx-unit, .med-schedule-type, .med-q-hours, '
-    + '#emr-discharge-rx-body [data-med="doseAmount"], #emr-discharge-rx-body [data-med="unit"], #emr-discharge-rx-body [data-med="scheduleType"]';
-  const GROUPS = [['#rx_tbody', '#rx_protocol_tbody'], ['#mon_rx_tbody', '#mon_rx_protocol_tbody'], ['#opd_rx_tbody'], ['#emr-discharge-rx-body']];
-  const PRESCRIBERS = ['DOCTOR', 'MIDWIFE'];
+  // ===================== 2. Prescribing warnings (doctors) =====================
+  const NAME = '.rx-name, .prx-name, .mrx-name, .mprx-name, .orx-name';
+  const DOSE = '.rx-m, .rx-a, .rx-e, .rx-n, .prx-dose, .mrx-m, .mrx-a, .mrx-e, .mrx-n, .mprx-dose, .orx-m, .orx-a, .orx-e, .orx-n';
+  const GROUPS = [['#rx_tbody', '#rx_protocol_tbody'], ['#mon_rx_tbody', '#mon_rx_protocol_tbody'], ['#opd_rx_tbody']];
   let safetyTables = null;
-  let tablesPromise = null;
   const pendingOverrides = [];
-  const reportedUnconverted = new Set();
 
   const normalize = (value) => String(value || '').toLowerCase().normalize('NFKC').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
   // v42.3: old Khmer unit labels (public/medicine-units.js) count as mg, mL, mcg, g, IU.
@@ -281,120 +275,23 @@
   };
   const number = (value) => { const n = parseFloat(String(value || '').replace(',', '.')); return Number.isFinite(n) ? n : 0; };
 
-  function loadTables() {
-    if (safetyTables) return Promise.resolve(safetyTables);
-    if (!tablesPromise) {
-      tablesPromise = api('/api/drug-safety')
-        .then((result) => { safetyTables = result; return result; })
-        .catch(() => { tablesPromise = null; return { interactions: [], maxDoses: [] }; });
-    }
-    return tablesPromise;
-  }
-
   function groupRows(row) {
     const group = GROUPS.find((selectors) => selectors.some((selector) => row.closest(selector)));
     if (!group) return [];
     return group.flatMap((selector) => Array.from(document.querySelectorAll(`${selector} tr`))).filter((tr) => tr.querySelector(NAME));
   }
 
-  // Number of medicine, unit and doses per day of one prescription row.
-  function rowInfo(row) {
-    const nameInput = row.querySelector(NAME);
-    if (nameInput?.matches('[data-med="name"]')) {
-      const value = (key) => row.querySelector(`[data-med="${key}"]`)?.value || '';
-      return { nameInput, quantity: value('doseAmount'), unit: value('unit'),
-        frequency: window.BorkeoDoseCheck?.frequencyOf(value('scheduleType')) || 0 };
-    }
-    const prefix = (/\b(rx|prx|mrx|mprx|orx)-name\b/.exec(nameInput?.className || '') || [])[1] || 'rx';
-    const field = (suffix) => row.querySelector(`.${prefix}-${suffix}`);
-    let frequency = 0;
-    try { frequency = Number(window.getMedicationDailyFrequency?.(row)) || 0; } catch { frequency = 0; }
-    return { nameInput, prefix, quantity: field('dose')?.value || '', unit: field('unit')?.value || '', frequency };
-  }
-
-  // Legacy rule (entered by hand, by name): number of medicine as typed.
   function rowDoses(row) {
-    const info = rowInfo(row);
-    const value = (suffix) => number(row.querySelector(`.${info.prefix}-${suffix}`)?.value);
-    const slots = info.prefix ? ['m', 'a', 'e', 'n'].map(value) : [];
-    const single = number(info.quantity) || Math.max(0, ...slots);
-    const perDay = info.frequency ? single * info.frequency : slots.reduce((sum, n) => sum + n, 0);
-    return { perDose: single, perDay, unit: normalize(canonicalUnit(info.unit)) };
-  }
-
-  // Weight from Triage (latest in the record): kg or null.
-  function weightKg() {
-    for (const id of ['p2_weight', 'opd_weight', 'ipd_weight']) {
-      const value = parseFloat(String(document.getElementById(id)?.value || '').replace(',', '.'));
-      if (Number.isFinite(value) && value > 0) return value;
-    }
-    return null;
-  }
-
-  // The Essential Medicines List line of a row (chosen now, or saved label / CMS code).
-  function catalogueItem(info) {
-    const medicine = window.BorkeoMedicine;
-    if (!medicine?.ready?.()) { medicine?.ensureData?.(); return null; }
-    return medicine.lookup(info.nameInput.value, info.nameInput.dataset.cmsCode);
-  }
-
-  const doseLabel = {
-    perDose: () => plain('', 'Per dose:', 'ក្នុងមួយដង៖'),
-    perDay: () => plain('', 'Per day:', 'ក្នុងមួយថ្ងៃ៖'),
-    maximum: () => plain('', 'maximum', 'អតិបរមា'),
-    child: () => plain('', 'Child', 'កុមារ'),
-    weight: () => plain('', 'Enter the weight to check the dose', 'បញ្ចូលទម្ងន់ ដើម្បីពិនិត្យកម្រិតថ្នាំ'),
-    protocol: () => plain('', 'Protocol:', 'តាមពិធីសារ៖'),
-  };
-
-  // v42.5: maximum dose of an approved Essential Medicines List line.
-  // Returns { warning (red, needs a reason), note (orange or guidance text) }.
-  function doseCheck(row) {
-    const info = rowInfo(row);
-    const item = info.nameInput ? catalogueItem(info) : null;
-    if (!item || !window.BorkeoDoseCheck) return {};
-    const limit = (safetyTables?.maxDoses || []).find((rule) => rule.doseKey && rule.doseKey === item.doseKey && rule.status === 'approved');
-    if (!limit) return {};
-    const context = window.BorkeoMedicine.patientContext?.() || null;
-    const child = context ? window.BorkeoMedicine.isChild(context) === true : false;
-    const result = window.BorkeoDoseCheck.evaluate(limit, item, info.quantity, info.unit, info.frequency, { child, weightKg: weightKg() });
-    if (result.level === 'weight') return { note: doseLabel.weight() };
-    if (result.level === 'guide') return { note: result.note ? `${doseLabel.protocol()} ${result.note}` : '' };
-    if (result.level === 'unconverted') {
-      const key = `${item.doseKey}|${item.label}|${info.unit}`;
-      if (!reportedUnconverted.has(key)) {
-        reportedUnconverted.add(key);
-        api('/api/drug-safety/unconverted', { doseKey: item.doseKey, label: item.label, unit: info.unit }).catch(() => {});
-      }
-      return {};
-    }
-    if (result.level !== 'red') return {};
-    const unit = result.unit || '';
-    const parts = [];
-    if (result.child) parts.push(`${doseLabel.child()} · ${result.weightKg} kg`);
-    if (result.overDose) parts.push(`${doseLabel.perDose()} ${result.perDose} ${unit} (${doseLabel.maximum()} ${result.maxPerDose} ${unit})`);
-    if (result.overDay) parts.push(`${doseLabel.perDay()} ${result.perDay} ${unit} (${doseLabel.maximum()} ${result.maxPerDay} ${unit})`);
-    return { warning: { kind: 'max-dose', detail: parts.join(' · ') } };
-  }
-
-  // Orange note under the medicine name (weight needed, protocol guidance).
-  function showDoseNote(row, text) {
-    const nameInput = row.querySelector(NAME);
-    if (!nameInput) return;
-    let note = nameInput.parentNode?.querySelector('.medication-dose-note');
-    if (!text) { note?.remove(); return; }
-    if (!note) {
-      note = document.createElement('span');
-      note.className = 'medication-dose-note no-print';
-      note.setAttribute('data-emr-transient', '');
-      nameInput.insertAdjacentElement('afterend', note);
-    }
-    note.textContent = `⚠ ${text}`;
+    const prefix = (/\b(rx|prx|mrx|mprx|orx)-name\b/.exec(row.querySelector(NAME)?.className || '') || [])[1] || 'rx';
+    const value = (suffix) => number(row.querySelector(`.${prefix}-${suffix}`)?.value);
+    const slots = ['m', 'a', 'e', 'n'].map(value);
+    const single = value('dose') || Math.max(...slots);
+    return { perDose: single, perDay: slots.reduce((sum, n) => sum + n, 0), unit: normalize(canonicalUnit(row.querySelector(`.${prefix}-unit`)?.value)) };
   }
 
   function warningsFor(row) {
     const medicine = row.querySelector(NAME)?.value?.trim();
-    if (!medicine) { showDoseNote(row, ''); return []; }
+    if (!medicine) return [];
     const warnings = [];
     for (const allergy of window.EmrClinicalSummary?.get()?.summary?.allergies || []) {
       if (names(medicine, allergy.substance)) warnings.push({ kind: 'allergy', detail: `${allergy.substance}${allergy.reaction ? ` (${allergy.reaction})` : ''}` });
@@ -408,13 +305,8 @@
         }
       }
     }
-    const check = doseCheck(row);
-    showDoseNote(row, check.note || '');
-    if (check.warning) warnings.push(check.warning);
-    // Lines entered by hand before v42.5 (no dose key), when approved.
     const doses = rowDoses(row);
     for (const rule of safetyTables?.maxDoses || []) {
-      if (rule.doseKey || (rule.status && rule.status !== 'approved')) continue;
       if (!names(medicine, rule.drug)) continue;
       if (rule.unit && doses.unit && normalize(canonicalUnit(rule.unit)) !== doses.unit) continue;
       if (rule.maxPerDose && doses.perDose > rule.maxPerDose) warnings.push({ kind: 'max-dose', detail: `${doses.perDose} > ${rule.maxPerDose} ${rule.unit}`.trim() });
@@ -446,12 +338,11 @@
       </form>`;
     const form = dialog.querySelector('form');
     const ack = JSON.stringify(warnings);
-    const nameInput = row.querySelector(NAME) || field;
     dialog.querySelector('[data-safety-cancel]').addEventListener('click', () => {
-      nameInput.value = '';
-      nameInput.dispatchEvent(new Event('input', { bubbles: true }));
+      field.value = '';
+      field.dispatchEvent(new Event('input', { bubbles: true }));
       dialog.close();
-      nameInput.focus();
+      field.focus();
     });
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -459,12 +350,7 @@
       if (!reason) { dialog.querySelector('.mar-message').textContent = plain('safety.reasonRequired', 'Write the override reason to continue.'); return; }
       const entry = { medicine, warnings, reason };
       row.dataset.safetyAck = ack;
-      // v42.5: the reason above a maximum dose is saved with the prescription line.
-      if (warnings.some((warning) => warning.kind === 'max-dose')) nameInput.dataset.doseReason = reason;
       dialog.close();
-      // Back to the row: the number of medicine when it is still empty.
-      const quantity = row.querySelector('[data-med="doseAmount"], .rx-dose, .prx-dose, .mrx-dose, .mprx-dose, .orx-dose');
-      if (quantity && !quantity.value) quantity.focus();
       if (patientKey()) await api('/api/prescribing-overrides', { patientKey: patientKey(), ...entry }).catch(() => pendingOverrides.push(entry));
       else pendingOverrides.push(entry);
     });
@@ -472,42 +358,20 @@
     dialog.showModal();
   }
 
-  const isPrescriber = () => PRESCRIBERS.includes(role());
-
   async function checkPrescription(field) {
-    if (!isPrescriber()) return;
+    if (role() !== 'DOCTOR') return;
     const row = field.closest('tr');
     if (!row?.querySelector(NAME)) return;
-    await loadTables();
+    if (!safetyTables) safetyTables = await api('/api/drug-safety').catch(() => ({ interactions: [], maxDoses: [] }));
     const warnings = warningsFor(row);
-    // Back under the maximum: the reason written for the higher dose no longer applies.
-    if (safetyTables && window.BorkeoMedicine?.ready?.() && !warnings.some((warning) => warning.kind === 'max-dose')) delete row.querySelector(NAME).dataset.doseReason;
     if (!warnings.length) { delete row.dataset.safetyAck; return; }
     if (row.dataset.safetyAck === JSON.stringify(warnings)) return;
     askOverride(row, field, row.querySelector(NAME).value.trim(), warnings);
   }
 
-  // v42.5: checked again on save. A line above the maximum dose without the
-  // written reason cannot be saved: returns the message (and opens the warning
-  // of the first such line), or '' when saving may go on.
-  function validateDoses(rowSelector) {
-    if (!isPrescriber() || !safetyTables) return '';
-    let first = null;
-    document.querySelectorAll(rowSelector).forEach((row) => {
-      if (first || !row.querySelector(NAME)?.value?.trim()) return;
-      const check = doseCheck(row);
-      showDoseNote(row, check.note || '');
-      if (check.warning && !row.querySelector(NAME).dataset.doseReason) first = { row, warning: check.warning };
-    });
-    if (!first) return '';
-    const nameInput = first.row.querySelector(NAME);
-    askOverride(first.row, nameInput, nameInput.value.trim(), [first.warning]);
-    return plain('', 'Write the reason to continue above the maximum dose.', 'សូមសរសេរមូលហេតុ ដើម្បីបន្តលើសកម្រិតថ្នាំអតិបរមា។');
-  }
-
   document.addEventListener('change', (event) => {
     const field = event.target.closest?.(`${NAME}, ${DOSE}`);
-    if (field && (field.closest('#page3') || field.closest('#emr-discharge-rx-body'))) checkPrescription(field);
+    if (field && field.closest('#page3')) checkPrescription(field);
   });
 
   // A new record gets its key on the first save; overrides made before are sent then.
@@ -517,13 +381,8 @@
     for (const entry of pendingOverrides.splice(0)) api('/api/prescribing-overrides', { patientKey: key, ...entry }).catch(() => {});
   });
 
-  document.addEventListener('emr:patient-loaded', () => window.setTimeout(() => {
-    wrapChart();
-    loadAdministrations();
-    // Prescribers: the approved limits and the medicine list are ready before the first save.
-    if (isPrescriber()) { loadTables(); window.BorkeoMedicine?.ensureData?.(); }
-  }, 0));
+  document.addEventListener('emr:patient-loaded', () => window.setTimeout(() => { wrapChart(); loadAdministrations(); }, 0));
   window.addEventListener('borkeo-language-change', decorateAll);
   wrapChart();
-  window.EmrMedicationSafety = { loadAdministrations, warningsFor, validateDoses, decorateAll, administrations: () => administrations };
+  window.EmrMedicationSafety = { loadAdministrations, warningsFor, decorateAll, administrations: () => administrations };
 })();

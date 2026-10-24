@@ -6,14 +6,13 @@
 <title>Drug safety tables</title>
 <link rel="stylesheet" href="/public/emr-session.css?v=3700">
 <link rel="stylesheet" href="/public/responsive-layout.css?v=3045">
-<link rel="stylesheet" href="/public/drug-safety.css?v=4250">
+<link rel="stylesheet" href="/public/drug-safety.css?v=4120">
 <script src="/public/emr-session.js?v=3700" defer></script>
-<script src="/public/drug-safety.js?v=4250" defer></script>
+<script src="/public/drug-safety.js?v=4120" defer></script>
 </head>
 <body class="ds-page">
 <!-- v41.2: drug interaction and maximum-dose tables used by the prescribing warnings.
-     v42.5: maximum doses of the Essential Medicines List (adult and child, per kg);
-     the administrator edits, the Head of Pharmacy or the Director approves each line. -->
+     Empty until a doctor-approved list is entered (docs/clinical-review.md). -->
 <main class="ds-shell">
   <div data-session-host></div>
   <header class="ds-hero">
@@ -21,31 +20,6 @@
     <p data-new-text="drugSafety.intro">Used for the prescribing warnings. Only an administrator can change them. Enter only lists approved by a doctor.</p>
   </header>
   <p id="ds-status" role="status" aria-live="polite"></p>
-  <section class="ds-panel" aria-labelledby="ds-dose-title">
-    <h2 id="ds-dose-title" data-new-text="drugSafety.doseTable">Maximum doses (Essential Medicines List)</h2>
-    <p class="ds-intro" data-new-text="drugSafety.doseIntro">Only approved lines are used by the prescribing check. The administrator edits values; the Head of Pharmacy or the Director approves or rejects each line.</p>
-    <div class="ds-filters">
-      <label><span data-new-text="drugSafety.filterSearch">Search medicine</span><input id="ds-filter-text" type="search" maxlength="100"></label>
-      <label><span data-new-text="drugSafety.filterStatus">Status</span><select id="ds-filter-status">
-        <option value="" data-new-text="drugSafety.all">All</option>
-        <option value="draft" data-new-text="drugSafety.statusDraft">Draft</option>
-        <option value="approved" data-new-text="drugSafety.statusApproved">Approved</option>
-        <option value="rejected" data-new-text="drugSafety.statusRejected">Rejected</option>
-      </select></label>
-      <label><span data-new-text="drugSafety.filterType">Check type</span><select id="ds-filter-type">
-        <option value="" data-new-text="drugSafety.all">All</option>
-        <option value="check" data-new-text="drugSafety.typeCheck">Checked</option>
-        <option value="protocol" data-new-text="drugSafety.typeProtocol">Protocol (guidance only)</option>
-        <option value="none" data-new-text="drugSafety.typeNone">No check</option>
-      </select></label>
-      <p class="ds-count"><strong id="ds-count">0</strong> <span data-new-text="drugSafety.shown">lines shown</span></p>
-    </div>
-    <div class="ds-table-wrap"><table class="ds-table ds-dose-table" id="ds-dose-limits"></table></div>
-  </section>
-  <section class="ds-panel" aria-labelledby="ds-unconverted-title">
-    <h2 id="ds-unconverted-title" data-new-text="drugSafety.unconverted">Doses the check could not convert</h2>
-    <div class="ds-table-wrap"><table class="ds-table" id="ds-unconverted"></table></div>
-  </section>
   <section class="ds-panel" aria-labelledby="ds-interactions-title">
     <h2 id="ds-interactions-title" data-new-text="drugSafety.interactions">Drug interactions</h2>
     <div class="ds-table-wrap"><table class="ds-table" id="ds-interactions"></table></div>
@@ -58,7 +32,7 @@
     </form>
   </section>
   <section class="ds-panel" aria-labelledby="ds-max-title">
-    <h2 id="ds-max-title" data-new-text="drugSafety.otherMaxDoses">Other maximum doses (entered by hand)</h2>
+    <h2 id="ds-max-title" data-new-text="drugSafety.maxDoses">Maximum doses</h2>
     <div class="ds-table-wrap"><table class="ds-table" id="ds-max-doses"></table></div>
     <form class="ds-form" id="ds-max-form" hidden>
       <label><span data-new-text="drugSafety.drug">Medicine</span><input name="drug" required maxlength="200"></label>

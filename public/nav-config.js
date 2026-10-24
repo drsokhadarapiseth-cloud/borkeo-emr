@@ -31,10 +31,6 @@
     { id: 'register', group: 'care', href: '/emr?view=register', icon: 'icon-user-plus', label: 'ចុះឈ្មោះអ្នកជំងឺ', labelEn: 'Register patient', access: ['REGISTRATION'] },
     { id: 'triage', group: 'care', href: '/triage', icon: 'icon-activity', label: 'បញ្ជីរង់ចាំទ្រីយ៉ា', labelEn: 'Triage queue', access: ['TRIAGE'] },
     { id: 'opd-queue', group: 'care', href: '/opd-queue', icon: 'icon-stethoscope', label: 'បញ្ជីរង់ចាំ OPD', labelEn: 'OPD queue', access: ['DOCTOR@opd'] },
-    // v42.6: the midwife's outpatient queue (ANC, PNC, family planning, cervical screening, vaccination)
-    // and the safe-abortion outpatients of the Gynecology ward.
-    { id: 'maternal-queue', group: 'care', href: '/maternal', icon: 'icon-heart-pulse', label: 'បញ្ជីអ្នកជំងឺសេវាមាតា', labelEn: 'Maternal services queue', access: ['MIDWIFE'] },
-    { id: 'gynecology-outpatients', group: 'care', href: '/maternal?kind=gynecology', icon: 'icon-heart-pulse', label: 'រំលូតកូនដោយសុវត្ថិភាព', labelEn: 'Safe abortion', access: ['DOCTOR@gynecology', 'CHIEF_WARD@gynecology'] },
     { id: 'medical-record', group: 'care', href: '/emr', icon: 'icon-clipboard', label: 'កំណត់ត្រាវេជ្ជសាស្ត្រ', labelEn: 'Medical record', access: ['DOCTOR@!opd'] },
     { id: 'departments', group: 'care', href: '/departments', icon: 'icon-bed', label: 'គ្រប់គ្រងផ្នែក និងគ្រែ', labelEn: 'Wards and beds', access: [...WARD_STAFF, ...MGMT] },
     { id: 'patient-list', group: 'care', href: '/patient-list', icon: 'icon-users', label: 'បញ្ជីអ្នកជំងឺ', labelEn: 'Patient list', access: ALL_ROLES },

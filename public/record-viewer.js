@@ -2,33 +2,9 @@
 (async function managementRecordViewer() {
   const $=id=>document.getElementById(id),escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const key=new URLSearchParams(location.search).get('patient');
-  let encounters=[],kind='ipd',generation=0,scope='medical';
-  const language = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'kh';
-  const copy = language === 'en' ? {visit:'Visit date',department:'Department',exit:'Exit date',payment:'Payment status',edit:'Edit',request:'Request correction',active:'Active visit',paid:'Paid',unpaid:'Unpaid',pending:'Pending',close:'Close'} :
-    {visit:'កាលបរិច្ឆេទពិនិត្យ',department:'ផ្នែក',exit:'កាលបរិច្ឆេទចេញ',payment:'ស្ថានភាពបង់ប្រាក់',edit:'កែប្រែព័ត៌មាន',request:'ស្នើសុំកែប្រែ',active:'មិនទាន់ចេញពីពេទ្យ',paid:'បានបង់ប្រាក់',unpaid:'មិនទាន់បង់ប្រាក់',pending:'កំពុងរង់ចាំ',close:'បិទ'};
-  function visitList(){
-    const host=document.createElement('section');host.className='viewer-visits';
-    host.innerHTML='<table><thead><tr>'+[copy.visit,copy.department,copy.exit,copy.payment,''].map(label=>'<th>'+escape(label)+'</th>').join('')+'</tr></thead><tbody>'+encounters.map(entry=>{
-      const patient=entry.patient,access=patient.recordAccess||{},payment=patient.paymentStatus||{};
-      const paid=payment.paid===true||['PAID','FULLY_PAID','HEF_PAID','NSSF_PAID','FULL_WAIVER','EXEMPT'].includes(payment.code);
-      const status=(language==='en'?payment.labelEn:payment.labelKh)||(paid?copy.paid:['UNPAID','NOT_PAID'].includes(payment.code)?copy.unpaid:copy.pending);
-      return '<tr><td><button type="button" data-visit="'+escape(patient.patientKey)+'">'+escape(date(patient.entryDate)+(patient.entryTime?' '+patient.entryTime:'')+' · '+(patient.caseNumber||''))+'</button></td><td>'+escape(patient.departmentNameKh||patient.departmentCode||'—')+'</td><td>'+escape(patient.dischargeDate?date(patient.dischargeDate):copy.active)+'</td><td>'+escape(status)+'</td><td>'+
-        (access.canEdit||access.requiresApproval?'<a target="_blank" rel="noopener" href="/emr?'+escape(new URLSearchParams({patient:patient.patientKey,view:access.view,mode:'edit'}).toString())+'">'+escape(access.requiresApproval?copy.request:copy.edit)+'</a>':'')+'</td></tr>';
-    }).join('')+'</tbody></table>';
-    host.addEventListener('click',event=>{const button=event.target.closest('[data-visit]');if(!button)return;const entry=encounters.find(item=>item.patient.patientKey===button.dataset.visit);if(!entry)return;choose(scope==='triage'?'triage':entry.patient.serviceMode==='opd'?'opd':'ipd',entry.patient.patientKey);});
-    document.querySelector('.viewer-toolbar').after(host);
-  }
+  let encounters=[],kind='ipd',generation=0;
   const date=value=>value?String(value).replace('T',' ').slice(0,19):'—';
   const readArray=value=>{try{const list=typeof value==='string'?JSON.parse(value):value;return Array.isArray(list)?list:[]}catch{return []}};
-  function imagingHtml(orders){
-    const title=language==='en'?'Imaging results':'លទ្ធផលរូបភាពវេជ្ជសាស្ត្រ';
-    const modalities={XRAY:'ថតកាំរស្មី',ULTRASOUND:'អេកូសាស្ត្រ',CT:'ថតស្កេន',MRI:'ថតអនុភាពម៉ាញេទិក'};
-    return '<section class="viewer-imaging"><h3>'+title+'</h3>'+orders.filter(order=>order.modality!=='LAB').map(order=>{
-      const result=order.result||{};
-      return '<article><h4>'+escape(language==='en'?order.modality:modalities[order.modality]||title)+' · '+escape(order.accessionNumber)+'</h4><p>'+escape(order.releasedAt?(language==='en'?'Verified result':'បានផ្ទៀងផ្ទាត់លទ្ធផល'):copy.pending)+'</p>'+[result.findings,result.conclusion,result.recommendation].filter(Boolean).map(value=>'<p>'+escape(value)+'</p>').join('')+
-        (order.attachments||[]).map(file=>'<p><a target="_blank" rel="noopener" href="/api/paraclinic/attachments/'+encodeURIComponent(file.id)+'?history=1">'+escape(file.filename)+'</a></p>').join('')+'</article>';
-    }).join('')+'</section>';
-  }
   function labHtml(orders){
     const labs=orders.filter(order=>order.modality==='LAB');
     return '<section class="viewer-lab"><h3>លទ្ធផលមន្ទីរពិសោធន៍</h3>'+(labs.length?labs.map(order=>{
@@ -81,12 +57,11 @@
         };check();
       },{once:true});
     });
-    const view=scope==='triage'?'triage':kind==='opd'?'opd':'medical';
-    frame.src='/emr?'+new URLSearchParams({patient:entry.patient.patientKey,view,mode:'view',recordPage:view});
+    frame.src='/emr?'+new URLSearchParams({patient:entry.patient.patientKey,view:kind==='opd'?'opd':'medical',mode:'view',recordPage:kind==='opd'?'opd':'medical'});
     document.querySelectorAll('.viewer-report-source').forEach(item=>item.remove());document.body.append(frame);
     try{return await loaded}catch(error){frame.remove();throw error}
   }
-  function matches(entry){return scope==='triage' || entry.patient.serviceMode===kind || kind==='opd'&&Boolean(entry.patient.data?.['system:opdEncounterAt']);}
+  function matches(entry){return entry.patient.serviceMode===kind || kind==='opd'&&Boolean(entry.patient.data?.['system:opdEncounterAt']);}
   async function render(){
     const ticket=++generation,entry=encounters.find(item=>item.patient.patientKey===$('viewer-encounter').value);if(!entry)return;
     $('viewer-status').textContent='កំពុងរៀបចំកំណត់ត្រាសម្រាប់មើល…';$('viewer-document').replaceChildren();$('viewer-pages').replaceChildren();
@@ -94,7 +69,6 @@
       const frame=await loadSource(entry,ticket);if(ticket!==generation){frame.remove();return;}
       const doc=frame.contentDocument;
       const specs=kind==='ipd'?[['ព័ត៌មានចុះឈ្មោះ','page1'],['ព័ត៌មានទ្រីយ៉ា','page2'],['កំណត់ត្រាវេជ្ជសាស្ត្រ និងលទ្ធផលមន្ទីរពិសោធន៍','sub_ipd'],['ការតាមដានប្រចាំថ្ងៃ និងលទ្ធផលមន្ទីរពិសោធន៍','daily'],['ដំណើរការថែទាំ','sub_nursing'],['លិខិតចេញពីមន្ទីរពេទ្យ','emr-discharge-view'],['សង្ខេបករណីសម្រាកពេទ្យ','resume']]:[['កំណត់ត្រាពិគ្រោះក្រៅ និងលទ្ធផលមន្ទីរពិសោធន៍','sub_opd']];
-      if(scope==='triage')specs.splice(0,specs.length,['ព័ត៌មានទ្រីយ៉ា','page2']);
       for(const [index,[title,id]] of specs.entries()){
         const page=document.createElement('section');page.className='viewer-page';page.id='record-page-'+(index+1);
         const heading=document.createElement('h2');heading.textContent='ទំព័រទី '+(index+1)+' · '+title;page.append(heading);
@@ -103,7 +77,7 @@
           const paper=document.createElement('iframe');paper.title=title;paper.setAttribute('sandbox','allow-same-origin');
           paper.addEventListener('load',()=>{try{const resize=()=>{paper.style.height=Math.max(paper.contentDocument.documentElement.scrollHeight,paper.contentDocument.body.scrollHeight,500)+'px'};resize();paper.contentDocument.fonts?.ready.then(resize);new ResizeObserver(resize).observe(paper.contentDocument.body);}catch{}});
           paper.srcdoc=staticPage(doc,snapshot(doc.getElementById(id)));page.append(paper);
-          if(id==='sub_ipd'||id==='sub_opd'){const labs=document.createElement('div');labs.innerHTML=labHtml(entry.orders)+imagingHtml(entry.orders);page.append(labs);}
+          if(id==='sub_ipd'||id==='sub_opd'){const labs=document.createElement('div');labs.innerHTML=labHtml(entry.orders);page.append(labs);}
         }
         $('viewer-document').append(page);
         const jump=document.createElement('button');jump.type='button';jump.textContent='ទំព័រទី '+(index+1);jump.onclick=()=>page.scrollIntoView({block:'start'});$('viewer-pages').append(jump);
@@ -111,14 +85,12 @@
       frame.remove();$('viewer-status').textContent='មើលបានតែប៉ុណ្ណោះ។ កំណត់ត្រាពិនិត្យ៖ '+date(entry.patient.entryDate)+' · '+(entry.patient.caseNumber||'');
     }catch(error){if(ticket===generation)$('viewer-status').textContent=error.message;}
   }
-  function choose(next,selected=key){kind=next;const options=encounters.filter(matches);$('viewer-encounter').replaceChildren(...options.map(entry=>new Option(date(entry.patient.entryDate)+' · '+(entry.patient.caseNumber||entry.patient.healthId),entry.patient.patientKey)));
-    if(options.some(entry=>entry.patient.patientKey===selected))$('viewer-encounter').value=selected;
+  function choose(next){kind=next;const options=encounters.filter(matches);$('viewer-encounter').replaceChildren(...options.map(entry=>new Option(date(entry.patient.entryDate)+' · '+(entry.patient.caseNumber||entry.patient.healthId),entry.patient.patientKey)));
+    if(options.some(entry=>entry.patient.patientKey===key))$('viewer-encounter').value=key;
     document.querySelectorAll('[data-view-kind]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.viewKind===kind)));
     if(options.length)render();else{$('viewer-document').replaceChildren();$('viewer-pages').replaceChildren();$('viewer-status').textContent='មិនមានកំណត់ត្រាប្រភេទនេះសម្រាប់អ្នកជំងឺនេះទេ។'}
   }
   $('viewer-print').onclick=()=>window.print();$('viewer-encounter').onchange=render;
   document.querySelectorAll('[data-view-kind]').forEach(button=>button.onclick=()=>choose(button.dataset.viewKind));
-  try{const response=await fetch('/api/record-viewer?'+new URLSearchParams({patientKey:key||''}),{cache:'no-store',credentials:'same-origin'});const result=await response.json();if(!response.ok)throw Error(result.error);encounters=result.encounters||[];scope=result.scope||'medical';
-    document.querySelectorAll('[data-view-kind]').forEach(button=>{button.hidden=scope==='triage'});visitList();
-    const initial=encounters.find(item=>item.patient.patientKey===key);choose(scope==='triage'?'triage':initial?.patient.serviceMode==='opd'?'opd':'ipd');}catch(error){$('viewer-status').textContent=error.message;}
+  try{const response=await fetch('/api/record-viewer?'+new URLSearchParams({patientKey:key||''}),{cache:'no-store',credentials:'same-origin'});const result=await response.json();if(!response.ok)throw Error(result.error);encounters=result.encounters||[];const initial=encounters.find(item=>item.patient.patientKey===key);choose(initial?.patient.serviceMode==='opd'?'opd':'ipd');}catch(error){$('viewer-status').textContent=error.message;}
 })();

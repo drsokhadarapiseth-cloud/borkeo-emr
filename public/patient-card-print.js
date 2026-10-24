@@ -238,12 +238,11 @@
             busy=false;if(el('card_print_button'))el('card_print_button').disabled=false;
         } catch(error) {cleanup();status(error.message,true);}
     }
-    function openPatientCardPrintModal(patient) {
+    function openPatientCardPrintModal() {
         const dialog=el('patient_card_dialog');if(!dialog)return;
         const fullName=[value('web_last_name'),value('web_first_name')].filter(Boolean).join(' ')||'—';
         const age=value('web_age');
         const data={card_lbl_name:fullName,card_lbl_sex:document.querySelector('input[name="sex_radio"]:checked')?.value||'—',card_lbl_age:age?(age.includes('ឆ្នាំ')?age:age+' ឆ្នាំ'):'—',card_lbl_dob:value('web_dob')||'—',card_lbl_phone:value('web_phone')||'—',card_lbl_address:['web_village','web_commune','web_district','web_province'].map(value).filter(Boolean).join(', ')||'—',card_lbl_id:value('web_health_id')||'—'};
-        if (patient?.healthId) data.card_lbl_id = patient.healthId;
         Object.entries(data).forEach(([id,text])=>{if(el(id))el(id).textContent=text;});
         openedSignature=patientSignature();
         state.qrText=data.card_lbl_id==='—'?'':data.card_lbl_id;
@@ -255,18 +254,6 @@
     window.patientCardState=state;
     window.patientCardPrintStudio={normalizeConfig,layout,printCss};
     window.openPatientCardPrintModal = openPatientCardPrintModal;
-    // Keep registration on screen until staff finish previewing the saved ID.
-    // Printing remains an explicit action inside the existing card dialog.
-    window.previewRegisteredPatientCard = function(patient) {
-        const dialog = el('patient_card_dialog');
-        if (!dialog || !patient?.healthId) return Promise.resolve();
-        return new Promise(resolve => {
-            const closed = () => { dialog.removeEventListener('close', closed); resolve(); };
-            dialog.addEventListener('close', closed);
-            try { openPatientCardPrintModal(patient); }
-            catch (error) { closed(); status(error.message, true); }
-        });
-    };
     window.updatePatientCardPreview = updatePatientCardPreview;
     window.printPatientCards = printPatientCards;
     window.renderCardQR = renderCardQR;

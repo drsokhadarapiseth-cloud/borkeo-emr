@@ -1,10 +1,8 @@
-// v42.5 browser check (explicit, like tests/v378-encounter-browser.mjs; not part of npm test):
-//   node --test tests/v425-medicine-list-browser.mjs
-// (v42.3 file, updated for the two-step search, the patient filter and the
-// maximum dose check.) Synthetic patients only, in-memory database: an adult
-// (IPD admission, nursing chart, daily note, discharge), a 5-year-old (OPD) and a
-// pregnant woman (Obstetric ward). Type "par", choose the name, then the form
-// with the keyboard, add a row with "+", type a dose, save, reopen, print.
+// v42.3 browser check (explicit, like tests/v378-encounter-browser.mjs; not part of npm test):
+//   node --test tests/v423-medicine-list-browser.mjs
+// Synthetic patients only, in-memory database. For the OPD prescription, the IPD
+// admission prescription, the daily note and the discharge medicines: type "par",
+// choose with the keyboard, add a row with "+", type a dose, save, reopen, print.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -21,7 +19,7 @@ async function openBrowser() {
     .find(file => file && fs.existsSync(file));
   assert.ok(executable, 'Set EMR_TEST_BROWSER to run this explicit Chromium test.');
   const debugPort = 9400 + Math.floor(Math.random() * 400);
-  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'borkeo-v425-'));
+  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'borkeo-v423-'));
   const child = spawn(executable, ['--headless=new', '--disable-gpu', '--no-first-run', `--remote-debugging-port=${debugPort}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
   let url;
   for (let i = 0; i < 80 && !url; i++) {
@@ -58,7 +56,7 @@ async function openBrowser() {
     throw new Error(`Timed out waiting for ${label}`);
   };
   const key = async (keyName, code) => {
-    const keyCode = { ArrowDown: 40, ArrowUp: 38, Enter: 13, Escape: 27, Backspace: 8 }[keyName];
+    const keyCode = { ArrowDown: 40, ArrowUp: 38, Enter: 13, Escape: 27 }[keyName];
     await send('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: keyName, code: code || keyName, windowsVirtualKeyCode: keyCode });
     await send('Input.dispatchKeyEvent', { type: 'keyUp', key: keyName, code: code || keyName, windowsVirtualKeyCode: keyCode });
   };
@@ -67,7 +65,7 @@ async function openBrowser() {
   return { send, evaluate, waitFor, key, type, close, state };
 }
 
-test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note and discharge prescriptions', { timeout: 400000 }, async () => {
+test('v42.3 medicine list in the OPD, IPD admission, daily note and discharge prescriptions', { timeout: 300000 }, async () => {
   const app = createEmrServer({ demoMode: true, databasePath: ':memory:', host: '127.0.0.1', port: 0, appOrigin: 'http://127.0.0.1:0', nodeEnv: 'test' });
   await new Promise(resolve => app.server.listen(0, '127.0.0.1', resolve));
   const origin = `http://127.0.0.1:${app.server.address().port}`;
@@ -97,45 +95,29 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
     // Capture what would be printed instead of opening the print window.
     await browser.evaluate(`window.__printed=[];window.printEmrReport=async(o)=>{window.__printed.push((o.selectors||[]).map(s=>[...document.querySelectorAll(s)].map(e=>e.innerText).join('\\n')).join('\\n'));};true`);
   };
-  // Type "par" into a name box (the last match of the selector). Step 1 must show
-  // the one name Paracetamol; Enter opens step 2 (forms for this patient), where
-  // the form containing `form` (default: the 2nd line) is chosen with the keyboard.
-  // Returns { label, names, forms }.
-  const choosePar = async (nameSelector, form = null, query = 'par', expectedName = 'Paracetamol') => {
+  // Type "par" into a name box (the last match of the selector), choose the
+  // 2nd list entry with the keyboard.
+  const choosePar = async (nameSelector) => {
     await browser.evaluate(`(()=>{const el=[...document.querySelectorAll(${JSON.stringify(nameSelector)})].at(-1);el.scrollIntoView({block:'center'});el.focus();el.value='';return true})()`);
-    await browser.type(query);
+    await browser.type('par');
     try {
-      await browser.waitFor(`document.querySelectorAll('.bk-med-list .bk-med-name, .bk-med-list .bk-med-form').length>0`, 'medicine list');
+      await browser.waitFor(`document.querySelectorAll('.bk-med-list .bk-med-item').length>1`, 'medicine list');
     } catch (error) {
-      const why = await browser.evaluate(`(()=>{const el=[...document.querySelectorAll(${JSON.stringify(nameSelector)})].at(-1);return JSON.stringify({value:el.value,focused:document.activeElement===el,list:document.querySelectorAll('.bk-med-list').length,lib:Boolean(window.BorkeoMedicine)})})()`);
+      const why = await browser.evaluate(`(()=>{const el=[...document.querySelectorAll(${JSON.stringify(nameSelector)})].at(-1);return JSON.stringify({value:el.value,focused:document.activeElement===el,active:document.activeElement?.outerHTML?.slice(0,100),list:document.querySelectorAll('.bk-med-list').length,lib:Boolean(window.BorkeoMedicine),search:window.BorkeoMedicine?window.BorkeoMedicine.search('par').length:-1})})()`);
       throw new Error(`${error.message}: ${why}`);
     }
-    const names = await browser.evaluate(`[...document.querySelectorAll('.bk-med-list .bk-med-name .bk-med-label')].map(e=>e.innerText)`);
-    assert.deepEqual(names, [expectedName], `step 1 shows the name once (${query})`);
+    const second = await browser.evaluate(`document.querySelectorAll('.bk-med-list .bk-med-item')[1].querySelector('.bk-med-label').innerText`);
+    await browser.key('ArrowDown');
     await browser.key('Enter');
-    await browser.waitFor(`document.querySelectorAll('.bk-med-list .bk-med-form').length>0 || !document.querySelector('.bk-med-list')`, 'step 2');
-    const forms = await browser.evaluate(`[...document.querySelectorAll('.bk-med-list .bk-med-form .bk-med-label')].map(e=>e.innerText)`);
-    if (forms.length) {
-      // Backspace returns to the names; Enter opens the forms again.
-      await browser.key('Backspace');
-      await browser.waitFor(`document.querySelectorAll('.bk-med-list .bk-med-name').length===1`, 'back to step 1');
-      await browser.key('Enter');
-      await browser.waitFor(`document.querySelectorAll('.bk-med-list .bk-med-form').length>0`, 'step 2 again');
-      const index = form === null ? 1 : forms.findIndex(text => text.split('\n')[0] === form);
-      assert.ok(index >= 0, `form ${form} offered: ${forms.join(' | ')}`);
-      for (let i = 0; i < index; i++) await browser.key('ArrowDown');
-      await browser.key('Enter');
-    }
     await browser.waitFor(`!document.querySelector('.bk-med-list')`, 'list closed');
-    const label = await browser.evaluate(`[...document.querySelectorAll(${JSON.stringify(nameSelector)})].at(-1).value`);
-    return { label, names, forms: forms.map(text => text.split('\n')[0]) };
+    return second;
   };
   const rowState = (rowSelector, prefix) => browser.evaluate(`(()=>{const rows=[...document.querySelectorAll(${JSON.stringify(rowSelector)})];return rows.map(r=>{
       const q=s=>r.querySelector(s);const name=q(${JSON.stringify(prefix ? `.${prefix}-name` : '[data-med="name"]')}),dose=q(${JSON.stringify(prefix ? `.${prefix}-dose` : '[data-med="doseAmount"]')}),
       unit=q(${JSON.stringify(prefix ? `.${prefix}-unit` : '[data-med="unit"]')}),route=q(${JSON.stringify(prefix ? `.${prefix}-route` : '[data-med="route"]')}),total=q(${JSON.stringify(prefix ? `.${prefix}-total` : '[data-med="total"]')});
       return {name:name?.value||'',cms:name?.dataset.cmsCode||'',dose:dose?.value??'',unit:unit?.value||'',route:route?.value??'',total:total?.value??'',focused:document.activeElement===dose,
         routeMessage:r.querySelector('.medication-route-message')?.textContent||''}})})()`);
-  const labelOf = choice => choice.label.trim();
+  const labelOf = text => text.trim();
   // A record may open in view mode; the doctor presses Edit (v37.8).
   const ensureEditMode = async (controlSelector) => {
     const editable = `(()=>{const c=document.querySelector(${JSON.stringify(controlSelector)});return Boolean(c&&!c.disabled&&!c.readOnly)})()`;
@@ -164,14 +146,6 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
     const item = catalogue.find(entry => entry.label === label);
     return { 'ក្រាម': 'g', 'ដង': 'បាញ់' }[item.unit] || item.unit;
   };
-  const doseNote = rowSelector => browser.evaluate(`[...document.querySelectorAll(${JSON.stringify(rowSelector)})].map(r=>r.querySelector('.medication-dose-note')?.textContent||'')`);
-  const warningOpen = () => browser.evaluate(`Boolean(document.querySelector('#safety-warning-dialog[open]'))`);
-  const warningText = () => browser.evaluate(`document.querySelector('#safety-warning-dialog[open]')?.innerText||''`);
-  // Writes the reason in the open warning and continues.
-  const continueWithReason = async reason => {
-    await browser.evaluate(`(()=>{const d=document.querySelector('#safety-warning-dialog[open]');d.querySelector('[name="safety-reason"]').value=${JSON.stringify(reason)};d.querySelector('[data-safety-continue]').click();return true})()`);
-    await browser.waitFor(`!document.querySelector('#safety-warning-dialog[open]')`, 'warning closed');
-  };
 
   try {
     // ---------- Synthetic patients ----------
@@ -184,10 +158,6 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
       data: { ...registrationFields('V423-IPD', 'Ipd', '45'), 'system:triageStatus': 'COMPLETED', 'system:admissionStatus': 'admitted', 'system:currentWardCode': 'medicine',
         'scope:medical:id:ipd_first_exam_date': today, 'system:initialIpdMedications': JSON.stringify(sixLines) } });
 
-    // The maximum dose (approved before the record opens) of paracetamol is approved by the Head of Pharmacy.
-    const pharmacist = await api('pharmacy');
-    const doseLine = (await (await fetch(origin + '/api/drug-safety', { headers: pharmacist })).json()).maxDoses.find(row => row.doseKey === 'paracetamol|ORAL');
-    assert.equal((await fetch(origin + `/api/drug-safety/max-doses/${doseLine.id}/approve`, { method: 'POST', headers: pharmacist, body: '{}' })).status, 200);
     // ---------- IPD admission prescription ----------
     await useAccount('doctor_medicine');
     await open(`/emr?patient=${encodeURIComponent(ipdKey)}&view=medical`, `document.querySelectorAll('#rx_tbody tr.rx-main-row').length>=6`);
@@ -196,31 +166,15 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
     assert.deepEqual([rows[0].name, rows[0].unit, rows[0].route, rows[0].dose], ['Old saved line 1', 'mg', 'po', '1'], 'old line: unit shown as mg, route PO, dose 1');
     await browser.evaluate(`addRxRow(true);true`);
     rows = await rowState('#rx_tbody tr.rx-main-row', 'rx');
-    assert.deepEqual([rows[6].dose, rows[6].route, rows[6].total], ['', '', ''], '"+" row: blank number, route and total (no NaN)');
-    const ipdChoice = await choosePar('#rx_tbody tr.rx-main-row .rx-name', 'AA0411 · Tablet · 500 mg');
-    assert.ok(!ipdChoice.forms.some(form => /\[c\]/.test(form)), 'adult: child-only lines (marked [c]) hidden');
-    const ipdLabel = labelOf(ipdChoice);
+    assert.deepEqual([rows[6].dose, rows[6].route, rows[6].total], ['', '', '0'], '"+" row: blank number and route, total 0 (no NaN)');
+    const ipdLabel = labelOf(await choosePar('#rx_tbody tr.rx-main-row .rx-name'));
     rows = await rowState('#rx_tbody tr.rx-main-row', 'rx');
     let chosen = rows.at(-1);
     assert.equal(chosen.name, ipdLabel, 'name box gets CMS code-Name-Form-Strength');
     assert.equal(chosen.unit, expectedUnit(ipdLabel));
     assert.deepEqual([chosen.dose, chosen.route, chosen.focused], ['', '', true], 'number cleared and focused; route not filled');
     assert.notEqual(chosen.total, 'NaN');
-    // 4 tablets of 500 mg TID: red alert (2 g per dose, 6 g per day).
-    await browser.type('4');
-    await browser.evaluate(`(()=>{const t=[...document.querySelectorAll('#rx_tbody tr.rx-main-row .med-schedule-type')].at(-1);t.value='tid';t.dispatchEvent(new Event('change',{bubbles:true}));handleMedicationScheduleChange(t);return true})()`);
-    await browser.waitFor(`Boolean(document.querySelector('#safety-warning-dialog[open]'))`, 'red maximum dose alert');
-    assert.match(await warningText(), /2000 mg/);
-    assert.match(await warningText(), /6000 mg/);
-    // Closed without a reason: the save is refused and the alert opens again.
-    await browser.evaluate(`document.querySelector('#safety-warning-dialog').close();true`);
-    await browser.evaluate(`(()=>{const s=[...document.querySelectorAll('#rx_tbody tr.rx-main-row .rx-route')].at(-1);s.value='po';s.dispatchEvent(new Event('change',{bubbles:true}));return true})()`);
-    assert.equal(await fillRequired(), true, 'required record fields filled');
-    assert.equal(await browser.evaluate(`window.savePatientRecord()`), false, 'above the maximum without a reason: not saved');
-    assert.equal(await warningOpen(), true, 'the alert opens again on save');
-    await continueWithReason('Synthetic evidence: loading dose');
-    // The route is chosen again below (the save without a route is refused first).
-    await browser.evaluate(`(()=>{const s=[...document.querySelectorAll('#rx_tbody tr.rx-main-row .rx-route')].at(-1);s.value='';s.dispatchEvent(new Event('change',{bubbles:true}));return true})()`);
+    await browser.type('2');
     // Save without a route: refused with the Khmer message next to the row.
     assert.equal(await fillRequired(), true, 'required record fields filled');
     assert.equal(await browser.evaluate(`window.savePatientRecord()`), false);
@@ -228,7 +182,6 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
     assert.equal(rows.at(-1).routeMessage, 'សូមជ្រើសរើសផ្លូវប្រើថ្នាំ');
     assert.equal(rows[0].routeMessage, '', 'rows with a route are fine; empty rows are ignored');
     await browser.evaluate(`(()=>{const s=[...document.querySelectorAll('#rx_tbody tr.rx-main-row .rx-route')].at(-1);s.value='po';s.dispatchEvent(new Event('change',{bubbles:true}));const t=[...document.querySelectorAll('#rx_tbody tr.rx-main-row .med-schedule-type')].at(-1);t.value='bid';handleMedicationScheduleChange(t);return true})()`);
-    assert.equal(await warningOpen(), false);
     assert.equal(await browser.evaluate(`window.savePatientRecord()`), true, 'saved once a route is chosen');
     let stored = JSON.parse(JSON.parse(db.findPatient(ipdKey).record_json)['system:initialIpdMedications']);
     assert.equal(stored.length, 7);
@@ -238,8 +191,7 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
       ['Old saved line 1', 'po', '1', '3', '6', 'mg', false]);
     const ipdItem = catalogue.find(entry => entry.label === ipdLabel);
     assert.equal(stored[6].cmsCode || '', ipdItem.code, 'cmsCode saved with the chosen medicine');
-    assert.equal(stored[6].doseAmount, '4');
-    assert.equal(stored[6].doseOverrideReason, 'Synthetic evidence: loading dose', 'the reason is saved with the line');
+    assert.equal(stored[6].doseAmount, '2');
     await browser.evaluate(`window.printPrescription('ipd')`);
     const ipdPrint = await browser.evaluate(`window.__printed.join('\\n')`);
     assert.match(ipdPrint, new RegExp(ipdItem.name.replace(/[()]/g, '.')), 'printed prescription has the medicine');
@@ -247,15 +199,7 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
     // Reopen.
     await open(`/emr?patient=${encodeURIComponent(ipdKey)}&view=medical`, `document.querySelectorAll('#rx_tbody tr.rx-main-row').length>=7`);
     rows = await rowState('#rx_tbody tr.rx-main-row', 'rx');
-    assert.deepEqual([rows[6].name, rows[6].cms, rows[6].dose, rows[6].route], [ipdLabel, ipdItem.code, '4', 'po'], 'reopened with name, CMS code, dose and route');
-    // Adult man: oxytocin (women only) is not offered.
-    await browser.evaluate(`(()=>{const el=[...document.querySelectorAll('#rx_tbody tr.rx-main-row .rx-name')].at(-1);el.focus();el.value='';return true})()`);
-    await browser.type('oxyt');
-    await browser.waitFor(`Boolean(document.querySelector('.bk-med-list .bk-med-empty'))`, 'no match for a man');
-    assert.equal(await browser.evaluate(`document.querySelector('.bk-med-list .bk-med-empty').innerText`), 'រកមិនឃើញឱសថ');
-    await browser.key('Escape');
-    await browser.evaluate(`(()=>{const el=[...document.querySelectorAll('#rx_tbody tr.rx-main-row .rx-name')].at(-1);el.value='';el.dispatchEvent(new Event('input',{bubbles:true}));return true})()`);
-    await browser.key('Escape');
+    assert.deepEqual([rows[6].name, rows[6].cms, rows[6].dose, rows[6].route], [ipdLabel, ipdItem.code, '2', 'po'], 'reopened with name, CMS code, dose and route');
 
     // ---------- Nursing medication chart (MAR) ----------
     await useAccount('nurse_medicine');
@@ -313,9 +257,6 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
     rows = await rowState('#emr-discharge-rx-body tr', '');
     assert.deepEqual([rows.length, rows[1].route, rows[1].dose], [2, '', ''], '"+" discharge row: blank route and number');
     const dischargeLabel = labelOf(await choosePar('#emr-discharge-rx-body tr [data-med="name"]'));
-    // v42.5: discharge medicines are checked too: a second paracetamol line is a duplicate.
-    await browser.waitFor(`Boolean(document.querySelector('#safety-warning-dialog[open] .safety-duplicate'))`, 'duplicate warning');
-    await continueWithReason('Synthetic: two forms on purpose');
     rows = await rowState('#emr-discharge-rx-body tr', '');
     assert.deepEqual([rows[1].name, rows[1].unit, rows[1].dose, rows[1].route, rows[1].focused], [dischargeLabel, expectedUnit(dischargeLabel), '', '', true]);
     await browser.type('1');
@@ -347,8 +288,8 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
     // ---------- OPD prescription ----------
     const opdKey = 'case:V423-OPD';
     const registration = await api('registration'), triage = await api('triage'), clerk = await api('clerk');
-    const opdReg = { caseNumber: 'V423-OPD', healthId: 'H-V423-OPD', firstName: 'Opd', lastName: 'Synthetic', fullName: 'Opd Synthetic', sex: 'ស្រី', age: '5', dateOfBirth: '', phone: '', equityCard: '', paymentType: 'CASH', departmentCode: '', departmentNameKh: '', departmentNameEn: '', serviceMode: '', entryDate: today, dischargeDate: '' };
-    assert.equal((await fetch(origin + '/api/patient-record', { method: 'PUT', headers: registration, body: JSON.stringify({ patientKey: opdKey, summary: opdReg, data: { ...registrationFields('V423-OPD', 'Opd', '5'), 'scope:registration:id:emr_pmrs_case_new': true } }) })).status, 200);
+    const opdReg = { caseNumber: 'V423-OPD', healthId: 'H-V423-OPD', firstName: 'Opd', lastName: 'Synthetic', fullName: 'Opd Synthetic', sex: 'ស្រី', age: '30', dateOfBirth: '', phone: '', equityCard: '', paymentType: 'CASH', departmentCode: '', departmentNameKh: '', departmentNameEn: '', serviceMode: '', entryDate: today, dischargeDate: '' };
+    assert.equal((await fetch(origin + '/api/patient-record', { method: 'PUT', headers: registration, body: JSON.stringify({ patientKey: opdKey, summary: opdReg, data: { ...registrationFields('V423-OPD', 'Opd', '30'), 'scope:registration:id:emr_pmrs_case_new': true } }) })).status, 200);
     const version = (await (await fetch(origin + `/api/patient-record?patientKey=${encodeURIComponent(opdKey)}`, { headers: registration })).json()).patient.version;
     const opdSummary = { ...opdReg, departmentCode: 'opd', departmentNameKh: 'ពិគ្រោះក្រៅ', departmentNameEn: 'OPD', serviceMode: 'opd' };
     assert.equal((await fetch(origin + '/api/patient-record', { method: 'PUT', headers: triage, body: JSON.stringify({ patientKey: opdKey, summary: opdSummary, expectedVersion: version, data: { 'scope:triage:id:p2_temp': '37.1' } }) })).status, 200);
@@ -362,22 +303,8 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
     await ensureEditMode('#opd_rx_tbody .orx-name');
     await browser.evaluate(`document.querySelector('[onclick="addOpdRxRow()"]').click();true`);
     assert.equal((await rowState('#opd_rx_tbody tr.orx-main-row', 'orx')).length, 4, '"+" adds a row');
-    // 5-year-old: the adult-only tablet line is hidden, the child syrup is offered.
-    const opdChoice = await choosePar('#opd_rx_tbody tr.orx-main-row:first-child .orx-name', 'AA0410 · Tablet · 250 mg');
-    assert.ok(!opdChoice.forms.includes('AA0410, AA0411 · Tablet · 500 mg'), 'adult-only line hidden for a child');
-    assert.ok(opdChoice.forms.includes('AA0413 · Oral liquid · 125 mg/ 5mL [c]'), 'child line shown');
-    const opdLabel = labelOf(opdChoice);
+    const opdLabel = labelOf(await choosePar('#opd_rx_tbody tr.orx-main-row:first-child .orx-name'));
     await browser.type('1');
-    // No weight recorded: orange note, no red alert.
-    await browser.evaluate(`(()=>{const d=document.querySelector('#opd_rx_tbody tr.orx-main-row .orx-dose');d.dispatchEvent(new Event('change',{bubbles:true}));return true})()`);
-    await browser.waitFor(`(document.querySelector('#opd_rx_tbody tr.orx-main-row .medication-dose-note')?.textContent||'').includes('បញ្ចូលទម្ងន់ ដើម្បីពិនិត្យកម្រិតថ្នាំ')`, 'orange weight note');
-    assert.equal(await warningOpen(), false, 'no red alert without a weight');
-    // Weight 10 kg: 250 mg is above 15 mg/kg (150 mg): red alert.
-    await browser.evaluate(`(()=>{const w=document.getElementById('p2_weight');w.value='10';const d=document.querySelector('#opd_rx_tbody tr.orx-main-row .orx-dose');d.dispatchEvent(new Event('change',{bubbles:true}));return true})()`);
-    await browser.waitFor(`Boolean(document.querySelector('#safety-warning-dialog[open]'))`, 'child red alert');
-    assert.match(await warningText(), /250 mg/);
-    assert.match(await warningText(), /150 mg/);
-    await continueWithReason('Synthetic evidence: specialist advice');
     await browser.evaluate(`(()=>{const r=document.querySelector('#opd_rx_tbody tr.orx-main-row .orx-route');r.value='po';r.dispatchEvent(new Event('change',{bubbles:true}));
       const t=document.querySelector('#opd_rx_tbody tr.orx-main-row .med-schedule-type');t.value='bid';handleMedicationScheduleChange(t);
       const d=document.querySelector('#opd_rx_tbody tr.orx-main-row .orx-d');d.value='3';d.dispatchEvent(new Event('input',{bubbles:true}));return true})()`);
@@ -391,7 +318,6 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
     const opdStored = JSON.parse(JSON.parse(db.findPatient(opdKey).record_json)['system:opdMedications']);
     const opdItem = catalogue.find(entry => entry.label === opdLabel);
     assert.deepEqual(opdStored.map(med => [med.name, med.cmsCode || '', med.route]), [[opdLabel, opdItem.code, 'po'], ['Synthetic free text medicine', '', 'topical']]);
-    assert.equal(opdStored[0].doseOverrideReason, 'Synthetic evidence: specialist advice');
     const total = Number(opdStored[0].total);
     assert.ok(Number.isFinite(total) && total === 6, `total 1 x BID x 3 days = 6 (got ${opdStored[0].total})`);
     const pharmacy = await api('pharmacy');
@@ -407,22 +333,6 @@ test('v42.5 medicine list and dose check in the OPD, IPD admission, daily note a
     rows = await rowState('#opd_rx_tbody tr.orx-main-row', 'orx');
     assert.deepEqual([rows[0].name, rows[0].cms, rows[0].route, rows[0].dose], [opdLabel, opdItem.code, 'po', '1'], 'reopened OPD prescription');
     assert.equal(rows.length, 3, '2 saved lines + 1 empty row = 3 rows');
-
-    // ---------- Pregnant woman (Obstetric ward) ----------
-    const obKey = 'case:V425-OB';
-    db.upsertPatient({ id: crypto.randomUUID(), patientKey: obKey, userId: admin, savedAt: Date.now(),
-      summary: { caseNumber: 'V425-OB', healthId: 'H-V425-OB', firstName: 'Ob', lastName: 'Synthetic', fullName: 'Ob Synthetic', sex: 'ស្រី', age: '24', dateOfBirth: '', phone: '', equityCard: '', paymentType: 'DIRECT', departmentCode: 'obstetric', departmentNameKh: 'ផ្នែកសម្ភព', departmentNameEn: 'Maternity', serviceMode: 'ipd', entryDate: today, dischargeDate: '' },
-      data: { ...registrationFields('V425-OB', 'Ob', '24'), 'system:triageStatus': 'COMPLETED', 'system:admissionStatus': 'admitted', 'system:currentWardCode': 'obstetric',
-        'scope:medical:id:ipd_first_exam_date': today } });
-    await useAccount('doctor_obstetric');
-    await open(`/emr?patient=${encodeURIComponent(obKey)}&view=medical`, `document.querySelectorAll('#rx_tbody tr.rx-main-row').length>=3`);
-    const obChoice = await choosePar('#rx_tbody tr.rx-main-row:first-child .rx-name', null, 'oxyt', 'Oxytocin');
-    assert.equal(obChoice.label, 'AB0440-Oxytocin-Injection-10 IU in 1-mL in ampoule', 'the only allowed line is chosen automatically');
-    rows = await rowState('#rx_tbody tr.rx-main-row', 'rx');
-    assert.deepEqual([rows[0].unit, rows[0].route, rows[0].dose], ['IU', '', ''], 'unit IU; route and number blank');
-    const routeChoices = await browser.evaluate(`[...document.querySelector('#rx_tbody tr.rx-main-row .rx-route').options].map(o=>o.textContent)`);
-    assert.deepEqual(routeChoices.slice(0, 4), ['-- ជ្រើស --', 'ចាក់សរសៃ (IV)', 'ចាក់សាច់ដុំ (IM)', 'ចាក់ក្រោមស្បែក (SC)'], 'simple injection routes');
-    assert.equal(routeChoices.length, 11, 'blank + 10 routes: the old injection choices are not offered');
 
     assert.deepEqual(browser.state.errors, [], 'no JavaScript errors');
   } finally {

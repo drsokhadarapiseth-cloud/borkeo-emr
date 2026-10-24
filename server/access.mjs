@@ -1,5 +1,4 @@
 import crypto from 'node:crypto';
-import fs from 'node:fs';
 import { USER_ROLES } from './database.mjs';
 
 export const WARDS = Object.freeze([
@@ -21,13 +20,6 @@ export const ROLES = Object.freeze(USER_ROLES.filter(role => role !== 'SUPERUSER
 // constraint of existing databases. It is never an assignable or active role.
 const ROLE_SET = new Set(ROLES);
 const WARD_SET = new Set(WARDS.map(item => item.code));
-// v42.6: OPD services seen by the midwife and by the Gynecology ward
-// (server/clinical-options.json "maternal"; read once at start).
-const MATERNAL_SETTINGS = (() => {
-  try { return JSON.parse(fs.readFileSync(new URL('./clinical-options.json', import.meta.url), 'utf8')).maternal || {}; } catch { return {}; }
-})();
-export const MATERNAL_OPD_CODES = new Set([...(MATERNAL_SETTINGS.paidServiceCodes || ['anc', 'pnc', 'family-planning', 'cervix-screening']), ...(MATERNAL_SETTINGS.freeServiceCodes || ['vaccination'])]);
-export const GYNECOLOGY_OPD_CODES = new Set(MATERNAL_SETTINGS.gynecologyOutpatientCodes || ['safe-abortion']);
 const WARD_REQUIRED = new Set(['DOCTOR', 'NURSE', 'MIDWIFE', 'CHIEF_WARD', 'WARD_HEAD']);
 
 export const DEFAULT_ROLE_LABELS = Object.freeze({
@@ -480,13 +472,6 @@ export function canAccessPatient(database, session, row) {
   try { data = JSON.parse(row.record_json || '{}'); } catch {}
   const transferred = String(data['system:transferredWard'] || data['scope:medical:id:opd-ipd-transfer-ward'] || data['id:web_opd_transfer_ward'] || '').toLowerCase();
   if (transferred === ward) return true;
-  // v42.6: the midwife (Obstetric ward) sees the maternal OPD services; the
-  // Gynecology ward sees the safe-abortion outpatients.
-  if (row?.service_mode === 'opd') {
-    const service = String(row.department_code || '').toLowerCase();
-    if (role === 'MIDWIFE' && MATERNAL_OPD_CODES.has(service)) return true;
-    if (['DOCTOR', 'CHIEF_WARD'].includes(role) && ward === 'gynecology' && GYNECOLOGY_OPD_CODES.has(service)) return true;
-  }
   if (ward === 'opd') {
     if (row.service_mode === 'opd' || Boolean(data['system:opdEncounterAt'] || data['scope:medical:id:opd-ipd-transfer-ward'] || data['scope:medical:id:emr_pmrs_opd_diagnosis'] || data['system:transferredWard'] || data['scope:opd:id:opd_complaint'] || data['id:opd_complaint'])) {
       return true;
@@ -503,18 +488,15 @@ function dataHasAssignedRoom(row) {
 }
 
 export function roleCanPage(role, pathname) {
-  if (pathname === '/admin/npca') return ['ADMIN','DIRECTOR'].includes(role);
-  if (pathname === '/npca') return ['ADMIN','DIRECTOR','ACCOUNTANT','CLERK'].includes(role);
   role = String(role || '').toUpperCase();
   if (['/admin/organization','/admin/interface','/admin/health-facility','/styleguide'].includes(pathname)) return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
   // v41.2: drug interaction and maximum-dose tables (administrators edit, management views).
-  // v42.5: the Head of Pharmacy approves the maximum doses on this page.
-  if (pathname === '/admin/drug-safety') return ['ADMIN','DIRECTOR','VICE_DIRECTOR','PHARMACY'].includes(role);
+  if (pathname === '/admin/drug-safety') return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
   // v41.7: record view log viewer (management only).
   if (pathname === '/admin/record-log') return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
   if (['ADMIN','VICE_DIRECTOR'].includes(role) || role === 'DIRECTOR') return true;
   if (pathname === '/requests') return ['REGISTRATION','TRIAGE','DOCTOR','NURSE','MIDWIFE','CHIEF_WARD','WARD_HEAD','PHARMACY','LAB','IMAGING','CLERK','ACCOUNTANT'].includes(role);
-  if (pathname === '/record-viewer') return ['ADMIN','DIRECTOR','VICE_DIRECTOR','TRIAGE','DOCTOR','CHIEF_WARD'].includes(role);
+  if (pathname === '/record-viewer') return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
   if (pathname === '/home' || pathname === '/context' || pathname === '/print-preview') return true;
   if (pathname === '/lab/materials') return role === 'LAB';
   if (pathname === '/pharmacy/medicines') return role === 'PHARMACY';
@@ -526,10 +508,6 @@ export function roleCanPage(role, pathname) {
   if (pathname === '/finance') return role === 'DIRECTOR';
   if (pathname === '/triage') return role === 'TRIAGE';
   if (pathname === '/opd-queue') return ['TRIAGE','DOCTOR'].includes(role);
-  // v42.6: maternal services queue (midwife; Gynecology doctors see the safe-abortion outpatients),
-  // official ANC record and vaccination (midwife; ward doctors read and sign referrals).
-  if (pathname === '/maternal') return ['MIDWIFE','DOCTOR','CHIEF_WARD'].includes(role);
-  if (['/anc-record','/vaccination'].includes(pathname)) return ['MIDWIFE','DOCTOR','CHIEF_WARD','NURSE'].includes(role);
   if (pathname === '/opd-paraclinic-nurse') return role === 'NURSE';
   if (pathname === '/ipd-transfer') return role === 'DOCTOR';
   if (pathname === '/queue-display') return ['TRIAGE','DOCTOR','NURSE','MIDWIFE'].includes(role);

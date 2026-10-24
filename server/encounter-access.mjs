@@ -1,7 +1,6 @@
-import { canAccessPatient, sessionRole, sessionWard, MATERNAL_OPD_CODES, GYNECOLOGY_OPD_CODES } from './access.mjs';
+import { canAccessPatient, sessionRole, sessionWard } from './access.mjs';
 
 export const RECORD_MANAGEMENT = ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'];
-export const isOpdHistoryReader = session => ['DOCTOR','CHIEF_WARD'].includes(sessionRole(session)) && sessionWard(session) === 'opd';
 const parse = value => { try { return JSON.parse(value || '{}'); } catch { return {}; } };
 const deny = message => { throw Object.assign(new Error(message), { status: 403 }); };
 
@@ -27,8 +26,7 @@ export function encounterClosed(db, patient) {
   }
   return {
     received: received || Boolean(data['system:opdDischarge']?.dispensedAt),
-    discharged: Boolean(patient?.service_mode === 'ipd' && (patient.discharge_date || data['system:admissionStatus'] === 'discharged' || data['system:discharge']?.dischargeAt) ||
-      patient?.service_mode === 'opd' && (received || data['system:opdDischarge']?.dispensedAt)),
+    discharged: patient?.service_mode === 'ipd' && Boolean(patient.discharge_date || data['system:admissionStatus'] === 'discharged' || data['system:discharge']?.dischargeAt),
   };
 }
 
@@ -41,13 +39,7 @@ export function correctionGrant(db, actor, patient, scope) {
 export function encounterAccess(db, session, patient, requestedScope = '') {
   const role = sessionRole(session), ward = sessionWard(session);
   const management = RECORD_MANAGEMENT.includes(role);
-  // v42.6: the midwife writes the OPD forms of the maternal services (PNC, family
-  // planning, cervical screening); the Gynecology ward sees safe-abortion outpatients.
-  const service = String(patient?.department_code || '').toLowerCase();
-  const maternalMidwife = role === 'MIDWIFE' && patient?.service_mode === 'opd' && MATERNAL_OPD_CODES.has(service);
-  const gynecologyOutpatient = ['DOCTOR','CHIEF_WARD'].includes(role) && ward === 'gynecology' && patient?.service_mode === 'opd' && GYNECOLOGY_OPD_CODES.has(service);
   let view = role === 'REGISTRATION' ? 'register' : role === 'TRIAGE' ? 'triage' :
-    maternalMidwife || gynecologyOutpatient ? 'opd' :
     ['NURSE','MIDWIFE'].includes(role) ? 'nursing' : ward === 'opd' ? 'opd' : 'medical';
   const ownScope = view === 'register' ? 'registration' : view === 'triage' ? 'triage' : view === 'nursing' ? 'nursing' : 'medical';
   const scope = management ? (requestedScope || 'medical') : ownScope;
@@ -57,16 +49,15 @@ export function encounterAccess(db, session, patient, requestedScope = '') {
   const validScope = !requestedScope || ['registration','triage','medical','nursing'].includes(requestedScope);
   const canView = validScope && permitted && (!patient || canAccessPatient(db, session, patient));
   const state = encounterClosed(db, patient);
-  const mismatch = clinical && patient && ['DOCTOR','CHIEF_WARD'].includes(role) && !gynecologyOutpatient &&
+  const mismatch = clinical && patient && ['DOCTOR','CHIEF_WARD'].includes(role) &&
     (ward === 'opd' ? patient.service_mode !== 'opd' : patient.service_mode !== 'ipd');
   const clinicalScope = scope === 'medical' || scope === 'nursing';
   const grant = patient && clinicalScope && state.discharged ? correctionGrant(db, session, patient, scope) : '';
-  const locked = scope === 'triage' && state.discharged || clinicalScope &&
-    (state.discharged && !grant || patient?.service_mode === 'opd' && state.received && !grant);
+  const locked = clinicalScope && (patient?.service_mode === 'opd' && state.received || state.discharged && !grant);
   return { view, scope, canView: canView && !mismatch, canEdit: canView && !mismatch && !locked,
     requiresApproval: canView && !mismatch && clinicalScope && state.discharged && !grant,
     received: state.received, discharged: state.discharged, correctionId: grant,
-    message: scope === 'triage' && state.discharged ? 'អ្នកជំងឺបានចេញពីពេទ្យ។ មិនអាចកែប្រែព័ត៌មានទ្រីយ៉ាបានទេ។' : mismatch ? 'អ្នកអាចកែប្រែតែកំណត់ត្រាក្នុងផ្នែករបស់អ្នកប៉ុណ្ណោះ។' :
+    message: mismatch ? 'អ្នកអាចកែប្រែតែកំណត់ត្រាក្នុងផ្នែករបស់អ្នកប៉ុណ្ណោះ។' :
       state.received && patient?.service_mode === 'opd' && clinicalScope ? 'អ្នកជំងឺបានទទួលឱសថរួចហើយ។ កំណត់ត្រាត្រូវបានបិទការកែប្រែ។' :
       state.discharged && clinicalScope && !grant ? 'អ្នកជំងឺបានចេញពីពេទ្យ។ សូមស្នើសុំការអនុម័តពីគណៈគ្រប់គ្រងមុនកែប្រែ។' : '' };
 }

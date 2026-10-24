@@ -23,23 +23,3 @@ body.ds-page { margin: 0; background: #eef5f4; color: #153d43; font-family: Aria
 @media (max-width: 600px) { .ds-form label { flex: 1 1 100%; } }
 /* Untranslated placeholder text stays readable on the dark header. */
 .ds-hero .needs-translation { color: #3b2f00; }
-/* v42.5 - maximum doses of the Essential Medicines List: filters, review buttons. */
-.ds-shell { max-width: 1500px; }
-.ds-intro { margin: 0 0 12px; color: #4a6a6f; }
-.ds-filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; margin-bottom: 12px; }
-.ds-filters label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; min-width: 160px; }
-.ds-filters input, .ds-filters select { font: inherit; padding: 7px 9px; border: 1px solid #bdd3cf; border-radius: 8px; }
-.ds-count { margin: 0 0 8px auto; color: #4a6a6f; }
-.ds-dose-table th { text-align: center; white-space: nowrap; font-size: 12px; }
-.ds-dose-table td.ds-num { text-align: right; white-space: nowrap; }
-.ds-dose-table td.ds-note { min-width: 220px; font-size: 13px; color: #334155; }
-.ds-dose-table input, .ds-dose-table select, .ds-dose-table textarea { font: inherit; font-size: 13px; width: 100%; min-width: 64px; box-sizing: border-box; padding: 4px 6px; border: 1px solid #bdd3cf; border-radius: 6px; }
-.ds-dose-table textarea { min-height: 60px; min-width: 200px; }
-.ds-actions { white-space: nowrap; }
-.ds-actions button { font: inherit; font-size: 13px; padding: 5px 10px; border-radius: 8px; border: 1px solid #087d72; background: #087d72; color: #ffffff; cursor: pointer; margin: 2px; }
-.ds-actions button.ds-secondary { background: #ffffff; color: #087d72; }
-.ds-actions button.ds-reject { background: #ffffff; color: #b91c1c; border-color: #b91c1c; }
-.ds-status { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; }
-.ds-status-draft { background: #fef3c7; color: #92400e; }
-.ds-status-approved { background: #dcfce7; color: #166534; }
-.ds-status-rejected { background: #fee2e2; color: #991b1b; }

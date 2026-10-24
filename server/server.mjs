@@ -1,10 +1,10 @@
-import { ensureSuperuser, countDefaultPasswordAccounts } from './superuser.mjs';
+import { ensureSuperuser } from './superuser.mjs';
 import {createHefLookup,HEF_LOOKUP_ROLES} from './hef-lookup.mjs';
 import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v44.0 - Electronic Medical Record System
+// Borkeo EMR v42.3 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -19,7 +19,7 @@ import {PAYMENT_CATEGORIES,NSSF_SUBTYPES,FACILITY_LEVELS,majorPaymentCategory,pa
 import {ensureInvoiceEditSchema,invoiceHistory,invoiceEditRequests,cashierPaymentAlerts,requestInvoiceEdit,reviewInvoiceEdit,applyInvoiceEdit,assertCashierInvoiceWritable,queueCashierPayment,isPatientDischarged,applyDirectInvoiceEdit} from './invoice-edits.mjs';
 import { prepareOpdPrescription, submitOpdPrescription, prescriptionForMessage,
   listOpdPrescriptions, opdPrescriptionForPharmacy, markOpdPrescriptionReceived, ensureOpdReceiptDischarges } from './pharmacy-prescriptions.mjs';
-import {encounterAccess,assertEncounterWrite,consumeCorrection,RECORD_MANAGEMENT,isOpdHistoryReader} from './encounter-access.mjs';
+import {encounterAccess,assertEncounterWrite,consumeCorrection,RECORD_MANAGEMENT} from './encounter-access.mjs';
 import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import fs from 'node:fs';
@@ -41,11 +41,6 @@ import { mountPatientsRoutes } from './routes/patients.mjs';
 import { mountClinicalRoutes } from './routes/clinical.mjs';
 import { mountClinicalSummaryRoutes } from './routes/clinical-summary.mjs';
 import { mountMedicationSafetyRoutes } from './routes/medication-safety.mjs';
-import { mountMaternalRoutes } from './routes/maternal.mjs';
-import { NpcaIntegration } from './npca/integration.mjs';
-import { ensureNpcaSchema } from './npca/storage.mjs';
-import { mountNpcaRoutes } from './routes/npca.mjs';
-import { ensureMaternalSchema } from './maternal.mjs';
 import { mountPeriopFormRoutes } from './routes/periop-forms.mjs';
 import { mountRecordAccessRoutes } from './routes/record-access.mjs';
 import { ensureRecordAccessSchema } from './record-access.mjs';
@@ -116,11 +111,6 @@ const dummyPasswordHash = 'scrypt$32768$8$1$MDAwMDAwMDAwMDAwMDAwMA$qM8HKw2pZpspP
 const pharmacySettledCodes=new Set(['INSURANCE','NGO','PAID','NSSF','HEF_EQUITY','HEF_VULNERABLE','EXEMPT','NSSF_OUTSIDE','NSSF_WORKER','NSSF_CIVIL','HEF_POOR','HEF_VULNERABLE_FAMILY','FULL_WAIVER']);
 
 const publicFiles = new Map([
-  ['/public/npca-registration.js', ['npca-registration.js', 'text/javascript; charset=utf-8']],
-  ['/public/npca-forms.js', ['npca-forms.js', 'text/javascript; charset=utf-8']],
-  ['/public/npca-widget.js', ['npca-widget.js', 'text/javascript; charset=utf-8']],
-  ['/public/npca.js', ['npca.js', 'text/javascript; charset=utf-8']],
-  ['/public/npca.css', ['npca.css', 'text/css; charset=utf-8']],
   ['/public/escape-html.js', ['escape-html.js', 'text/javascript; charset=utf-8']],
   ['/public/ipd-transfer.js', ['ipd-transfer.js', 'text/javascript; charset=utf-8']],
   ['/public/ipd-transfer.css', ['ipd-transfer.css', 'text/css; charset=utf-8']],
@@ -164,16 +154,6 @@ const publicFiles = new Map([
   ['/public/medicine-autocomplete.js', ['medicine-autocomplete.js', 'text/javascript; charset=utf-8']],
   ['/public/medicine-autocomplete.css', ['medicine-autocomplete.css', 'text/css; charset=utf-8']],
   ['/public/medicine-units.js', ['medicine-units.js', 'text/javascript; charset=utf-8']],
-  ['/public/medication-routes.js', ['medication-routes.js', 'text/javascript; charset=utf-8']],
-  ['/public/anc-engine.mjs', ['anc-engine.mjs', 'text/javascript; charset=utf-8']],
-  ['/public/anc-referral-letter.mjs', ['anc-referral-letter.mjs', 'text/javascript; charset=utf-8']],
-  ['/public/maternal.js', ['maternal.js', 'text/javascript; charset=utf-8']],
-  ['/public/maternal.css', ['maternal.css', 'text/css; charset=utf-8']],
-  ['/public/anc-record.js', ['anc-record.js', 'text/javascript; charset=utf-8']],
-  ['/public/anc-record.css', ['anc-record.css', 'text/css; charset=utf-8']],
-  ['/public/vaccination.js', ['vaccination.js', 'text/javascript; charset=utf-8']],
-  ['/public/maternal-emr.js', ['maternal-emr.js', 'text/javascript; charset=utf-8']],
-  ['/public/medicine-dose-check.js', ['medicine-dose-check.js', 'text/javascript; charset=utf-8']],
   ['/public/clinical-summary.css', ['clinical-summary.css', 'text/css; charset=utf-8']],
   ['/public/clinical-summary.js', ['clinical-summary.js', 'text/javascript; charset=utf-8']],
   ['/public/display-rules.css', ['display-rules.css', 'text/css; charset=utf-8']],
@@ -208,8 +188,6 @@ const publicFiles = new Map([
   ['/public/record-viewer.js', ['record-viewer.js', 'text/javascript; charset=utf-8']],
   ['/public/record-viewer.css', ['record-viewer.css', 'text/css; charset=utf-8']],
   ['/public/emr-language-lock.js', ['emr-language-lock.js', 'text/javascript; charset=utf-8']],
-  ['/public/emr-consultation-workspace.css', ['emr-consultation-workspace.css', 'text/css; charset=utf-8']],
-  ['/public/emr-consultation-workspace.js', ['emr-consultation-workspace.js', 'text/javascript; charset=utf-8']],
   ['/public/emr-required-fields.js', ['emr-required-fields.js', 'text/javascript; charset=utf-8']],
   ['/public/emr-required-fields.css', ['emr-required-fields.css', 'text/css; charset=utf-8']],
   ['/public/emr-diagnoses.js', ['emr-diagnoses.js', 'text/javascript; charset=utf-8']],
@@ -310,14 +288,8 @@ const APP_VERSION = (() => {
   catch { return '22.2'; }
 })();
 const protectedPages = new Map([
-  ['/admin/npca', ['npca.html',false]],
-  ['/npca', ['npca.html',false]],
   ['/admin/health-facility',['health-facility.html',false]],
   ['/admin/drug-safety',['drug-safety.html',false]],
-  // v42.6: maternal services (midwife queue, official ANC record, vaccination).
-  ['/maternal',['maternal.html',false]],
-  ['/anc-record',['anc-record.html',false]],
-  ['/vaccination',['vaccination.html',false]],
   ['/admin/record-log',['record-log.html',false]],
   ['/admin/interface',['interface-theme.html',false]],
   ['/styleguide', ['styleguide.html', false]],
@@ -478,15 +450,7 @@ function notifyTriageReferral(database, session, patient) {
   send(wardCode, wardCode === 'obstetric' ? 'MIDWIFE' : 'NURSE');
 }
 
-// v42.4: behind a hosting proxy (TRUST_PROXY=true) the client address is the
-// last address in X-Forwarded-For (added by the proxy itself; earlier entries
-// can be sent by the client). Login lockout, the audit log and the record view
-// log all use this address. Without TRUST_PROXY the header is ignored.
 function requestIp(request) {
-  if (request.borkeoTrustProxy) {
-    const forwarded = String(request.headers['x-forwarded-for'] || '').split(',').map(part => part.trim()).filter(Boolean);
-    if (forwarded.length) return forwarded[forwarded.length - 1];
-  }
   return request.socket.remoteAddress ?? 'unknown';
 }
 
@@ -521,23 +485,18 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
     return cached.bytes;
   }
   let html = fs.readFileSync(filePath, 'utf8');
-  html = html.replace(/emr-permissions\.js\?v=\d+/g, 'emr-permissions.js?v=4400');
   html = html.replace(/(<span\b[^>]*\bdata-app-version\b[^>]*>)[^<]*(<\/span>)/g, (_, open, close) => `${open}v${APP_VERSION}${close}`);
   html = html.replace(/Borkeo EMR v\d+\.\d+/g, `Borkeo EMR v${APP_VERSION}`);
   html = html.replace(/<head\b[^>]*>/i, head => head + '<style>.emr-language-switch, [data-emr-language], #langBtn, .lang-btn, body #emr-site-banner .portal-account-actions .emr-language-switch, #emr-session-control .portal-account-actions .emr-language-switch, .portal-account-actions .emr-language-switch { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; max-width: 0 !important; max-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; position: absolute !important; left: -9999px !important; clip: rect(0,0,0,0) !important; }</style><script src="/public/emr-language-lock.js?v=3760"></script><link rel="stylesheet" href="/public/emr-required-fields.css?v=3770"><script src="/public/emr-required-fields.js?v=3770"></script>');
-  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=3980"><link rel="stylesheet" href="/public/patient-banner.css?v=4100"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><link rel="stylesheet" href="/public/npca.css?v=4280"><script src="/public/npca-widget.js?v=4280" defer></script><script src="/public/npca-forms.js?v=4280" defer></script><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=3980" defer></script><script src="/public/app-shell.js?v=3980" defer></script><script src="/public/patient-banner.js?v=4170" defer></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
+  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=3980"><link rel="stylesheet" href="/public/patient-banner.css?v=4100"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=3980" defer></script><script src="/public/app-shell.js?v=3980" defer></script><script src="/public/patient-banner.js?v=4170" defer></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
   // v42.3: one medication unit table for every page (old Khmer unit labels shown as mg, mL, mcg, g, IU).
   html = html.replace('</head>', '<script src="/public/medicine-units.js?v=4230"></script></head>');
-  // v42.5: one medication route table for every page (new lines: IV, IM, SC and the simple routes).
-  html = html.replace('</head>', '<script src="/public/medication-routes.js?v=4250"></script></head>');
   // v42.3: medicine name search in the prescription forms (medical record page only).
-  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/medicine-autocomplete.css?v=4250"><script src="/public/medicine-autocomplete.js?v=4250" defer></script><script src="/public/medicine-dose-check.js?v=4250" defer></script><link rel="stylesheet" href="/public/maternal.css?v=4260"><script src="/public/maternal-emr.js?v=4260" defer></script></head>');
-  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=4400" defer></script></head>');
+  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/medicine-autocomplete.css?v=4230"><script src="/public/medicine-autocomplete.js?v=4230" defer></script></head>');
+  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=3800" defer></script></head>');
   // v41.0: structured allergy record, problem list and nursing demographics (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/clinical-summary.css?v=4100"><script src="/public/clinical-summary.js?v=4100" defer></script><link rel="stylesheet" href="/public/display-rules.css?v=4110"><script src="/public/display-rules.js?v=4110" defer></script><link rel="stylesheet" href="/public/medication-safety.css?v=4120"><script src="/public/medication-safety.js?v=4120" defer></script><link rel="stylesheet" href="/public/periop-forms.css?v=4160"><script src="/public/periop-forms.js?v=4160" defer></script><script src="/public/fluid-balance.js?v=4160" defer></script><script src="/public/early-warning.js?v=4160" defer></script><link rel="stylesheet" href="/public/patient-documents.css?v=4170"><script src="/public/patient-documents.js?v=4170" defer></script></head>');
-  // v43.4: modern clinical consultation workspace and integrated patient record (EMR.html only).
-  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-consultation-workspace.css?v=4340"><script src="/public/emr-consultation-workspace.js?v=4340" defer></script></head>');
   html = html.replace('</head>', `<meta name="borkeo-version" content="${APP_VERSION}"></head>`);
   // New text without approved Khmer is highlighted unless SHOW_UNTRANSLATED=0 (public/new-text.js).
   const showUntranslated = globalThis.process?.env?.SHOW_UNTRANSLATED === '0' ? '0' : '1';
@@ -1670,8 +1629,6 @@ function sanitizeAdmissionAction(value) {
       protocolStopAt: read('protocolStopAt', 40),
       // v42.3: CMS code of a medicine chosen from the Essential Medicines List (additive).
       ...(read('cmsCode', 40) ? { cmsCode: read('cmsCode', 40) } : {}),
-      // v42.5: reason written to continue above a maximum dose (additive).
-      ...(read('doseOverrideReason', 1_000) ? { doseOverrideReason: read('doseOverrideReason', 1_000) } : {}),
     };
   }) : null;
   const discharge = action === 'discharge' ? {
@@ -1923,14 +1880,8 @@ export function createEmrServer(configOverrides = {}) {
   ensureAccessSchema(database);
   ensureESignSchema(database);
   if (config.demoMode) ensureDemoAccounts(database);
-  // v42.4: an online server never creates the shared-password (1234) ward accounts;
-  // the Superuser (SUPERUSER_PASSWORD) creates the real staff accounts.
-  else if (!config.isProduction) ensureDefaultWardUsers(database);
-  ensureSuperuser(database, Date.now(), { production: config.isProduction, password: config.superuserPassword });
-  if (config.isProduction) {
-    const defaults = countDefaultPasswordAccounts(database);
-    if (defaults) defaultLogger.warn(`${defaults} active account(s) still use the default password. Change them before staff use this server.`);
-  }
+  else ensureDefaultWardUsers(database);
+  ensureSuperuser(database);
   ensureParaclinicSchema(database);
   ensureFinanceSchema(database);
   ensureInvoiceEditSchema(database);
@@ -1947,8 +1898,6 @@ export function createEmrServer(configOverrides = {}) {
   ensureEditorHistorySchema(database);
   ensureClinicalSummarySchema(database);
   ensureMedicationSafetySchema(database);
-  ensureMaternalSchema(database);
-  ensureNpcaSchema(database);
   ensurePeriopSchema(database);
   ensureCriticalEscalationSchema(database);
   ensureRecordAccessSchema(database);
@@ -1968,10 +1917,9 @@ export function createEmrServer(configOverrides = {}) {
   if (recovery.patients) ensureOpdQueueSchema(database);
   ensureOpdReceiptDischarges(database);
   seedExistingRequests(database);
-  if (config.autoDatabase || config.dataDirectory) createDailyBackup(database, config.databasePath, 14, config.backupDirectory);
+  if (config.autoDatabase) createDailyBackup(database, config.databasePath);
   database.deleteExpiredSessions(Date.now());
 
-  const npca = new NpcaIntegration(config.npca, database);
   const router = new Router('emr');
   mountAuthRoutes(router);
   mountAdminRoutes(router);
@@ -1984,8 +1932,6 @@ export function createEmrServer(configOverrides = {}) {
   mountClinicalRoutes(router);
   mountClinicalSummaryRoutes(router);
   mountMedicationSafetyRoutes(router);
-  mountMaternalRoutes(router);
-  mountNpcaRoutes(router);
   mountPeriopFormRoutes(router);
   mountRecordAccessRoutes(router);
   // POST' && pathname === '/api/finance/complete-payment'
@@ -2031,17 +1977,12 @@ export function createEmrServer(configOverrides = {}) {
   // system:ipdDischargeSummary
 
   const server = http.createServer(async (request, response) => {
-    request.borkeoTrustProxy = config.trustProxy === true;
     const requestId = crypto.randomUUID();
     response.setHeader('X-Request-ID', requestId);
     const reqLogger = defaultLogger.child({ requestId });
     try {
       const url = new URL(request.url ?? '/', config.appOrigin);
       const pathname = decodeURIComponent(url.pathname);
-      // v42.4: health check for the hosting platform (no login, no patient data).
-      if (request.method === 'GET' && pathname === '/api/health') {
-        return sendJson(response, 200, { ok: true }, { secure: config.cookieSecure });
-      }
       const session = sessionFor(request, database);
       if (session && session.must_change_password === 1 && !['/api/auth/change-password', '/api/auth/logout', '/api/auth/me', '/api/auth/context'].includes(pathname)) {
         if (pathname.startsWith('/api/')) {
@@ -2053,7 +1994,7 @@ export function createEmrServer(configOverrides = {}) {
       }
       const ctx = {
         request, response, url, pathname, session, database, config,
-        requestId, logger: reqLogger, npca,
+        requestId, logger: reqLogger,
         sendJson, sendBuffer, readJson, readBinary, audit, sameOrigin, safeTokenEqual,
         sessionRole, sessionWard, requireContext, redirect, sendFile,
         listUsers, buildIdentity, requestIp, genericLoginFailure, landingPathForRole,
@@ -2155,12 +2096,9 @@ export function createEmrServer(configOverrides = {}) {
           const row=database.findPatient(url.searchParams.get('patient'));
           if(row){
             const policy=encounterAccess(database,session,row);
+            if(!policy.canView)return sendJson(response,403,{error:'អ្នកមិនមានសិទ្ធិមើលកំណត់ត្រានេះទេ។'},{secure:config.cookieSecure});
             const requested=url.searchParams.get('view')||'';
-            // Historical snapshots are read-only; encounter write policy stays unchanged.
-            const historySnapshot=isOpdHistoryReader(session) && url.searchParams.get('mode')==='view' &&
-              ['opd','medical'].includes(requested) && url.searchParams.get('recordPage')===requested;
-            if(!policy.canView&&!historySnapshot)return sendJson(response,403,{error:'អ្នកមិនមានសិទ្ធិមើលកំណត់ត្រានេះទេ។'},{secure:config.cookieSecure});
-            const allowed=historySnapshot || requested===policy.view || policy.view==='medical'&&['daily','discharge'].includes(requested) || policy.view==='opd'&&requested==='opd-paraclinic';
+            const allowed=requested===policy.view || policy.view==='medical'&&['daily','discharge'].includes(requested) || policy.view==='opd'&&requested==='opd-paraclinic';
             if(!allowed){url.searchParams.set('view',policy.view);return redirect(response,url.pathname+'?'+url.searchParams.toString(),{secure:config.cookieSecure});}
           }
         }
@@ -2212,8 +2150,6 @@ export function createEmrServer(configOverrides = {}) {
   server.requestTimeout = 30_000;
   server.headersTimeout = 15_000;
   server.keepAliveTimeout = 5_000;
-  server.once('listening', () => npca.start());
-  server.on('close', () => npca.stop());
   server.on('close', () => diagnosisSearch.close());
   return {
     server,
@@ -2221,7 +2157,6 @@ export function createEmrServer(configOverrides = {}) {
     config,
     persistence,
     recovery,
-    npca,
     access: {
       getUserImagingSubtypes: (userId) => getUserImagingSubtypes(database, userId),
       setUserImagingSubtypes: (userId, subtypes, actorId) => setUserImagingSubtypes(database, userId, subtypes, actorId),
@@ -2258,7 +2193,6 @@ export async function startServer() {
     console.log(`DEMO: username-only accounts, localhost only. Demo data: ${application.config.databasePath}`);
     console.log('Demo usernames: admin, registration, triage, doctor_medicine, pharmacy.');
   }
-  if (application.config.dataDirectory) console.log(`Persistent EMR data (DATA_DIR): ${application.config.dataDirectory}`);
   if (application.config.autoDatabase) {
     console.log(`Persistent EMR data: ${application.config.databasePath}`);
     if (application.persistence.sourcePath) console.log(`Initial database recovered from: ${application.persistence.sourcePath}`);
@@ -2272,7 +2206,7 @@ export async function startServer() {
     try { escalateCriticalResults(application.database, clinicalOptions().criticalEscalation); } catch (error) { console.error('Critical result escalation failed:', error.message); }
   }, 60_000);
   escalation.unref();
-  const backupScheduler = startBackupScheduler(application.database, application.config, { backupDirectory: application.config.backupDirectory || undefined });
+  const backupScheduler = startBackupScheduler(application.database, application.config);
   const stop = () => application.server.close(() => {
     backupScheduler.stop();
     application.database.close();

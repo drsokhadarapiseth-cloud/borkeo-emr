@@ -53,30 +53,3 @@ the old labels still open as the new units (public/medicine-units.js).
 | protected/EMR.html, public/pmrs-import.js | unit lists | ម៉ៃក្រូក្រាម (mcg/µg) | mcg |
 | protected/EMR.html, public/pmrs-import.js | unit lists | ម៉ៃក្រូក្រាម | mcg |
 | protected/EMR.html, public/pmrs-import.js | unit lists | ក្រាម (g) | g |
-
-## v42.5: medication routes, one table for every page (owner's order)
-
-The owner ordered (PROMPT-1, Phase 2.5) that a new prescription line offers only
-ចាក់សរសៃ (IV), ចាក់សាច់ដុំ (IM), ចាក់ក្រោមស្បែក (SC) for injections, that the old
-injection choices are removed from the list, that old lines are shown as IV / IM,
-and that the same labels are used everywhere a route is shown. The route labels
-now live in one file (public/medication-routes.js) instead of four copies, so the
-labels that stay the same are listed here with the same text before and after.
-
-| file | line | before | after |
-|------|------|--------|-------|
-| protected/EMR.html | route list | សារធាតុរាវតាមសរសៃឈាម (IV) | ចាក់សរសៃ (IV) |
-| protected/EMR.html | route list | អង់ទីប៊ីយ៉ូទិកតាមសរសៃឈាម (IV) | ចាក់សរសៃ (IV) |
-| protected/EMR.html | route list | អង់ទីប៊ីយ៉ូទិកចាក់សាច់ដុំ (IM) | ចាក់សាច់ដុំ (IM) |
-| protected/EMR.html | route list | ថ្នាំផ្សេងតាមសរសៃឈាម (IV) | ចាក់សរសៃ (IV) |
-| protected/EMR.html | route list | ថ្នាំផ្សេងចាក់សាច់ដុំ (IM) | ចាក់សាច់ដុំ (IM) |
-| protected/EMR.html | nursing chart | IV សារធាតុរាវ | IV |
-| public/messages.js, public/pharmacy-opd.js | route labels | បញ្ចូលតាមសរសៃ (IV) | ចាក់សរសៃ (IV) |
-| public/messages.js, public/pharmacy-opd.js | route labels | ក្រោមស្បែក | ចាក់ក្រោមស្បែក (SC) |
-| public/messages.js, public/pharmacy-opd.js | route labels | តាមទ្វារធំ | តាមទ្វារធំ (PR) |
-| public/messages.js, public/pharmacy-opd.js | route labels | ក្រោមអណ្ដាត | ក្រោមអណ្តាត (SL) |
-| protected/EMR.html, public/messages.js, public/pharmacy-opd.js | route labels (one copy) | លេប (PO) | លេប (PO) |
-| protected/EMR.html | route labels (one copy) | បន្តក់ | បន្តក់ |
-| protected/EMR.html | route labels (one copy) | ស្រូប | ស្រូប |
-| protected/EMR.html | route labels (one copy) | តាមទ្វារមាស | តាមទ្វារមាស |
-| protected/EMR.html | route labels (one copy) | លាប | លាប |

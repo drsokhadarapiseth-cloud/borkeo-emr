@@ -6,7 +6,7 @@ import { loadConfig, projectRoot } from '../server/config.mjs';
 
 const config = loadConfig();
 const dbPath = process.argv[2] || config.databasePath;
-const backupDir = process.argv[3] || config.backupDirectory || path.join(projectRoot, 'data', 'backups');
+const backupDir = process.argv[3] || path.join(projectRoot, 'data', 'backups');
 
 console.log(`Borkeo EMR Backup Utility`);
 console.log(`Database source: ${dbPath}`);

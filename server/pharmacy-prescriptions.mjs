@@ -4,8 +4,7 @@ import { opdLocalDate } from './opd-queue.mjs';
 
 export function prepareOpdPrescription(data, summary, prescriber) {
   if (summary.serviceMode !== 'opd') throw new Error('Only an OPD prescription can be submitted here.');
-  // v42.6: the midwife also signs the prescriptions of the maternal services.
-  if (!prescriber || !['DOCTOR', 'MIDWIFE'].includes(prescriber.role) || !prescriber.userId) throw new Error('A doctor must sign this OPD prescription.');
+  if (!prescriber || prescriber.role !== 'DOCTOR' || !prescriber.userId) throw new Error('A doctor must sign this OPD prescription.');
   // The authenticated doctor's name is a valid attribution when no optional
   // signature image is configured. The snapshot still records whether an
   // actual electronic signature image was available at submission time.

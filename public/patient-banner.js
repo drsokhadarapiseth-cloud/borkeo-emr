@@ -236,38 +236,14 @@
     };
   }
 
-  function isRegistrationUser() {
-    const role = String(window.emrSession?.user?.activeRole || window.userRole || sessionStorage.getItem('borkeo-active-role') || '').toUpperCase();
-    if (role === 'REGISTRATION') return true;
-    const view = new URLSearchParams(window.location.search).get('view');
-    if (view === 'register' || view === 'registration') return true;
-    if (document.documentElement.classList.contains('registration-user') || document.body?.classList.contains('registration-user') || document.documentElement.classList.contains('bed-direct-register')) return true;
-    return false;
-  }
-
   // Render the sticky patient banner into container
   function renderPatientBanner(info) {
-    if (isRegistrationUser()) {
-      const banner = document.getElementById('emr-persistent-patient-banner');
-      if (banner) banner.remove();
-      return;
-    }
     let banner = document.getElementById('emr-persistent-patient-banner');
     if (!banner) {
       banner = document.createElement('section');
       banner.id = 'emr-persistent-patient-banner';
       banner.className = 'emr-patient-banner no-print';
       banner.setAttribute('aria-label', 'ព័ត៌មានអ្នកជំងឺបច្ចុប្បន្ន');
-      // Keep sticky tabs below the real header after wrapping, zoom or async alerts.
-      if (typeof ResizeObserver !== 'undefined') {
-        const observer = new ResizeObserver(() => {
-          const height = `${Math.round(banner.getBoundingClientRect().height)}px`;
-          if (document.documentElement.style.getPropertyValue('--emr-banner-live-height') !== height) {
-            document.documentElement.style.setProperty('--emr-banner-live-height', height);
-          }
-        });
-        observer.observe(banner);
-      }
 
       // Place banner right under topbar / before main-content
       const main = document.getElementById('main-content') || document.querySelector('main, .shell, body > *:first-child');
@@ -293,7 +269,7 @@
       ? `<span class="emr-banner-badge allergy-alert" title="${escapeHtml(info.allergyText)}"><svg><use href="/public/icons.svg#icon-alert-triangle"></use></svg> អាលែកហ្ស៊ី៖ ${tickedOnly ? label('banner.allergy.tickedOnly', 'Drug allergy ticked in the record') : escapeHtml(info.allergyText)}</span>`
       : info.allergyState === 'none'
         ? `<span class="emr-banner-badge allergy-none"><svg><use href="/public/icons.svg#icon-check"></use></svg> គ្មានប្រវត្តិអាលែកហ្ស៊ី</span>`
-        : `<span class="emr-banner-badge allergy-unknown"><svg><use href="/public/icons.svg#icon-alert-triangle"></use></svg> ${label('', 'Allergy alert', 'ប្រតិកម្មអាលែកហ្ស៊ី')} · ${label('banner.allergy.notRecorded', 'Allergy not recorded', 'មិនបានបញ្ជាក់')}</span>`;
+        : `<span class="emr-banner-badge allergy-unknown"><svg><use href="/public/icons.svg#icon-alert-triangle"></use></svg> ${label('banner.allergy.notRecorded', 'Allergy not recorded')}</span>`;
     const allergyHtml = `<button type="button" class="emr-banner-badge-button" data-banner-details-toggle aria-expanded="${bannerDetailsOpen ? 'true' : 'false'}" aria-controls="emr-banner-summary-panel" aria-label="${escapeHtml(plainLabel('', 'Allergy alert', 'ប្រតិកម្មអាលែកហ្ស៊ី'))}">${allergyBadge}</button>`;
 
     const payerHtml = info.payer
@@ -335,40 +311,13 @@
         ${allergyHtml}
         ${payerHtml}
         ${statusBadge}
-      <button type="button" class="emr-banner-details-button" data-banner-details-toggle aria-expanded="${bannerDetailsOpen ? 'true' : 'false'}" aria-controls="emr-banner-summary-panel" aria-label="${escapeHtml(plainLabel('', 'Patient Summary Banner', 'ផ្ទាំងសង្ខេបព័ត៌មានអ្នកជំងឺ'))}">
-        <svg class="emr-banner-details-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"></path></svg>
-        <span>${label('', 'Patient details', 'ផ្ទាំងសង្ខេបព័ត៌មានអ្នកជំងឺ')}</span>
-      </button>
       </div>
       ${clinicalRowHtml(info)}
     `;
-    banner.classList.toggle('is-details-open', bannerDetailsOpen);
     banner.querySelectorAll('[data-banner-details-toggle]').forEach(button => button.addEventListener('click', toggleBannerDetails));
     renderBannerDetails(banner, info);
-    decorateAncBadge(banner);
     // The chart tabs stick just under the banner, whatever its height (v41.0).
     document.documentElement.style.setProperty('--emr-banner-live-height', `${Math.round(banner.getBoundingClientRect().height) || 76}px`);
-  }
-
-  // v42.6: colour of the open ANC record (official Ministry of Health colour code).
-  const ancBadgeCache = new Map();
-  const ANC_COLOUR_KH = { green: 'បៃតង', yellow: 'លឿង', red: 'ក្រហម' };
-  const ANC_COLOUR_EN = { green: 'green', yellow: 'yellow', red: 'red' };
-  function decorateAncBadge(banner) {
-    const key = activePatient?.patientKey || window.getLoadedEmrPatient?.()?.patientKey || '';
-    if (!key) return;
-    const paint = (colour) => {
-      const host = banner.querySelector('.emr-banner-badges');
-      if (!colour || !host || host.querySelector('.anc-colour-badge')) return;
-      const word = window.getBorkeoLanguage?.() === 'en' ? ANC_COLOUR_EN[colour] : ANC_COLOUR_KH[colour];
-      host.insertAdjacentHTML('beforeend', `<span class="emr-banner-badge anc-colour-badge anc-${escapeHtml(colour)}">ANC · ${escapeHtml(word || colour)}</span>`);
-    };
-    if (ancBadgeCache.has(key)) { paint(ancBadgeCache.get(key)); return; }
-    ancBadgeCache.set(key, '');
-    fetch(`/api/anc/badge?patientKey=${encodeURIComponent(key)}`, { credentials: 'same-origin', cache: 'no-store' })
-      .then((response) => (response.ok ? response.json() : {}))
-      .then((body) => { ancBadgeCache.set(key, body.colour || ''); paint(body.colour || ''); })
-      .catch(() => {});
   }
 
   // v41.6: Early Warning Score from public/early-warning.js (medical record page only).
@@ -400,14 +349,16 @@
       </div>`;
     return `<div class="emr-banner-clinical" aria-label="${escapeHtml(plainLabel('', 'Patient Summary Banner', 'ផ្ទាំងសង្ខេបព័ត៌មានអ្នកជំងឺ'))}">
       ${item(resus === 'dnr' ? 'is-dnr' : '', label('', 'Resuscitation status', 'ស្ថានភាពការសង្គ្រោះជីវិត'),
-        resus ? optionLabel('resuscitation', resus) : label('banner.notRecorded', 'Not recorded', 'មិនបានបញ្ជាក់'), ' data-banner-resuscitation')}
+        resus ? optionLabel('resuscitation', resus) : label('banner.notRecorded', 'Not recorded'), ' data-banner-resuscitation')}
       ${item(flags.length ? 'has-flags' : '', label('', 'Risk flags', 'សញ្ញាហានិភ័យ'), flags.length ? escapeHtml(flags.join(' · ')) : dash, ' data-banner-risk-flags')}
       ${earlyWarning ? item(`ews-${earlyWarning.level}`, label('', 'Early Warning Score', 'ពិន្ទុវាយតម្លៃកម្រិតសង្គ្រោះបន្ទាន់'), escapeHtml(earlyWarning.text), ' data-banner-ews') : ''}
       ${item('', label('', 'Active problem list', 'បញ្ជីបញ្ហាសុខភាពកំពុងជួបប្រទះ'),
         problems.length ? escapeHtml(problems.map(p => (p.icd10 ? `${p.problem} (${p.icd10})` : p.problem)).join(' · ')) : dash, ' data-banner-problems')}
       ${item('', label('', 'Current medications', 'ឱសថដែលកំពុងប្រើ'),
         meds.length ? `${meds.length} · ${escapeHtml(meds.map(m => m.name).filter(Boolean).join(', '))}` : dash, ' data-banner-medications')}
-
+      <button type="button" class="emr-banner-details-button" data-banner-details-toggle aria-expanded="${bannerDetailsOpen ? 'true' : 'false'}" aria-controls="emr-banner-summary-panel" aria-label="${escapeHtml(plainLabel('', 'Patient Summary Banner', 'ផ្ទាំងសង្ខេបព័ត៌មានអ្នកជំងឺ'))}">
+        <svg class="emr-banner-details-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"></path></svg>
+      </button>
     </div>`;
   }
 
@@ -441,7 +392,7 @@
           <th>${label('', 'Severity', 'កម្រិតធ្ងន់ធ្ងរ')}</th><th>${label('', 'Date', 'កាលបរិច្ឆេទ')}</th><th>${label('', 'Recorded by', 'អ្នកកត់ត្រា')}</th></tr></thead>
           <tbody>${allergyRows}</tbody></table></div>` : ''}
         ${allergy.freeText || allergy.ticked ? `<p class="emr-banner-record-text"><span>${label('clinical.allergy.recordText', 'Drug allergy written in the medical record')}</span> ${allergy.freeText ? escapeHtml(allergy.freeText) : label('banner.allergy.tickedOnly', 'Drug allergy ticked in the record')}</p>` : ''}
-        ${!allergyRows && !allergy.freeText && !allergy.ticked ? `<p class="emr-banner-panel-empty">${allergy.state === 'none' ? 'គ្មានប្រវត្តិអាលែកហ្ស៊ី' : label('banner.allergy.notRecorded', 'Allergy not recorded', 'មិនបានបញ្ជាក់')}</p>` : ''}
+        ${!allergyRows && !allergy.freeText && !allergy.ticked ? `<p class="emr-banner-panel-empty">${allergy.state === 'none' ? 'គ្មានប្រវត្តិអាលែកហ្ស៊ី' : label('banner.allergy.notRecorded', 'Allergy not recorded')}</p>` : ''}
       </section>
       <section>
         <h3>${label('', 'Active problem list', 'បញ្ជីបញ្ហាសុខភាពកំពុងជួបប្រទះ')}</h3>
@@ -453,7 +404,7 @@
       </section>
       <section data-banner-resuscitation-section>
         <h3>${label('', 'Resuscitation status', 'ស្ថានភាពការសង្គ្រោះជីវិត')}</h3>
-        <p>${summary?.resuscitation ? `<strong>${optionLabel('resuscitation', summary.resuscitation.status)}</strong> · ${escapeHtml(summary.resuscitation.recordedBy || '')} · ${escapeHtml(new Date(summary.resuscitation.recordedAt).toLocaleString())}` : label('banner.notRecorded', 'Not recorded', 'មិនបានបញ្ជាក់')}</p>
+        <p>${summary?.resuscitation ? `<strong>${optionLabel('resuscitation', summary.resuscitation.status)}</strong> · ${escapeHtml(summary.resuscitation.recordedBy || '')} · ${escapeHtml(new Date(summary.resuscitation.recordedAt).toLocaleString())}` : label('banner.notRecorded', 'Not recorded')}</p>
         ${summary && canWriteSummary() ? `<div class="emr-banner-resus-form">
           <select data-emr-transient data-banner-resus-select aria-label="${escapeHtml(plainLabel('', 'Resuscitation status', 'ស្ថានភាពការសង្គ្រោះជីវិត'))}">
             ${(summary.options?.resuscitationStatuses || []).map(code => `<option value="${escapeHtml(code)}"${summary.resuscitation?.status === code ? ' selected' : ''}>${escapeHtml(plainOptionLabel('resuscitation', code))}</option>`).join('')}
@@ -690,13 +641,6 @@
   // Setup the Chart Tabs on EMR.html filtered by active user role
   function setupChartTabs(patient) {
     if (window.location.pathname !== '/emr') return;
-    if (isRegistrationUser()) {
-      const tabsContainer = document.getElementById('emr-chart-tabs-wrapper');
-      if (tabsContainer) tabsContainer.remove();
-      const dash = document.getElementById('emr-summary-dashboard-panel');
-      if (dash) dash.remove();
-      return;
-    }
 
     const currentRole = String(window.emrSession?.user?.activeRole || window.userRole || '').toUpperCase();
     const allowed = getAllowedTabsForRole(currentRole);

@@ -1,7 +1,5 @@
 import crypto from 'node:crypto';
-import fs from 'node:fs';
 import path from 'node:path';
-import { applySecurityHeaders } from '../security.mjs';
 import {
   listUsers, listAllRoles, allRoleLabels, listAllWards, createCustomRole, createCustomWard,
   updateUserProfile, setUserAccess, IMAGING_SUBTYPES, IMAGING_SUBTYPE_DETAILS, IMAGING_GROUPS
@@ -297,47 +295,6 @@ export function mountAdminRoutes(router) {
     }
   });
 
-  // v42.4: database backups on the server (DATA_DIR/backups on an online host;
-  // otherwise data/backups). The server makes one at start and every 6 hours.
-  // GET /api/admin/backups lists them; GET /api/admin/backups/latest (or a file
-  // name) downloads one. Same roles as creating a backup; every download is audited.
-  const BACKUP_ROLES = ['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'];
-  const backupFolder = config => config.backupDirectory || path.join(config.dataDirectory || path.resolve(process.cwd(), 'data'), 'backups');
-  const listBackupFiles = config => {
-    const folder = backupFolder(config);
-    if (!fs.existsSync(folder)) return [];
-    return fs.readdirSync(folder)
-      .filter(name => /^[A-Za-z0-9._-]+\.sqlite$/.test(name))
-      .map(name => { const stat = fs.statSync(path.join(folder, name)); return { name, sizeBytes: stat.size, createdAt: stat.mtimeMs }; })
-      .sort((a, b) => b.createdAt - a.createdAt);
-  };
-
-  router.get('/api/admin/backups', async (ctx) => {
-    const { session, sendJson, response, config, sessionRole } = ctx;
-    if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-    if (!BACKUP_ROLES.includes(sessionRole(session))) return sendJson(response, 403, { error: 'Administrator access is required.' }, { secure: config.cookieSecure });
-    return sendJson(response, 200, { backups: listBackupFiles(config) }, { secure: config.cookieSecure });
-  });
-
-  router.get(/^\/api\/admin\/backups\/([A-Za-z0-9._-]+)$/, async (ctx) => {
-    const { session, sendJson, response, config, sessionRole, match, request, database, audit } = ctx;
-    if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
-    if (!BACKUP_ROLES.includes(sessionRole(session))) return sendJson(response, 403, { error: 'Administrator access is required.' }, { secure: config.cookieSecure });
-    const files = listBackupFiles(config);
-    const file = match[1] === 'latest' ? files[0] : files.find(item => item.name === match[1]);
-    if (!file) return sendJson(response, 404, { error: 'Backup not found.' }, { secure: config.cookieSecure });
-    audit(database, request, 'DATABASE_BACKUP_DOWNLOADED', { userId: session.user_id, subjectUsername: session.username, details: { filename: file.name, sizeBytes: file.sizeBytes } });
-    applySecurityHeaders(response, { secure: config.cookieSecure });
-    response.writeHead(200, {
-      'Content-Type': 'application/vnd.sqlite3',
-      'Content-Length': String(file.sizeBytes),
-      'Content-Disposition': `attachment; filename="${file.name}"`,
-      'Cache-Control': 'no-store',
-    });
-    fs.createReadStream(path.join(backupFolder(config), file.name)).pipe(response);
-    return true;
-  });
-
   router.post('/api/admin/backup', async (ctx) => {
     const { session, database, sendJson, response, config, sessionRole, request, audit } = ctx;
     if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
@@ -345,7 +302,7 @@ export function mountAdminRoutes(router) {
       return sendJson(response, 403, { error: 'Administrator access is required.' }, { secure: config.cookieSecure });
     }
     try {
-      const backupDir = backupFolder(config);
+      const backupDir = path.join(config.dataDirectory || path.resolve(process.cwd(), 'data'), 'backups');
       const result = createDatabaseBackup(database, { backupDirectory: backupDir, keepCount: 14 });
       audit(database, request, 'DATABASE_BACKUP_CREATED', { userId: session.user_id, details: { filename: result.filename, sizeBytes: result.sizeBytes } });
       return sendJson(response, 201, result, { secure: config.cookieSecure });

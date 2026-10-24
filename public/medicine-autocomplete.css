@@ -1,5 +1,4 @@
-/* v42.3: medicine search list (public/medicine-autocomplete.js).
-   v42.5: two steps - names, then forms and strengths with orange notes. */
+/* v42.3: medicine search list (public/medicine-autocomplete.js). */
 .bk-med-list {
   position: fixed;
   z-index: 99999;
@@ -43,34 +42,6 @@
   background: #fff2a8;
   color: inherit;
   border-radius: 2px;
-}
-
-.bk-med-head {
-  padding: 6px 10px 4px;
-  font-weight: 700;
-  color: #0f4c5c;
-  border-bottom: 1px solid #e2ece9;
-  margin-bottom: 2px;
-}
-
-.bk-med-syn {
-  margin-left: auto;
-  font-size: 12px;
-  color: #64748b;
-}
-
-.bk-med-note {
-  display: block;
-  margin-top: 2px;
-  font-size: 12px;
-  color: #c2410c;
-}
-
-.medication-dose-note {
-  display: block;
-  margin-top: 2px;
-  font-size: 12px;
-  color: #c2410c;
 }
 
 .bk-med-empty {

@@ -1,44 +1,18 @@
-# Borkeo EMR - files that must never be uploaded to GitHub (patient data,
-# backups, secrets). They stay on this computer.
+# Database files
+data/*.sqlite*
+data/backups/
 
 # Dependencies
 node_modules/
 
-# Environment and secrets (.env.example is the template and is kept)
+# Environment
 .env
-.env.*
-!.env.example
 
-# Databases: patient database, WAL/SHM files, backups. data/demo.sqlite (local
-# username-only demo) also stays on this computer and is not uploaded.
-*.sqlite
-*.sqlite-wal
-*.sqlite-shm
-*.sqlite-journal
-*.db
-*.db-wal
-*.db-shm
-data/*.sqlite*
-# ICD-10 reference catalogue (96,693 diagnoses, no patient data): needed by the server.
-!data/icd10/catalogue.sqlite
-
-# Backups (server/backup.mjs, scripts/backup-database.mjs, the admin backup
-# button, daily backups next to the database) and old backup files
-data/backups/
-backups/
+# Backup files
 *.bak
-
-# Patient uploads: scanned documents, message and payment attachments,
-# paraclinic results (written next to the database, in <database folder>/uploads)
-data/uploads/
-uploads/
-
-# Persistent data folder (hospital database outside the project)
-Borkeo_EMR_Data/
-
-# Logs
-logs/
-*.log
 
 # Staff login export (generate with scripts/generate-passwords-csv.mjs; never commit)
 borkeo-emr-passwords.csv
+
+# Scanned patient documents (v41.7)
+data/uploads/

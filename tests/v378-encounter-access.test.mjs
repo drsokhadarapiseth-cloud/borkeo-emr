@@ -74,7 +74,7 @@ test('completed Triage edits stay in Triage for staff and management without rer
 test('IPD corrections require requester/scope/version-bound management approval, consumed by one save',async()=>{
  const f=await fixture();try{
   const item=f.seed('Correction','ipd',{'system:admissionStatus':'discharged','system:discharge':{dischargeAt:'2026-10-18T12:00'}});
-  const doctor=await f.login('doctor_medicine'),manager=await f.login('director');
+  const doctor=await f.login('doctor_medicine'),manager=await f.login('admin');
   const save=()=>f.request('/api/patient-record',doctor,{...item,editorScope:'medical',editOnly:true,
     expectedVersion:f.db.findPatient(item.patientKey).version,data:{'scope:medical:id:diag_input':'Corrected diagnosis','scope:registration:id:web_first_name':'FORGED','scope:nursing:id:care':'FORGED'}},'PUT');
   assert.equal((await save()).status,403);

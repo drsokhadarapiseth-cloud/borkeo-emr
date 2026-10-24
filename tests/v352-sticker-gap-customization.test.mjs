@@ -26,7 +26,7 @@ test('EMR.html contains Gap X and Gap Y input controls with 2.5mm defaults and u
 
   // Cache busting version ?v=3520 or ?v=3530
   assert.match(emrHtml, /\/public\/patient-card-print\.css\?v=35[23]0/);
-  assert.match(emrHtml, /\/public\/patient-card-print\.js\?v=\d+/);
+  assert.match(emrHtml, /\/public\/patient-card-print\.js\?v=35[23]0/);
 });
 
 test('patient-card-print.js normalizeConfig defaults to gapX 2.5 and gapY 2.5 with backward compatibility', () => {

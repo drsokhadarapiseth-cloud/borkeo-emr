@@ -209,10 +209,9 @@ export function recoverLegacyPatientData(database, { projectRoot, targetPath, ca
   return { patients, forms, sources };
 }
 
-export function createDailyBackup(database, targetPath, keep = 14, directory = '') {
+export function createDailyBackup(database, targetPath, keep = 14) {
   if (!targetPath || targetPath === ':memory:' || !fs.existsSync(targetPath)) return '';
-  // v42.4: DATA_DIR/backups when DATA_DIR is set; otherwise next to the database.
-  const backupDirectory = directory || path.join(path.dirname(targetPath), 'backups');
+  const backupDirectory = path.join(path.dirname(targetPath), 'backups');
   fs.mkdirSync(backupDirectory, { recursive: true });
   const now = new Date();
   const day = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;

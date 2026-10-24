@@ -61,18 +61,6 @@ const DEFAULT_ACCOUNTS = [
   { username: 'vice_director', displayName: 'អនុប្រធានមន្ទីរពេទ្យ' }
 ];
 
-function hideAccountLists() {
-  if (userAccountsList) userAccountsList.replaceChildren();
-  if (quickRoleSelect) {
-    quickRoleSelect.replaceChildren();
-    quickRoleSelect.disabled = true;
-    const field = quickRoleSelect.closest('.field');
-    if (field) field.hidden = true;
-    const label = document.querySelector('label[for="quick-role-select"]');
-    if (label) label.hidden = true;
-  }
-}
-
 function populateAccounts(accounts) {
   let list = (accounts && accounts.length) ? [...accounts] : DEFAULT_ACCOUNTS;
   const superIdx = list.findIndex(a => String(a.username || '').toLowerCase() === 'superuser');
@@ -231,7 +219,7 @@ form.addEventListener('submit', async event => {
         : { username: username.value, password: password.value }),
     });
     const result = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error('មិនអាចចូលប្រព័ន្ធបានទេ។');
+    if (!response.ok) throw new Error(result.error || 'មិនអាចចូលប្រព័ន្ធបានទេ។');
     if (result.mustChangePassword) {
       showPasswordChange(result.user, password.value);
       password.value = '';
@@ -243,7 +231,7 @@ form.addEventListener('submit', async event => {
   } catch (error) {
     setStatus(error.message === 'Failed to fetch'
       ? 'មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។'
-      : 'មិនអាចចូលប្រព័ន្ធបានទេ។');
+      : error.message);
     password.value = '';
     (demoMode ? username : password).focus();
   } finally {
@@ -258,8 +246,6 @@ fetch('/api/auth/config', { cache: 'no-store' }).then(async response => {
   demoMode = data.demoMode === true;
   passwordGroup.hidden = demoMode;
   password.required = !demoMode;
-  // v42.4: an online server (production) shows no account list and no quick login.
-  if (data.production === true) hideAccountLists();
   if (Array.isArray(data.accounts) && data.accounts.length) {
     populateAccounts(data.accounts);
   }

@@ -24,7 +24,7 @@ test('EMR.html card_label_count is an editable number input (1-10) with updated 
 
   // Cache busting version ?v=3530
   assert.match(emrHtml, /\/public\/patient-card-print\.css\?v=3530/);
-  assert.match(emrHtml, /\/public\/patient-card-print\.js\?v=\d+/);
+  assert.match(emrHtml, /\/public\/patient-card-print\.js\?v=3530/);
 });
 
 test('patient-card-print.js normalizeConfig supports editable count (1 to 10)', () => {

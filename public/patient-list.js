@@ -39,7 +39,6 @@
   const triageToday = Boolean(document.querySelector('[data-patient-list-mode="triage-today"]'));
   const patientsUrl = triageToday ? '/api/triage/queue?omitPhotos=1' : '/api/patients?includePayment=1&omitPhotos=1';
   let patients = [];
-  let activeWard = '';
   let csrfToken = '';
   let activeRole = (() => { try { return String(window.emrSession?.user?.activeRole || window.sessionStorage?.getItem('borkeo-active-role') || '').toUpperCase(); } catch { return ''; } })();
   let admissionPanel = null;
@@ -77,33 +76,19 @@
     return value || text('unknown');
   }
 
-  // Group only the directory display; encounter keys and stored visits stay intact.
-  function latestPatients(rows) {
-    const grouped = new Map();
-    const sorted = [...rows].sort((a,b) => String(b.entryDate || '').localeCompare(String(a.entryDate || '')) ||
-      Number(b.createdAt || 0) - Number(a.createdAt || 0) || String(b.patientKey).localeCompare(String(a.patientKey)));
-    for (const patient of sorted) {
-      const identity = String(patient.healthId || '').trim().toLocaleLowerCase();
-      const key = identity ? 'health:' + identity : 'visit:' + patient.patientKey;
-      if (!grouped.has(key)) grouped.set(key, patient);
-    }
-    return [...grouped.values()];
-  }
-
   function filteredPatients() {
     const query = element('patient-search').value.trim().toLocaleLowerCase();
     const entry = element('entry-filter').value;
     const discharge = element('discharge-filter').value;
     const department = element('department-filter').value;
     const payment = element('payment-filter').value;
-    const list = (triageToday ? patients : latestPatients(patients)).filter(patient => {
+    return patients.filter(patient => {
       const haystack = [patient.fullName, patient.firstName, patient.lastName, patient.caseNumber, patient.healthId, patient.phone, patient.equityCard]
         .join(' ').toLocaleLowerCase();
       return (!query || haystack.includes(query)) && (!entry || patient.entryDate === entry) &&
         (!discharge || patient.dischargeDate === discharge) &&
         (!department || patient.departmentCode === department) && (!payment || paymentTypeCode(patient) === payment);
     });
-    return list;
   }
 
   function renderDepartmentFilter() {
@@ -228,16 +213,6 @@
 
   function ageLabel(patient) {
     let value=String(patient.age || '').trim();
-    if(!value && patient.dateOfBirth) {
-      const dob = new Date(patient.dateOfBirth);
-      if(!isNaN(dob.getTime())) {
-        const ref = patient.entryDate ? new Date(patient.entryDate) : new Date();
-        let years = ref.getFullYear() - dob.getFullYear();
-        const m = ref.getMonth() - dob.getMonth();
-        if (m < 0 || (m === 0 && ref.getDate() < dob.getDate())) years--;
-        if (years >= 0) value = String(years);
-      }
-    }
     if(!value)return '—';
     if(/^\d+(?:\.\d+)?$/.test(value))return `${value} ${text('years')}`;
     return language==='en' ? value.replace(/ឆ្នាំ/g,'years').replace(/ខែ/g,'months').replace(/ថ្ងៃ/g,'days')
@@ -276,11 +251,11 @@
       const isMgmt=['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(activeRole);
       const isCashier=['CLERK','ACCOUNTANT'].includes(activeRole);
       const access=patient.recordAccess||{};
-      const viewHref=isCashier?'/billing?'+new URLSearchParams({patientKey:patient.patientKey,history:'1',from:'patient-list'}):
-        (isMgmt||activeRole==='TRIAGE'||['DOCTOR','CHIEF_WARD'].includes(activeRole)&&activeWard==='opd')?'/record-viewer?'+new URLSearchParams({patient:patient.patientKey,from:'patient-list'}):
-        '/emr?'+new URLSearchParams({patient:patient.patientKey,view:access.view||(activeRole==='REGISTRATION'?'register':activeRole==='TRIAGE'?'triage':'medical'),mode:'view',from:'patient-list'});
+      const viewHref=isCashier?'/billing?'+new URLSearchParams({patientKey:patient.patientKey,history:'1'}):
+        isMgmt?'/record-viewer?'+new URLSearchParams({patient:patient.patientKey}):
+        '/emr?'+new URLSearchParams({patient:patient.patientKey,view:access.view||(activeRole==='REGISTRATION'?'register':activeRole==='TRIAGE'?'triage':'medical'),mode:'view'});
       const clinical=['REGISTRATION','TRIAGE','DOCTOR','NURSE','MIDWIFE','CHIEF_WARD'].includes(activeRole);
-      const eyeButton=(isMgmt||isCashier||clinical&&access.canView||['DOCTOR','CHIEF_WARD'].includes(activeRole)&&activeWard==='opd')
+      const eyeButton=(isMgmt||isCashier||clinical&&access.canView)
         ? `<a class="icon-action view" target="_blank" rel="noopener noreferrer" title="មើលព័ត៌មាន" aria-label="មើលព័ត៌មាន" href="${escapeHtml(viewHref)}">👁</a>`
         : `<button type="button" class="icon-action view" data-view-patient="${escapeHtml(patient.patientKey)}" title="មើលព័ត៌មានអ្នកជំងឺ" aria-label="មើលព័ត៌មានអ្នកជំងឺ">👁</button>`;
       const editButton=(isMgmt||clinical&&access.canView)
@@ -290,7 +265,7 @@
         <td data-column="number">${offset+index+1}</td>
         <td data-column="patientName"><span class="patient-primary">${escapeHtml(patient.fullName || text('unknown'))}</span></td>
         <td data-column="sex">${escapeHtml(localizedSex(patient.sex))}</td>
-        <td data-column="age" class="patient-age"><span class="age-badge" data-patient-value>${escapeHtml(ageLabel(patient))}</span></td>
+        <td data-column="age" class="patient-age"><span data-patient-value>${escapeHtml(formatDate(patient.dateOfBirth))}</span> <span class="age-badge" data-patient-value>${escapeHtml(ageLabel(patient))}</span></td>
         <td data-column="phone" class="patient-phone" data-patient-value>${escapeHtml(patient.phone || '')}</td>
         <td data-column="patientId">${!triageToday && ['REGISTRATION','ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(activeRole) ? `<button type="button" class="patient-id-link" style="border:0!important;outline:0!important;background:transparent!important;padding:0!important;box-shadow:none!important;color:#087dff!important;font:inherit!important;font-weight:700!important;cursor:pointer;text-decoration:none!important;" data-new-record="${escapeHtml(patient.patientKey)}">${escapeHtml(patient.healthId || patient.patientKey)}</button>` : `<span class="health-id" data-patient-value>${escapeHtml(patient.healthId || '')}</span>`}</td>
         <td data-column="equityCard" data-patient-value>${escapeHtml(patient.equityCard || '')}</td>
@@ -320,7 +295,6 @@
     const result = await response.json();
     csrfToken = result.csrfToken;
     activeRole = String(result.user?.activeRole || '').toUpperCase();
-    activeWard = String(result.user?.activeWard?.code || '').toLowerCase();
     try { window.sessionStorage?.setItem('borkeo-active-role', activeRole); } catch {}
     ensureAdmissionPanel();
   }
@@ -658,51 +632,16 @@
     const requestEditButton=event.target.closest('[data-request-edit]');
     if(requestEditButton){
       const patient=patients.find(item=>item.patientKey===requestEditButton.dataset.requestEdit);if(!patient)return;
+      if(['ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(activeRole)){
+        const dialog=document.createElement('dialog');dialog.className='patient-summary-dialog';
+        const choices=[['register','ព័ត៌មានចុះឈ្មោះ'],['triage','ព័ត៌មានទ្រីយ៉ា'],[patient.serviceMode==='opd'?'opd':'medical','កំណត់ត្រាវេជ្ជសាស្ត្រ'],['nursing','ដំណើរការថែទាំ']];
+        dialog.innerHTML='<h2>ជ្រើសរើសទម្រង់ដែលត្រូវកែប្រែ</h2>'+choices.map(([view,label])=>`<p><button type="button" data-edit-view="${view}">${label}</button></p>`).join('')+'<button type="button" data-cancel-edit>បោះបង់</button>';
+        dialog.onclick=event=>{const button=event.target.closest('[data-edit-view]');if(button)location.assign('/emr?'+new URLSearchParams({patient:patient.patientKey,view:button.dataset.editView,mode:'edit'}));if(event.target.closest('[data-cancel-edit]'))dialog.close()};
+        dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();return;
+      }
       const access=patient.recordAccess||{};
       if(access.requiresApproval){await submitPatientRequest('PATIENT_EDIT',patient,access.scope);return;}
-
-      const dialog=document.createElement('dialog');
-      dialog.className='patient-summary-dialog patient-edit-choice-dialog';
-      dialog.style.maxWidth='440px';
-      dialog.style.padding='22px';
-      dialog.style.borderRadius='12px';
-      dialog.style.border='1px solid #71c3d8';
-      dialog.style.boxShadow='0 12px 36px rgba(7, 92, 124, 0.22)';
-      dialog.innerHTML=`
-        <h2 style="margin:0 0 8px;font-size:16px;color:#075c7c;">${escapeHtml(patient.fullName || text('unknown'))}</h2>
-        <p style="margin:0 0 16px;font-size:13px;color:#475569;">${patient.healthId ? `${escapeHtml(text('patientId'))}: ${escapeHtml(patient.healthId)}` : ''}</p>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <button type="button" data-action-edit-info style="padding:10px 14px;background:#0284c7;color:#fff;border:0;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;"><span aria-hidden="true">✎</span> ${escapeHtml(text('edit'))}</button>
-          <button type="button" data-action-add-record style="padding:10px 14px;background:#0d9488;color:#fff;border:0;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;"><span aria-hidden="true">➕</span> ${escapeHtml(text('addRecord'))}</button>
-          <button type="button" data-action-cancel style="padding:8px 14px;background:#64748b;color:#fff;border:0;border-radius:8px;font-size:13px;cursor:pointer;margin-top:4px;">${escapeHtml(text('cancel'))}</button>
-        </div>
-      `;
-      dialog.querySelector('[data-action-edit-info]').onclick=()=>{
-        dialog.close();
-        dialog.remove();
-        if(['ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(activeRole)){
-          const choices=[['register','ព័ត៌មានចុះឈ្មោះ'],['triage','ព័ត៌មានទ្រីយ៉ា'],[patient.serviceMode==='opd'?'opd':'medical','កំណត់ត្រាវេជ្ជសាស្ត្រ'],['nursing','ដំណើរការថែទាំ']];
-          const subDialog=document.createElement('dialog');subDialog.className='patient-summary-dialog';
-          subDialog.innerHTML='<h2>ជ្រើសរើសទម្រង់ដែលត្រូវកែប្រែ</h2>'+choices.map(([view,label])=>`<p><button type="button" data-edit-view="${view}">${label}</button></p>`).join('')+'<button type="button" data-cancel-edit>បោះបង់</button>';
-          subDialog.onclick=event=>{const button=event.target.closest('[data-edit-view]');if(button)location.assign('/emr?'+new URLSearchParams({patient:patient.patientKey,view:button.dataset.editView,mode:'edit',from:'patient-list'}));if(event.target.closest('[data-cancel-edit]'))subDialog.close()};
-          subDialog.addEventListener('close',()=>subDialog.remove());document.body.append(subDialog);subDialog.showModal();
-        } else {
-          try { sessionStorage.setItem('emr_from_patient_list', '1'); } catch (_) {}
-          if(access.canEdit)location.assign('/emr?'+new URLSearchParams({patient:patient.patientKey,view:access.view,mode:'edit'}));
-        }
-      };
-      dialog.querySelector('[data-action-add-record]').onclick=()=>{
-        dialog.close();
-        dialog.remove();
-        location.assign(`/emr?view=register&newVisitFrom=${encodeURIComponent(patient.patientKey)}&from=patient-list`);
-      };
-      dialog.querySelector('[data-action-cancel]').onclick=()=>{
-        dialog.close();
-        dialog.remove();
-      };
-      dialog.addEventListener('close',()=>dialog.remove());
-      document.body.append(dialog);
-      dialog.showModal();
+      if(access.canEdit)location.assign('/emr?'+new URLSearchParams({patient:patient.patientKey,view:access.view,mode:'edit'}));
       return;
     }
     const deleteButton=event.target.closest('[data-action-delete]');

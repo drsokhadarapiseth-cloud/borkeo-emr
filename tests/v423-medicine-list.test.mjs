@@ -1,7 +1,7 @@
 // v42.3 - Medicine names from the Cambodia Essential Medicines List (10th edition,
 // 2023-2024) in every prescription form; units written as international units;
 // blank number of medicine and route; 3 starting rows; CMS code saved.
-// The browser behaviour is also checked in tests/v425-medicine-list-browser.mjs (v42.5).
+// The browser behaviour is also checked in tests/v423-medicine-list-browser.mjs.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -39,7 +39,7 @@ test('the catalogue has 704 medicines, each with a label and a unit', () => {
     const expected = [item.code, item.name, item.form, item.strength].filter(Boolean).join('-');
     assert.equal(item.label, expected, `label of item ${item.id} is CMS code-Name-Form-Strength`);
   }
-  assert.equal(catalogue.find(item => item.label.startsWith('AA0410')).label, 'AA0410, AA0411-Paracetamol-Tablet-500 mg');
+  assert.equal(catalogue.find(item => item.label.startsWith('AA0410')).label, 'AA0410, AA0411-Paracetamol (acetaminophen)-Tablet-500 mg');
   assert.ok(catalogue.some(item => !item.code && item.label === 'Isoflurane-Inhalation'), 'a medicine without a CMS code is shown without it');
 });
 
@@ -69,7 +69,7 @@ test('choosing a medicine sets the unit by the owner rules (international units 
   assert.equal(unitOf(41), 'ដុំ', 'transdermal patch: piece');
   const allowed = new Set(['mg', 'mL', 'mcg', 'g', 'IU', 'mmol', 'គ្រាប់', 'កញ្ចប់', 'ដំណក់', 'បាញ់', 'ដុំ']);
   for (const item of catalogue) assert.ok(allowed.has(BorkeoMedicine.optionUnit(item)), `${item.label}: ${item.unit}`);
-  for (const item of catalogue.filter(entry => entry.route === 'INJ')) {
+  for (const item of catalogue.filter(entry => entry.kind === 'inj')) {
     assert.ok(!['អំពូល', 'ផ្លាកុង'].includes(BorkeoMedicine.optionUnit(item)), 'injections are never in ampoules');
   }
 });
@@ -161,8 +161,7 @@ test('each prescription table starts with 3 rows; saved records keep every line'
 
 test('no NaN in the total when the number of medicine is empty', () => {
   assert.match(html, /var dose = parseFloat\(getMedicationDoseAmount\(mainRow\)\) \|\| 0;/);
-  // v42.5: an empty number of medicine leaves the total empty (not 0, never NaN).
-  assert.match(html, /totalField\.value = total && isFinite\(total\) \? String\(Math\.round\(total \* 100\) \/ 100\) : '';/);
+  assert.match(html, /totalField\.value = total \? String\(Math\.round\(total \* 100\) \/ 100\) : '0';/);
   assert.match(html, /var dose = getMedicationDoseAmount\(mainRow\) \|\| '0';/, 'legacy dose fields get 0, not NaN');
 });
 

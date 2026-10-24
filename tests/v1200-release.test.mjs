@@ -4,7 +4,6 @@ import path from 'node:path';
 import test from 'node:test';
 import { projectRoot } from '../server/config.mjs';
 import { openDatabase } from '../server/database.mjs';
-import { seedDemoPatients } from '../scripts/seed-demo-patients.mjs';
 
 const root = projectRoot;
 
@@ -50,9 +49,8 @@ test('v19.4 retains the TV display and removes the management dashboard', () => 
 });
 
 test('v12.0 demo database retains 10 New Case demo patients with sex and queue numbers', () => {
-  const db = openDatabase(':memory:');
+  const db = openDatabase(path.join(root, 'data', 'demo.sqlite'));
   try {
-    seedDemoPatients(db);
     const rows = db.sqlite.prepare(`SELECT sex, record_json FROM patient_records
       WHERE patient_key LIKE 'case:BK-%' AND json_extract(record_json, '$."system:demoPatient"')='true' ORDER BY created_at`).all();
     assert.ok(rows.length >= 10);
@@ -165,9 +163,8 @@ test('v19.4 keeps cashier-first OPD handoffs and the bilingual support and print
 });
 
 test('v13.0 demo patients contain complete registration data and real names', () => {
-  const db = openDatabase(':memory:');
+  const db = openDatabase(path.join(root, 'data', 'demo.sqlite'));
   try {
-    seedDemoPatients(db);
     const rows = db.sqlite.prepare(`SELECT first_name,last_name,sex,age,date_of_birth,phone,record_json
       FROM patient_records
       WHERE patient_key LIKE 'case:BK-%' AND json_extract(record_json, '$."system:demoPatient"')='true'

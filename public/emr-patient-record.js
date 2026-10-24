@@ -29,8 +29,6 @@
     safe: { code: 'safe-abortion', kh: 'រំលូតកូនដោយសុវត្ថិភាព', en: 'Safe Abortion', mode: 'opd', module: 'safe', hefCode: 'RH-Del' },
     cervix: { code: 'cervix-screening', kh: 'ពិនិត្យមហារីកមាត់ស្បូន', en: 'Cervical Cancer Screening', mode: 'opd', module: 'cervix', hefCode: 'RH-Gyn1' },
     std: { code: 'std', kh: 'ជំងឺកាមរោគ', en: 'Sexually Transmitted Diseases', mode: 'opd', module: 'general', hefCode: 'RH-STI' },
-    // v42.6: free vaccination by the midwife (Triage -> midwife, no Cashier).
-    vaccination: { code: 'vaccination', kh: 'ចាក់វ៉ាក់សាំង', en: 'Vaccination', mode: 'opd', module: 'general' },
   };
 
   const labels = {
@@ -714,15 +712,12 @@
       if (otherDept === 'emergency') return 'EMG';
       if (otherDept === 'surgery') return 'SURG';
       if (otherDept === 'gynecology') return 'GYN';
-      if (otherDept === 'maternity') return 'MAT';
-      // v42.6: safe abortion is a Gynecology ward service.
-      if (otherDept === 'safe') return 'GYN';
+      if (otherDept === 'maternity' || otherDept === 'safe') return 'MAT';
       if (otherDept === 'pediatric') return 'PED';
       if (otherDept === 'tb') return 'TB';
       if (otherDept === 'medicine') return 'MED';
       if (otherDept === 'infectious') return 'MED';
       if (['anc', 'pnc', 'spacing', 'cervix', 'std', 'eyecare'].includes(otherDept)) return 'OPD';
-      if (otherDept === 'vaccination') return 'OPD';
     }
 
     const isEmergency = document.getElementById('s2_emergency')?.checked ||
@@ -798,8 +793,7 @@
       if (otherDept === 'emergency') return 'emergency';
       if (otherDept === 'surgery') return 'surgery';
       if (otherDept === 'gynecology') return 'gynecology';
-      if (otherDept === 'maternity') return 'obstetric';
-      if (otherDept === 'safe') return 'gynecology';
+      if (otherDept === 'maternity' || otherDept === 'safe') return 'obstetric';
       if (otherDept === 'pediatric') return 'pediatric';
       if (otherDept === 'tb') return 'tb';
       if (otherDept === 'infectious') return 'infectious';
@@ -1213,20 +1207,12 @@
       setStatus('error', routeError);
       return false;
     }
-    // v42.5: a line above the maximum dose needs the written reason before saving.
-    const doseError = activeEditorScope() === 'medical'
-      ? window.EmrMedicationSafety?.validateDoses('#opd_rx_tbody tr.orx-main-row, #rx_tbody tr.rx-main-row, #rx_protocol_tbody tr.protocol-main-row') : '';
-    if (doseError) {
-      setStatus('error', doseError);
-      return false;
-    }
     const validation = validatePatient(context, options);
     if (validation) {
       setStatus('error', validation);
       window.alert(validation);
       return false;
     }
-    const previewNewPatientCard = activeEditorScope() === 'registration' && !loadedPatient && !registrationVisitSourceKey;
     setStatus('saving', t('saving'));
     try {
       const token = await getCsrfToken();
@@ -1277,7 +1263,6 @@
       void refreshAdmissionApprovalPanel();
       applyTriageWorkspaceRestrictions();
       updateTriageSaveButtonState();
-      if (previewNewPatientCard) await window.previewRegisteredPatientCard?.(loadedPatient);
       if (String(window.emrSession?.user?.activeRole || '').toUpperCase() === 'TRIAGE' && options.continueTo) {
         window.location.href = '/triage';
         return true;

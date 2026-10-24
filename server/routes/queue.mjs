@@ -4,7 +4,6 @@ import {
 } from '../queue-board.mjs';
 import { listOpdQueue, opdLocalDate } from '../opd-queue.mjs';
 import { completePatientMessages } from '../messages.mjs';
-import { canUseMaternalPatient, isFreeMaternalService, isNotOpdDoctorPatient } from '../maternal.mjs';
 
 export function mountQueueRoutes(router) {
   // 1. GET /api/triage/queue
@@ -63,11 +62,9 @@ export function mountQueueRoutes(router) {
       const occupiedElsewhere = new Set(listActiveQueueCalls(database)
         .filter(call => call.service === 'OPD' && counter && call.counter !== counter)
         .map(call => call.patientKey));
-      // v42.6: maternal services go to the midwife, safe abortion to the Gynecology ward.
       const readyPatients = listOpdQueue(database, date).filter(item =>
         ['WAITING', 'IN_CONSULTATION'].includes(item.status) &&
         !item.transferredToIpdAt &&
-        !isNotOpdDoctorPatient(database.findPatient(item.patientKey)) &&
         database.findPatient(item.patientKey)?.service_mode === 'opd' &&
         !database.findPatient(item.patientKey)?.discharge_date
       );
@@ -135,8 +132,7 @@ export function mountQueueRoutes(router) {
     } = ctx;
     if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
     const role = requireContext(session);
-    // v42.6: the midwife and the Gynecology ward call their patients on the OPD board.
-    if (!['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'TRIAGE', 'DOCTOR', 'MIDWIFE', 'CHIEF_WARD'].includes(role)) {
+    if (!['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'TRIAGE', 'DOCTOR'].includes(role)) {
       return sendJson(response, 403, { error: 'Queue calling is available to Triage, OPD doctors, Admin and Director.' }, { secure: config.cookieSecure });
     }
     const body = await readJson(request, 10_000);
@@ -144,7 +140,7 @@ export function mountQueueRoutes(router) {
     if (role === 'TRIAGE' && service !== 'TRIAGE') {
       return sendJson(response, 403, { error: 'Triage staff can only call the Triage board.' }, { secure: config.cookieSecure });
     }
-    if (['DOCTOR', 'MIDWIFE', 'CHIEF_WARD'].includes(role) && service !== 'OPD') {
+    if (role === 'DOCTOR' && service !== 'OPD') {
       return sendJson(response, 403, { error: 'OPD doctors can only call the OPD board.' }, { secure: config.cookieSecure });
     }
     try {
@@ -152,12 +148,9 @@ export function mountQueueRoutes(router) {
       if (!row || !canAccessPatient(database, session, row)) {
         return sendJson(response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
       }
-      if (['MIDWIFE', 'CHIEF_WARD'].includes(role) && !canUseMaternalPatient({ ...session, activeRole: role }, row, ctx.sessionWard(session))) {
-        return sendJson(response, 403, { error: 'This patient is outside your service.' }, { secure: config.cookieSecure });
-      }
       const rowData = parseStoredJson(row.record_json);
       const testOnlyPreConsult = service === 'OPD' && rowData['system:workflowStage'] === 'OPD_PARACLINIC_ORDERING' && Boolean(rowData['system:opdPreConsultParaclinicAt']);
-      if (service === 'OPD' && !testOnlyPreConsult && !isFreeMaternalService(row) && !opdConsultationPaymentConfirmed(database, row)) {
+      if (service === 'OPD' && !testOnlyPreConsult && !opdConsultationPaymentConfirmed(database, row)) {
         return sendJson(response, 409, { error: 'Confirm the OPD consultation fee before calling this patient to the doctor.' }, { secure: config.cookieSecure });
       }
       const call = callQueuePatient(database, { service, counter: body?.counter, patientKey: row.patient_key, userId: session.user_id, queueNumber: body?.queueNumber });

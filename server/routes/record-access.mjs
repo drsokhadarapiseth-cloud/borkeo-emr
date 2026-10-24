@@ -1,4 +1,3 @@
-import { uploadDirectory } from '../config.mjs';
 // v41.7 - /api/record-access-log (printing and export reported by the page;
 // viewer for management) and /api/patient-documents (scanned documents).
 import os from 'node:os';
@@ -57,8 +56,7 @@ export function mountRecordAccessRoutes(router) {
       const bytes = await readBinary(request, 10 * 1024 * 1024 + 1);
       const document = addDocument(database, {
         // Next to the database (data/uploads/patients); a test database in memory uses a temporary folder.
-        uploadRoot: config.dataDirectory ? uploadDirectory(config, 'patients')
-          : path.join(config.databasePath === ':memory:' ? path.join(os.tmpdir(), 'borkeo-test-uploads') : path.dirname(config.databasePath), 'uploads', 'patients'),
+        uploadRoot: path.join(config.databasePath === ':memory:' ? path.join(os.tmpdir(), 'borkeo-test-uploads') : path.dirname(config.databasePath), 'uploads', 'patients'),
         patientKey: found.row.patient_key, session, bytes,
         declaredType: String(request.headers['content-type'] || '').split(';')[0].trim(),
         // The page sends the name URI-encoded (Khmer file names); decode, then clean.

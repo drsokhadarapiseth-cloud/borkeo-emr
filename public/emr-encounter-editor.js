@@ -11,7 +11,6 @@
   const scopeFor = view => view === 'register' ? 'registration' : view === 'triage' ? 'triage' : view === 'nursing' ? 'nursing' : 'medical';
   const roots = { register:'page1',triage:'page2',opd:'sub_opd','opd-paraclinic':'sub_opd',medical:'sub_ipd',nursing:'sub_nursing',daily:'emr-daily-view',discharge:'emr-discharge-view' };
   function view() {
-    if (report && explicitView) return report;
     if (manager()) return report || query.get('view') || 'medical';
     if(access?.view==='medical' && ['daily','discharge'].includes(query.get('view')))return query.get('view');
     return access?.view || query.get('view') || (role() === 'REGISTRATION' ? 'register' : role() === 'TRIAGE' ? 'triage' : ['NURSE','MIDWIFE'].includes(role()) ? 'nursing' : window.emrSession?.user?.activeWard?.code === 'opd' ? 'opd' : 'medical');
@@ -48,20 +47,12 @@
     if(!bar && !report){
       bar=document.createElement('div');bar.className='emr-encounter-toolbar no-print';bar.dataset.emrTransient='';
       bar.innerHTML='<button type="button" data-editor-toggle data-required-bypass></button><button type="button" data-editor-cancel data-required-bypass>បោះបង់ការកែប្រែ</button><button type="button" data-editor-print data-required-bypass>បោះពុម្ព</button><span data-editor-status role="status"></span>';
-      const regActionBar = current === 'register' ? (root.querySelector('.action-bar') || document.getElementById('reg_action_bar') || document.querySelector('#sub_reg .action-bar')) : null;
-      if (regActionBar) {
-        regActionBar.prepend(bar);
-      } else {
-        page.after(bar);
-      }
+      page.after(bar);
       bar.querySelector('[data-editor-toggle]').onclick=toggle;
       bar.querySelector('[data-editor-cancel]').onclick=()=>{if(confirm('តើបោះបង់ការកែប្រែដែលមិនទាន់រក្សាទុកឬ?')){const url=new URL(location.href);url.searchParams.set('mode','view');url.searchParams.delete('edit');location.assign(url)}};
       const printButton=bar.querySelector('[data-editor-print]');
       if(current==='register')printButton.remove();
       else printButton.onclick=()=>window.printEmrReport?.({selectors:['#'+root.id],title:document.title});
-    } else if (bar && current === 'register') {
-      const regActionBar = root.querySelector('.action-bar') || document.getElementById('reg_action_bar') || document.querySelector('#sub_reg .action-bar');
-      if (regActionBar && !regActionBar.contains(bar)) regActionBar.prepend(bar);
     }
     const locked=report || !editing;
     root.querySelectorAll('input,select,textarea,button').forEach(field=>{

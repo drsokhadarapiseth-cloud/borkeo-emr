@@ -126,7 +126,6 @@ export function notifyRequestFeedback(db,r,actor,note){const dest=r.source_ward?
 export function reviewWorkflowRequest(db,id,body,actor){
  if(!MANAGEMENT.includes(actor.role))fail('Management approval required.',403);
  const r=getWorkflowRequest(db,id,actor);
- if(r.kind==='PATIENT_EDIT'&&r.payload.scope==='medical'&&actor.role!=='DIRECTOR')fail('សំណើកែប្រែការព្យាបាលត្រូវការការអនុម័តពីនាយក។',403);
  if(r.status!=='PENDING')fail('This request was already reviewed.');
  if(body.revision!==r.revision)fail('The request changed. Refresh before signing.');
  if(typeof body.approved!=='boolean')fail('Choose approve or reject.',400);
@@ -159,7 +158,6 @@ export function bulkReviewWorkflowRequests(db,body,actor){
    if(!row||row.status!=='PENDING')continue;
    if(item.revision!==undefined&&item.revision!==row.revision)continue;
    const r=getWorkflowRequest(db,id,actor);
-   if(r.kind==='PATIENT_EDIT'&&r.payload.scope==='medical'&&actor.role!=='DIRECTOR')fail('សំណើកែប្រែការព្យាបាលត្រូវការការអនុម័តពីនាយក។',403);
    if(r.kind==='FEE')validateFee(db,r.payload,r.patientKey);
    db.sqlite.prepare("UPDATE workflow_requests SET status='APPROVED',reviewed_by=?,reviewed_at=?,review_note=?,signature_json=? WHERE id=? AND status='PENDING'").run(actor.userId,Date.now(),note,JSON.stringify(signature),id);
    db.sqlite.prepare('INSERT INTO request_decisions VALUES(?,?,?,?,?,?,?,?,?)').run(crypto.randomUUID(),id,r.revision,'APPROVED',actor.userId,Date.now(),note,JSON.stringify(signature),r.row.snapshot_json);

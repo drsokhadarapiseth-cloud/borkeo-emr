@@ -87,8 +87,7 @@
     const status=actions.querySelector('#message-prescription-status');
     try{
       const {prescription:p}=await api(`/api/messages/${message.id}/prescription`);
-      // v42.5: the same route labels as the prescription forms (public/medication-routes.js).
-      const routes=Object.fromEntries((window.BorkeoMedicationRoutes?.definitions()||[]).map(route=>[route.value,route.khmer]));
+      const routes={po:'លេប (PO)',iv_fluid:'បញ្ចូលតាមសរសៃ (IV)',antibiotic_iv:'IV',antibiotic_im:'IM',other_iv:'IV',other_im:'IM',subcutaneous:'ក្រោមស្បែក',topical:'លាប',drops:'បន្តក់',inhaled:'ស្រូប',rectal:'តាមទ្វារធំ',sublingual:'ក្រោមអណ្ដាត',vaginal:'តាមទ្វារមាស'};
       const medicines=p.medications.map((medicine,index)=>`<tr><td>${index+1}</td><td>${esc(medicine.name)}</td><td>${esc(routes[medicine.route]||medicine.route||'—')}</td><td>${esc(medicine.doseAmount||'—')} ${esc(medicine.unit||'')}</td><td>${esc((medicine.scheduleType||'—').toUpperCase())}</td><td>${[medicine.m,medicine.a,medicine.e,medicine.n].map(value=>esc(value||'0')).join(' - ')}</td><td>${esc(medicine.d||'—')}</td><td>${esc(medicine.total||'—')}</td><td>${esc(medicine.note||'—')}</td></tr>`).join('');
       const signature=/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(p.prescriber?.signatureDataUrl||'')
         ? `<img class="rx-signature" src="${esc(p.prescriber.signatureDataUrl)}" alt="ហត្ថលេខាវេជ្ជបណ្ឌិត">` : '';
