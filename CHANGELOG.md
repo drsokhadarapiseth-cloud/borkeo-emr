@@ -1,3 +1,9 @@
+## 43.9.0 - Restoration of navigation tabs, header & clinical workspace
+
+- Restore navigation tabs (`.step-wrapper` Page 1 ចុះឈ្មោះ, Page 2 ទ្រីយ៉ា, Page 3 ពិនិត្យជំងឺ) and dashboard header so they are never suppressed or blocked.
+- Refine registration user checks in `public/patient-banner.js`, `public/emr-consultation-workspace.js`, and `public/app-shell.js` so clinicians and admins visiting Page 1 are not treated as registration users.
+- Ensure persistent patient banners, chart tabs, summary cards, and the modern consultation workspace remain fully loaded and interactive for all clinical staff.
+
 ## 43.8.0 - Patient list deduplication, edit choice action dialog & return navigation
 
 - Patient list deduplication: In `public/patient-list.js`, when multiple patient records share the same Health ID (`healthId`), the list displays exactly one row representing their latest visit.

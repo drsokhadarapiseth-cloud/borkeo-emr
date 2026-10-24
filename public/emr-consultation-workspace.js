@@ -17,7 +17,7 @@
     if (role === 'REGISTRATION') return true;
     const view = new URLSearchParams(window.location.search).get('view');
     if (view === 'register' || view === 'registration') return true;
-    if (document.documentElement.classList.contains('registration-user') || document.body?.classList.contains('registration-user') || document.documentElement.classList.contains('on-registration-page') || document.documentElement.classList.contains('bed-direct-register')) return true;
+    if (document.documentElement.classList.contains('registration-user') || document.body?.classList.contains('registration-user') || document.documentElement.classList.contains('bed-direct-register')) return true;
     return false;
   }
 

@@ -356,7 +356,6 @@
       new URLSearchParams(window.location.search).get('view') === 'register' ||
       new URLSearchParams(window.location.search).get('view') === 'registration' ||
       document.documentElement.classList.contains('registration-user') ||
-      document.documentElement.classList.contains('on-registration-page') ||
       document.documentElement.classList.contains('bed-direct-register');
 
     const breadcrumbItems = getBreadcrumbs();

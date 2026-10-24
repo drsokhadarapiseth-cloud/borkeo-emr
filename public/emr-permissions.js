@@ -54,12 +54,12 @@
     const b1 = document.getElementById('btn_page1');
     const b2 = document.getElementById('btn_page2');
     if (role === 'REGISTRATION') {
-      document.documentElement.classList.add('registration-user', 'on-registration-page');
+      document.documentElement.classList.add('registration-user');
       document.documentElement.setAttribute('data-user-role', 'REGISTRATION');
       if (document.body) document.body.classList.add('registration-user');
       hide(b1,false); hide(b2,true); hide(b3,true);
-      hide(document.querySelector('.step-wrapper'),true);
-      hide(document.querySelector('.dashboard-header'),true);
+      hide(document.querySelector('.step-wrapper'),false);
+      hide(document.querySelector('.dashboard-header'),false);
       hide(document.getElementById('emr-persistent-patient-banner'),true);
       hide(document.getElementById('emr-chart-tabs-wrapper'),true);
       hide(document.getElementById('emr-summary-dashboard-panel'),true);
@@ -72,7 +72,7 @@
       document.documentElement.classList.add('bed-direct-view', 'bed-direct-triage');
       hide(b1,true); hide(b2,false); hide(b3,true);
       hide(document.querySelector('.step-wrapper'),true);
-      hide(document.querySelector('.dashboard-header'),true);
+      hide(document.querySelector('.dashboard-header'),false);
       const p1 = document.getElementById('page1');
       const p3 = document.getElementById('page3');
       if (p1) { p1.classList.remove('active'); p1.hidden = true; }
@@ -91,7 +91,18 @@
       window.switchPage?.(3);
       window.switchOpdTab?.('nursing');
     }
-    else if (['DOCTOR','ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(role)) { hide(b1,false); hide(b2,false); hide(b3,false); }
+    else if (['DOCTOR','ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(role)) {
+      document.documentElement.classList.remove('registration-user', 'on-registration-page', 'triage-restricted');
+      if (document.body) document.body.classList.remove('registration-user');
+      hide(b1,false); hide(b2,false); hide(b3,false);
+      hide(document.querySelector('.step-wrapper'),false);
+      hide(document.querySelector('.dashboard-header'),false);
+      hide(document.getElementById('emr-persistent-patient-banner'),false);
+      hide(document.getElementById('emr-chart-tabs-wrapper'),false);
+      hide(document.getElementById('emr-summary-dashboard-panel'),false);
+      hide(document.getElementById('emr-consultation-workspace'),false);
+      hide(document.querySelector('.emr-breadcrumbs-container'),false);
+    }
   }
 
   function applyReadPermissions(role) {
