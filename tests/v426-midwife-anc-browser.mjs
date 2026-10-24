@@ -126,8 +126,11 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies, 
       await click('[data-action="open"]');
       await browser.waitFor(`Boolean(document.querySelector('#anc-visit-form'))`, 'record opened');
     }
-    await browser.waitFor(`document.querySelector('#anc-tasks-dialog')?.open===true`, 'to-do window opens once');
-    await click('#anc-tasks-dialog [data-dialog-close]');
+    await browser.waitFor(`document.querySelector('#anc-tasks details')?.open===true`, 'inline checklist opens');
+    assert.equal(await browser.evaluate(`document.querySelector('#anc-tasks-dialog')?.open`), false, 'no automatic modal');
+    await click('#anc-tasks summary');
+    assert.equal(await browser.evaluate(`document.querySelector('#anc-tasks details').open`), false);
+    await click('#anc-tasks summary');
     assert.ok(await browser.evaluate(`document.querySelectorAll('#anc-tasks .anc-task').length>0`), 'to-do panel always visible');
     await typeInto('[data-path="identity.age"]', age);
     await typeInto('[data-path="identity.births"]', births);
@@ -187,6 +190,22 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies, 
     await click('[data-action="print"]');
     assert.ok(await browser.evaluate(`document.querySelectorAll('#anc-print .anc-print-page').length>=2`), 'printed pages 2-5');
     assert.match(await browser.evaluate(`document.querySelector('#anc-print').innerText`), /ប្រវត្តិមានផ្ទៃពោះលើកមុន/);
+    const evidence = path.resolve('verification-v431');
+    fs.mkdirSync(evidence, { recursive: true });
+    const screenshot = async name => {
+      const result = await browser.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
+      fs.writeFileSync(path.join(evidence, name + '.png'), Buffer.from(result.data, 'base64'));
+    };
+    await screenshot('anc-desktop');
+    await browser.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+    await sleep(400);
+    await screenshot('anc-mobile');
+    await browser.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+    await browser.send('Emulation.setEmulatedMedia', { media: 'print' });
+    await screenshot('anc-print');
+    const pdf = await browser.send('Page.printToPDF', { printBackground: true, preferCSSPageSize: true });
+    fs.writeFileSync(path.join(evidence, 'anc.pdf'), Buffer.from(pdf.data, 'base64'));
+    await browser.send('Emulation.setEmulatedMedia', { media: '' });
     await useAccount('doctor_obstetric');
     await open(`/anc-record?patient=${encodeURIComponent(red)}`, `Boolean(document.querySelector('[data-action="sign"]'))`);
     await click('[data-action="sign"]');
@@ -209,6 +228,21 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies, 
 
     // ---------- Cervical screening ----------
     await open(`/emr?patient=${encodeURIComponent(cervix)}&view=opd`, `Boolean(document.querySelector('#cervix-result-panel'))`);
+    await browser.waitFor(`(document.querySelector('.emr-banner-details-button')?.getBoundingClientRect().width||0)>50`, 'visible patient header with readable details label').catch(async error => {
+      await screenshot('patient-header-failure');
+      throw new Error(error.message + ' ' + JSON.stringify(await browser.evaluate(`({buttons:[...document.querySelectorAll('.emr-banner-details-button')].map(b=>({width:b.getBoundingClientRect().width,style:getComputedStyle(b).width,parent:b.parentElement.className})),styles:[...document.styleSheets].map(s=>s.href),media:matchMedia('screen').matches})`)));
+    });
+    assert.ok(await browser.evaluate(`document.querySelector('.emr-banner-details-button').getBoundingClientRect().width>50`), 'details label has room beyond the old icon width');
+    await screenshot('patient-desktop');
+    await click('.emr-banner-details-button');
+    await browser.waitFor(`Boolean(document.querySelector('#emr-banner-summary-panel'))`, 'patient details');
+    await screenshot('patient-details-desktop');
+    await browser.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+    await sleep(400);
+    await screenshot('patient-details-mobile');
+    await click('.emr-banner-details-button');
+    await screenshot('patient-mobile');
+    await browser.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
     // The record opens in view mode; the midwife presses Edit (v37.8).
     for (let attempt = 0; attempt < 10 && await browser.evaluate(`document.querySelector('#cervix-send').disabled`); attempt++) {
       await browser.evaluate(`document.querySelector('[data-editor-toggle]')?.click();true`);
@@ -231,6 +265,7 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies, 
     assert.deepEqual(browser.state.errors, [], 'no JavaScript errors');
   } finally {
     browser.close();
+    app.server.closeAllConnections();
     await new Promise(resolve => app.server.close(resolve));
     app.database.close();
   }

@@ -1,0 +1,51 @@
+================================================================================
+Borkeo EMR Update Note: Version 44.7.0
+Update plan #7: consultation workspace (compact layout, consultation cards,
+view switcher)
+================================================================================
+
+Date: 2026-10-24
+Previous Version: 44.6.0
+New Version: 44.7.0
+Source: re-applies the v43.1.0, v43.2.0 and v43.3.0 work (commits cef9798,
+2687380, 685acbf) on top of v44.6.0, combined into one release.
+Patient data: not touched. No database change. Saved records are not rewritten.
+
+Verified in a disposable copy with synthetic data:
+- npm test: 982 / 982 pass.
+- npm run check:khmer: passes.
+- Every account signs in and opens its page in demo mode (34 accounts),
+  hospital mode (24 accounts, password 1234) and online mode (Superuser with
+  SUPERUSER_PASSWORD, all 65 role/ward choices). Same result as v44.6.0.
+
+--------------------------------------------------------------------------------
+1. WHAT CHANGED
+--------------------------------------------------------------------------------
+a) Compact workspace (v43.1): tighter spacing on desktop; the ANC record and
+   patient details fit phone and tablet widths without sideways scrolling.
+b) Consultation cards (v43.2): on the patient record, vitals cards (BP, pulse,
+   temperature, SpO2, respiratory rate, BMI), structured HPI and physical
+   examination cards, quick diagnosis search and a treatment plan with a task
+   checklist (public/emr-consultation-workspace.js and .css).
+c) View switcher (v43.3): clinicians choose one of three views:
+     1. Integrated view: the cards on top, the full classic hospital forms below
+     2. Compact view: the cards only
+     3. Classic view: the full classic forms only, as in v42.3
+   The classic forms, their fields and how they save are unchanged.
+d) The navigation buttons, hospital banner, Switch role, Change password and
+   Log out stay visible for every role (the v43.4 hiding is NOT included).
+e) Version 44.7.0 in package.json, the login page and the server.
+
+--------------------------------------------------------------------------------
+2. INSTALLATION (one step at a time)
+--------------------------------------------------------------------------------
+Step 1: Close the EMR server window (or press Ctrl + C in it).
+Step 2: In the project folder run: git pull
+Step 3: Double-click "Start-Borkeo-WiFi.bat" (or run npm start).
+Step 4: In the browser press Ctrl + F5 once, open a patient record and try the
+        three views.
+
+For Antigravity: this folder already contains the update. The full code change
+is the Git commit "v44.7.0" on master (git log). After pulling, run
+"npm test" and "npm run check:khmer".
+================================================================================

@@ -92,7 +92,7 @@ Password, Log Out and the department navigation bar must stay usable.
     sheets.
  5  Session recovery when doctors and nurses switch wards.          Tested (v44.5.0)
  6  Role-based access for laboratory, imaging and clinical wards.   Tested (v44.6.0)
- 7  Consultation workspace: desktop/phone layouts, vitals cards,    Waiting
+ 7  Consultation workspace: desktop/phone layouts, vitals cards,    Tested (v44.7.0)
     HPI and examination cards, quick diagnosis search, plan
     checklist, switch between 3 views.
  8  Save and Send to Triage buttons on the same row.                Waiting

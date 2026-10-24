@@ -1,5 +1,13 @@
 # Borkeo EMR Changelog
 
+## v44.7.0 - Consultation workspace (compact layout, modern consultation cards, integrated view switcher; re-applies v43.1, v43.2, v43.3)
+- 3 View Modes with instant switching: «ទម្រង់រួមបញ្ចូលគ្នា» (Integrated Form - default), «ទម្រង់សង្ខេប» (Modern Compact View), and «ទម្រង់ពិស្ដារពេញលេញ» (Full Classic Form View).
+- In Integrated View: Modern card displays at top, with TB Screening Matrix (ការពិនិត្យស្វែងរកជំងឺរបេង), ICD-10 multi-diagnosis picker, full medication prescription table (តារាងវេជ្ជបញ្ជាឱសថ), paraclinic investigation builder, and doctor e-signature embedded seamlessly below with unified rounded card styling.
+- Two-way live synchronization across modern inputs and frozen legacy storage fields (`data-emr-transient` and `data-emr-no-save`).
+- Dropdown action «បញ្ចូលវេជ្ជបញ្ជាទៅក្នុងផែនការ» formats prescribed medicines into the treatment plan notes.
+- Quick return bar in classic view to switch back immediately.
+- 100% preservation of authentic A4 paper printing templates and frozen patient data. See docs/ui-43.3.md.
+
 ## v44.6.0 - Scoped paraclinic access and role audit
 
 - Enforce existing patient access for doctors creating or directly reading laboratory/imaging orders; keep Obstetric and Gynecology active contexts separate.

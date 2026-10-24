@@ -1,0 +1,440 @@
+Borkeo EMR v43.1.0 - applied and browser verified update
+Base: 808bff074aead7400f007e6ebc839bc0362805af (43.0.0).
+Includes supplied compact workspace changes plus mobile ANC overflow and details-button sizing fixes.
+No patient database, environment, uploads or backups included. Preserve all local data and unrelated edits.
+Installation: read AGENTS.md, extract the unified patch below, run git apply --check, merge conflicts deliberately, then apply only once. Validate in a disposable synthetic copy with npm test and npm run check:khmer and the explicit browser tests. Never reset local changes or replace patient data.
+For this already updated checkout, do not reapply; restart with the existing launcher and hard-refresh.
+Browser checks use installed Edge and synthetic in-memory records; desktop/mobile screenshots and ANC print-media/PDF inspected. Physical printing not tested. Legacy patient form phone desktop viewport retained.
+Rollback: reverse only this source patch, preserving unrelated edits and all patient data.
+
+SHA256 UPDATED FILES
+55a5b43758e33f08b6a7ae33d562159595f941a38f28322ee128a3a2b0a61f0c  CHANGELOG.md
+2b194aa115a2262ceb5d7a7b95f9d39aacaecc61583cf3ebd4fa5a4fc05cef3a  docs/ui-43.1.md
+30393659a477724d1f74e9ddd8c7e96f953d34d27241f5687d6f5a7e72fceddf  package.json
+1a9c0edb4319ec7d1ed7eafe562a6ab320166f1170ccc66a49811da5fb1f9e07  public/anc-record.js
+bf88a1d96cad8fe77187ffb6e1916c5c2496f43f49e1be90391f4cc22101e42b  public/app-shell.js
+a85a55270e965565d9e5ac5bdee01a462bd1add38f85d68396c950395817dbfe  public/interface-theme.css
+9dbf549a5e6de20b9b2139a6e3c803f057592be626d6eeb1ecc190bbb383e947  public/login.html
+19a87d4645a92fef60a7ec5a7a585a57f2a4c8aebb512edf00ea6fcab211d973  public/patient-banner.js
+4bebb8bf39aecffe88e5f4b3209b30599fa57a727b9ee2e62b7591fe82938aaa  server/server.mjs
+75d236c32b1a5d12606ccd603171fac9a160a442ba847ee56e3c7ac2eba5bc5e  tests/accessibility-quality-smoke.test.mjs
+515c24c5d131f0361502858f7d73f02a63d8d6ee31054988ee8e203a4ea6a668  tests/v426-midwife-anc-browser.mjs
+111db619df3126834d3cb0545698dd26ee8e95ffe916c247fd7eb8045e96226e  tests/v431-compact-workspace.test.mjs
+
+BEGIN UNIFIED PATCH
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index ac6d9dc..191d2fa 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,3 +1,7 @@
++## 43.1.0 - Compact clinical workspace
++
++Shared navy/teal navigation, compact safety-aware patient header, expandable details and inline collapsible ANC tasks. Existing role permissions, clinical data and paper templates preserved. See docs/ui-43.1.md for validation and browser limitations.
++
+ ## v43.0.0 - Scoped paraclinic access and role audit
+ 
+ - Enforce existing patient access for doctors creating or directly reading laboratory/imaging orders; keep Obstetric and Gynecology active contexts separate.
+diff --git a/package.json b/package.json
+index 3bc9c71..19927f1 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "borkeo-emr",
+-  "version": "43.0.0",
++  "version": "43.1.0",
+   "private": true,
+   "type": "module",
+   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",
+diff --git a/public/anc-record.js b/public/anc-record.js
+index 152ef94..7190a3f 100644
+--- a/public/anc-record.js
++++ b/public/anc-record.js
+@@ -329,13 +329,10 @@ function renderTasks(status) {
+     <p class="anc-task-visit">${esc(header)}</p>${next ? `<p class="anc-task-next">${esc(next)}</p>` : ''}
+     ${status.tasks.length ? `<ul class="anc-task-list">${status.tasks.map((task) => taskItem(stateOf(task))).join('')}</ul>` : ''}
+     ${status.overdue.length ? `<h3 class="anc-overdue-title">${esc(t('anc.overdue', 'Overdue from earlier visits'))}</h3><ul class="anc-task-list">${status.overdue.map((task) => taskItem(stateOf(task), true)).join('')}</ul>` : ''}`;
+-  host.innerHTML = html;
+-  if (!tasksShown && data.pregnancy?.status === 'open') {
+-    tasksShown = true;
+-    const dialog = $('anc-tasks-dialog');
+-    dialog.innerHTML = `<div class="anc-dialog-body">${html}</div><div class="anc-actions"><button type="button" data-dialog-close>${esc(t('anc.ok', 'OK'))}</button></div>`;
+-    dialog.showModal();
+-  }
++  const wasClosed = host.querySelector('details')?.open === false;
++  host.innerHTML = `<details class="anc-task-disclosure"${wasClosed ? '' : ' open'}><summary>${esc(t('anc.todo', 'To do at this visit'))}</summary><div>${html}</div></details>`;
++  // v43.1: tasks stay inline; opening a patient never launches a blocking modal.
++  tasksShown = true;
+ }
+ 
+ // ---------------------------------------------------------------- render all
+diff --git a/public/app-shell.js b/public/app-shell.js
+index a6dab01..b3c9870 100644
+--- a/public/app-shell.js
++++ b/public/app-shell.js
+@@ -620,7 +620,8 @@
+     const sidebarToggleBtn = document.getElementById('emr-sidebar-toggle-btn');
+     const pinBtn = document.getElementById('emr-sidebar-pin-btn');
+     const COLLAPSE_DELAY_MS = 200;
+-    let pinned = storage.get(pinKey) === '1';
++    // Default to readable labels on desktop; retain an explicit user choice.
++    let pinned = storage.get(pinKey) !== '0';
+     let collapseTimer = null;
+     let dragging = false;
+     let printing = false;
+diff --git a/public/interface-theme.css b/public/interface-theme.css
+index 3d8bf41..904903b 100644
+--- a/public/interface-theme.css
++++ b/public/interface-theme.css
+@@ -22,3 +22,79 @@
+  body .queue-patient{max-width:280px;overflow-wrap:anywhere}body .queue-patient small{display:none}body .opd-toolbar{gap:12px;padding:16px}body .opd-table-wrap table{min-width:980px}body .opd-table-wrap th,body .opd-table-wrap td{text-align:left;padding:12px}
+ }
+ @media screen and (max-width:700px){body #emr-site-banner{padding:16px!important}body #emr-site-banner .emr-brand-mark{width:56px;height:56px;flex-basis:56px}body #emr-site-banner .emr-unified-brand .emr-brand-mark img{width:44px!important;height:44px!important;max-width:44px!important}body #emr-site-banner .emr-unified-brand h1,body .hospital-name-kh{font-size:20px!important}}
++
++/* v43.1 approved compact workspace. Screen only: existing paper layouts remain intact. */
++@media screen {
++ :root { --emr-sidebar-width:232px; --emr-topbar-height:60px; }
++ body.has-emr-shell { --emr-radius:10px; --emr-panel-shadow:0 1px 3px #12314a0b; background:#f3f7fb!important; }
++ .emr-sidebar { --emr-nav-bg:#132f4a; --emr-nav-fg:#e2edf6; --emr-nav-fg-strong:#fff; --emr-nav-muted:#b7cbdc; --emr-nav-border:#ffffff20; --emr-nav-hover-bg:#21435e; --emr-nav-active-bg:#00869a; --emr-nav-accent:#fff; --emr-nav-focus:#67e8f9; box-shadow:none; }
++ .emr-sidebar-item.is-active { border-color:transparent; }
++ .emr-sidebar-brand-name { font-size:13px; line-height:1.8; white-space:normal; }
++ .emr-sidebar-section-title { letter-spacing:0; font-size:11px; }
++ .emr-sidebar-item { border-radius:8px!important; }
++ .emr-sidebar-icon { color:inherit; }
++ .emr-topbar { box-shadow:none; background:#fff; gap:12px; }
++ .emr-topbar-search-trigger { border-radius:8px!important; background:#f8fafc; }
++ .emr-topbar-brand { display:none; }
++ .emr-topbar-left { flex:0 0 auto; }
++ .emr-topbar-center { flex:1; max-width:620px; }
++ .emr-topbar-right { gap:8px; flex-shrink:0; }
++ .emr-sync-status { padding:4px; background:transparent; border:0; }
++ .emr-sync-status .emr-status-text { display:none; }
++ .emr-breadcrumbs-container { margin:0 auto 8px; }
++ .emr-patient-banner { margin:0 16px; padding:12px 16px; gap:8px 16px; border:1px solid #dce7ef; border-radius:10px; box-shadow:none; background:#fff; }
++ .emr-banner-avatar-wrap { width:46px; height:46px; border-radius:8px; box-shadow:none; }
++ .emr-banner-name { font-size:17px; line-height:1.7; }
++ .emr-banner-details { gap:6px 20px; }
++ .emr-banner-field-label { font-size:11px; line-height:1.65; letter-spacing:0; }
++ .emr-banner-field-value { font-size:13px; white-space:normal; overflow-wrap:anywhere; }
++ .emr-banner-badges { gap:6px; margin-left:auto; max-width:100%; }
++ .emr-banner-badge { padding:6px 9px; border-radius:6px; max-width:100%; white-space:normal; line-height:1.6; }
++ .emr-banner-badge.allergy-alert { animation:none; }
++ body .emr-banner-details-button { display:inline-flex; align-items:center; gap:6px; width:auto; height:auto; flex-shrink:0; min-height:36px; padding:5px 9px!important; background:#f8fafc; border:1px solid #dce7ef; color:#17394a; font:inherit; font-size:12px; cursor:pointer; }
++ .is-details-open .emr-banner-details-icon { transform:rotate(180deg); }
++ .emr-patient-banner:not(.is-details-open) .emr-banner-clinical-item:not(.is-dnr):not(.has-flags):not([data-banner-ews]) { display:none; }
++ .emr-patient-banner:not(.is-details-open) .emr-banner-clinical:not(:has(.is-dnr,.has-flags,[data-banner-ews])) { display:none; }
++ .emr-banner-clinical { padding-top:6px; gap:8px; }
++ .emr-banner-clinical-item { flex:1 1 150px; }
++ .emr-banner-clinical-item.is-dnr,.emr-banner-clinical-item.has-flags { background:#fff1f2; padding:5px 9px; border-radius:6px; }
++ .emr-banner-summary-panel { max-height:45vh; overflow:auto; width:100%; }
++ .emr-chart-tabs-wrap { margin:0 16px 12px; padding:0 8px; box-shadow:none; border-bottom:1px solid #dce7ef; }
++ .emr-chart-tabs { gap:4px; }
++ .emr-chart-tab { border-radius:0!important; padding:10px 13px; font-size:13px; }
++ .emr-chart-tab.is-active { background:#fff; color:#008697; }
++ .emr-chart-tab.is-active::after { background:#008697; }
++ body.has-emr-shell :is(.panel,.card,.patient-panel,.queue-panel,.modern-section,.service-manager-card,.admin-dashboard) { border:1px solid #dce7ef; }
++ body.has-emr-shell :is(button,input,select,textarea) { scroll-margin-top:190px; }
++ body.has-emr-shell :is(input,select,textarea):focus-visible { outline:2px solid #008697; outline-offset:2px; }
++ .anc-task-disclosure>summary { font-weight:700; cursor:pointer; padding:8px 0; color:#17394a; }
++ .anc-task-disclosure h2 { display:none; }
++ .anc-tasks { border-color:#dce7ef; border-radius:10px; box-shadow:none; }
++ .anc-task { padding:10px 0; border-bottom:1px solid #e5edf3; }
++}
++@media screen and (min-width:769px) {
++ body.has-emr-shell.sidebar-pinned .emr-topbar { left:var(--emr-sidebar-width); }
++}
++@media screen and (max-width:1100px) {
++ .emr-patient-banner { align-items:flex-start; }
++ .emr-banner-identity { flex:1 1 auto; }
++ .emr-banner-badges { justify-content:flex-start; margin-left:0; }
++}
++@media screen and (max-width:768px) {
++ .anc-top { flex-wrap:wrap; gap:8px; padding:10px; }
++ .anc-top h1 { flex:1 1 220px; font-size:18px; }
++ .anc-colour-boxes { flex:1 1 100%; justify-content:center; flex-wrap:wrap; }
++ .anc-layout { grid-template-columns:minmax(0,1fr); }
++ .anc-layout>*,.anc-visit-form { min-width:0; }
++ .anc-visit-grid,.anc-visit-grid.wide { grid-template-columns:minmax(0,1fr); }
++ .anc-shell .anc-page { padding:10px; overflow-wrap:anywhere; }
++ .anc-shell .anc-field.wide { min-width:0; max-width:100%; }
++ .emr-patient-banner { margin:0 8px; padding:10px; position:relative; top:auto; }
++ .emr-banner-details { gap:6px 12px; }
++ .emr-chart-tabs-wrap { position:relative; top:auto; margin:0 8px 10px; }
++ .emr-topbar { gap:6px; padding:0 8px; }
++ .emr-topbar-center { min-width:0; }
++ .emr-topbar-search-text { display:none; }
++ .emr-topbar-right { gap:4px; }
++ .emr-banner-badges { width:100%; }
++}
+diff --git a/public/login.html b/public/login.html
+index a58ce5a..1d229af 100644
+--- a/public/login.html
++++ b/public/login.html
+@@ -34,7 +34,7 @@
+         </div>
+         <div class="header-meta">
+           <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
+-          <span class="login-build-version" data-app-version data-language-exclude>v43.0</span>
++          <span class="login-build-version" data-app-version data-language-exclude>v43.1</span>
+         </div>
+       </header>
+ 
+@@ -108,7 +108,7 @@
+ 
+         <aside class="info-panel" aria-label="ព័ត៌មានប្រព័ន្ធ">
+           <div class="info-card accent">
+-            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v43.0</span></h3>
++            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v43.1</span></h3>
+             <p>គណនីសាកល្បងចូលបានដោយគ្មានពាក្យសម្ងាត់។ ប្រើតែទិន្នន័យសាកល្បងប៉ុណ្ណោះ។</p>
+           </div>
+           <div class="info-card">
+diff --git a/public/patient-banner.js b/public/patient-banner.js
+index dfc9345..40b3aeb 100644
+--- a/public/patient-banner.js
++++ b/public/patient-banner.js
+@@ -244,6 +244,16 @@
+       banner.id = 'emr-persistent-patient-banner';
+       banner.className = 'emr-patient-banner no-print';
+       banner.setAttribute('aria-label', 'ព័ត៌មានអ្នកជំងឺបច្ចុប្បន្ន');
++      // Keep sticky tabs below the real header after wrapping, zoom or async alerts.
++      if (typeof ResizeObserver !== 'undefined') {
++        const observer = new ResizeObserver(() => {
++          const height = `${Math.round(banner.getBoundingClientRect().height)}px`;
++          if (document.documentElement.style.getPropertyValue('--emr-banner-live-height') !== height) {
++            document.documentElement.style.setProperty('--emr-banner-live-height', height);
++          }
++        });
++        observer.observe(banner);
++      }
+ 
+       // Place banner right under topbar / before main-content
+       const main = document.getElementById('main-content') || document.querySelector('main, .shell, body > *:first-child');
+@@ -269,7 +279,7 @@
+       ? `<span class="emr-banner-badge allergy-alert" title="${escapeHtml(info.allergyText)}"><svg><use href="/public/icons.svg#icon-alert-triangle"></use></svg> អាលែកហ្ស៊ី៖ ${tickedOnly ? label('banner.allergy.tickedOnly', 'Drug allergy ticked in the record') : escapeHtml(info.allergyText)}</span>`
+       : info.allergyState === 'none'
+         ? `<span class="emr-banner-badge allergy-none"><svg><use href="/public/icons.svg#icon-check"></use></svg> គ្មានប្រវត្តិអាលែកហ្ស៊ី</span>`
+-        : `<span class="emr-banner-badge allergy-unknown"><svg><use href="/public/icons.svg#icon-alert-triangle"></use></svg> ${label('banner.allergy.notRecorded', 'Allergy not recorded')}</span>`;
++        : `<span class="emr-banner-badge allergy-unknown"><svg><use href="/public/icons.svg#icon-alert-triangle"></use></svg> ${label('', 'Allergy alert', 'ប្រតិកម្មអាលែកហ្ស៊ី')} · ${label('banner.allergy.notRecorded', 'Allergy not recorded', 'មិនបានបញ្ជាក់')}</span>`;
+     const allergyHtml = `<button type="button" class="emr-banner-badge-button" data-banner-details-toggle aria-expanded="${bannerDetailsOpen ? 'true' : 'false'}" aria-controls="emr-banner-summary-panel" aria-label="${escapeHtml(plainLabel('', 'Allergy alert', 'ប្រតិកម្មអាលែកហ្ស៊ី'))}">${allergyBadge}</button>`;
+ 
+     const payerHtml = info.payer
+@@ -311,9 +321,14 @@
+         ${allergyHtml}
+         ${payerHtml}
+         ${statusBadge}
++      <button type="button" class="emr-banner-details-button" data-banner-details-toggle aria-expanded="${bannerDetailsOpen ? 'true' : 'false'}" aria-controls="emr-banner-summary-panel" aria-label="${escapeHtml(plainLabel('', 'Patient Summary Banner', 'ផ្ទាំងសង្ខេបព័ត៌មានអ្នកជំងឺ'))}">
++        <svg class="emr-banner-details-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"></path></svg>
++        <span>${label('', 'Patient details', 'ផ្ទាំងសង្ខេបព័ត៌មានអ្នកជំងឺ')}</span>
++      </button>
+       </div>
+       ${clinicalRowHtml(info)}
+     `;
++    banner.classList.toggle('is-details-open', bannerDetailsOpen);
+     banner.querySelectorAll('[data-banner-details-toggle]').forEach(button => button.addEventListener('click', toggleBannerDetails));
+     renderBannerDetails(banner, info);
+     decorateAncBadge(banner);
+@@ -371,16 +386,14 @@
+       </div>`;
+     return `<div class="emr-banner-clinical" aria-label="${escapeHtml(plainLabel('', 'Patient Summary Banner', 'ផ្ទាំងសង្ខេបព័ត៌មានអ្នកជំងឺ'))}">
+       ${item(resus === 'dnr' ? 'is-dnr' : '', label('', 'Resuscitation status', 'ស្ថានភាពការសង្គ្រោះជីវិត'),
+-        resus ? optionLabel('resuscitation', resus) : label('banner.notRecorded', 'Not recorded'), ' data-banner-resuscitation')}
++        resus ? optionLabel('resuscitation', resus) : label('banner.notRecorded', 'Not recorded', 'មិនបានបញ្ជាក់'), ' data-banner-resuscitation')}
+       ${item(flags.length ? 'has-flags' : '', label('', 'Risk flags', 'សញ្ញាហានិភ័យ'), flags.length ? escapeHtml(flags.join(' · ')) : dash, ' data-banner-risk-flags')}
+       ${earlyWarning ? item(`ews-${earlyWarning.level}`, label('', 'Early Warning Score', 'ពិន្ទុវាយតម្លៃកម្រិតសង្គ្រោះបន្ទាន់'), escapeHtml(earlyWarning.text), ' data-banner-ews') : ''}
+       ${item('', label('', 'Active problem list', 'បញ្ជីបញ្ហាសុខភាពកំពុងជួបប្រទះ'),
+         problems.length ? escapeHtml(problems.map(p => (p.icd10 ? `${p.problem} (${p.icd10})` : p.problem)).join(' · ')) : dash, ' data-banner-problems')}
+       ${item('', label('', 'Current medications', 'ឱសថដែលកំពុងប្រើ'),
+         meds.length ? `${meds.length} · ${escapeHtml(meds.map(m => m.name).filter(Boolean).join(', '))}` : dash, ' data-banner-medications')}
+-      <button type="button" class="emr-banner-details-button" data-banner-details-toggle aria-expanded="${bannerDetailsOpen ? 'true' : 'false'}" aria-controls="emr-banner-summary-panel" aria-label="${escapeHtml(plainLabel('', 'Patient Summary Banner', 'ផ្ទាំងសង្ខេបព័ត៌មានអ្នកជំងឺ'))}">
+-        <svg class="emr-banner-details-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"></path></svg>
+-      </button>
++
+     </div>`;
+   }
+ 
+@@ -414,7 +427,7 @@
+           <th>${label('', 'Severity', 'កម្រិតធ្ងន់ធ្ងរ')}</th><th>${label('', 'Date', 'កាលបរិច្ឆេទ')}</th><th>${label('', 'Recorded by', 'អ្នកកត់ត្រា')}</th></tr></thead>
+           <tbody>${allergyRows}</tbody></table></div>` : ''}
+         ${allergy.freeText || allergy.ticked ? `<p class="emr-banner-record-text"><span>${label('clinical.allergy.recordText', 'Drug allergy written in the medical record')}</span> ${allergy.freeText ? escapeHtml(allergy.freeText) : label('banner.allergy.tickedOnly', 'Drug allergy ticked in the record')}</p>` : ''}
+-        ${!allergyRows && !allergy.freeText && !allergy.ticked ? `<p class="emr-banner-panel-empty">${allergy.state === 'none' ? 'គ្មានប្រវត្តិអាលែកហ្ស៊ី' : label('banner.allergy.notRecorded', 'Allergy not recorded')}</p>` : ''}
++        ${!allergyRows && !allergy.freeText && !allergy.ticked ? `<p class="emr-banner-panel-empty">${allergy.state === 'none' ? 'គ្មានប្រវត្តិអាលែកហ្ស៊ី' : label('banner.allergy.notRecorded', 'Allergy not recorded', 'មិនបានបញ្ជាក់')}</p>` : ''}
+       </section>
+       <section>
+         <h3>${label('', 'Active problem list', 'បញ្ជីបញ្ហាសុខភាពកំពុងជួបប្រទះ')}</h3>
+@@ -426,7 +439,7 @@
+       </section>
+       <section data-banner-resuscitation-section>
+         <h3>${label('', 'Resuscitation status', 'ស្ថានភាពការសង្គ្រោះជីវិត')}</h3>
+-        <p>${summary?.resuscitation ? `<strong>${optionLabel('resuscitation', summary.resuscitation.status)}</strong> · ${escapeHtml(summary.resuscitation.recordedBy || '')} · ${escapeHtml(new Date(summary.resuscitation.recordedAt).toLocaleString())}` : label('banner.notRecorded', 'Not recorded')}</p>
++        <p>${summary?.resuscitation ? `<strong>${optionLabel('resuscitation', summary.resuscitation.status)}</strong> · ${escapeHtml(summary.resuscitation.recordedBy || '')} · ${escapeHtml(new Date(summary.resuscitation.recordedAt).toLocaleString())}` : label('banner.notRecorded', 'Not recorded', 'មិនបានបញ្ជាក់')}</p>
+         ${summary && canWriteSummary() ? `<div class="emr-banner-resus-form">
+           <select data-emr-transient data-banner-resus-select aria-label="${escapeHtml(plainLabel('', 'Resuscitation status', 'ស្ថានភាពការសង្គ្រោះជីវិត'))}">
+             ${(summary.options?.resuscitationStatuses || []).map(code => `<option value="${escapeHtml(code)}"${summary.resuscitation?.status === code ? ' selected' : ''}>${escapeHtml(plainOptionLabel('resuscitation', code))}</option>`).join('')}
+diff --git a/server/server.mjs b/server/server.mjs
+index 62ba62f..e25d5fb 100644
+--- a/server/server.mjs
++++ b/server/server.mjs
+@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
+ import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
+ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
+ import { createDiagnosisSearch } from './icd10.mjs';
+-// Borkeo EMR v43.0 - Electronic Medical Record System
++// Borkeo EMR v43.1 - Electronic Medical Record System
+ import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
+ import {validateAddressHierarchy} from './gazetteer.mjs';
+ import {validateCambodianPhone} from './cambodia-phone.mjs';
+diff --git a/tests/accessibility-quality-smoke.test.mjs b/tests/accessibility-quality-smoke.test.mjs
+index eb704b4..24e28a2 100644
+--- a/tests/accessibility-quality-smoke.test.mjs
++++ b/tests/accessibility-quality-smoke.test.mjs
+@@ -17,11 +17,11 @@ test('Phase 8: Version consistency across package.json, server.mjs, and login.ht
+   const serverCode = read('server/server.mjs');
+   const loginHtml = read('public/login.html');
+ 
+-  assert.equal(pkg.version, '43.0.0', 'package.json version must be 43.0.0');
++  assert.equal(pkg.version, '43.1.0', 'package.json version must be 43.1.0');
+   assert.match(serverCode, /Borkeo EMR v(?:39\.[6-9]|4[0-9]\.[0-9])/, 'server.mjs must declare v39.6 or above');
+   assert.match(serverCode, /design-system\.css\?v=3970/, 'server.mjs must inject design-system.css with v=3970');
+   assert.match(serverCode, /worklists-feedback\.css\?v=3970/, 'server.mjs must inject worklists-feedback.css with v=3970');
+-  assert.match(loginHtml, /data-app-version[^>]*>v43\.0<\/span>/, 'login.html must display v43.0');
++  assert.match(loginHtml, /data-app-version[^>]*>v43\.1<\/span>/, 'login.html must display v43.1');
+ });
+ 
+ test('Phase 8: Complete presentation-layer suite of assets is present and registered', () => {
+diff --git a/tests/v426-midwife-anc-browser.mjs b/tests/v426-midwife-anc-browser.mjs
+index 3b4d62f..b9a19ff 100644
+--- a/tests/v426-midwife-anc-browser.mjs
++++ b/tests/v426-midwife-anc-browser.mjs
+@@ -126,8 +126,11 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies,
+       await click('[data-action="open"]');
+       await browser.waitFor(`Boolean(document.querySelector('#anc-visit-form'))`, 'record opened');
+     }
+-    await browser.waitFor(`document.querySelector('#anc-tasks-dialog')?.open===true`, 'to-do window opens once');
+-    await click('#anc-tasks-dialog [data-dialog-close]');
++    await browser.waitFor(`document.querySelector('#anc-tasks details')?.open===true`, 'inline checklist opens');
++    assert.equal(await browser.evaluate(`document.querySelector('#anc-tasks-dialog')?.open`), false, 'no automatic modal');
++    await click('#anc-tasks summary');
++    assert.equal(await browser.evaluate(`document.querySelector('#anc-tasks details').open`), false);
++    await click('#anc-tasks summary');
+     assert.ok(await browser.evaluate(`document.querySelectorAll('#anc-tasks .anc-task').length>0`), 'to-do panel always visible');
+     await typeInto('[data-path="identity.age"]', age);
+     await typeInto('[data-path="identity.births"]', births);
+@@ -187,6 +190,22 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies,
+     await click('[data-action="print"]');
+     assert.ok(await browser.evaluate(`document.querySelectorAll('#anc-print .anc-print-page').length>=2`), 'printed pages 2-5');
+     assert.match(await browser.evaluate(`document.querySelector('#anc-print').innerText`), /ប្រវត្តិមានផ្ទៃពោះលើកមុន/);
++    const evidence = path.resolve('verification-v431');
++    fs.mkdirSync(evidence, { recursive: true });
++    const screenshot = async name => {
++      const result = await browser.send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false });
++      fs.writeFileSync(path.join(evidence, name + '.png'), Buffer.from(result.data, 'base64'));
++    };
++    await screenshot('anc-desktop');
++    await browser.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
++    await sleep(400);
++    await screenshot('anc-mobile');
++    await browser.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
++    await browser.send('Emulation.setEmulatedMedia', { media: 'print' });
++    await screenshot('anc-print');
++    const pdf = await browser.send('Page.printToPDF', { printBackground: true, preferCSSPageSize: true });
++    fs.writeFileSync(path.join(evidence, 'anc.pdf'), Buffer.from(pdf.data, 'base64'));
++    await browser.send('Emulation.setEmulatedMedia', { media: '' });
+     await useAccount('doctor_obstetric');
+     await open(`/anc-record?patient=${encodeURIComponent(red)}`, `Boolean(document.querySelector('[data-action="sign"]'))`);
+     await click('[data-action="sign"]');
+@@ -209,6 +228,21 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies,
+ 
+     // ---------- Cervical screening ----------
+     await open(`/emr?patient=${encodeURIComponent(cervix)}&view=opd`, `Boolean(document.querySelector('#cervix-result-panel'))`);
++    await browser.waitFor(`(document.querySelector('.emr-banner-details-button')?.getBoundingClientRect().width||0)>50`, 'visible patient header with readable details label').catch(async error => {
++      await screenshot('patient-header-failure');
++      throw new Error(error.message + ' ' + JSON.stringify(await browser.evaluate(`({buttons:[...document.querySelectorAll('.emr-banner-details-button')].map(b=>({width:b.getBoundingClientRect().width,style:getComputedStyle(b).width,parent:b.parentElement.className})),styles:[...document.styleSheets].map(s=>s.href),media:matchMedia('screen').matches})`)));
++    });
++    assert.ok(await browser.evaluate(`document.querySelector('.emr-banner-details-button').getBoundingClientRect().width>50`), 'details label has room beyond the old icon width');
++    await screenshot('patient-desktop');
++    await click('.emr-banner-details-button');
++    await browser.waitFor(`Boolean(document.querySelector('#emr-banner-summary-panel'))`, 'patient details');
++    await screenshot('patient-details-desktop');
++    await browser.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
++    await sleep(400);
++    await screenshot('patient-details-mobile');
++    await click('.emr-banner-details-button');
++    await screenshot('patient-mobile');
++    await browser.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+     // The record opens in view mode; the midwife presses Edit (v37.8).
+     for (let attempt = 0; attempt < 10 && await browser.evaluate(`document.querySelector('#cervix-send').disabled`); attempt++) {
+       await browser.evaluate(`document.querySelector('[data-editor-toggle]')?.click();true`);
+@@ -231,6 +265,7 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies,
+     assert.deepEqual(browser.state.errors, [], 'no JavaScript errors');
+   } finally {
+     browser.close();
++    app.server.closeAllConnections();
+     await new Promise(resolve => app.server.close(resolve));
+     app.database.close();
+   }
+diff --git a/docs/ui-43.1.md b/docs/ui-43.1.md
+new file mode 100644
+index 0000000..1dbfafd
+--- /dev/null
++++ b/docs/ui-43.1.md
+@@ -0,0 +1,18 @@
++# 43.1.0 compact clinical workspace
++
++Baseline: uploaded Borkeo_EMR_v43.0.zip, package 43.0.0. This is the approved visual-style update, not completion of the earlier NPCA/master task.
++
++- Shared shell uses a dark navy labeled sidebar, teal active state, subdued topbar and tighter spacing across existing role-specific pages. Desktop navigation starts pinned unless the user explicitly saved a collapsed preference. Existing drawer, pin, hover/focus, keyboard and mobile navigation remain.
++- Patient header uses compact identity, identifiers, ward/bed and safety badges. Details are explicitly expandable. DNR, risk flags, early-warning and allergy states remain available without expanding. Header sizing follows actual wrapping via ResizeObserver; mobile uses natural flow to avoid stacking oversized sticky sections.
++- Unknown allergy and unrecorded status use existing Khmer vocabulary rather than English placeholder badges. Unknown is never converted into a negative allergy history. No approved translation inventory or baseline was changed.
++- ANC task panel is inline and collapsible, with no automatic task modal. Existing task controls and server-side clinical rules are unchanged.
++- Visual changes are screen-only. Existing print-specific templates and clinical fields remain intact; this is not a claim that every existing print defect is fixed.
++- Existing role/ward permissions, backend clinical logic, NPCA submission behavior, stock and financial calculations are unchanged. No schema/data migration or new runtime dependency.
++
++Validation in extracted synthetic review copy: npm test 977/977 passing; npm run check:khmer passing; targeted shell/banner/navigation tests 24/24 passing; JS syntax checks passed. New synthetic row test verifies critical safety states remain represented by the compact renderer. Existing role navigation/backend tests passed as part of the full suite.
++
++Local verification (2026-10-24): applied cleanly to Git baseline 808bff0, preserving untracked user files. All 977 tests and the Khmer check passed in a disposable copy with synthetic records, without live environment, patient databases, uploads or backups. Installed Edge verified all 19 role contexts and the maternal workflow (green/yellow/red pregnancies, inline checklist expansion/collapse, task closure, referral signing, repeat visit, vaccination and cervical screening). Desktop/mobile screenshots cover ANC and patient details; print-media screenshot and A4-landscape PDF cover the existing ANC paper layout. Visual review found and corrected the mobile ANC title/grid overflow and the old fixed-width patient-details button. Existing clinical forms and the legacy patient form's phone desktop-viewport/pinch-zoom behavior are preserved. Existing English clinical labels remain in legacy forms; this update does not claim a complete translation audit. No production deployment or physical printer verification performed.
++
++Installation: apply the combined update only to the supplied 43.0 source. If local files have later edits, merge deliberately instead of overwriting. Run checks in a disposable copy, then restart with the existing launcher and hard-refresh. No patient data files are included. Rollback restores only changed source files; no database rollback is required.
++
++Verification notes: one repeated full-suite run encountered a transient SQLite lock in the historical v30.4 demo-database test; the first and final complete runs passed 977/977. Browser measurements must wait for the asynchronously loaded patient header to become visible, rather than merely exist in the DOM. Synthetic screenshots and ANC PDF are saved under verification-v431/ in the applied checkout.
+diff --git a/tests/v431-compact-workspace.test.mjs b/tests/v431-compact-workspace.test.mjs
+new file mode 100644
+index 0000000..75587e0
+--- /dev/null
++++ b/tests/v431-compact-workspace.test.mjs
+@@ -0,0 +1,35 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import vm from 'node:vm';
++
++// Exercise real row generation with synthetic summaries: compacting the header
++// must retain critical resuscitation and risk/early-warning information.
++const source = fs.readFileSync('public/patient-banner.js', 'utf8');
++const start = source.indexOf('  function clinicalRowHtml(info)');
++const end = source.indexOf('\n  function toggleBannerDetails', start);
++function row(summary, earlyWarning = null) {
++  const context = vm.createContext({
++    summaryFor: () => summary,
++    riskFlags: value => value.flags || [],
++    currentMedications: () => [],
++    label: (_key, en) => en,
++    plainLabel: (_key, en) => en,
++    optionLabel: (_group, code) => code,
++    escapeHtml: value => String(value).replaceAll('<', '&lt;'),
++    earlyWarning,
++    bannerDetailsOpen: false,
++  });
++  vm.runInContext(source.slice(start, end) + '\nthis.row = clinicalRowHtml({raw:{data:{}}});', context);
++  return context.row;
++}
++test('compact patient header retains DNR, risks and early warning in dedicated visible classes', () => {
++  const html = row({resuscitation:{status:'dnr'}, flags:['Severe allergy'], problems:[]}, {level:'high',text:'Urgent review'});
++  assert.match(html, /is-dnr/);
++  assert.match(html, /has-flags/);
++  assert.match(html, /data-banner-ews/);
++  assert.match(html, /Urgent review/);
++  assert.match(html, /Severe allergy/);
++  const normal = row({problems:[]});
++  assert.doesNotMatch(normal, /is-dnr|has-flags|data-banner-ews/);
++});
+END UNIFIED PATCH

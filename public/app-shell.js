@@ -620,7 +620,8 @@
     const sidebarToggleBtn = document.getElementById('emr-sidebar-toggle-btn');
     const pinBtn = document.getElementById('emr-sidebar-pin-btn');
     const COLLAPSE_DELAY_MS = 200;
-    let pinned = storage.get(pinKey) === '1';
+    // Default to readable labels on desktop; retain an explicit user choice.
+    let pinned = storage.get(pinKey) !== '0';
     let collapseTimer = null;
     let dragging = false;
     let printing = false;
