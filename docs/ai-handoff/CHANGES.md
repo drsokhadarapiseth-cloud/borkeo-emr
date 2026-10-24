@@ -12,3 +12,5 @@ Disposable paths recorded by temporary pointer files borkeo-master-validation-pa
 Release metadata updated consistently to 42.9.0 (package/login/server header and version assertion). Cache-busted changed login/context assets. scripts/build-v429-update.mjs uses explicit safe file allowlist and baseline 107ed3a, SHA-256 manifest and reverse patch verification. No changes to .gitignore.
 
 Additional release files: CHANGELOG.md, package.json, public/login.html, server/server.mjs, tests/accessibility-quality-smoke.test.mjs and tests/v399-password-change-loop.test.mjs (release metadata/cache expectation), docs/translations-needed.csv (new retry-label provenance). Fixes to translation insertion order/CSV are recorded in TEST_RESULTS. No unrelated source edits.
+
+Release 42.9.0 code committed as c858abe2b51bda86bc59738c1657f542dc9cac12 and pushed to origin/master. Patient data and all initial user-owned untracked files remain excluded. Next phase ACCESS-01; full master task remains incomplete. Handoff/publication records and combined-update snapshot refreshed after push; no runtime source edits.

@@ -19,4 +19,4 @@ Source requirements: BORKEO_EMR_MASTER_TASK.txt sections 1-10 and acceptance lis
 - RELEASE-01 TODO: full npm test and check:khmer in disposable synthetic copy; inspect browser/print evidence and outstanding limitations.
 - RELEASE-02 TODO: bump visible/package version once for completed approved update; combined Antigravity update with manifest; safe staged review, verified commit/push; installation guidance.
 
-- REL429-01 VERIFIED: 42.8.0 -> 42.9.0 local recovery increment; full 974/974 tests, Khmer and Chromium pass; combined patch reverse/forward checks pass. Git publication pending final review. RELEASE-01/02 above refer to full master acceptance, still TODO.
+- REL429-01 VERIFIED: 42.8.0 -> 42.9.0 local recovery increment; full 974/974 tests, Khmer and Chromium pass; combined patch reverse/forward checks pass. Code commit c858abe2b51bda86bc59738c1657f542dc9cac12 pushed to origin/master; publication VERIFIED. RELEASE-01/02 above refer to full master acceptance, still TODO.
