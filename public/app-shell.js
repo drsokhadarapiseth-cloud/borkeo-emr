@@ -252,6 +252,8 @@
 
   function getBreadcrumbs() {
     const path = window.location.pathname;
+    // v45.2: params was used here without being defined, so the shell (menu, top bar) never mounted.
+    const params = new URLSearchParams(window.location.search);
     const fromPatientList = params.get('from') === 'patient-list' || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('emr_from_patient_list') === '1');
     const hasPatient = params.has('patient') || params.has('patientKey') || params.has('newVisitFrom') || fromPatientList;
     const items = [{ href: '/home', label: 'ទំព័រដើម' }];
@@ -351,6 +353,11 @@
     }
 
     // 2. Breadcrumbs
+    // v45.2: isRegisterUser came from the skipped v43.4; defined here only for the
+    // registration return link (breadcrumbs and headers are not hidden).
+    const pageView = new URLSearchParams(window.location.search).get('view');
+    const isRegisterUser = String(user?.activeRole || '').toUpperCase() === 'REGISTRATION' ||
+      pageView === 'register' || pageView === 'registration';
     const breadcrumbItems = getBreadcrumbs();
     if (breadcrumbItems.length > 1 && mainContent && !mainContent.querySelector(':scope > .emr-breadcrumbs-container')) {
       const bcContainer = document.createElement('div');
