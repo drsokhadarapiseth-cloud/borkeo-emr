@@ -1,0 +1,184 @@
+================================================================================
+Borkeo EMR: Codebase Restoration to Version 42.3.0 & Version History (v42.3 - v44.0)
+================================================================================
+
+Date: 2026-10-24
+Restored Version: 42.3.0
+Active Branch: master
+Repository: drsokhadarapiseth-cloud/borkeo-emr
+Rollback Commit: 4d93d88
+
+Patient Data: Safe and untouched. Databases in data/*.sqlite were never modified,
+moved, or uploaded to Git.
+
+================================================================================
+1. EXECUTIVE SUMMARY: RESTORATION TO v42.3.0
+================================================================================
+At the user's request, the entire Borkeo EMR codebase has been restored to the
+original, fully tested baseline of Version 42.3.0.
+
+What is fully active and restored:
+- Original persistent hospital banner on every page:
+  - Hospital title: មន្ទីរពេទ្យបង្អែក បរកែវ
+  - Logged-in user name and role badge
+  - «ប្តូរតួនាទី/ផ្នែក» (Switch User Role & Ward button)
+  - «ប្តូរពាក្យសម្ងាត់» (Change Password button)
+  - «ចាកចេញ» (Log Out button)
+  - Full department navigation bar (ចុះឈ្មោះ, ទ្រីយ៉ា, កំណត់ត្រាវេជ្ជសាស្ត្រ, បញ្ជីអ្នកជំងឺ, etc.)
+- All experimental modern UI overlays, CSS layout shifts, and broad class-based
+  suppressions have been completely removed.
+- All complex encounter access restrictions and 403 Forbidden blockers added
+  in v44.0.0 have been eliminated.
+- Test Suite: 915 / 915 tests passing.
+- Khmer Language Check: 100% passing.
+
+================================================================================
+2. COMPLETE VERSION HISTORY & FEATURES (v42.3.0 to v44.0.0)
+================================================================================
+
+--------------------------------------------------------------------------------
+Version 42.3.0 (Commit 4b80aa5) - The Restored Baseline
+--------------------------------------------------------------------------------
+- Integrated the Cambodia Essential Medicines List, 10th edition (704 medicines)
+  into all prescription forms (OPD, IPD admission, daily note, discharge).
+- Auto-completes CMS code, Name, Form, and Strength after typing 2 characters.
+- Standardized unit mappings (mg, mL, mcg, g, IU).
+- Route selection is required before saving (prevents accidental PO defaults).
+- Initial prescription tables start with 3 clean rows.
+
+--------------------------------------------------------------------------------
+Version 42.4.0 (Commit 87cce71) - Cloud Deployment & Production Security
+--------------------------------------------------------------------------------
+- Docker & Railway hosting support (Dockerfile, .dockerignore, docs/DEPLOY.md).
+- Strict Git privacy: all databases, uploads, backups, and logs permanently excluded.
+- DATA_DIR support for persistent cloud volume mounts.
+- Production security: Superuser password via environment variable; shared 1234
+  passwords disabled in production.
+
+--------------------------------------------------------------------------------
+Version 42.5.0 (Commit 1c6d23e) - Filtered Prescription Picker & Max Dose Checks
+--------------------------------------------------------------------------------
+- 2-step prescription selection: search by generic medicine name, then select
+  specific CMS code / form / strength.
+- Automatic filtering by patient age, sex, pregnancy status, and service mode.
+- Maximum dosage limits (adult and pediatric per kg) with alert warnings.
+- Expanded routes: IV, IM, SC, PO.
+
+--------------------------------------------------------------------------------
+Version 42.6.0 (Commit 8c92552) - Midwife Services & Official 2026 ANC Record
+--------------------------------------------------------------------------------
+- Official 2026 Antenatal Care (ANC) pregnancy record (pages 2-5).
+- Gestational age (GA) and expected delivery date (EDD) calculated from LMP
+  with first-trimester ultrasound override.
+- Midwife queue, vaccination tracking, and CPA3 doctor-signed referral letters.
+
+--------------------------------------------------------------------------------
+Version 42.8.0 (Commit 98198b0) - NPCA Integration & Patient Registration Cards
+--------------------------------------------------------------------------------
+- NPCA (National Social Protection Council) API client and beneficiary validation.
+- Automated registration cards with barcodes and printable sticker sheets.
+
+--------------------------------------------------------------------------------
+Version 42.9.0 (Commit c858abe) - Context & Session Recovery
+--------------------------------------------------------------------------------
+- Resolved session recovery issues when doctors and nurses switch active wards.
+
+--------------------------------------------------------------------------------
+Version 43.0.0 (Commit 1e3f06d) - Paraclinic Access Audit
+--------------------------------------------------------------------------------
+- Scoped role-based permissions across laboratory, imaging, and clinical wards.
+
+--------------------------------------------------------------------------------
+Version 43.1.0 (Commit cef9798) - Compact Workspace & Mobile Layouts
+--------------------------------------------------------------------------------
+- Optimized responsive layouts across desktop and mobile screen widths.
+
+--------------------------------------------------------------------------------
+Version 43.2.0 (Commit 2687380) - Modern Consultation Workspace
+--------------------------------------------------------------------------------
+- Visual vitals cards (BP, Pulse, Temperature, SpO2, Respiratory rate, BMI).
+- Modern HPI and Physical Examination structured cards.
+- Quick diagnosis search and treatment plan with interactive tasks checklist.
+
+--------------------------------------------------------------------------------
+Version 43.3.0 (Commit 685acbf) - Integrated Consultation & Classic Switcher
+--------------------------------------------------------------------------------
+- 3 view modes for clinicians:
+  1. Integrated View (Modern cards on top, full classic hospital forms below)
+  2. Modern Compact View
+  3. Full Classic Form View
+
+--------------------------------------------------------------------------------
+Version 43.4.0 (Commit 9ad55e5) - Registration View Cleaning (Had Side-Effects)
+--------------------------------------------------------------------------------
+- Attempted to suppress clinical banners on registration pages, which accidentally
+  hid navigation buttons (.step-wrapper) and headers for other user roles.
+
+--------------------------------------------------------------------------------
+Version 43.5.0 (Commit f266bfb) - Same-Row Registration Action Buttons
+--------------------------------------------------------------------------------
+- Unified the «រក្សាទុក» (Save) and «បញ្ជូនទៅផ្នែកទ្រីយ៉ា» (Send to Triage)
+  buttons onto the same row at the bottom of the registration form.
+
+--------------------------------------------------------------------------------
+Version 43.6.0 (Commit d165a6a) - Patient List Age Display Refinement
+--------------------------------------------------------------------------------
+- Refined patient list to show only the age badge (e.g. 7 ឆ្នាំ, 71 ឆ្នាំ),
+  omitting the date of birth string.
+
+--------------------------------------------------------------------------------
+Version 43.7.0 (Commit cff015f) - Top Bar Inline Search & CSRF Auto-Recovery
+--------------------------------------------------------------------------------
+- Converted top search into an inline search input with instant attached dropdown.
+- Automatic CSRF token refresh on 403 response.
+
+--------------------------------------------------------------------------------
+Version 43.8.0 (Commit 064d999) - Deduplication & Return Navigation
+--------------------------------------------------------------------------------
+- Patient list deduplication: 1 row per unique patient Health ID.
+- Pencil edit icon pops up choice dialog: «កែប្រែព័ត៌មាន» vs «បន្ថែមកំណត់ត្រាថ្មី».
+- Return navigation breadcrumb to return easily to patient list.
+
+--------------------------------------------------------------------------------
+Version 43.9.0 (Commit 13ac56b) - Navigation & Workspace Restoration
+--------------------------------------------------------------------------------
+- Restored .step-wrapper (Page 1, Page 2, Page 3 buttons) and dashboard header.
+- Attached Git tags for all previous releases.
+
+--------------------------------------------------------------------------------
+Version 44.0.0 (Commit d9cfd3a) - Multi-Visit History (Caused Access Issues)
+--------------------------------------------------------------------------------
+- Added multi-visit history snapshots and locked discharged records.
+- Introduced strict encounter access checks that triggered 403 Forbidden errors
+  and suppressed user switching / log out controls.
+
+================================================================================
+3. GIT TAGS REFERENCE (HOW TO SWITCH VERSIONS EASILY)
+================================================================================
+All past versions remain preserved as tags in your Git repository. You can inspect
+or check out any version at any time:
+
+- List all available tags:
+    git tag -l
+
+- Switch to any past version (e.g. v43.7, v43.8, v43.9):
+    git checkout v43.7
+    git checkout v43.8
+    git checkout v43.9
+
+- Return back to master (currently restored to v42.3.0 baseline):
+    git checkout master
+
+================================================================================
+4. HOW TO RUN THE SYSTEM NOW
+================================================================================
+1. Start the server:
+    npm start
+
+2. Open in your browser:
+    http://localhost:3001
+
+3. Sign in:
+    All standard demo accounts (admin, registration, triage, doctor_medicine, etc.)
+    are available and will load the classic, stable interface immediately.
+================================================================================
