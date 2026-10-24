@@ -1,0 +1,147 @@
+================================================================================
+Borkeo EMR: v44.1.0 Update Plan (current code = v42.3.0 baseline)
+================================================================================
+
+Date: 2026-10-24
+Current code version: 42.3.0 (package.json and visible version)
+Next version: 44.1.0
+Active Branch: master
+Repository: drsokhadarapiseth-cloud/borkeo-emr
+Rollback commit (code restored to v42.3.0): 4d93d88
+Latest commit when this plan was written: c4cb0dd (documentation only)
+
+Patient Data: Safe and untouched. Databases in data/*.sqlite were never modified,
+moved, or uploaded to Git.
+
+================================================================================
+1. CURRENT STATE: v42.3.0 BASELINE
+================================================================================
+The code on master is the original, tested baseline of Version 42.3.0.
+
+What is active now:
+- Persistent hospital banner on every page:
+  - Hospital title: មន្ទីរពេទ្យបង្អែក បរកែវ
+  - Logged-in user name and role badge
+  - «ប្តូរតួនាទី/ផ្នែក» (Switch User Role & Ward button)
+  - «ប្តូរពាក្យសម្ងាត់» (Change Password button)
+  - «ចាកចេញ» (Log Out button)
+  - Full department navigation bar (ចុះឈ្មោះ, ទ្រីយ៉ា, កំណត់ត្រាវេជ្ជសាស្ត្រ, បញ្ជីអ្នកជំងឺ, etc.)
+- Page 1 / Page 2 / Page 3 navigation buttons (.step-wrapper) and dashboard header.
+- No modern UI overlays and no strict encounter 403 blockers.
+
+Verified on 2026-10-24 (this session):
+- npm test: 915 / 915 tests passing, 0 failing.
+- npm run check:khmer: passed.
+
+================================================================================
+2. VERSION HISTORY (v42.3.0 to v44.0.0)
+================================================================================
+IMPORTANT: Everything from v42.4 to v44.0 is NOT in the current code. Those
+versions exist only as Git tags. Items marked "Re-apply" are in the v44.1 plan
+(section 3).
+
+v42.3.0 (Commit 4b80aa5) - Current baseline [ACTIVE]
+- Cambodia Essential Medicines List, 10th edition (704 medicines) in all
+  prescription forms (OPD, IPD admission, daily note, discharge).
+- Auto-complete of CMS code, name, form and strength after 2 characters.
+- Standard units (mg, mL, mcg, g, IU); route required before saving.
+- Prescription tables start with 3 empty rows.
+
+v42.4.0 (Commit 87cce71) - Cloud deployment & production security [Re-apply: #1]
+v42.5.0 (Commit 1c6d23e) - Two-step prescription picker & max dose [Re-apply: #2]
+v42.6.0 (Commit 8c92552) - Midwife services & 2026 ANC record      [Re-apply: #3]
+v42.7.0 - Never released (no tag and no commit exist). Nothing to apply.
+v42.8.0 (Commit 98198b0) - NPCA & registration cards                [Re-apply: #4]
+v42.9.0 (Commit c858abe) - Session recovery when switching wards    [Re-apply: #5]
+v43.0.0 (Commit 1e3f06d) - Paraclinic role access                   [Re-apply: #6]
+v43.1.0 (Commit cef9798) + v43.2.0 (Commit 2687380) + v43.3.0 (Commit 685acbf)
+        - Consultation workspace, merged into one update            [Re-apply: #7]
+v43.4.0 (Commit 9ad55e5) - Hid navigation by mistake                [Removed]
+v43.5.0 (Commit f266bfb) - Save and Send to Triage on one row       [Re-apply: #8]
+v43.6.0 (Commit d165a6a) - Patient list shows age only              [Re-apply: #9]
+v43.7.0 (Commit cff015f) - Inline top search & CSRF auto-recovery   [Re-apply: #10]
+v43.8.0 (Commit 064d999) - One row per Health ID & return link      [Re-apply: #11]
+v43.9.0 (Commit 13ac56b) - Restored navigation hidden by v43.4      [Removed]
+v44.0.0 (Commit d9cfd3a) - Visit history with strict access checks [Will not apply]
+
+Why removed:
+- v43.4 and v43.9 cancel each other out. v42.3.0 already has the navigation
+  buttons and dashboard header.
+- v44.0 caused 403 Forbidden errors and hid the Switch Role and Log Out buttons.
+  Visit history and locked discharged records may come back later as a new,
+  separate update without the strict access checks.
+
+================================================================================
+3. v44.1 PLAN: UPDATES STILL NEEDED
+================================================================================
+Each update is discussed one at a time, agreed, coded, then tested.
+Status values: Waiting / Agreed / Coded / Tested.
+Every update must keep all user roles working: banner, Switch Role, Change
+Password, Log Out and the department navigation bar must stay usable.
+
+ #  Update                                                         Status
+ 1  Cloud deployment: Docker/Railway, DATA_DIR, Superuser password  Waiting
+    from server setting, shared 1234 passwords off in production.
+ 2  Two-step prescription picker: generic name, then CMS code /     Waiting
+    form / strength; filter by age, sex, pregnancy, service;
+    adult and per-kg child max-dose warnings; IV, IM, SC, PO routes.
+ 3  Midwife services: 2026 ANC record (pages 2-5), GA/EDD from LMP  Waiting
+    with ultrasound override, midwife queue, vaccinations,
+    CPA3 referral letters.
+ 4  NPCA beneficiary check, barcode registration cards, sticker     Waiting
+    sheets.
+ 5  Session recovery when doctors and nurses switch wards.          Waiting
+ 6  Role-based access for laboratory, imaging and clinical wards.   Waiting
+ 7  Consultation workspace: desktop/phone layouts, vitals cards,    Waiting
+    HPI and examination cards, quick diagnosis search, plan
+    checklist, switch between 3 views.
+ 8  Save and Send to Triage buttons on the same row.                Waiting
+ 9  Patient list shows the age badge only (no date of birth).      Waiting
+10  Inline top search with dropdown; CSRF token refresh on 403.     Waiting
+11  One row per Health ID; pencil asks "edit information" or "add   Waiting
+    new record"; back link to the patient list.
+
+================================================================================
+4. GIT TAGS (VIEWING OLD VERSIONS)
+================================================================================
+- List all versions:
+    git tag -l
+
+- View an old version (replace <tag>, e.g. v43.8):
+    git checkout <tag>
+
+- Always return to master afterwards:
+    git checkout master
+
+WARNING: Checking out an old tag is for viewing only. Changes made there do not
+stay on master.
+
+================================================================================
+5. HOW TO RUN THE SYSTEM NOW
+================================================================================
+Normal mode (real patient database, password required):
+1. Start the server:
+    npm start
+2. Open in your browser:
+    http://localhost:3001
+3. Sign in with your own username and password.
+
+Demo mode (username-only demo accounts, separate demo database, this computer only):
+Demo accounts (admin, registration, triage, doctor_medicine, etc.) only exist
+when EMR_MODE=demo is set. A plain "npm start" does NOT enable them.
+In PowerShell:
+    $env:EMR_MODE = "demo"; npm start
+
+================================================================================
+6. HOW TO INSTALL AN UPDATE (ANTIGRAVITY), ONE STEP AT A TIME
+================================================================================
+Step 1. Close the running EMR server (Ctrl+C in its window).
+Step 2. Back up the data folder (data/ or Borkeo_EMR_Data in your user folder).
+Step 3. Place the update text file (Borkeo-EMR-v44.x.0-update.txt) in the
+        project folder.
+Step 4. In Antigravity, ask it to read that file and apply it to the project.
+Step 5. Run: npm test
+Step 6. Run: npm run check:khmer
+Step 7. Start the server (section 5) and sign in with each role to check the
+        banner, Switch Role, Change Password, Log Out and navigation.
+================================================================================
