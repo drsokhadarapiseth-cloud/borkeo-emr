@@ -1,3 +1,9 @@
+## 43.5.0 - Unified same-row registration action bar
+
+- Unify the «រក្សាទុក» (Save) button and «បញ្ជូនទៅផ្នែកទ្រីយ៉ា» (Send to Triage) button in the same clean row at the bottom of the registration form (`#sub_reg`).
+- Eliminate detached floating boxes below the card; encounter toolbar now mounts directly inside `#reg_action_bar` with coherent styling, status updates, and cancellation handling.
+- Preserve 100% of data persistence, frozen storage keys, and authentic hospital paper printing templates.
+
 ## 43.4.0 - Clean registration interface (suppression of clinical top sections)
 
 - Hide all clinical top sections (breadcrumbs, persistent patient banner, chart tabs, summary dashboard cards, consultation cards) for registration users (`REGISTRATION` role) and registration views (`/emr?view=register` / Page 1 `#sub_reg`).
