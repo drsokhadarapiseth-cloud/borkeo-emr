@@ -17,7 +17,7 @@ import { syncClinicalRequests } from '../requests.mjs';
 import { ensureAdmissionMovement, recordBedAssignment, recordMovement } from '../daily-report.mjs';
 import { patientBill } from '../finance.mjs';
 import { queueCashierPayment } from '../invoice-edits.mjs';
-import { encounterAccess, assertEncounterWrite, consumeCorrection, RECORD_MANAGEMENT } from '../encounter-access.mjs';
+import { encounterAccess, assertEncounterWrite, consumeCorrection, RECORD_MANAGEMENT, isOpdHistoryReader } from '../encounter-access.mjs';
 import { allergyAlert, patientRef } from '../clinical-summary.mjs';
 import { logFromContext } from '../record-access.mjs';
 import { isFreeMaternalService, isGynecologyOutpatient, isMaternalService, maternalOptions } from '../maternal.mjs';
@@ -105,22 +105,24 @@ export function mountPatientsRoutes(router) {
 
   // 5. GET /api/record-viewer
   router.get('/api/record-viewer', async (ctx) => {
-    const { response, session, database, config, sendJson, url, requireContext, clinicalPatientKey, parseStoredJson, patientRecordResponse, buildIpdDischargeSummary } = ctx;
+    const { response, session, database, config, sendJson, url, requireContext, clinicalPatientKey, parseStoredJson, patientRecordResponse, buildIpdDischargeSummary, patientDataVisibleForRole, paymentStatusForPatient } = ctx;
     if (!session) return sendJson(response, 401, { error: 'សូមចូលគណនីជាមុន។' }, { secure: config.cookieSecure });
     const row = database.findPatient(clinicalPatientKey(url.searchParams.get('patientKey')));
     if (!row) return sendJson(response, 404, { error: 'រកមិនឃើញកំណត់ត្រាអ្នកជំងឺ។' }, { secure: config.cookieSecure });
     const role = requireContext(session);
-    if (!RECORD_MANAGEMENT.includes(role)) return sendJson(response, 403, { error: 'ទំព័រនេះសម្រាប់គណៈគ្រប់គ្រងប៉ុណ្ណោះ។' }, { secure: config.cookieSecure });
-    const rows = row.health_id ? database.sqlite.prepare('SELECT * FROM patient_records WHERE health_id=? COLLATE NOCASE ORDER BY entry_date DESC,created_at DESC').all(row.health_id) : [row];
+    if (!RECORD_MANAGEMENT.includes(role) && role !== 'TRIAGE' && !isOpdHistoryReader(session)) return sendJson(response, 403, { error: 'ទំព័រនេះសម្រាប់គណៈគ្រប់គ្រងប៉ុណ្ណោះ។' }, { secure: config.cookieSecure });
+    const rows = String(row.health_id || '').trim() ? database.sqlite.prepare('SELECT * FROM patient_records WHERE trim(health_id)=trim(?) COLLATE NOCASE ORDER BY entry_date DESC,created_at DESC,patient_key DESC').all(row.health_id) : [row];
     const encounters = rows.map(record => {
       const data = parseStoredJson(record.record_json);
       return {
-        patient: patientRecordResponse(record, true),
-        orders: listOrders(database, { patientKey: record.patient_key }),
-        resume: record.service_mode === 'ipd' ? buildIpdDischargeSummary(database, record, data, data['system:discharge'] || {}) : null
+        patient: { ...patientRecordResponse(record, true), data: patientDataVisibleForRole(data, role),
+          paymentStatus: paymentStatusForPatient(database, record.patient_key), recordAccess: encounterAccess(database, session, record) },
+        orders: role === 'TRIAGE' ? [] : listOrders(database, { patientKey: record.patient_key }),
+        resume: role !== 'TRIAGE' && record.service_mode === 'ipd' ? buildIpdDischargeSummary(database, record, data, data['system:discharge'] || {}) : null
       };
     });
-    return sendJson(response, 200, { encounters }, { secure: config.cookieSecure });
+    logFromContext(ctx, row, 'open', 'visit history');
+    return sendJson(response, 200, { encounters, scope: role === 'TRIAGE' ? 'triage' : 'medical' }, { secure: config.cookieSecure });
   });
 
   // 6. GET /api/patients
@@ -160,7 +162,7 @@ export function mountPatientsRoutes(router) {
     if (!session) return sendJson(response, 401, { error: 'Authentication required.' }, { secure: config.cookieSecure });
     const patientKey = clinicalPatientKey(url.searchParams.get('patientKey'));
     let patient = database.findPatient(patientKey);
-    if (patient && !canAccessPatient(database, session, patient)) {
+    if (patient && !canAccessPatient(database, session, patient) && !(url.searchParams.get('readOnly') === '1' && isOpdHistoryReader(session))) {
       return sendJson(response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
     }
     const role = sessionRole(session);
@@ -351,7 +353,7 @@ export function mountPatientsRoutes(router) {
     if (existingPatient && activeRoleBeforeSave === 'DOCTOR' && existingPatient.service_mode === 'opd') {
       const workflowStage = String(existingData['system:workflowStage'] || '');
       const isOpdClinicalSave = body.editorScope === 'medical' || body.editorScope === 'opd' || body.submitOpdPrescription === true || body.markMedicalComplete === true || Object.keys(submittedData).some(key => key.startsWith('scope:medical:') || key.startsWith('system:opdMedications')) || submittedData['system:medicalRecordCompleted'] === true;
-      if (isOpdClinicalSave && (!['DOCTOR_READY', 'IN_CONSULTATION'].includes(workflowStage) || !opdConsultationPaymentConfirmed(database, existingPatient))) {
+      if (isOpdClinicalSave && !editAccess?.correctionId && (!['DOCTOR_READY', 'IN_CONSULTATION'].includes(workflowStage) || !opdConsultationPaymentConfirmed(database, existingPatient))) {
         return sendJson(response, 409, { error: 'The OPD consultation fee must be confirmed by Cashier before the patient can meet the doctor.' }, { secure: config.cookieSecure });
       }
     }
@@ -534,7 +536,7 @@ export function mountPatientsRoutes(router) {
     } else if (activeClinicalRole === 'NURSE' || activeClinicalRole === 'MIDWIFE' || editorScope === 'nursing') {
       data['system:signature:nursing'] = JSON.stringify(signatureSnapshot(database, session, savedAt));
     }
-    if (activeClinicalRole === 'DOCTOR' && existingPatient?.service_mode === 'opd' && data['system:opdConsultedAt']) {
+    if (!editAccess?.correctionId && activeClinicalRole === 'DOCTOR' && existingPatient?.service_mode === 'opd' && data['system:opdConsultedAt']) {
       const currentBill = patientBill(database, patientKey);
       const outstanding = Number(currentBill?.summary?.KHR?.balance || 0) + Number(currentBill?.summary?.USD?.balance || 0);
       if (outstanding > 0 && currentBill?.invoice?.id) {
@@ -547,6 +549,7 @@ export function mountPatientsRoutes(router) {
     }
     let prescriptionSnapshot = null;
     if (body.submitOpdPrescription === true) {
+      if (editAccess?.correctionId) return sendJson(response, 403, { error: 'ការកែតម្រូវកំណត់ត្រាមិនអាចបញ្ជូនវេជ្ជបញ្ជាថ្មីបានទេ។' }, { secure: config.cookieSecure });
       if (activeClinicalRole !== 'DOCTOR' && !maternalMidwife) return sendJson(response, 403, { error: 'Only the prescribing doctor can submit an OPD prescription.' }, { secure: config.cookieSecure });
       // v42.6: the midwife prescribes only the medicines of the maternal services.
       if (maternalMidwife) {
@@ -617,7 +620,7 @@ export function mountPatientsRoutes(router) {
       }
       if (triageSave && !wasTransferredBefore && patient.service_mode === 'opd') {
         opdReferral = referToOpd(database, patientKey, savedAt);
-      } else if (patient.service_mode === 'opd' && (activeClinicalRole === 'DOCTOR' || editorScope === 'medical')) {
+      } else if (!editAccess?.correctionId && patient.service_mode === 'opd' && (activeClinicalRole === 'DOCTOR' || editorScope === 'medical')) {
         updateOpdQueueStatus(database, patientKey, 'IN_CONSULTATION', savedAt);
         if (!data['system:encounterId']) {
           const now = new Date(savedAt);

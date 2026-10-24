@@ -1,3 +1,11 @@
+## 44.0.0 - One patient directory row with visit history and discharge locks
+
+- Group directory rows by Health ID and show entry and exit dates from the latest visit; retain every encounter and keep different Health IDs separate.
+- Triage View opens a visit list with department, dates and payment status. Select a date to see only that visit's triage. Active visits remain editable; discharged visits are locked by the server.
+- OPD doctors can read OPD and IPD history, laboratory results, imaging findings and attachments. Historical reading grants no additional write access.
+- Treatment corrections after discharge require Director approval. An approved correction is bound to its requester, visit, form and record version, and is consumed by one save. It cannot restart the OPD queue or issue another prescription.
+- Registration behavior and stored patient data are preserved. Synthetic API and browser verification is documented in docs/visit-history.md. The v43.8 action choices and v43.9 navigation changes are retained.
+
 ## 43.9.0 - Restoration of navigation tabs, header & clinical workspace
 
 - Restore navigation tabs (`.step-wrapper` Page 1 ចុះឈ្មោះ, Page 2 ទ្រីយ៉ា, Page 3 ពិនិត្យជំងឺ) and dashboard header so they are never suppressed or blocked.

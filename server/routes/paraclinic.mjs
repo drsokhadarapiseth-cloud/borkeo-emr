@@ -1,4 +1,5 @@
 import { canUseMaternalPatient, maternalOptions } from '../maternal.mjs';
+import { isOpdHistoryReader } from '../encounter-access.mjs';
 import { uploadDirectory } from '../config.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -776,7 +777,9 @@ export function mountParaclinicRoutes(router) {
     const attachment = getAttachment(database, match[1]);
     if (!attachment) return sendJson(response, 404, { error: 'Attachment not found.' }, { secure: config.cookieSecure });
     const patient = database.findPatient(attachment.patient_key);
-    const allowed = orderActorAllowed(role, attachment.modality) ||
+    const historyRead = ctx.url.searchParams.get('history') === '1';
+    if (historyRead && !['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role) && !isOpdHistoryReader(session)) return sendJson(response, 403, { error: 'You cannot view this attachment.' }, { secure: config.cookieSecure });
+    const allowed = (historyRead && isOpdHistoryReader(session)) || orderActorAllowed(role, attachment.modality) ||
       (!['LAB', 'IMAGING'].includes(role) && patient && canAccessPatient(database, session, patient));
     if (!allowed) return sendJson(response, 403, { error: 'You cannot view this attachment.' }, { secure: config.cookieSecure });
     return sendFile(response, attachment.storage_path, attachment.content_type, { secure: config.cookieSecure }, false);

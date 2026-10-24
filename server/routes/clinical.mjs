@@ -22,7 +22,7 @@ import { buildPmrs2TransferPackage, pmrs2ReviewIssues } from '../pmrs2-transfer.
 import { normalizePmrsId, preparePmrsMedicineImport, applyPmrsMedicineImport } from '../pmrs2-medicine-import.mjs';
 import { admissionApprovalFor, listPendingAdmissionApprovals } from '../admission-approvals.mjs';
 import { completePatientMessages } from '../messages.mjs';
-import { assertEncounterWrite } from '../encounter-access.mjs';
+import { assertEncounterWrite, consumeCorrection } from '../encounter-access.mjs';
 import { validate, Schemas } from '../validation.mjs';
 
 export function mountClinicalRoutes(router) {
@@ -791,18 +791,31 @@ export function mountClinicalRoutes(router) {
     const patientKey = clinicalPatientKey(body.patientKey);
     const patientRow = database.findPatient(patientKey);
     if (patientRow && !canAccessPatient(database, session, patientRow)) return sendJson(response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
+    let access;
     try {
-      assertEncounterWrite(database, session, patientRow, 'medical');
+      access = assertEncounterWrite(database, session, patientRow, 'medical');
     } catch (error) {
       return sendJson(response, error.status || 403, { error: error.message }, { secure: config.cookieSecure });
     }
     const patient = sanitizePatientSnapshot(body.patient);
     const data = sanitizeClinicalFormData(body.data);
     const savedAt = Date.now();
-    const record = database.upsertClinicalForm({
-      id: crypto.randomUUID(), patientKey, formType, patient, data,
-      userId: session.user_id, savedAt,
-    });
+    let record;
+    database.sqlite.exec('SAVEPOINT clinical_form_save');
+    try {
+      access = assertEncounterWrite(database, session, database.findPatient(patientKey), 'medical');
+      record = database.upsertClinicalForm({
+        id: crypto.randomUUID(), patientKey, formType, patient, data,
+        userId: session.user_id, savedAt,
+      });
+      consumeCorrection(database, access);
+      if (access.correctionId) database.sqlite.prepare('UPDATE patient_records SET version=version+1,updated_at=?,updated_by=? WHERE patient_key=?').run(savedAt, session.user_id, patientKey);
+      database.sqlite.exec('RELEASE SAVEPOINT clinical_form_save');
+    } catch (error) {
+      database.sqlite.exec('ROLLBACK TO SAVEPOINT clinical_form_save');
+      database.sqlite.exec('RELEASE SAVEPOINT clinical_form_save');
+      throw error;
+    }
     audit(database, request, 'CLINICAL_FORM_SAVED', {
       userId: session.user_id,
       subjectUsername: session.username,

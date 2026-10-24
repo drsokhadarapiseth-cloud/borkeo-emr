@@ -1925,6 +1925,42 @@
       "en": "Retry context session loading",
       "kh": "ព្យាយាមម្តងទៀត",
       "key": "context.retry"
+    },
+    {
+      "en": "Visit date",
+      "kh": "កាលបរិច្ឆេទពិនិត្យ"
+    },
+    {
+      "en": "Pending",
+      "kh": "កំពុងរង់ចាំ"
+    },
+    {
+      "en": "Imaging results",
+      "kh": "លទ្ធផលរូបភាពវេជ្ជសាស្ត្រ"
+    },
+    {
+      "en": "X-ray",
+      "kh": "ថតកាំរស្មី"
+    },
+    {
+      "en": "CT scan",
+      "kh": "ថតស្កេន"
+    },
+    {
+      "en": "MRI scan",
+      "kh": "ថតអនុភាពម៉ាញេទិក"
+    },
+    {
+      "en": "The patient is discharged. Triage information cannot be edited.",
+      "kh": "អ្នកជំងឺបានចេញពីពេទ្យ។ មិនអាចកែប្រែព័ត៌មានទ្រីយ៉ាបានទេ។"
+    },
+    {
+      "en": "Treatment corrections require Director approval.",
+      "kh": "សំណើកែប្រែការព្យាបាលត្រូវការការអនុម័តពីនាយក។"
+    },
+    {
+      "en": "A record correction cannot submit a new prescription.",
+      "kh": "ការកែតម្រូវកំណត់ត្រាមិនអាចបញ្ជូនវេជ្ជបញ្ជាថ្មីបានទេ។"
     }
   ]
 }

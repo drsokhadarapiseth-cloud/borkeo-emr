@@ -12,11 +12,11 @@ function read(relPath) {
 test('v43.8: Patient list deduplicates patients sharing the same Health ID', () => {
   const patientListJs = read('public/patient-list.js');
 
-  // Verify deduplication set and logic is present
+  // The directory chooses the latest encounter before applying filters.
   assert.ok(
-    patientListJs.includes('const seen = new Set();') &&
-    patientListJs.includes('const id = String(patient.healthId || \'\').trim();') &&
-    patientListJs.includes('seen.has(key)'),
+    patientListJs.includes('function latestPatients(rows)') &&
+    patientListJs.includes('const grouped = new Map();') &&
+    patientListJs.includes('triageToday ? patients : latestPatients(patients)'),
     'filteredPatients must deduplicate multiple rows with same Health ID'
   );
 });

@@ -115,7 +115,8 @@
     const requestedView = new URLSearchParams(location.search).get('view') || '';
     const prePaymentParaclinicReview = requestedView === 'opd-paraclinic';
     const opdStage = String(loadedPatient?.workflowStage || '');
-    const opdLockedForCashier = role === 'DOCTOR' && String(loadedPatient?.serviceMode || '').toLowerCase() === 'opd' && !['DOCTOR_READY','IN_CONSULTATION'].includes(opdStage);
+    const approvedCorrection = Boolean(loadedPatient?.recordAccess?.correctionId && loadedPatient.recordAccess.canEdit);
+    const opdLockedForCashier = role === 'DOCTOR' && String(loadedPatient?.serviceMode || '').toLowerCase() === 'opd' && !['DOCTOR_READY','IN_CONSULTATION'].includes(opdStage) && !approvedCorrection;
     const outpatient = document.getElementById('sub_opd');
     const medical = document.getElementById('sub_ipd');
     const nursing = document.getElementById('sub_nursing');

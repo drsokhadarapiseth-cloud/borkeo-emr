@@ -11,6 +11,7 @@
   const scopeFor = view => view === 'register' ? 'registration' : view === 'triage' ? 'triage' : view === 'nursing' ? 'nursing' : 'medical';
   const roots = { register:'page1',triage:'page2',opd:'sub_opd','opd-paraclinic':'sub_opd',medical:'sub_ipd',nursing:'sub_nursing',daily:'emr-daily-view',discharge:'emr-discharge-view' };
   function view() {
+    if (report && explicitView) return report;
     if (manager()) return report || query.get('view') || 'medical';
     if(access?.view==='medical' && ['daily','discharge'].includes(query.get('view')))return query.get('view');
     return access?.view || query.get('view') || (role() === 'REGISTRATION' ? 'register' : role() === 'TRIAGE' ? 'triage' : ['NURSE','MIDWIFE'].includes(role()) ? 'nursing' : window.emrSession?.user?.activeWard?.code === 'opd' ? 'opd' : 'medical');

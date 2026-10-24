@@ -514,7 +514,7 @@ export function roleCanPage(role, pathname) {
   if (pathname === '/admin/record-log') return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
   if (['ADMIN','VICE_DIRECTOR'].includes(role) || role === 'DIRECTOR') return true;
   if (pathname === '/requests') return ['REGISTRATION','TRIAGE','DOCTOR','NURSE','MIDWIFE','CHIEF_WARD','WARD_HEAD','PHARMACY','LAB','IMAGING','CLERK','ACCOUNTANT'].includes(role);
-  if (pathname === '/record-viewer') return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
+  if (pathname === '/record-viewer') return ['ADMIN','DIRECTOR','VICE_DIRECTOR','TRIAGE','DOCTOR','CHIEF_WARD'].includes(role);
   if (pathname === '/home' || pathname === '/context' || pathname === '/print-preview') return true;
   if (pathname === '/lab/materials') return role === 'LAB';
   if (pathname === '/pharmacy/medicines') return role === 'PHARMACY';

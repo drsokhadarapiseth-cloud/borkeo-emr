@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v43.9 - Electronic Medical Record System
+// Borkeo EMR v44.0 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -19,7 +19,7 @@ import {PAYMENT_CATEGORIES,NSSF_SUBTYPES,FACILITY_LEVELS,majorPaymentCategory,pa
 import {ensureInvoiceEditSchema,invoiceHistory,invoiceEditRequests,cashierPaymentAlerts,requestInvoiceEdit,reviewInvoiceEdit,applyInvoiceEdit,assertCashierInvoiceWritable,queueCashierPayment,isPatientDischarged,applyDirectInvoiceEdit} from './invoice-edits.mjs';
 import { prepareOpdPrescription, submitOpdPrescription, prescriptionForMessage,
   listOpdPrescriptions, opdPrescriptionForPharmacy, markOpdPrescriptionReceived, ensureOpdReceiptDischarges } from './pharmacy-prescriptions.mjs';
-import {encounterAccess,assertEncounterWrite,consumeCorrection,RECORD_MANAGEMENT} from './encounter-access.mjs';
+import {encounterAccess,assertEncounterWrite,consumeCorrection,RECORD_MANAGEMENT,isOpdHistoryReader} from './encounter-access.mjs';
 import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import fs from 'node:fs';
@@ -521,6 +521,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
     return cached.bytes;
   }
   let html = fs.readFileSync(filePath, 'utf8');
+  html = html.replace(/emr-permissions\.js\?v=\d+/g, 'emr-permissions.js?v=4400');
   html = html.replace(/(<span\b[^>]*\bdata-app-version\b[^>]*>)[^<]*(<\/span>)/g, (_, open, close) => `${open}v${APP_VERSION}${close}`);
   html = html.replace(/Borkeo EMR v\d+\.\d+/g, `Borkeo EMR v${APP_VERSION}`);
   html = html.replace(/<head\b[^>]*>/i, head => head + '<style>.emr-language-switch, [data-emr-language], #langBtn, .lang-btn, body #emr-site-banner .portal-account-actions .emr-language-switch, #emr-session-control .portal-account-actions .emr-language-switch, .portal-account-actions .emr-language-switch { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; max-width: 0 !important; max-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; position: absolute !important; left: -9999px !important; clip: rect(0,0,0,0) !important; }</style><script src="/public/emr-language-lock.js?v=3760"></script><link rel="stylesheet" href="/public/emr-required-fields.css?v=3770"><script src="/public/emr-required-fields.js?v=3770"></script>');
@@ -532,7 +533,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   html = html.replace('</head>', '<script src="/public/medication-routes.js?v=4250"></script></head>');
   // v42.3: medicine name search in the prescription forms (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/medicine-autocomplete.css?v=4250"><script src="/public/medicine-autocomplete.js?v=4250" defer></script><script src="/public/medicine-dose-check.js?v=4250" defer></script><link rel="stylesheet" href="/public/maternal.css?v=4260"><script src="/public/maternal-emr.js?v=4260" defer></script></head>');
-  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=3800" defer></script></head>');
+  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=4400" defer></script></head>');
   // v41.0: structured allergy record, problem list and nursing demographics (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/clinical-summary.css?v=4100"><script src="/public/clinical-summary.js?v=4100" defer></script><link rel="stylesheet" href="/public/display-rules.css?v=4110"><script src="/public/display-rules.js?v=4110" defer></script><link rel="stylesheet" href="/public/medication-safety.css?v=4120"><script src="/public/medication-safety.js?v=4120" defer></script><link rel="stylesheet" href="/public/periop-forms.css?v=4160"><script src="/public/periop-forms.js?v=4160" defer></script><script src="/public/fluid-balance.js?v=4160" defer></script><script src="/public/early-warning.js?v=4160" defer></script><link rel="stylesheet" href="/public/patient-documents.css?v=4170"><script src="/public/patient-documents.js?v=4170" defer></script></head>');
   // v43.4: modern clinical consultation workspace and integrated patient record (EMR.html only).
@@ -2154,9 +2155,12 @@ export function createEmrServer(configOverrides = {}) {
           const row=database.findPatient(url.searchParams.get('patient'));
           if(row){
             const policy=encounterAccess(database,session,row);
-            if(!policy.canView)return sendJson(response,403,{error:'អ្នកមិនមានសិទ្ធិមើលកំណត់ត្រានេះទេ។'},{secure:config.cookieSecure});
             const requested=url.searchParams.get('view')||'';
-            const allowed=requested===policy.view || policy.view==='medical'&&['daily','discharge'].includes(requested) || policy.view==='opd'&&requested==='opd-paraclinic';
+            // Historical snapshots are read-only; encounter write policy stays unchanged.
+            const historySnapshot=isOpdHistoryReader(session) && url.searchParams.get('mode')==='view' &&
+              ['opd','medical'].includes(requested) && url.searchParams.get('recordPage')===requested;
+            if(!policy.canView&&!historySnapshot)return sendJson(response,403,{error:'អ្នកមិនមានសិទ្ធិមើលកំណត់ត្រានេះទេ។'},{secure:config.cookieSecure});
+            const allowed=historySnapshot || requested===policy.view || policy.view==='medical'&&['daily','discharge'].includes(requested) || policy.view==='opd'&&requested==='opd-paraclinic';
             if(!allowed){url.searchParams.set('view',policy.view);return redirect(response,url.pathname+'?'+url.searchParams.toString(),{secure:config.cookieSecure});}
           }
         }

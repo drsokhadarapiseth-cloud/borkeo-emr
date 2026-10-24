@@ -459,3 +459,13 @@ npca.344,"NPCA referral 344","NPCA v42.8 draft Khmer owner review",public/npca-w
 npca.345,"NPCA referral 345","NPCA v42.8 draft Khmer owner review",public/npca-widget.js,"ប្រភេទមូលដ្ឋានទទួល"
 npca.346,"NPCA referral 346","NPCA v42.8 draft Khmer owner review",public/npca-widget.js,"តំណលិខិតបញ្ជូន"
 context.retry,Retry context session loading,Authorized master-task context recovery,protected/context.html,ព្យាយាមម្តងទៀត
+
+"v438.visitHistory.0","Visit date","User-approved visit history and discharge correction","public/record-viewer.js","កាលបរិច្ឆេទពិនិត្យ"
+"v438.visitHistory.1","Pending","User-approved visit history and discharge correction","public/record-viewer.js","កំពុងរង់ចាំ"
+"v438.visitHistory.2","Imaging results","User-approved visit history and discharge correction","public/record-viewer.js","លទ្ធផលរូបភាពវេជ្ជសាស្ត្រ"
+"v438.visitHistory.3","X-ray","User-approved visit history and discharge correction","public/record-viewer.js","ថតកាំរស្មី"
+"v438.visitHistory.4","CT scan","User-approved visit history and discharge correction","public/record-viewer.js","ថតស្កេន"
+"v438.visitHistory.5","MRI scan","User-approved visit history and discharge correction","public/record-viewer.js","ថតអនុភាពម៉ាញេទិក"
+"v438.visitHistory.6","The patient is discharged. Triage information cannot be edited.","User-approved visit history and discharge correction","public/record-viewer.js","អ្នកជំងឺបានចេញពីពេទ្យ។ មិនអាចកែប្រែព័ត៌មានទ្រីយ៉ាបានទេ។"
+"v438.visitHistory.7","Treatment corrections require Director approval.","User-approved visit history and discharge correction","public/record-viewer.js","សំណើកែប្រែការព្យាបាលត្រូវការការអនុម័តពីនាយក។"
+"v438.visitHistory.8","A record correction cannot submit a new prescription.","User-approved visit history and discharge correction","public/record-viewer.js","ការកែតម្រូវកំណត់ត្រាមិនអាចបញ្ជូនវេជ្ជបញ្ជាថ្មីបានទេ។"

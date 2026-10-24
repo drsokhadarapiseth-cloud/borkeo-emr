@@ -110,6 +110,6 @@ test('OPD main / secondary ICD-10: old records keep their first code; Set as mai
 
 test('OPD cashier pre-payment lock is unchanged', () => {
   const route = read('server/routes/patients.mjs');
-  assert.match(route, /isOpdClinicalSave && \(!\['DOCTOR_READY', 'IN_CONSULTATION'\]\.includes\(workflowStage\) \|\| !opdConsultationPaymentConfirmed\(database, existingPatient\)\)/);
+  assert.match(route, /isOpdClinicalSave && !editAccess\?\.correctionId && \(!\['DOCTOR_READY', 'IN_CONSULTATION'\]\.includes\(workflowStage\) \|\| !opdConsultationPaymentConfirmed\(database, existingPatient\)\)/);
   assert.match(route, /The OPD consultation fee must be confirmed by Cashier before the patient can meet the doctor\./);
 });

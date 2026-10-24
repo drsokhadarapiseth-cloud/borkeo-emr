@@ -39,6 +39,7 @@
   const triageToday = Boolean(document.querySelector('[data-patient-list-mode="triage-today"]'));
   const patientsUrl = triageToday ? '/api/triage/queue?omitPhotos=1' : '/api/patients?includePayment=1&omitPhotos=1';
   let patients = [];
+  let activeWard = '';
   let csrfToken = '';
   let activeRole = (() => { try { return String(window.emrSession?.user?.activeRole || window.sessionStorage?.getItem('borkeo-active-role') || '').toUpperCase(); } catch { return ''; } })();
   let admissionPanel = null;
@@ -76,30 +77,33 @@
     return value || text('unknown');
   }
 
+  // Group only the directory display; encounter keys and stored visits stay intact.
+  function latestPatients(rows) {
+    const grouped = new Map();
+    const sorted = [...rows].sort((a,b) => String(b.entryDate || '').localeCompare(String(a.entryDate || '')) ||
+      Number(b.createdAt || 0) - Number(a.createdAt || 0) || String(b.patientKey).localeCompare(String(a.patientKey)));
+    for (const patient of sorted) {
+      const identity = String(patient.healthId || '').trim().toLocaleLowerCase();
+      const key = identity ? 'health:' + identity : 'visit:' + patient.patientKey;
+      if (!grouped.has(key)) grouped.set(key, patient);
+    }
+    return [...grouped.values()];
+  }
+
   function filteredPatients() {
     const query = element('patient-search').value.trim().toLocaleLowerCase();
     const entry = element('entry-filter').value;
     const discharge = element('discharge-filter').value;
     const department = element('department-filter').value;
     const payment = element('payment-filter').value;
-    const list = patients.filter(patient => {
+    const list = (triageToday ? patients : latestPatients(patients)).filter(patient => {
       const haystack = [patient.fullName, patient.firstName, patient.lastName, patient.caseNumber, patient.healthId, patient.phone, patient.equityCard]
         .join(' ').toLocaleLowerCase();
       return (!query || haystack.includes(query)) && (!entry || patient.entryDate === entry) &&
         (!discharge || patient.dischargeDate === discharge) &&
         (!department || patient.departmentCode === department) && (!payment || paymentTypeCode(patient) === payment);
     });
-    if (triageToday) return list;
-    const seen = new Set();
-    const unique = [];
-    for (const patient of list) {
-      const id = String(patient.healthId || '').trim();
-      const key = id ? `id:${id.toLowerCase()}` : `key:${patient.patientKey}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      unique.push(patient);
-    }
-    return unique;
+    return list;
   }
 
   function renderDepartmentFilter() {
@@ -273,10 +277,10 @@
       const isCashier=['CLERK','ACCOUNTANT'].includes(activeRole);
       const access=patient.recordAccess||{};
       const viewHref=isCashier?'/billing?'+new URLSearchParams({patientKey:patient.patientKey,history:'1',from:'patient-list'}):
-        isMgmt?'/record-viewer?'+new URLSearchParams({patient:patient.patientKey,from:'patient-list'}):
+        (isMgmt||activeRole==='TRIAGE'||['DOCTOR','CHIEF_WARD'].includes(activeRole)&&activeWard==='opd')?'/record-viewer?'+new URLSearchParams({patient:patient.patientKey,from:'patient-list'}):
         '/emr?'+new URLSearchParams({patient:patient.patientKey,view:access.view||(activeRole==='REGISTRATION'?'register':activeRole==='TRIAGE'?'triage':'medical'),mode:'view',from:'patient-list'});
       const clinical=['REGISTRATION','TRIAGE','DOCTOR','NURSE','MIDWIFE','CHIEF_WARD'].includes(activeRole);
-      const eyeButton=(isMgmt||isCashier||clinical&&access.canView)
+      const eyeButton=(isMgmt||isCashier||clinical&&access.canView||['DOCTOR','CHIEF_WARD'].includes(activeRole)&&activeWard==='opd')
         ? `<a class="icon-action view" target="_blank" rel="noopener noreferrer" title="មើលព័ត៌មាន" aria-label="មើលព័ត៌មាន" href="${escapeHtml(viewHref)}">👁</a>`
         : `<button type="button" class="icon-action view" data-view-patient="${escapeHtml(patient.patientKey)}" title="មើលព័ត៌មានអ្នកជំងឺ" aria-label="មើលព័ត៌មានអ្នកជំងឺ">👁</button>`;
       const editButton=(isMgmt||clinical&&access.canView)
@@ -316,6 +320,7 @@
     const result = await response.json();
     csrfToken = result.csrfToken;
     activeRole = String(result.user?.activeRole || '').toUpperCase();
+    activeWard = String(result.user?.activeWard?.code || '').toLowerCase();
     try { window.sessionStorage?.setItem('borkeo-active-role', activeRole); } catch {}
     ensureAdmissionPanel();
   }
