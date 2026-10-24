@@ -1,0 +1,780 @@
+Borkeo EMR 42.9.0 - Login and work-context recovery
+Baseline: 42.8.0, 107ed3a. Apply only to this baseline; preserve later work.
+
+This is the first incremental master-task update. The whole master task is NOT
+complete. See docs/ai-handoff/TASKS.md for exact remaining requirements.
+
+Behavior: safe context bootstrap/retry, session expiration/account change checks,
+fresh cookie-bound CSRF, safe Khmer login/context errors. Existing authorization
+and separate doctor contexts remain. Two old demo tests now seed their own
+in-memory fixtures. No migration, clinical-data edits or runtime dependencies.
+
+INSTALLATION FOR ANTIGRAVITY - perform one step at a time
+1. Stop the local server and use the existing hospital backup procedure.
+2. Review local changes against baseline 107ed3a; apply the patch below only
+   to its listed code/doc/test files. Never overwrite .env, .gitignore, databases,
+   uploads, backups, credentials or unrelated local work.
+3. Run npm test and npm run check:khmer in a disposable synthetic copy.
+4. Restart with the existing launcher, refresh the browser and verify login and
+   authorized context selection. Production deployment remains separately gated.
+
+VALIDATION AND LIMITATIONS
+See docs/ai-handoff/TEST_RESULTS.md. No deployment-specific network fault was
+established from the unavailable screenshot. No print action was changed or
+visually verified in this increment. No live NPCA verification/transmission.
+Rollback: restore only these source files from baseline; no database rollback.
+
+SHA-256 FILE MANIFEST (bytes in the prepared Windows workspace)
+88af0a58683cbcc2b45c0f2cb86b5a2458e78430ae9892bf28c1d79d178abbdc  CHANGELOG.md
+5da7bbc7f4b5ddc0ed1fe52db932ee6efc69f7abbc6a86cc0007bfc526e66e23  package.json
+524da2cd9bcf0a55ea9177425b5816ba9ca7cbce3121558febbdddd00d581f77  public/login.html
+f6684f699b38295a1f2976def14cbfeda43e56e02f6f70a67e7de5c4cfd35ba4  public/login.js
+b84899601378deb66ee516a05ce22685c27bc9e1a3f645b67aff60ffffe6e871  protected/context.html
+8db5504b5e388ee1aea64542a936c8e69f2484cfccc7ee4635d87f2dd674f49c  public/context.js
+a900c545aa00fc065265922319b7cbc3724405310444468688cb5e8aa63eceab  public/context.css
+9cb29491739891e373b3d8d1ef35515c6888836ea10c741ede7c0551316c184a  server/server.mjs
+80170df6fac04045a728a0cc360452e7dc24aef9fcf7cb5f372245671ebc8599  docs/approved-new-khmer.json
+8c11fe11eca5a3dcc5479c0ed19ad302e6b6db491174590805258d8ab4298741  docs/translations-needed.csv
+9fbc39d1d3a99b9cecb6c0a912c6d4c9d88dcee124b7135a9245361d1b2067db  tests/accessibility-quality-smoke.test.mjs
+5acfa3c4150fc66c3d1e88c919dbbbdadedcc7804a12a91487d62c0588d2dc16  tests/v1200-release.test.mjs
+b21f981cc016949aff13678dbba471d443c4e273ccedfcda40cea17bfa270721  tests/v399-password-change-loop.test.mjs
+ca204cfada78d8b58102b2a13122c0243899d0ce84b0d32f6b5689c51055f998  tests/context-recovery.test.mjs
+eac6ba94aba6cbdca1b43e1e2050cadae81f2cc4df1d95389778812d316548d2  tests/context-recovery-browser.mjs
+0e515866d6924f21f05004004a69cfbfcce8d84203142398e1734a742d800246  tests/helpers/context-browser.mjs
+6e5006f47b10b1fb02fa2f0c96723f9edbd291bc561a8acd95c716a4d8965e1e  scripts/build-v429-update.mjs
+94dce0bc0fac255aac0fb8648c7fd21b06cd9c5c7e7e9e993b5fc28ca8813618  docs/ai-handoff/STATUS.md
+95d7f220e27064db542f5125f8ad13ea2ef3aabb69f0d8e296ae064fec4a6566  docs/ai-handoff/TASKS.md
+347131413c39f89aa122fcfddb046fe7b783c0ea9c22e8f892407f1e0e9e27dd  docs/ai-handoff/DECISIONS.md
+6cd87bb61136e909a49f2baccc115c75a2fb621d122498f2028242060685428f  docs/ai-handoff/TEST_RESULTS.md
+6efaa19875dc46b1c7d055e4511fa2bc14c89be8d94c4ac1028b331e902c9522  docs/ai-handoff/CHANGES.md
+
+BEGIN BORKEO 42.9.0 UNIFIED PATCH
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 4e1e7bb..49efc4e 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,3 +1,11 @@
++## v42.9.0 - Login and work-context recovery
++
++- Disable work-context submission until the session is loaded; offer an explicit retry after network/server failures.
++- Refresh cookie-bound CSRF before selection, recover expired sessions, and reject a selection if the browser account changed.
++- Show safe Khmer errors for login/context failures without exposing backend exception text; retain backend authorization and CSRF enforcement.
++- Make two legacy demo assertions seed isolated in-memory fixtures instead of opening a local demo database.
++- Add synthetic behavior and explicit Chromium coverage. See docs/ai-handoff for verified scope and the remaining master requirements; this release does not complete the master task.
++
+ ## v42.8.0 (NPCA v1.4 clinical payment-certification integration, disabled by default)
+ - Adds configurable NPCA endpoints, OAuth token cache/refresh, beneficiary selection and verified SPID links, official Excel reference mappings, local visit payload validation, durable authorized submission queue, retry/reconciliation, processing-status polling and review pages.
+ - Adds optional NPCA assessment/referral fields, record/Billing status badges, and small server-authenticated metadata on changed daily notes. Existing clinical, stock and financial calculations are preserved.
+diff --git a/package.json b/package.json
+index d37d641..604b4b3 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "borkeo-emr",
+-  "version": "42.8.0",
++  "version": "42.9.0",
+   "private": true,
+   "type": "module",
+   "description": "Borkeo EMR with authentic hospital paper-style laboratory requisition form popup, permanent reprintable order sheets linked to registration, and professional icon-free imaging ordering.",
+diff --git a/public/login.html b/public/login.html
+index af983e1..0137f12 100644
+--- a/public/login.html
++++ b/public/login.html
+@@ -9,7 +9,7 @@
+   <link rel="stylesheet" href="/public/components.css?v=3970">
+   <link rel="stylesheet" href="/public/login.css?v=3990">
+   <script src="/public/components.js?v=3970" defer></script>
+-  <script src="/public/organization-branding.js?v=1560" defer></script><script src="/public/login.js?v=3990" defer></script>
++  <script src="/public/organization-branding.js?v=1560" defer></script><script src="/public/login.js?v=4290" defer></script>
+   <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+ </head>
+ <body>
+@@ -34,7 +34,7 @@
+         </div>
+         <div class="header-meta">
+           <span class="meta-chip">សាកល្បង · Localhost / LAN</span>
+-          <span class="login-build-version" data-app-version data-language-exclude>v42.8</span>
++          <span class="login-build-version" data-app-version data-language-exclude>v42.9</span>
+         </div>
+       </header>
+ 
+@@ -108,7 +108,7 @@
+ 
+         <aside class="info-panel" aria-label="ព័ត៌មានប្រព័ន្ធ">
+           <div class="info-card accent">
+-            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v42.8</span></h3>
++            <h3><span>កំណែសាកល្បង</span> <span data-app-version data-language-exclude>v42.9</span></h3>
+             <p>គណនីសាកល្បងចូលបានដោយគ្មានពាក្យសម្ងាត់។ ប្រើតែទិន្នន័យសាកល្បងប៉ុណ្ណោះ។</p>
+           </div>
+           <div class="info-card">
+diff --git a/public/login.js b/public/login.js
+index 6d3cad6..dac5c86 100644
+--- a/public/login.js
++++ b/public/login.js
+@@ -231,7 +231,7 @@ form.addEventListener('submit', async event => {
+         : { username: username.value, password: password.value }),
+     });
+     const result = await response.json().catch(() => ({}));
+-    if (!response.ok) throw new Error(result.error || 'មិនអាចចូលប្រព័ន្ធបានទេ។');
++    if (!response.ok) throw new Error('មិនអាចចូលប្រព័ន្ធបានទេ។');
+     if (result.mustChangePassword) {
+       showPasswordChange(result.user, password.value);
+       password.value = '';
+@@ -243,7 +243,7 @@ form.addEventListener('submit', async event => {
+   } catch (error) {
+     setStatus(error.message === 'Failed to fetch'
+       ? 'មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។'
+-      : error.message);
++      : 'មិនអាចចូលប្រព័ន្ធបានទេ។');
+     password.value = '';
+     (demoMode ? username : password).focus();
+   } finally {
+diff --git a/protected/context.html b/protected/context.html
+index f3ec83e..248e59e 100644
+--- a/protected/context.html
++++ b/protected/context.html
+@@ -5,8 +5,8 @@
+   <meta name="viewport" content="width=1200, user-scalable=yes">
+   <title>ជ្រើសរើសតួនាទី និងផ្នែក — Borkeo EMR</title>
+   <link rel="stylesheet" href="/public/ocean-theme.css">
+-  <link rel="stylesheet" href="/public/context.css">
+-  <script src="/public/organization-branding.js?v=1560" defer></script><script src="/public/context.js" defer></script>
++  <link rel="stylesheet" href="/public/context.css?v=4290">
++  <script src="/public/organization-branding.js?v=1560" defer></script><script src="/public/context.js?v=4290" defer></script>
+   <link rel="stylesheet" href="/public/responsive-layout.css?v=1310">
+ </head>
+ <body>
+@@ -22,7 +22,8 @@
+         <label for="context-ward" id="ward-label">ផ្នែក</label>
+         <select id="context-ward"></select>
+         <div id="context-status" role="alert" aria-live="polite"></div>
+-        <button type="submit">ចូលប្រើ EMR</button>
++        <button type="submit" disabled>ចូលប្រើ EMR</button>
++        <button type="button" id="context-retry" hidden>ព្យាយាមម្តងទៀត</button>
+       </form>
+     </section>
+   </main>
+diff --git a/public/context.js b/public/context.js
+index f8c3f02..bfc706e 100644
+--- a/public/context.js
++++ b/public/context.js
+@@ -5,7 +5,10 @@
+   const wardLabel=document.getElementById('ward-label');
+   const status=document.getElementById('context-status');
+   const form=document.getElementById('context-form');
++  const button=form.querySelector('button[type=submit]');
++  const retry=document.getElementById('context-retry');
+   let session=null;
++  let busy=false;
+   const esc=window.escapeHtml||(v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
+   const roleLabels={ADMIN:'អ្នកគ្រប់គ្រងប្រព័ន្ធ',REGISTRATION:'ចុះឈ្មោះ',TRIAGE:'ផ្នែកទ្រីយ៉ា',DOCTOR:'វេជ្ជបណ្ឌិត',NURSE:'គិលានុបដ្ឋាក',MIDWIFE:'ឆ្មប',LAB:'មន្ទីរពិសោធន៍',IMAGING:'រូបភាពវេជ្ជសាស្ត្រ',PHARMACY:'ឱសថស្ថាន',ACCOUNTANT:'គណនេយ្យករ',CLERK:'បេឡា',DIRECTOR:'នាយកមន្ទីរពេទ្យ',VICE_DIRECTOR:'អនុប្រធានមន្ទីរពេទ្យ',CHIEF_WARD:'ប្រធានផ្នែក',WARD_HEAD:'នាយសាល'};
+   // v42.1: the Superuser picks one of the 15 user types, in this order.
+@@ -20,23 +23,56 @@
+     wardSelect.innerHTML='<option value="">ជ្រើសរើសផ្នែក</option>'+available.map(w=>`<option value="${esc(w.code)}">${esc(w.nameKh||w.nameEn||w.code)}</option>`).join('');
+     if(needed&&available.length===1)wardSelect.value=available[0].code;
+   }
+-  try{
+-    const response=await fetch('/api/auth/me',{credentials:'same-origin',cache:'no-store'});if(!response.ok){location.replace('/login');return}
+-    session=await response.json();
++  function failure(response){const error=new Error('context request failed');error.status=response.status;return error;}
++  function showError(error){
++    // Never render server exception text, proxy HTML or browser diagnostics.
++    if(error.status===401){session=null;location.replace('/login');return;}
++    setStatus([400,403].includes(error.status)
++      ? 'មិនអាចជ្រើសរើសតួនាទី និងផ្នែកការងារបានទេ។'
++      : 'មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។ សូមផ្ទុកទំព័រឡើងវិញ។');
++    if(retry)retry.hidden=false;
++  }
++  async function readSession(){
++    const response=await fetch('/api/auth/me',{credentials:'same-origin',cache:'no-store'});
++    if(!response.ok)throw failure(response);
++    const current=await response.json();
++    if(!current.user||!current.csrfToken)throw new Error('invalid session response');
++    return current;
++  }
++  async function loadSession(){
++    if(busy)return;
++    busy=true;button.disabled=true;session=null;
++    if(retry){retry.hidden=true;retry.disabled=true;}
++    setStatus('');
++    try{
++    session=await readSession();
+     const roles=session.user.isSuperuser?userTypeOrder.filter(role=>(session.user.roles||[]).includes(role)):(session.user.roles||[]);
+     roleSelect.innerHTML=roles.map(role=>`<option value="${esc(role)}">${esc(roleLabels[role]||role)}</option>`).join('');
+     if(session.user.activeRole) roleSelect.value=session.user.activeRole;
+     renderWards();
+     if(session.user.activeWard?.code) wardSelect.value=session.user.activeWard.code;
+-  }catch(error){setStatus(error.message)}
++    }catch(error){session=null;showError(error)}
++    finally{busy=false;button.disabled=!session;if(retry)retry.disabled=false;}
++  }
++  if(retry)retry.addEventListener('click',loadSession);
+   roleSelect.addEventListener('change',renderWards);
+   form.addEventListener('submit',async e=>{
+     e.preventDefault();setStatus('');
+-    const button=form.querySelector('button[type=submit]');button.disabled=true;
++    if(busy||!session)return;
++    if(!form.reportValidity())return;
++    busy=true;button.disabled=true;if(retry)retry.hidden=true;
+     try{
++      // Refresh the cookie-bound token before the write, without retrying a
++      // context mutation after an uncertain network outcome.
++      const current=await readSession();
++      if(current.user.id!==session.user.id||current.user.username!==session.user.username){session=null;throw failure({status:401});}
++      session=current;
+       const response=await fetch('/api/auth/context',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF-Token':session.csrfToken},body:JSON.stringify({role:roleSelect.value,wardCode:wardSelect.hidden?'':wardSelect.value})});
+-      const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||'មិនអាចជ្រើសរើសតួនាទី និងផ្នែកការងារបានទេ។');location.replace(result.landingPath||landingPath(result.user));
+-    }catch(error){setStatus(error.message);button.disabled=false}
++      if(!response.ok)throw failure(response);
++      const result=await response.json();if(!result.user)throw new Error('invalid context response');
++      location.replace(result.landingPath||landingPath(result.user));
++    }catch(error){showError(error)}finally{busy=false;button.disabled=!session;}
+   });
+   document.getElementById('context-logout')?.addEventListener('click',async()=>{try{if(session)await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin',headers:{'X-CSRF-Token':session.csrfToken}})}finally{location.replace('/login')}});
++  await loadSession();
+ })();
+diff --git a/public/context.css b/public/context.css
+index 5ae9a75..a686424 100644
+--- a/public/context.css
++++ b/public/context.css
+@@ -1 +1 @@
+-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(135deg,#eef8fb,#dceff6);font-family:"Khmer OS Battambang","Noto Sans Khmer",Arial,sans-serif;color:#173b4b}.context-shell{min-height:100vh;display:grid;place-items:center;padding:28px}.context-card{width:min(620px,100%);background:white;border:1px solid #cfe3eb;border-radius:22px;box-shadow:0 18px 50px rgba(23,71,90,.13);padding:34px}.context-logo{width:80px;height:80px;object-fit:contain;display:block;margin:0 auto 12px}.eyebrow{text-align:center;color:#317b99;font-weight:700;margin:0}.context-card h1{text-align:center;margin:8px 0 10px;font-size:25px}.help{text-align:center;color:#567583;line-height:1.7;margin-bottom:26px}.context-card label{display:block;font-weight:700;margin:14px 0 7px}.context-card select{width:100%;min-height:48px;border:1px solid #b9d4df;border-radius:11px;padding:8px 12px;background:white;font:inherit}.context-card button[type=submit]{width:100%;margin-top:24px;border:0;border-radius:11px;padding:13px;background:#1676a1;color:#fff;font:inherit;font-weight:700;cursor:pointer}.context-card button:disabled{opacity:.55;cursor:not-allowed}#context-status{min-height:24px;margin-top:12px;color:#a52727}.logout{display:none!important}.emr-language-switch{display:none!important}
++*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(135deg,#eef8fb,#dceff6);font-family:"Khmer OS Battambang","Noto Sans Khmer",Arial,sans-serif;color:#173b4b}.context-shell{min-height:100vh;display:grid;place-items:center;padding:28px}.context-card{width:min(620px,100%);background:white;border:1px solid #cfe3eb;border-radius:22px;box-shadow:0 18px 50px rgba(23,71,90,.13);padding:34px}.context-logo{width:80px;height:80px;object-fit:contain;display:block;margin:0 auto 12px}.eyebrow{text-align:center;color:#317b99;font-weight:700;margin:0}.context-card h1{text-align:center;margin:8px 0 10px;font-size:25px}.help{text-align:center;color:#567583;line-height:1.7;margin-bottom:26px}.context-card label{display:block;font-weight:700;margin:14px 0 7px}.context-card select{width:100%;min-height:48px;border:1px solid #b9d4df;border-radius:11px;padding:8px 12px;background:white;font:inherit}.context-card button{width:100%;margin-top:24px;border:0;border-radius:11px;padding:13px;background:#1676a1;color:#fff;font:inherit;font-weight:700;cursor:pointer}.context-card button:disabled{opacity:.55;cursor:not-allowed}#context-status{min-height:24px;margin-top:12px;color:#a52727}.logout{display:none!important}.emr-language-switch{display:none!important}
+diff --git a/server/server.mjs b/server/server.mjs
+index af20f81..2d07ecd 100644
+--- a/server/server.mjs
++++ b/server/server.mjs
+@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
+ import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
+ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
+ import { createDiagnosisSearch } from './icd10.mjs';
+-// Borkeo EMR v42.8 - Electronic Medical Record System
++// Borkeo EMR v42.9 - Electronic Medical Record System
+ import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
+ import {validateAddressHierarchy} from './gazetteer.mjs';
+ import {validateCambodianPhone} from './cambodia-phone.mjs';
+diff --git a/docs/approved-new-khmer.json b/docs/approved-new-khmer.json
+index 6f09507..1777645 100644
+--- a/docs/approved-new-khmer.json
++++ b/docs/approved-new-khmer.json
+@@ -1920,6 +1920,11 @@
+       "kh": "តំណលិខិតបញ្ជូន",
+       "en": "NPCA referral 346",
+       "key": "npca.346"
++    },
++    {
++      "en": "Retry context session loading",
++      "kh": "ព្យាយាមម្តងទៀត",
++      "key": "context.retry"
+     }
+   ]
+ }
+diff --git a/docs/translations-needed.csv b/docs/translations-needed.csv
+index f3a3818..9786fb6 100644
+--- a/docs/translations-needed.csv
++++ b/docs/translations-needed.csv
+@@ -458,3 +458,4 @@ npca.343,"NPCA referral 343","NPCA v42.8 draft Khmer owner review",public/npca-w
+ npca.344,"NPCA referral 344","NPCA v42.8 draft Khmer owner review",public/npca-widget.js,"កូដមូលដ្ឋានទទួល"
+ npca.345,"NPCA referral 345","NPCA v42.8 draft Khmer owner review",public/npca-widget.js,"ប្រភេទមូលដ្ឋានទទួល"
+ npca.346,"NPCA referral 346","NPCA v42.8 draft Khmer owner review",public/npca-widget.js,"តំណលិខិតបញ្ជូន"
++context.retry,Retry context session loading,Authorized master-task context recovery,protected/context.html,ព្យាយាមម្តងទៀត
+diff --git a/tests/accessibility-quality-smoke.test.mjs b/tests/accessibility-quality-smoke.test.mjs
+index 352876e..dfcd942 100644
+--- a/tests/accessibility-quality-smoke.test.mjs
++++ b/tests/accessibility-quality-smoke.test.mjs
+@@ -17,11 +17,11 @@ test('Phase 8: Version consistency across package.json, server.mjs, and login.ht
+   const serverCode = read('server/server.mjs');
+   const loginHtml = read('public/login.html');
+ 
+-  assert.equal(pkg.version, '42.8.0', 'package.json version must be 42.8.0');
++  assert.equal(pkg.version, '42.9.0', 'package.json version must be 42.9.0');
+   assert.match(serverCode, /Borkeo EMR v(?:39\.[6-9]|4[0-9]\.[0-9])/, 'server.mjs must declare v39.6 or above');
+   assert.match(serverCode, /design-system\.css\?v=3970/, 'server.mjs must inject design-system.css with v=3970');
+   assert.match(serverCode, /worklists-feedback\.css\?v=3970/, 'server.mjs must inject worklists-feedback.css with v=3970');
+-  assert.match(loginHtml, /data-app-version[^>]*>v42\.8<\/span>/, 'login.html must display v42.8');
++  assert.match(loginHtml, /data-app-version[^>]*>v42\.9<\/span>/, 'login.html must display v42.9');
+ });
+ 
+ test('Phase 8: Complete presentation-layer suite of assets is present and registered', () => {
+diff --git a/tests/v1200-release.test.mjs b/tests/v1200-release.test.mjs
+index 4e987a9..49267ee 100644
+--- a/tests/v1200-release.test.mjs
++++ b/tests/v1200-release.test.mjs
+@@ -4,6 +4,7 @@ import path from 'node:path';
+ import test from 'node:test';
+ import { projectRoot } from '../server/config.mjs';
+ import { openDatabase } from '../server/database.mjs';
++import { seedDemoPatients } from '../scripts/seed-demo-patients.mjs';
+ 
+ const root = projectRoot;
+ 
+@@ -49,8 +50,9 @@ test('v19.4 retains the TV display and removes the management dashboard', () =>
+ });
+ 
+ test('v12.0 demo database retains 10 New Case demo patients with sex and queue numbers', () => {
+-  const db = openDatabase(path.join(root, 'data', 'demo.sqlite'));
++  const db = openDatabase(':memory:');
+   try {
++    seedDemoPatients(db);
+     const rows = db.sqlite.prepare(`SELECT sex, record_json FROM patient_records
+       WHERE patient_key LIKE 'case:BK-%' AND json_extract(record_json, '$."system:demoPatient"')='true' ORDER BY created_at`).all();
+     assert.ok(rows.length >= 10);
+@@ -163,8 +165,9 @@ test('v19.4 keeps cashier-first OPD handoffs and the bilingual support and print
+ });
+ 
+ test('v13.0 demo patients contain complete registration data and real names', () => {
+-  const db = openDatabase(path.join(root, 'data', 'demo.sqlite'));
++  const db = openDatabase(':memory:');
+   try {
++    seedDemoPatients(db);
+     const rows = db.sqlite.prepare(`SELECT first_name,last_name,sex,age,date_of_birth,phone,record_json
+       FROM patient_records
+       WHERE patient_key LIKE 'case:BK-%' AND json_extract(record_json, '$."system:demoPatient"')='true'
+diff --git a/tests/v399-password-change-loop.test.mjs b/tests/v399-password-change-loop.test.mjs
+index 72bf97f..653d759 100644
+--- a/tests/v399-password-change-loop.test.mjs
++++ b/tests/v399-password-change-loop.test.mjs
+@@ -97,7 +97,7 @@ test('v39.9 sign-in page shows a Khmer change-password form instead of redirecti
+   assert.match(html, /<form id="password-change-form"[^>]*hidden/);
+   assert.match(html, /ប្តូរពាក្យសម្ងាត់/);
+   assert.match(html, /id="password-change-next"[^>]*autocomplete="new-password"/);
+-  assert.match(html, /login\.js\?v=3990/);
++  assert.match(html, /login\.js\?v=4290/);
+   assert.doesNotMatch(html, /<script>(?!<\/script>)/, 'no inline scripts (CSP)');
+   assert.match(script, /result\.mustChangePassword[\s\S]*showPasswordChange/);
+   assert.match(script, /result\.user\?\.mustChangePassword\) \{ showPasswordChange/);
+diff --git a/tests/context-recovery.test.mjs b/tests/context-recovery.test.mjs
+new file mode 100644
+index 0000000..eab131c
+--- /dev/null
++++ b/tests/context-recovery.test.mjs
+@@ -0,0 +1,92 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import vm from 'node:vm';
++
++const source = fs.readFileSync(new URL('../public/context.js', import.meta.url), 'utf8');
++const identity = { id: 'synthetic-user', username: 'synthetic-user', roles: ['DOCTOR'], wards: [{code: 'medicine', nameEn: 'Medicine'}] };
++const session = (token = 'synthetic-token') => ({ user: identity, csrfToken: token });
++const response = (status, body) => ({ ok: status >= 200 && status < 300, status, json: async () => body });
++
++async function page(replies) {
++  const nodes = new Map();
++  for (const id of ['context-role', 'context-ward', 'ward-label', 'context-status', 'context-form', 'context-retry', 'submit']) {
++    nodes.set(id, { value: '', hidden: false, disabled: false, handlers: {}, textContent: '',
++      addEventListener(name, handler) { this.handlers[name] = handler; },
++      querySelector() { return nodes.get('submit'); }, reportValidity() { return true; },
++    });
++  }
++  const requests = [], redirects = [];
++  const context = vm.createContext({ document: { getElementById: id => nodes.get(id) }, window: {},
++    location: { replace: path => redirects.push(path) },
++    fetch: async (url, options) => {
++      requests.push({ url, options });
++      const next = replies.shift();
++      assert.notEqual(next, undefined, `unexpected request ${url}`);
++      if (next instanceof Error) throw next;
++      return next;
++    },
++  });
++  await vm.runInContext(source, context);
++  return { nodes, requests, redirects, submit: () => nodes.get('context-form').handlers.submit({ preventDefault() {} }),
++    retry: () => nodes.get('context-retry').handlers.click() };
++}
++
++test('context bootstrap network failure disables unsafe submit and can recover without reloading', async () => {
++  const p = await page([new TypeError('Failed to fetch'), response(200, session())]);
++  assert.equal(p.nodes.get('submit').disabled, true);
++  assert.equal(p.nodes.get('context-retry').hidden, false);
++  assert.doesNotMatch(p.nodes.get('context-status').textContent, /Failed to fetch/);
++  await p.submit();
++  assert.equal(p.requests.length, 1);
++  await p.retry();
++  assert.equal(p.nodes.get('submit').disabled, false);
++  assert.equal(p.nodes.get('context-retry').hidden, true);
++  assert.equal(p.nodes.get('context-status').textContent, '');
++});
++
++test('context write refreshes CSRF with same-origin cookie and keeps chosen context', async () => {
++  const p = await page([response(200, session('old')), response(200, session('fresh')), response(200, { user: identity, landingPath: '/home' })]);
++  p.nodes.get('context-role').value = 'DOCTOR';
++  p.nodes.get('context-role').handlers.change();
++  p.nodes.get('context-ward').value = 'medicine';
++  await p.submit();
++  const post = p.requests[2];
++  assert.equal(post.options.headers['X-CSRF-Token'], 'fresh');
++  assert.equal(post.options.credentials, 'same-origin');
++  assert.deepEqual(JSON.parse(post.options.body), { role: 'DOCTOR', wardCode: 'medicine' });
++  assert.deepEqual(p.redirects, ['/home']);
++});
++
++test('expired context session redirects before attempting a context write', async () => {
++  const p = await page([response(200, session()), response(401, {})]);
++  await p.submit();
++  assert.deepEqual(p.redirects, ['/login']);
++  assert.equal(p.requests.length, 2);
++});
++
++test('changed browser account cannot submit the old account selection', async () => {
++  const p = await page([response(200, session()), response(200, { ...session(), user: { ...identity, id: 'another', username: 'another' } })]);
++  await p.submit();
++  assert.deepEqual(p.redirects, ['/login']);
++  assert.equal(p.requests.length, 2);
++  assert.equal(p.nodes.get('submit').disabled, true);
++});
++
++for (const failure of [new TypeError('Failed to fetch'), response(403, { error: 'private exception' }), response(502, {})]) {
++  test(`context write failure ${failure.status || 'network'} stays visible without automatic mutation retry`, async () => {
++    const p = await page([response(200, session()), response(200, session()), failure]);
++    await p.submit();
++    assert.equal(p.requests.length, 3);
++    assert.deepEqual(p.redirects, []);
++    assert.ok(p.nodes.get('context-status').textContent);
++    assert.doesNotMatch(p.nodes.get('context-status').textContent, /Failed to fetch|private exception/);
++    assert.equal(p.nodes.get('context-retry').hidden, false);
++  });
++}
++
++test('bootstrap server failure remains on context page rather than logging user out', async () => {
++  const p = await page([response(503, {})]);
++  assert.deepEqual(p.redirects, []);
++  assert.equal(p.nodes.get('submit').disabled, true);
++});
+diff --git a/tests/context-recovery-browser.mjs b/tests/context-recovery-browser.mjs
+new file mode 100644
+index 0000000..61ea9ac
+--- /dev/null
++++ b/tests/context-recovery-browser.mjs
+@@ -0,0 +1,67 @@
++// Explicit Chromium test. Synthetic account and in-memory database only.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { createEmrServer } from '../server/server.mjs';
++import { setUserAccess } from '../server/access.mjs';
++import { openBrowser } from './helpers/context-browser.mjs';
++
++test('context network recovery, fresh CSRF, scoped selection and session expiry in Chromium', { timeout: 90000 }, async () => {
++  const app = createEmrServer({ demoMode: true, databasePath: ':memory:', host: '127.0.0.1', port: 0, appOrigin: 'http://127.0.0.1:0', nodeEnv: 'test', npca: { enabled: false } });
++  let browser;
++  try {
++    app.database.createUser({ id: 'synthetic-context', username: 'synthetic_context', displayName: 'Synthetic Context', role: 'DOCTOR', passwordHash: 'synthetic-unused', createdAt: Date.now() });
++    setUserAccess(app.database, 'synthetic-context', ['DOCTOR'], ['medicine', 'obstetric']);
++    await new Promise(resolve => app.server.listen(0, '127.0.0.1', resolve));
++    const origin = `http://127.0.0.1:${app.server.address().port}`;
++    app.config.appOrigin = origin;
++    browser = await openBrowser();
++    await browser.send('Page.addScriptToEvaluateOnNewDocument', { source: `
++      const originalFetch = window.fetch.bind(window);
++      window.failSession = location.pathname === '/context';
++      window.failLogin = 'network';
++      window.fetch = function(url, options) {
++        if (window.failSession && url === '/api/auth/me') return Promise.reject(new TypeError('Failed to fetch'));
++        if (url === '/api/auth/login' && window.failLogin === 'network') return Promise.reject(new TypeError('Failed to fetch'));
++        if (url === '/api/auth/login' && window.failLogin === 'denied') return Promise.resolve(new Response(JSON.stringify({error:'private backend diagnostic'}),{status:401}));
++        return originalFetch(url, options);
++      };
++    ` });
++    await browser.send('Page.navigate', { url: origin + '/login' });
++    await browser.waitFor("document.getElementById('login-button') && !document.getElementById('login-button').disabled", 'login config');
++    await browser.evaluate("document.getElementById('username').value='synthetic_context'; document.getElementById('login-form').requestSubmit()");
++    await browser.waitFor("document.getElementById('login-status').textContent && !document.getElementById('login-button').disabled", 'login network error');
++    assert.doesNotMatch(await browser.evaluate("document.getElementById('login-status').textContent"), /Failed to fetch/);
++    await browser.evaluate("window.failLogin='denied'; document.getElementById('login-form').requestSubmit()");
++    await browser.waitFor("document.getElementById('login-status').textContent && !document.getElementById('login-button').disabled", 'login rejection');
++    assert.doesNotMatch(await browser.evaluate("document.getElementById('login-status').textContent"), /private backend diagnostic/);
++    await browser.evaluate("window.failLogin=false; document.getElementById('login-form').requestSubmit()");
++    await browser.waitFor("location.pathname==='/context' && document.getElementById('context-retry') && !document.getElementById('context-retry').hidden", 'network failure');
++    assert.equal(await browser.evaluate("document.querySelector('button[type=submit]').disabled"), true);
++    assert.doesNotMatch(await browser.evaluate("document.getElementById('context-status').textContent"), /Failed to fetch/);
++    await browser.evaluate("window.failSession=false; document.getElementById('context-retry').click()");
++    await browser.waitFor("!document.querySelector('button[type=submit]').disabled", 'retry recovered');
++    assert.deepEqual(await browser.evaluate("Array.from(document.getElementById('context-ward').options).map(o=>o.value)"), ['', 'medicine', 'obstetric']);
++    const denied = await browser.evaluate(`(async()=>{
++      const me=await(await fetch('/api/auth/me')).json();
++      const r=await fetch('/api/auth/context',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':me.csrfToken},body:JSON.stringify({role:'DOCTOR',wardCode:'gynecology'})});return r.status;
++    })()`);
++    assert.equal(denied, 400);
++    // Simulate a same-account session/token refresh while the picker is open.
++    app.database.sqlite.prepare('UPDATE sessions SET csrf_token=? WHERE user_id=?').run('synthetic-refreshed-token', 'synthetic-context');
++    await browser.evaluate("document.getElementById('context-ward').value='medicine'; document.getElementById('context-form').requestSubmit()");
++    await browser.waitFor("location.pathname==='/home'", 'authorized landing');
++    assert.equal(await browser.evaluate("fetch('/api/auth/me').then(r=>r.json()).then(m=>m.user.activeWard.code)"), 'medicine');
++    await browser.send('Page.navigate', { url: origin + '/context' });
++    await browser.waitFor("document.getElementById('context-retry') && !document.getElementById('context-retry').hidden", 'second context bootstrap');
++    await browser.evaluate("window.failSession=false; document.getElementById('context-retry').click()");
++    await browser.waitFor("!document.querySelector('button[type=submit]').disabled", 'second picker');
++    app.database.sqlite.prepare('DELETE FROM sessions WHERE user_id=?').run('synthetic-context');
++    await browser.evaluate("document.getElementById('context-form').requestSubmit()");
++    await browser.waitFor("location.pathname==='/login'", 'expired session recovery');
++    assert.deepEqual(browser.state.errors, []);
++  } finally {
++    browser?.close();
++    if (app.server.listening) await new Promise(resolve => app.server.close(resolve));
++    app.database.close();
++  }
++});
+diff --git a/tests/helpers/context-browser.mjs b/tests/helpers/context-browser.mjs
+new file mode 100644
+index 0000000..f0b87d8
+--- /dev/null
++++ b/tests/helpers/context-browser.mjs
+@@ -0,0 +1,63 @@
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import { spawn } from 'node:child_process';
++
++const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
++
++export async function openBrowser() {
++  const executable = [process.env.EMR_TEST_BROWSER, 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Google/Chrome/Application/chrome.exe']
++    .find(file => file && fs.existsSync(file));
++  assert.ok(executable, 'Set EMR_TEST_BROWSER to run this explicit Chromium test.');
++  const debugPort = 9400 + Math.floor(Math.random() * 400);
++  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'borkeo-context-browser-'));
++  const child = spawn(executable, ['--headless=new', '--disable-gpu', '--no-first-run', `--remote-debugging-port=${debugPort}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore', windowsHide: true });
++  let launchError;
++  child.on('error', error => { launchError = error; });
++  let url;
++  for (let i = 0; i < 80 && !url; i++) {
++    if (launchError) throw launchError;
++    try { url = (await (await fetch(`http://127.0.0.1:${debugPort}/json/list`)).json()).find(item => item.type === 'page')?.webSocketDebuggerUrl; } catch {}
++    if (!url) await sleep(250);
++  }
++  if (!url) { child.kill(); throw new Error('Headless Chromium debugger did not become available.'); }
++  const ws = new WebSocket(url);
++  await new Promise(resolve => ws.addEventListener('open', resolve, { once: true }));
++  let seq = 0;
++  const pending = new Map();
++  const state = { loads: 0, errors: [] };
++  ws.addEventListener('message', event => {
++    const message = JSON.parse(event.data);
++    if (message.id && pending.has(message.id)) { pending.get(message.id)(message); pending.delete(message.id); return; }
++    if (message.method === 'Page.loadEventFired') state.loads++;
++    if (message.method === 'Runtime.exceptionThrown') state.errors.push(message.params.exceptionDetails?.exception?.description || message.params.exceptionDetails?.text);
++    if (message.method === 'Page.javascriptDialogOpening') send('Page.handleJavaScriptDialog', { accept: true }).catch(() => {});
++  });
++  const send = (method, params = {}) => new Promise((resolve, reject) => {
++    const id = ++seq;
++    pending.set(id, message => message.error ? reject(new Error(`${method}: ${message.error.message}`)) : resolve(message.result));
++    ws.send(JSON.stringify({ id, method, params }));
++  });
++  await send('Page.enable'); await send('Runtime.enable'); await send('Network.enable');
++  await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
++  const evaluate = async expression => {
++    const result = await send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true });
++    if (result.exceptionDetails) throw new Error(result.exceptionDetails.exception?.description || result.exceptionDetails.text);
++    return result.result.value;
++  };
++  const waitFor = async (expression, label, timeout = 20000) => {
++    const until = Date.now() + timeout;
++    while (Date.now() < until) { try { if (await evaluate(expression)) return; } catch {} await sleep(150); }
++    throw new Error(`Timed out waiting for ${label}`);
++  };
++  const key = async (keyName, code) => {
++    const keyCode = { ArrowDown: 40, ArrowUp: 38, Enter: 13, Escape: 27, Backspace: 8 }[keyName];
++    await send('Input.dispatchKeyEvent', { type: 'rawKeyDown', key: keyName, code: code || keyName, windowsVirtualKeyCode: keyCode });
++    await send('Input.dispatchKeyEvent', { type: 'keyUp', key: keyName, code: code || keyName, windowsVirtualKeyCode: keyCode });
++  };
++  const type = text => send('Input.insertText', { text });
++  const close = () => { ws.close(); child.kill(); };
++  return { send, evaluate, waitFor, key, type, close, state };
++}
++
+diff --git a/scripts/build-v429-update.mjs b/scripts/build-v429-update.mjs
+new file mode 100644
+index 0000000..c5cecee
+--- /dev/null
++++ b/scripts/build-v429-update.mjs
+@@ -0,0 +1,81 @@
++// Explicit, non-sensitive release allowlist; no patient paths or environment files.
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import crypto from 'node:crypto';
++import { fileURLToPath } from 'node:url';
++import { spawnSync } from 'node:child_process';
++
++const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
++const baseline = '107ed3a';
++const files = [
++  'CHANGELOG.md', 'package.json', 'public/login.html', 'public/login.js',
++  'protected/context.html', 'public/context.js', 'public/context.css',
++  'server/server.mjs', 'docs/approved-new-khmer.json', 'docs/translations-needed.csv',
++  'tests/accessibility-quality-smoke.test.mjs', 'tests/v1200-release.test.mjs',
++  'tests/v399-password-change-loop.test.mjs',
++  'tests/context-recovery.test.mjs', 'tests/context-recovery-browser.mjs',
++  'tests/helpers/context-browser.mjs', 'scripts/build-v429-update.mjs',
++  ...['STATUS', 'TASKS', 'DECISIONS', 'TEST_RESULTS', 'CHANGES'].map(name => `docs/ai-handoff/${name}.md`),
++];
++const git = (args, options = {}) => spawnSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, ...options });
++const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'borkeo-429-patch-base-'));
++let patch = '';
++const manifest = [];
++for (const file of files) {
++  const current = path.join(root, file);
++  const old = path.join(temporary, file);
++  const original = git(['show', `${baseline}:${file}`]);
++  const existed = original.status === 0;
++  if (existed) {
++    fs.mkdirSync(path.dirname(old), { recursive: true });
++    fs.writeFileSync(old, original.stdout);
++  }
++  const diff = git(['diff', '--no-index', '--ignore-space-at-eol', '--', existed ? old.replaceAll('\\', '/') : '/dev/null', current.replaceAll('\\', '/')]);
++  if (diff.status === 0) continue;
++  if (diff.status !== 1) throw new Error(`Cannot build patch for ${file}: ${diff.stderr}`);
++  const lines = diff.stdout.replace(/\r\n/g, '\n').split('\n');
++  lines[0] = `diff --git a/${file} b/${file}`;
++  const hunk = lines.findIndex(line => line.startsWith('@@'));
++  for (let index = 1; index < hunk; index++) {
++    if (lines[index].startsWith('--- ')) lines[index] = existed ? `--- a/${file}` : '--- /dev/null';
++    if (lines[index].startsWith('+++ ')) lines[index] = `+++ b/${file}`;
++  }
++  patch += lines.join('\n');
++  manifest.push(`${crypto.createHash('sha256').update(fs.readFileSync(current)).digest('hex')}  ${file}`);
++}
++const checked = git(['apply', '--reverse', '--check', '--ignore-space-change', '-'], { input: patch });
++if (checked.status !== 0) throw new Error(`Reverse patch validation failed: ${checked.stderr}`);
++const header = `Borkeo EMR 42.9.0 - Login and work-context recovery
++Baseline: 42.8.0, ${baseline}. Apply only to this baseline; preserve later work.
++
++This is the first incremental master-task update. The whole master task is NOT
++complete. See docs/ai-handoff/TASKS.md for exact remaining requirements.
++
++Behavior: safe context bootstrap/retry, session expiration/account change checks,
++fresh cookie-bound CSRF, safe Khmer login/context errors. Existing authorization
++and separate doctor contexts remain. Two old demo tests now seed their own
++in-memory fixtures. No migration, clinical-data edits or runtime dependencies.
++
++INSTALLATION FOR ANTIGRAVITY - perform one step at a time
++1. Stop the local server and use the existing hospital backup procedure.
++2. Review local changes against baseline ${baseline}; apply the patch below only
++   to its listed code/doc/test files. Never overwrite .env, .gitignore, databases,
++   uploads, backups, credentials or unrelated local work.
++3. Run npm test and npm run check:khmer in a disposable synthetic copy.
++4. Restart with the existing launcher, refresh the browser and verify login and
++   authorized context selection. Production deployment remains separately gated.
++
++VALIDATION AND LIMITATIONS
++See docs/ai-handoff/TEST_RESULTS.md. No deployment-specific network fault was
++established from the unavailable screenshot. No print action was changed or
++visually verified in this increment. No live NPCA verification/transmission.
++Rollback: restore only these source files from baseline; no database rollback.
++
++SHA-256 FILE MANIFEST (bytes in the prepared Windows workspace)
++${manifest.join('\n')}
++
++BEGIN BORKEO 42.9.0 UNIFIED PATCH
++`;
++fs.writeFileSync(path.join(root, 'Borkeo-EMR-v42.9.0-update.txt'), header + patch + 'END BORKEO 42.9.0 UNIFIED PATCH\n');
++console.log(`Built combined update: ${manifest.length} files; reverse patch check passed.`);
+diff --git a/docs/ai-handoff/STATUS.md b/docs/ai-handoff/STATUS.md
+new file mode 100644
+index 0000000..3f26132
+--- /dev/null
++++ b/docs/ai-handoff/STATUS.md
+@@ -0,0 +1,12 @@
++# Status
++Updated: 2026-10-24, Asia/Phnom_Penh. One active writer.
++Objective: BORKEO_EMR_MASTER_TASK.txt, incremental implementation with preserved data/work.
++Actual baseline: 42.8.0; branch master; startup commit 107ed3a. Current prepared version: 42.9.0. Folder label 42.3.0 is stale.
++Repository: startup tracked tree clean; user-owned untracked files preserved (CHANGES.md). Release changes limited to login/context recovery, synthetic test isolation, metadata, delivery and handoff. No migrations.
++Completed: read complete master prompt/AGENTS; created five checkpoints; reconciled Git/source. Fixed context null-session bootstrap, explicit retry, expired/account-changed sessions, refreshed CSRF and safe Khmer failures. Chromium synthetic login/context/recovery/denied ward/landing verified; targeted auth/CSRF passed. Existing demo assertions now seed in memory.
++Verified 42.9 increment: full npm test 974/974 PASS; Khmer PASS; explicit Chromium PASS; forward and reverse combined-patch checks PASS. Git publication is the remaining release action.
++Limitations: deployment screenshot and origin/network evidence unavailable; no claim that the reported deployment fault is resolved. No print/PDF visual check in this increment. Remaining clinical/routing/ANC/QD/print/NPCA requirements are TODO, not assumed covered by old releases.
++Next EXACT action: inspect safe staged diff, commit and push verified 42.9 recovery release, record its commit and remote result, then continue ACCESS-01.
++After this increment: ACCESS-01 role/action audit using public/nav-config.js, server/access.mjs and modular route guards; then ROLE-01. Known mismatch: roleWardAllowed and context.js currently restrict MIDWIFE to Obstetric only. Do not grant unassigned wards or combine doctor contexts.
++No application/test processes intentionally left running; prior headless Edge instances closed. Synthetic browser profiles and logs remain in TEMP only.
++Resume instruction: Read master, AGENTS and all five handoff files; reconcile git status/diff and latest commit, then resume the exact next action above. Preserve all existing changes. User already authorized routine implementation/testing.
+diff --git a/docs/ai-handoff/TASKS.md b/docs/ai-handoff/TASKS.md
+new file mode 100644
+index 0000000..7ad2a08
+--- /dev/null
++++ b/docs/ai-handoff/TASKS.md
+@@ -0,0 +1,22 @@
++# Tasks
++Source requirements: BORKEO_EMR_MASTER_TASK.txt sections 1-10 and acceptance lists. Existing release functionality requires revalidation; no prior claims are assumed verified.
++- CONT-01 VERIFIED: create five checkpoints and reconcile baseline.
++- AUTH-01 VERIFIED: local login/context network recovery, cookie persistence, fresh CSRF, session expiry/account change and safe Khmer errors; synthetic Chromium/API coverage with NPCA disabled. Deployment fault is separate AUTH-02.
++- AUTH-02 TODO: obtain actual deployment request URL/status/origin/proxy/browser evidence for the reported screenshot; do not equate local reproduction with production resolution. Continue ACCESS-01 independently.
++- ACCESS-01 TODO: inventory all roles, contexts, navigation/actions and authorized/denied direct API matrix; audit findings with reproductions.
++- ROLE-01 TODO: separate Obstetric/Gynecology doctors; explicit authorized midwife contexts; clinical routing and distinct miscarriage diagnoses.
++- GYN-01 TODO: nursing assessment then valid bed placement; durable doctor task, explicit acknowledgement and service scoping.
++- GYN-02 TODO: retries/restarts/unassigned doctors/transfers/audit and urgent escalation before bed; reconcile later placement.
++- ANC-01 TODO: remove automatic popup; responsive inline linked checklist preserving unsaved work.
++- ANC-02 TODO: saved evidence/manual author-time; preserve exception states; server/UI closure gates; visit distinct from pregnancy.
++- ANC-03 TODO: field-by-field old/new form comparison, unified form, provenance/conflicts, additive repeatable transactional migration.
++- RISK-01 TODO: approved shared rule configuration; age/date/BMI weight provenance, reasons/colors/history and unknown missing input.
++- RX-01 TODO: explicit four QD times and actual quantity throughout save/reopen/review/dispense/print; historical ambiguity; other frequencies preserved.
++- PRINT-01 TODO: inventory every print action/template/route, diagnose blank causes; visually inspect synthetic PDF including long records.
++- NPCA-01 TODO: verify official docs/workbooks, contract differences and unresolved clinical/catalog/currency mappings; disable affected transmission.
++- NPCA-02 TODO: selected visit role-authorized review/correction links/explicit confirmation, offline preview, stable IDs, stage-specific validated source mappings.
++- NPCA-03 TODO: secure backend token/beneficiary confirmation, durable attempts/status/queue, reconciliation/retry/backoff and correction; mocked/demo evidence; local care independent.
++- RELEASE-01 TODO: full npm test and check:khmer in disposable synthetic copy; inspect browser/print evidence and outstanding limitations.
++- RELEASE-02 TODO: bump visible/package version once for completed approved update; combined Antigravity update with manifest; safe staged review, verified commit/push; installation guidance.
++
++- REL429-01 VERIFIED: 42.8.0 -> 42.9.0 local recovery increment; full 974/974 tests, Khmer and Chromium pass; combined patch reverse/forward checks pass. Git publication pending final review. RELEASE-01/02 above refer to full master acceptance, still TODO.
+diff --git a/docs/ai-handoff/DECISIONS.md b/docs/ai-handoff/DECISIONS.md
+new file mode 100644
+index 0000000..a42c741
+--- /dev/null
++++ b/docs/ai-handoff/DECISIONS.md
+@@ -0,0 +1,11 @@
++﻿# Decisions
++2026-10-24: User explicitly authorized implementation/testing and routine technical decisions. Follow master task execution order; one active writer.
++Combined Obstetric/Gynecology doctor access was CANCELLED. Preserve separate access and individual attribution.
++Preserve all patient data, user untracked files, unrelated logic and .gitignore. No production deployment or real patient transmission authorized.
++Use disposable source copy without .env/data/uploads/backups; synthetic/in-memory databases only. Never infer clinical thresholds, NPCA mappings or submission permissions.
++Baseline package 42.8.0 is authoritative over directory label. Defer release bump until cohesive update is ready.
++Observed context.js: bootstrap catch displays raw error; form stays usable with null/stale session; submission reads cached CSRF. Network failure's deployment cause remains unknown.
++
++2026-10-24: Fixed pre-existing release-test dependence on ignored data/demo.sqlite by invoking existing synthetic seedDemoPatients with an in-memory database inside each affected test. Assertions retained. This is a permanent test-isolation fix, not injecting fixtures to mask a production failure.
++
++Task scope for this increment: AUTH-01 local recovery and isolated regression infrastructure. A deployment-specific failed fetch can originate outside this source and remains unconfirmed without deployment network/origin evidence; do not label that root cause fixed. Existing backend roles/CSRF rules remain authoritative and unchanged.
+diff --git a/docs/ai-handoff/TEST_RESULTS.md b/docs/ai-handoff/TEST_RESULTS.md
+new file mode 100644
+index 0000000..37a3339
+--- /dev/null
++++ b/docs/ai-handoff/TEST_RESULTS.md
+@@ -0,0 +1,17 @@
++﻿# Test results
++2026-10-24 startup: Node v24.21.0, Windows PowerShell. Branch master 107ed3a, baseline package 42.8.0. git diff --stat empty. No tests yet in this run.
++Browser and print verification: not performed. Full suite and Khmer checks pending.
++No production database/server launched. No test background process started.
++
++Before tests: AUTH-01 has partial implementation, unverified. Deployment network cause remains unresolved. New tests exercise UI script with synthetic DOM/fetch; this is not browser visual evidence.
++
++2026-10-24 verification: baseline npm test: 964/966 pass, 2 pre-existing failures in tests/v1200-release.test.mjs expecting local data/demo.sqlite. Baseline check:khmer PASS. Targeted context/auth/CSRF: 15/15 PASS. Explicit headless Edge synthetic browser flow: PASS (login, context network failure/retry, rejected unassigned ward, rotated CSRF, authorized landing, expired session). Browser required approved escalation; initial sandbox attempt interrupted. Two legacy fixture tests now use seedDemoPatients(:memory:), targeted 6/6 PASS. No external NPCA calls or real patient records used.
++Relevant later edits: login failures now hide raw backend error text; retry button styled/labeled; expired session disables submit. Added browser login network/401 assertions. These later edits need fresh tests.
++
++2026-10-24 08:18:00 +07:00 : 42.9 full regression and final Chromium checks running in changed disposable copy; Khmer check PASS on final UI strings. Do not claim release verified until completion.
++
++2026-10-24 final browser: node --test tests/context-recovery-browser.mjs PASS (1/1, 12.57 seconds), headless Edge, disposable 42.9 source copy, synthetic multi-ward doctor, in-memory DB, NPCA disabled. Covers failed login network/401 recovery, context bootstrap network retry, cookie persistence, rotated CSRF, rejected unassigned ward, authorized landing, expired session redirect; zero uncaught runtime errors.
++First changed full run: 972/974 passed; translation entry inserted before required original 61 entries and missing CSV provenance, plus stale v399 login asset expectation. Corrected registry append and CSV; cache assertion updated. Targeted translation/password-change checks 7/7 PASS. Re-running full suite; not yet a passing full result.
++Final npm run check:khmer PASS after registry/CSV corrections. No clinical source edits after Chromium test; only translation bookkeeping/cache assertion/docs/delivery changes.
++
++2026-10-24 08:22 +07:00 FINAL: npm test PASS: 974 tests, 974 pass, 0 fail, 0 skipped (129.86 seconds). Disposable changed copy only; final runtime files version 42.9.0. npm run check:khmer PASS. Explicit Chromium test PASS 1/1. Combined update generated with 22-file manifest; reverse check against current files PASS and forward git apply --check against disposable 42.8 baseline PASS. No print/PDF output visually verified. No production NPCA or patient transmission.
+diff --git a/docs/ai-handoff/CHANGES.md b/docs/ai-handoff/CHANGES.md
+new file mode 100644
+index 0000000..d93779a
+--- /dev/null
++++ b/docs/ai-handoff/CHANGES.md
+@@ -0,0 +1,14 @@
++﻿# Changes
++2026-10-24: Created docs/ai-handoff/{STATUS,TASKS,DECISIONS,TEST_RESULTS,CHANGES}. No schema migration or clinical data edits.
++Initial tracked tree clean. User-owned untracked paths: .claude/, BORKEO_EMR_MASTER_TASK.txt, HOW-TO-RUN-NPCA.txt, PROMPT-4-NPCA-integration.md, borkeo-update-files/, public/HOW-TO-RUN.txt, public/PROMPT-1-medicine-list-and-dose-check.md, public/PROMPT-2-midwife-services-and-ANC.md, public/PROMPT-3-hosting-cloudflare.md, public/borkeo-update-files/. Preserve; do not include blindly in commits/delivery.
++No background processes launched by this session. No .env, patient databases, backups or uploads read/copied/modified.
++Rollback: checkpoint documents only so far; preserve useful history.
++
++Changed public/context.js and protected/context.html for safe session bootstrap/retry and cookie-bound token refresh. Added tests/context-recovery.test.mjs for network, expiration, account change, 403/502 and successful fresh-token writes. No schema/data changes. Tests not yet run.
++
++2026-10-24: public/login.js now shows safe Khmer failure text instead of raw backend diagnostics. public/context.css styles the retry action; docs/approved-new-khmer.json registers its Khmer label under the authorized UI requirement. tests/v1200-release.test.mjs now creates isolated synthetic fixtures rather than opening data/demo.sqlite.
++Disposable paths recorded by temporary pointer files borkeo-master-validation-path.txt and borkeo-context-changed-path.txt in the session TEMP directory. Baseline test process completed. Browser test process completed and its headless Edge closed; synthetic browser profile remains in TEMP. No application processes intentionally left running.
++
++Release metadata updated consistently to 42.9.0 (package/login/server header and version assertion). Cache-busted changed login/context assets. scripts/build-v429-update.mjs uses explicit safe file allowlist and baseline 107ed3a, SHA-256 manifest and reverse patch verification. No changes to .gitignore.
++
++Additional release files: CHANGELOG.md, package.json, public/login.html, server/server.mjs, tests/accessibility-quality-smoke.test.mjs and tests/v399-password-change-loop.test.mjs (release metadata/cache expectation), docs/translations-needed.csv (new retry-label provenance). Fixes to translation insertion order/CSV are recorded in TEST_RESULTS. No unrelated source edits.
+END BORKEO 42.9.0 UNIFIED PATCH

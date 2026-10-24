@@ -458,3 +458,4 @@ npca.343,"NPCA referral 343","NPCA v42.8 draft Khmer owner review",public/npca-w
 npca.344,"NPCA referral 344","NPCA v42.8 draft Khmer owner review",public/npca-widget.js,"កូដមូលដ្ឋានទទួល"
 npca.345,"NPCA referral 345","NPCA v42.8 draft Khmer owner review",public/npca-widget.js,"ប្រភេទមូលដ្ឋានទទួល"
 npca.346,"NPCA referral 346","NPCA v42.8 draft Khmer owner review",public/npca-widget.js,"តំណលិខិតបញ្ជូន"
+context.retry,Retry context session loading,Authorized master-task context recovery,protected/context.html,ព្យាយាមម្តងទៀត

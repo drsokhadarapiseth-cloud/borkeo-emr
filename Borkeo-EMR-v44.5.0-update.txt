@@ -1,0 +1,53 @@
+================================================================================
+Borkeo EMR Update Note: Version 44.5.0
+Update plan #5: login and work-context (ward switch) recovery
+================================================================================
+
+Date: 2026-10-24
+Previous Version: 44.4.0
+New Version: 44.5.0
+Source: re-applies the v42.9.0 work (commit c858abe) on top of v44.4.0.
+Patient data: not touched. No database change, no new package.
+
+Verified in a disposable copy with synthetic data:
+- npm test: 974 / 974 pass.
+- npm run check:khmer: passes.
+- Every account signs in and opens its page in demo mode (34 accounts),
+  hospital mode (24 accounts, password 1234) and online mode (Superuser with
+  SUPERUSER_PASSWORD, all 65 role/ward choices). Same result as v44.4.0.
+
+--------------------------------------------------------------------------------
+1. WHAT WAS WRONG
+--------------------------------------------------------------------------------
+When a doctor or nurse chose or switched their role and ward, the page could
+send the choice before the login session had finished loading, use an old
+security (CSRF) token, or keep working after the session had expired or a
+different account had signed in on the same browser. The user then saw a raw
+server error or was stuck on the choice page.
+
+--------------------------------------------------------------------------------
+2. WHAT CHANGED
+--------------------------------------------------------------------------------
+a) The role/ward choice button stays disabled until the session is loaded.
+   After a network or server error the page offers a clear "try again".
+b) A fresh security token is fetched before each choice. An expired session
+   goes back to the login page; if another account signed in on this browser,
+   the choice is refused.
+c) Login and choice errors are shown as short Khmer messages; server error
+   details are never shown. The server still checks every permission.
+d) Two old demo tests now use their own synthetic in-memory data instead of
+   the local demo database.
+
+--------------------------------------------------------------------------------
+3. INSTALLATION (one step at a time)
+--------------------------------------------------------------------------------
+Step 1: Close the EMR server window (or press Ctrl + C in it).
+Step 2: In the project folder run: git pull
+Step 3: Double-click "Start-Borkeo-WiFi.bat".
+Step 4: In the browser press Ctrl + F5 once, sign in, and use
+        «ប្តូរតួនាទី/ផ្នែក» to switch ward. The new page opens.
+
+For Antigravity: this folder already contains the update. On another computer
+run "git pull", then steps 1 to 4, then "npm test" and "npm run check:khmer".
+The full code change is the Git commit "v44.5.0" on master.
+================================================================================

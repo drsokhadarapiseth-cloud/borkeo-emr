@@ -1,14 +1,20 @@
+# Borkeo EMR Changelog
+
+## v44.5.0 - Login and work-context recovery
+
+- Disable work-context submission until the session is loaded; offer an explicit retry after network/server failures.
+- Refresh cookie-bound CSRF before selection, recover expired sessions, and reject a selection if the browser account changed.
+- Show safe Khmer errors for login/context failures without exposing backend exception text; retain backend authorization and CSRF enforcement.
+- Make two legacy demo assertions seed isolated in-memory fixtures instead of opening a local demo database.
+- Add synthetic behavior and explicit Chromium coverage. See docs/ai-handoff for verified scope and the remaining master requirements; this release does not complete the master task.
+
 ## v44.4.0 (NPCA v1.4 clinical payment-certification integration, disabled by default)
 - Adds configurable NPCA endpoints, OAuth token cache/refresh, beneficiary selection and verified SPID links, official Excel reference mappings, local visit payload validation, durable authorized submission queue, retry/reconciliation, processing-status polling and review pages.
 - Adds optional NPCA assessment/referral fields, record/Billing status badges, and small server-authenticated metadata on changed daily notes. Existing clinical, stock and financial calculations are preserved.
 - No real patient data sent during development; synthetic mock tests cover authentication, eligibility, payloads, permissions, retries, polling and resubmission. External NPCA acceptance and documented source discrepancies remain pending: docs/npca/INTEGRATION.md and OPEN-QUESTIONS.md.
 - Uses four workers for the regression suite's shared synthetic demo fixture. No new runtime packages.
-
-## v42.7.0 (Automatic patient ID card preview after registration)
-- Saving a new registration opens the existing patient card preview with a QR code containing the saved Patient ID. Printing remains manual. Closing the preview continues the normal registration navigation. Failed saves and existing patient edits do not trigger it.
-- Preserves the existing card layout, patient numbering, clinical logic and stored patient data.
-
-# Borkeo EMR Changelog
+- Patient card (from v42.7): Saving a new registration opens the existing patient card preview with a QR code containing the saved Patient ID. Printing remains manual. Closing the preview continues the normal registration navigation. Failed saves and existing patient edits do not trigger it.
+- Patient card (from v42.7): Preserves the existing card layout, patient numbering, clinical logic and stored patient data.
 
 ## v44.3.0 (Midwife maternal services and the official ANC record)
 - Routing: ANC (anc), PNC (pnc), family planning (family-planning) and cervical screening (cervix-screening) go Registration -> Triage -> Cashier -> midwife; vaccination (vaccination) goes Triage -> midwife directly and is free (no Cashier); safe abortion (safe-abortion) goes to the Gynecology ward queue instead of the OPD doctor. All of them stay counted as OPD services in reports.
