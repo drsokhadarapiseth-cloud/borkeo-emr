@@ -503,6 +503,8 @@ function dataHasAssignedRoom(row) {
 }
 
 export function roleCanPage(role, pathname) {
+  if (pathname === '/admin/npca') return ['ADMIN','DIRECTOR'].includes(role);
+  if (pathname === '/npca') return ['ADMIN','DIRECTOR','ACCOUNTANT','CLERK'].includes(role);
   role = String(role || '').toUpperCase();
   if (['/admin/organization','/admin/interface','/admin/health-facility','/styleguide'].includes(pathname)) return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
   // v41.2: drug interaction and maximum-dose tables (administrators edit, management views).

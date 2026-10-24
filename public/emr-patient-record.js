@@ -1226,6 +1226,7 @@
       window.alert(validation);
       return false;
     }
+    const previewNewPatientCard = activeEditorScope() === 'registration' && !loadedPatient && !registrationVisitSourceKey;
     setStatus('saving', t('saving'));
     try {
       const token = await getCsrfToken();
@@ -1276,6 +1277,7 @@
       void refreshAdmissionApprovalPanel();
       applyTriageWorkspaceRestrictions();
       updateTriageSaveButtonState();
+      if (previewNewPatientCard) await window.previewRegisteredPatientCard?.(loadedPatient);
       if (String(window.emrSession?.user?.activeRole || '').toUpperCase() === 'TRIAGE' && options.continueTo) {
         window.location.href = '/triage';
         return true;

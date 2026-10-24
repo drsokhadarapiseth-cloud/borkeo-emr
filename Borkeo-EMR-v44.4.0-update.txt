@@ -1,0 +1,29 @@
+================================================================================
+Borkeo EMR Update Note: Version 44.4.0
+Update plan #4: NPCA beneficiary check and automatic registration cards
+================================================================================
+
+Date: 2026-10-24
+Previous Version: 44.3.0
+New Version: 44.4.0
+Source: re-applies the v42.8.0 work (commit 98198b0) on top of v44.3.0.
+Patient data: not touched. Database changes are additive only; nothing removed.
+
+Verified in a disposable copy with synthetic data:
+- npm test: 966 / 966 pass.
+- npm run check:khmer: passes.
+- Every account signs in and opens its page in demo mode (34 accounts),
+  hospital mode (24 accounts, password 1234) and online mode (Superuser with
+  SUPERUSER_PASSWORD, all 65 role/ward choices). Same result as v44.3.0.
+1. Use the current v42.7.0 project as the base. Stop the server and back up the
+   hospital database using the existing backup procedure.
+2. Apply the unified diff below to the listed code files only. Never replace
+   data/, patient databases, backups, uploads, .env, or .gitignore.
+3. Read docs/npca/INTEGRATION.md. Add NPCA settings from .env.example to the
+   existing local .env, preserving unrelated settings. Leave NPCA_ENABLED=false.
+4. Restart with Start-Borkeo-WiFi.bat and refresh the browser.
+For Antigravity: this folder already contains the update. To get it on another
+computer, run "git pull" in the project folder, then the steps above, then
+"npm test" and "npm run check:khmer". The full code change is the Git commit
+"v44.4.0" on master (git show v44.4.0 or git log).
+================================================================================

@@ -13,7 +13,7 @@ test('openPatientCardPrintModal is defined, wired to window and opens patient ca
   assert.match(emrHtml, /id="btn_print_patient_card"[^>]*onclick="openPatientCardPrintModal\(\)"/);
 
   // Function is properly declared
-  assert.match(emrHtml, /function openPatientCardPrintModal\(\)\s*\{/);
+  assert.match(emrHtml, /function openPatientCardPrintModal\(patient\)\s*\{/);
   assert.match(emrHtml, /window\.openPatientCardPrintModal\s*=\s*openPatientCardPrintModal;/);
 
   // Dialog retrieval and opening

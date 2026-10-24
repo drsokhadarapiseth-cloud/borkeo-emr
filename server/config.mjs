@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { npcaSettings } from './npca/settings.mjs';
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -99,6 +100,7 @@ export function loadConfig(overrides = {}) {
 
   const config = {
     projectRoot,
+    npca: npcaSettings(overrides.npca),
     demoMode,
     isProduction,
     trustProxy,

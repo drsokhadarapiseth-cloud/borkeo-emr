@@ -88,7 +88,7 @@ Password, Log Out and the department navigation bar must stay usable.
  3  Midwife services: 2026 ANC record (pages 2-5), GA/EDD from LMP  Tested (v44.3.0)
     with ultrasound override, midwife queue, vaccinations,
     CPA3 referral letters.
- 4  NPCA beneficiary check, barcode registration cards, sticker     Waiting
+ 4  NPCA beneficiary check, barcode registration cards, sticker     Tested (v44.4.0)
     sheets.
  5  Session recovery when doctors and nurses switch wards.          Waiting
  6  Role-based access for laboratory, imaging and clinical wards.   Waiting
