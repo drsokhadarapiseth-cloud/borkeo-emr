@@ -252,7 +252,14 @@
 
   function getBreadcrumbs() {
     const path = window.location.pathname;
+    const fromPatientList = params.get('from') === 'patient-list' || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('emr_from_patient_list') === '1');
+    const hasPatient = params.has('patient') || params.has('patientKey') || params.has('newVisitFrom') || fromPatientList;
     const items = [{ href: '/home', label: 'ទំព័រដើម' }];
+    if ((path === '/emr' || path === '/record-viewer') && hasPatient) {
+      items.push({ href: '/patient-list', label: 'បញ្ជីអ្នកជំងឺ' });
+      items.push({ href: '#', label: 'កំណត់ត្រាអ្នកជំងឺ' });
+      return items;
+    }
     if (path !== '/home' && PAGE_TITLES[path]) {
       items.push({ href: path, label: PAGE_TITLES[path] });
     }
@@ -368,6 +375,13 @@
         </nav>
       `;
       mainContent.prepend(bcContainer);
+    }
+    if (isRegisterUser && breadcrumbItems.some(item => item.href === '/patient-list') && mainContent && !mainContent.querySelector('.emr-patient-return-bar')) {
+      const returnBar = document.createElement('div');
+      returnBar.className = 'emr-patient-return-bar no-print';
+      returnBar.style.cssText = 'padding:8px 16px;margin-bottom:8px;';
+      returnBar.innerHTML = `<a href="/patient-list" class="emr-return-link" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#0284c7;text-decoration:none;padding:6px 12px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;"><span aria-hidden="true">‹</span> ${escapeHtml(PAGE_TITLES['/patient-list'])}</a>`;
+      mainContent.prepend(returnBar);
     }
 
     // 3. Topbar

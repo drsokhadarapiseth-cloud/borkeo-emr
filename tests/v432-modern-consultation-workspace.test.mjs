@@ -17,14 +17,14 @@ function read(relPath) {
   return fs.readFileSync(path.join(rootDir, relPath), 'utf8');
 }
 
-test('v43.7: Version consistency across package.json, server.mjs, and login.html', () => {
+test('v43.8: Version consistency across package.json, server.mjs, and login.html', () => {
   const pkg = JSON.parse(read('package.json'));
   const serverCode = read('server/server.mjs');
   const loginHtml = read('public/login.html');
 
-  assert.equal(pkg.version, '43.7.0', 'package.json version must be 43.7.0');
-  assert.match(serverCode, /Borkeo EMR v43\.7/, 'server.mjs must declare v43.7');
-  assert.match(loginHtml, /data-app-version[^>]*>v43\.7<\/span>/, 'login.html must display v43.7');
+  assert.equal(pkg.version, '43.8.0', 'package.json version must be 43.8.0');
+  assert.match(serverCode, /Borkeo EMR v43\.8/, 'server.mjs must declare v43.8');
+  assert.match(loginHtml, /data-app-version[^>]*>v43\.8<\/span>/, 'login.html must display v43.8');
 });
 
 test('v43.3: Modern consultation workspace presentation assets exist and are registered in server.mjs', () => {
