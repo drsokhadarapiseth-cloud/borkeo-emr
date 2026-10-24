@@ -82,13 +82,24 @@
     const discharge = element('discharge-filter').value;
     const department = element('department-filter').value;
     const payment = element('payment-filter').value;
-    return patients.filter(patient => {
+    const list = patients.filter(patient => {
       const haystack = [patient.fullName, patient.firstName, patient.lastName, patient.caseNumber, patient.healthId, patient.phone, patient.equityCard]
         .join(' ').toLocaleLowerCase();
       return (!query || haystack.includes(query)) && (!entry || patient.entryDate === entry) &&
         (!discharge || patient.dischargeDate === discharge) &&
         (!department || patient.departmentCode === department) && (!payment || paymentTypeCode(patient) === payment);
     });
+    if (triageToday) return list;
+    const seen = new Set();
+    const unique = [];
+    for (const patient of list) {
+      const id = String(patient.healthId || '').trim();
+      const key = id ? `id:${id.toLowerCase()}` : `key:${patient.patientKey}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      unique.push(patient);
+    }
+    return unique;
   }
 
   function renderDepartmentFilter() {
@@ -261,9 +272,9 @@
       const isMgmt=['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(activeRole);
       const isCashier=['CLERK','ACCOUNTANT'].includes(activeRole);
       const access=patient.recordAccess||{};
-      const viewHref=isCashier?'/billing?'+new URLSearchParams({patientKey:patient.patientKey,history:'1'}):
-        isMgmt?'/record-viewer?'+new URLSearchParams({patient:patient.patientKey}):
-        '/emr?'+new URLSearchParams({patient:patient.patientKey,view:access.view||(activeRole==='REGISTRATION'?'register':activeRole==='TRIAGE'?'triage':'medical'),mode:'view'});
+      const viewHref=isCashier?'/billing?'+new URLSearchParams({patientKey:patient.patientKey,history:'1',from:'patient-list'}):
+        isMgmt?'/record-viewer?'+new URLSearchParams({patient:patient.patientKey,from:'patient-list'}):
+        '/emr?'+new URLSearchParams({patient:patient.patientKey,view:access.view||(activeRole==='REGISTRATION'?'register':activeRole==='TRIAGE'?'triage':'medical'),mode:'view',from:'patient-list'});
       const clinical=['REGISTRATION','TRIAGE','DOCTOR','NURSE','MIDWIFE','CHIEF_WARD'].includes(activeRole);
       const eyeButton=(isMgmt||isCashier||clinical&&access.canView)
         ? `<a class="icon-action view" target="_blank" rel="noopener noreferrer" title="មើលព័ត៌មាន" aria-label="មើលព័ត៌មាន" href="${escapeHtml(viewHref)}">👁</a>`
@@ -642,16 +653,51 @@
     const requestEditButton=event.target.closest('[data-request-edit]');
     if(requestEditButton){
       const patient=patients.find(item=>item.patientKey===requestEditButton.dataset.requestEdit);if(!patient)return;
-      if(['ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(activeRole)){
-        const dialog=document.createElement('dialog');dialog.className='patient-summary-dialog';
-        const choices=[['register','ព័ត៌មានចុះឈ្មោះ'],['triage','ព័ត៌មានទ្រីយ៉ា'],[patient.serviceMode==='opd'?'opd':'medical','កំណត់ត្រាវេជ្ជសាស្ត្រ'],['nursing','ដំណើរការថែទាំ']];
-        dialog.innerHTML='<h2>ជ្រើសរើសទម្រង់ដែលត្រូវកែប្រែ</h2>'+choices.map(([view,label])=>`<p><button type="button" data-edit-view="${view}">${label}</button></p>`).join('')+'<button type="button" data-cancel-edit>បោះបង់</button>';
-        dialog.onclick=event=>{const button=event.target.closest('[data-edit-view]');if(button)location.assign('/emr?'+new URLSearchParams({patient:patient.patientKey,view:button.dataset.editView,mode:'edit'}));if(event.target.closest('[data-cancel-edit]'))dialog.close()};
-        dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();return;
-      }
       const access=patient.recordAccess||{};
       if(access.requiresApproval){await submitPatientRequest('PATIENT_EDIT',patient,access.scope);return;}
-      if(access.canEdit)location.assign('/emr?'+new URLSearchParams({patient:patient.patientKey,view:access.view,mode:'edit'}));
+
+      const dialog=document.createElement('dialog');
+      dialog.className='patient-summary-dialog patient-edit-choice-dialog';
+      dialog.style.maxWidth='440px';
+      dialog.style.padding='22px';
+      dialog.style.borderRadius='12px';
+      dialog.style.border='1px solid #71c3d8';
+      dialog.style.boxShadow='0 12px 36px rgba(7, 92, 124, 0.22)';
+      dialog.innerHTML=`
+        <h2 style="margin:0 0 8px;font-size:16px;color:#075c7c;">${escapeHtml(patient.fullName || text('unknown'))}</h2>
+        <p style="margin:0 0 16px;font-size:13px;color:#475569;">${patient.healthId ? `${escapeHtml(text('patientId'))}: ${escapeHtml(patient.healthId)}` : ''}</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button type="button" data-action-edit-info style="padding:10px 14px;background:#0284c7;color:#fff;border:0;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;"><span aria-hidden="true">✎</span> ${escapeHtml(text('edit'))}</button>
+          <button type="button" data-action-add-record style="padding:10px 14px;background:#0d9488;color:#fff;border:0;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;text-align:center;"><span aria-hidden="true">➕</span> ${escapeHtml(text('addRecord'))}</button>
+          <button type="button" data-action-cancel style="padding:8px 14px;background:#64748b;color:#fff;border:0;border-radius:8px;font-size:13px;cursor:pointer;margin-top:4px;">${escapeHtml(text('cancel'))}</button>
+        </div>
+      `;
+      dialog.querySelector('[data-action-edit-info]').onclick=()=>{
+        dialog.close();
+        dialog.remove();
+        if(['ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(activeRole)){
+          const choices=[['register','ព័ត៌មានចុះឈ្មោះ'],['triage','ព័ត៌មានទ្រីយ៉ា'],[patient.serviceMode==='opd'?'opd':'medical','កំណត់ត្រាវេជ្ជសាស្ត្រ'],['nursing','ដំណើរការថែទាំ']];
+          const subDialog=document.createElement('dialog');subDialog.className='patient-summary-dialog';
+          subDialog.innerHTML='<h2>ជ្រើសរើសទម្រង់ដែលត្រូវកែប្រែ</h2>'+choices.map(([view,label])=>`<p><button type="button" data-edit-view="${view}">${label}</button></p>`).join('')+'<button type="button" data-cancel-edit>បោះបង់</button>';
+          subDialog.onclick=event=>{const button=event.target.closest('[data-edit-view]');if(button)location.assign('/emr?'+new URLSearchParams({patient:patient.patientKey,view:button.dataset.editView,mode:'edit',from:'patient-list'}));if(event.target.closest('[data-cancel-edit]'))subDialog.close()};
+          subDialog.addEventListener('close',()=>subDialog.remove());document.body.append(subDialog);subDialog.showModal();
+        } else {
+          try { sessionStorage.setItem('emr_from_patient_list', '1'); } catch (_) {}
+          if(access.canEdit)location.assign('/emr?'+new URLSearchParams({patient:patient.patientKey,view:access.view,mode:'edit'}));
+        }
+      };
+      dialog.querySelector('[data-action-add-record]').onclick=()=>{
+        dialog.close();
+        dialog.remove();
+        location.assign(`/emr?view=register&newVisitFrom=${encodeURIComponent(patient.patientKey)}&from=patient-list`);
+      };
+      dialog.querySelector('[data-action-cancel]').onclick=()=>{
+        dialog.close();
+        dialog.remove();
+      };
+      dialog.addEventListener('close',()=>dialog.remove());
+      document.body.append(dialog);
+      dialog.showModal();
       return;
     }
     const deleteButton=event.target.closest('[data-action-delete]');

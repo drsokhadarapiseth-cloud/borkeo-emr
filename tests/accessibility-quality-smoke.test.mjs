@@ -17,11 +17,11 @@ test('Phase 8: Version consistency across package.json, server.mjs, and login.ht
   const serverCode = read('server/server.mjs');
   const loginHtml = read('public/login.html');
 
-  assert.equal(pkg.version, '45.0.0', 'package.json version must be 45.0.0');
+  assert.equal(pkg.version, '45.1.0', 'package.json version must be 45.1.0');
   assert.match(serverCode, /Borkeo EMR v(?:39\.[6-9]|4[0-9]\.[0-9])/, 'server.mjs must declare v39.6 or above');
   assert.match(serverCode, /design-system\.css\?v=3970/, 'server.mjs must inject design-system.css with v=3970');
   assert.match(serverCode, /worklists-feedback\.css\?v=3970/, 'server.mjs must inject worklists-feedback.css with v=3970');
-  assert.match(loginHtml, /data-app-version[^>]*>v45\.0<\/span>/, 'login.html must display v45.0');
+  assert.match(loginHtml, /data-app-version[^>]*>v45\.1<\/span>/, 'login.html must display v45.1');
 });
 
 test('Phase 8: Complete presentation-layer suite of assets is present and registered', () => {

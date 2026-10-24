@@ -1,5 +1,11 @@
 # Borkeo EMR Changelog
 
+## v45.1.0 - Patient list deduplication, edit choice action dialog & return navigation
+
+- Patient list deduplication: In `public/patient-list.js`, when multiple patient records share the same Health ID (`healthId`), the list displays exactly one row representing their latest visit.
+- Edit choice action popup: Clicking the pencil edit icon (`[data-request-edit]`) on any patient row opens an action choice window with «កែប្រែព័ត៌មាន» (Edit Information), «បន្ថែមកំណត់ត្រាថ្មី» (Add New Record), and «បោះបង់» (Cancel).
+- Return navigation: Navigation from patient list to view or edit attaches `from=patient-list`, rendering breadcrumbs on `/emr` and `/record-viewer` and a return link on registration view back to `បញ្ជីអ្នកជំងឺ` (`/patient-list`).
+
 ## v45.0.0 - Top bar inline patient search with instant dropdown & CSRF auto-recovery
 
 - Transform the top bar search from a button modal trigger into a direct inline search input (`#emr-global-search-input`).
