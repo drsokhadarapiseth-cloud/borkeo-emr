@@ -213,6 +213,16 @@
 
   function ageLabel(patient) {
     let value=String(patient.age || '').trim();
+    if(!value && patient.dateOfBirth) {
+      const dob = new Date(patient.dateOfBirth);
+      if(!isNaN(dob.getTime())) {
+        const ref = patient.entryDate ? new Date(patient.entryDate) : new Date();
+        let years = ref.getFullYear() - dob.getFullYear();
+        const m = ref.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && ref.getDate() < dob.getDate())) years--;
+        if (years >= 0) value = String(years);
+      }
+    }
     if(!value)return '—';
     if(/^\d+(?:\.\d+)?$/.test(value))return `${value} ${text('years')}`;
     return language==='en' ? value.replace(/ឆ្នាំ/g,'years').replace(/ខែ/g,'months').replace(/ថ្ងៃ/g,'days')
@@ -265,7 +275,7 @@
         <td data-column="number">${offset+index+1}</td>
         <td data-column="patientName"><span class="patient-primary">${escapeHtml(patient.fullName || text('unknown'))}</span></td>
         <td data-column="sex">${escapeHtml(localizedSex(patient.sex))}</td>
-        <td data-column="age" class="patient-age"><span data-patient-value>${escapeHtml(formatDate(patient.dateOfBirth))}</span> <span class="age-badge" data-patient-value>${escapeHtml(ageLabel(patient))}</span></td>
+        <td data-column="age" class="patient-age"><span class="age-badge" data-patient-value>${escapeHtml(ageLabel(patient))}</span></td>
         <td data-column="phone" class="patient-phone" data-patient-value>${escapeHtml(patient.phone || '')}</td>
         <td data-column="patientId">${!triageToday && ['REGISTRATION','ADMIN','VICE_DIRECTOR','DIRECTOR'].includes(activeRole) ? `<button type="button" class="patient-id-link" style="border:0!important;outline:0!important;background:transparent!important;padding:0!important;box-shadow:none!important;color:#087dff!important;font:inherit!important;font-weight:700!important;cursor:pointer;text-decoration:none!important;" data-new-record="${escapeHtml(patient.patientKey)}">${escapeHtml(patient.healthId || patient.patientKey)}</button>` : `<span class="health-id" data-patient-value>${escapeHtml(patient.healthId || '')}</span>`}</td>
         <td data-column="equityCard" data-patient-value>${escapeHtml(patient.equityCard || '')}</td>

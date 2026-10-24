@@ -1,0 +1,51 @@
+================================================================================
+Borkeo EMR Update Note: Version 44.9.0
+Update plan #9: patient list shows the age only (no date of birth)
+================================================================================
+
+Date: 2026-10-24
+Previous Version: 44.8.0
+New Version: 44.9.0
+Source: re-applies the v43.6.0 work (commit d165a6a) on top of v44.8.0.
+Patient data: not touched. No database change.
+
+Verified in a disposable copy with synthetic data:
+- npm test: 987 / 987 pass.
+- npm run check:khmer: passes.
+- Every account signs in and opens its page in demo mode (34 accounts),
+  hospital mode (24 accounts, password 1234) and online mode (Superuser with
+  SUPERUSER_PASSWORD, all 65 role/ward choices). Same result as v44.8.0.
+
+--------------------------------------------------------------------------------
+1. WHAT CHANGED
+--------------------------------------------------------------------------------
+a) Patient list, Age column (public/patient-list.js): only the age badge is
+   shown (for example "7 ឆ្នាំ", "71 ឆ្នាំ"); the date of birth is no
+   longer printed in front of it.
+b) When a patient has no age saved, the age is calculated from the date of
+   birth (completed years, at the entry date or today).
+c) New test: tests/v436-patient-list-age-only.test.mjs.
+
+--------------------------------------------------------------------------------
+2. FILES
+--------------------------------------------------------------------------------
+- public/patient-list.js
+- docs/ui-43.6.md
+- tests/v436-patient-list-age-only.test.mjs (new)
+- package.json, public/login.html, server/server.mjs, CHANGELOG.md (version 44.9.0)
+- tests/accessibility-quality-smoke.test.mjs,
+  tests/v432-modern-consultation-workspace.test.mjs (expect 44.9.0)
+
+--------------------------------------------------------------------------------
+3. INSTALLATION (one step at a time)
+--------------------------------------------------------------------------------
+Step 1: Close the EMR server window (or press Ctrl + C in it).
+Step 2: In the project folder run "git pull".
+Step 3: Double-click "Start-Borkeo-WiFi.bat" (or run "npm start").
+Step 4: In the browser press Ctrl + F5 once and open the patient list: the Age
+        column shows only the age.
+
+For Antigravity: this folder already contains the update. On another computer,
+run "git pull", then the steps above, then "npm test" and "npm run check:khmer".
+The full code change is the Git commit "v44.9.0" on master.
+================================================================================

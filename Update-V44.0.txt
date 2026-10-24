@@ -96,7 +96,7 @@ Password, Log Out and the department navigation bar must stay usable.
     HPI and examination cards, quick diagnosis search, plan
     checklist, switch between 3 views.
  8  Save and Send to Triage buttons on the same row.                Tested (v44.8.0)
- 9  Patient list shows the age badge only (no date of birth).      Waiting
+ 9  Patient list shows the age badge only (no date of birth).      Tested (v44.9.0)
 10  Inline top search with dropdown; CSRF token refresh on 403.     Waiting
 11  One row per Health ID; pencil asks "edit information" or "add   Waiting
     new record"; back link to the patient list.
