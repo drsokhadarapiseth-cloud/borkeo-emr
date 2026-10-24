@@ -491,7 +491,8 @@ export function roleCanPage(role, pathname) {
   role = String(role || '').toUpperCase();
   if (['/admin/organization','/admin/interface','/admin/health-facility','/styleguide'].includes(pathname)) return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
   // v41.2: drug interaction and maximum-dose tables (administrators edit, management views).
-  if (pathname === '/admin/drug-safety') return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
+  // v42.5: the Head of Pharmacy approves the maximum doses on this page.
+  if (pathname === '/admin/drug-safety') return ['ADMIN','DIRECTOR','VICE_DIRECTOR','PHARMACY'].includes(role);
   // v41.7: record view log viewer (management only).
   if (pathname === '/admin/record-log') return ['ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(role);
   if (['ADMIN','VICE_DIRECTOR'].includes(role) || role === 'DIRECTOR') return true;

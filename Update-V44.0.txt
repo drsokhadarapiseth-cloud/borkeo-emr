@@ -82,7 +82,7 @@ Password, Log Out and the department navigation bar must stay usable.
  #  Update                                                         Status
  1  Cloud deployment: Docker/Railway, DATA_DIR, Superuser password  Tested (v44.1.0)
     from server setting, shared 1234 passwords off in production.
- 2  Two-step prescription picker: generic name, then CMS code /     Waiting
+ 2  Two-step prescription picker: generic name, then CMS code /     Tested (v44.2.0)
     form / strength; filter by age, sex, pregnancy, service;
     adult and per-kg child max-dose warnings; IV, IM, SC, PO routes.
  3  Midwife services: 2026 ANC record (pages 2-5), GA/EDD from LMP  Waiting

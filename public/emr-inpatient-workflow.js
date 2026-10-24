@@ -705,9 +705,10 @@
       { value: 'other_im', khmer: 'ចាក់សាច់ដុំ (IM)' },
     ];
     input('route').add(new Option('ជ្រើសផ្លូវប្រើ', ''));
-    routes.forEach(route => input('route').add(new Option(route.khmer, route.value)));
     const storedRoute = String(med.route || '');
-    if (!routes.some(route => route.value === storedRoute)) input('route').add(new Option(`${storedRoute} (ពិនិត្យ)`, storedRoute));
+    // v42.5: old route values only on the saved line that uses them; a blank route stays blank.
+    routes.filter(route => !route.legacy || route.value === storedRoute).forEach(route => input('route').add(new Option(route.khmer, route.value)));
+    if (storedRoute && !routes.some(route => route.value === storedRoute)) input('route').add(new Option(`${storedRoute} (ពិនិត្យ)`, storedRoute));
     input('route').value = storedRoute;
     for (const key of ['name', 'unit', 'doseAmount', 'scheduleType', 'm', 'a', 'e', 'n', 'd', 'total', 'note']) {
       if (med[key] !== null && med[key] !== undefined) input(key).value = String(med[key]);
@@ -716,6 +717,7 @@
     // medicine chosen from the Essential Medicines List stays with the line.
     if (med.unit) input('unit').value = window.BorkeoMedicineUnits?.canonical(med.unit) ?? String(med.unit);
     if (med.cmsCode) input('name').dataset.cmsCode = String(med.cmsCode);
+    if (med.doseOverrideReason) input('name').dataset.doseReason = String(med.doseOverrideReason);
     if (med.scheduleType && !Array.from(input('scheduleType').options).some(opt => opt.value === med.scheduleType)) {
       input('scheduleType').add(new Option(`${med.scheduleType} (ពិនិត្យ)`, med.scheduleType));
       input('scheduleType').value = med.scheduleType;
@@ -743,6 +745,10 @@
       const cmsCode = row.querySelector('[data-med="name"]')?.dataset.cmsCode || '';
       if (cmsCode) med.cmsCode = cmsCode;
       else if (med.cmsCode && med.name !== row._preservedMedication?.name) delete med.cmsCode;
+      // v42.5: reason written to continue above a maximum dose (public/medication-safety.js).
+      const doseReason = row.querySelector('[data-med="name"]')?.dataset.doseReason || '';
+      if (doseReason) med.doseOverrideReason = doseReason;
+      else if (med.doseOverrideReason && med.name !== row._preservedMedication?.name) delete med.doseOverrideReason;
       return med;
     }).filter(med => med.name);
   }
@@ -902,6 +908,12 @@
     const routeError = dischargeRouteError();
     if (routeError) {
       if (statusNode) { statusNode.dataset.state = 'error'; statusNode.textContent = routeError; }
+      return;
+    }
+    // v42.5: a line above the maximum dose needs the written reason before saving.
+    const doseError = window.EmrMedicationSafety?.validateDoses('#emr-discharge-rx-body tr');
+    if (doseError) {
+      if (statusNode) { statusNode.dataset.state = 'error'; statusNode.textContent = doseError; }
       return;
     }
     const button = document.getElementById('emr-save-discharge');

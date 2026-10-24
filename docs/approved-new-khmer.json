@@ -752,6 +752,330 @@
       "kh": "ដង",
       "key": "medicine.cataloguePuff",
       "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Children:",
+      "kh": "កុមារ៖",
+      "key": "medicine.childNote",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Adults:",
+      "kh": "មនុស្សពេញវ័យ៖",
+      "key": "medicine.adultNote",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Intravenous (IV)",
+      "kh": "ចាក់សរសៃ (IV)",
+      "key": "medicine.routeIv",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Drug interaction warning",
+      "kh": "ការព្រមានអន្តរកម្មឱសថ",
+      "key": "safety.interaction",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Maximum dose warning",
+      "kh": "ការព្រមានកម្រិតថ្នាំអតិបរមា",
+      "key": "safety.maxDose",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Do not prescribe",
+      "kh": "មិនចេញវេជ្ជបញ្ជាថ្នាំនេះ",
+      "key": "safety.remove",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Continue with this medicine",
+      "kh": "បន្តជាមួយថ្នាំនេះ",
+      "key": "safety.continue",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Write the override reason to continue.",
+      "kh": "សូមសរសេរមូលហេតុ ដើម្បីបន្ត។",
+      "key": "safety.reasonRequired",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Drug safety tables",
+      "kh": "តារាងសុវត្ថិភាពឱសថ",
+      "key": "nav.drugSafety",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Used for the prescribing warnings. Only an administrator can change them. Enter only lists approved by a doctor.",
+      "kh": "ប្រើសម្រាប់ការព្រមានពេលចេញវេជ្ជបញ្ជា។ មានតែអ្នកគ្រប់គ្រងប្រព័ន្ធទេ ដែលអាចកែប្រែបាន។ សូមបញ្ចូលតែបញ្ជីដែលបានអនុម័តដោយវេជ្ជបណ្ឌិត។",
+      "key": "drugSafety.intro",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Drug interactions",
+      "kh": "អន្តរកម្មឱសថ",
+      "key": "drugSafety.interactions",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Maximum doses",
+      "kh": "កម្រិតថ្នាំអតិបរមា",
+      "key": "drugSafety.maxDoses",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Medicine A",
+      "kh": "ឱសថ ក",
+      "key": "drugSafety.drugA",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Medicine B",
+      "kh": "ឱសថ ខ",
+      "key": "drugSafety.drugB",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Medicine",
+      "kh": "ឱសថ",
+      "key": "drugSafety.drug",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Note",
+      "kh": "កំណត់សម្គាល់",
+      "key": "drugSafety.note",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Maximum per dose",
+      "kh": "អតិបរមាក្នុងមួយដង",
+      "key": "drugSafety.maxPerDose",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Maximum per day",
+      "kh": "អតិបរមាក្នុងមួយថ្ងៃ",
+      "key": "drugSafety.maxPerDay",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Unit",
+      "kh": "ឯកតា",
+      "key": "drugSafety.unit",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Add",
+      "kh": "បន្ថែម",
+      "key": "drugSafety.add",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Delete",
+      "kh": "លុប",
+      "key": "drugSafety.delete",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "No entries yet.",
+      "kh": "មិនទាន់មានទិន្នន័យ។",
+      "key": "drugSafety.empty",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Maximum doses (Essential Medicines List)",
+      "kh": "កម្រិតថ្នាំអតិបរមា (បញ្ជីឱសថសំខាន់ៗ)",
+      "key": "drugSafety.doseTable",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Only approved lines are used by the prescribing check. The administrator edits values; the Head of Pharmacy or the Director approves or rejects each line.",
+      "kh": "មានតែបន្ទាត់ដែលបានអនុម័តប៉ុណ្ណោះ ដែលត្រូវប្រើពេលពិនិត្យវេជ្ជបញ្ជា។ អ្នកគ្រប់គ្រងប្រព័ន្ធកែតម្លៃ ហើយប្រធានឱសថស្ថាន ឬនាយកមន្ទីរពេទ្យ អនុម័ត ឬបដិសេធបន្ទាត់នីមួយៗ។",
+      "key": "drugSafety.doseIntro",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Search medicine",
+      "kh": "ស្វែងរកឱសថ",
+      "key": "drugSafety.filterSearch",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Status",
+      "kh": "ស្ថានភាព",
+      "key": "drugSafety.filterStatus",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Check type",
+      "kh": "ប្រភេទការពិនិត្យ",
+      "key": "drugSafety.filterType",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "All",
+      "kh": "ទាំងអស់",
+      "key": "drugSafety.all",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Draft",
+      "kh": "សេចក្តីព្រាង",
+      "key": "drugSafety.statusDraft",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Approved",
+      "kh": "បានអនុម័ត",
+      "key": "drugSafety.statusApproved",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Rejected",
+      "kh": "បានបដិសេធ",
+      "key": "drugSafety.statusRejected",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Checked",
+      "kh": "ពិនិត្យកម្រិត",
+      "key": "drugSafety.typeCheck",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Protocol (guidance only)",
+      "kh": "តាមពិធីសារ (ណែនាំប៉ុណ្ណោះ)",
+      "key": "drugSafety.typeProtocol",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "No check",
+      "kh": "មិនពិនិត្យ",
+      "key": "drugSafety.typeNone",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Adult",
+      "kh": "មនុស្សពេញវ័យ",
+      "key": "drugSafety.adult",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Child",
+      "kh": "កុមារ",
+      "key": "drugSafety.child",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "per dose",
+      "kh": "ក្នុងមួយដង",
+      "key": "drugSafety.perDose",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "per day",
+      "kh": "ក្នុងមួយថ្ងៃ",
+      "key": "drugSafety.perDay",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "per kg per dose",
+      "kh": "ក្នុងមួយគីឡូក្រាម ក្នុងមួយដង",
+      "key": "drugSafety.perKgDose",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "per kg per day",
+      "kh": "ក្នុងមួយគីឡូក្រាម ក្នុងមួយថ្ងៃ",
+      "key": "drugSafety.perKgDay",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Edit",
+      "kh": "កែប្រែ",
+      "key": "drugSafety.edit",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Save",
+      "kh": "រក្សាទុក",
+      "key": "drugSafety.save",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Cancel",
+      "kh": "បោះបង់",
+      "key": "drugSafety.cancel",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Approve",
+      "kh": "អនុម័ត",
+      "key": "drugSafety.approve",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Doses the check could not convert",
+      "kh": "កម្រិតថ្នាំដែលមិនអាចបម្លែងឯកតាបាន",
+      "key": "drugSafety.unconverted",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Times",
+      "kh": "ចំនួនដង",
+      "key": "drugSafety.count",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Other maximum doses (entered by hand)",
+      "kh": "កម្រិតថ្នាំអតិបរមាផ្សេងទៀត (បញ្ចូលដោយដៃ)",
+      "key": "drugSafety.otherMaxDoses",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "lines shown",
+      "kh": "បន្ទាត់ដែលបង្ហាញ",
+      "key": "drugSafety.shown",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Per dose:",
+      "kh": "ក្នុងមួយដង៖",
+      "key": "safety.dosePerDose",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Per day:",
+      "kh": "ក្នុងមួយថ្ងៃ៖",
+      "key": "safety.dosePerDay",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "maximum",
+      "kh": "អតិបរមា",
+      "key": "safety.doseMaximum",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Enter the weight to check the dose",
+      "kh": "បញ្ចូលទម្ងន់ ដើម្បីពិនិត្យកម្រិតថ្នាំ",
+      "key": "safety.weightNeeded",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Protocol:",
+      "kh": "តាមពិធីសារ៖",
+      "key": "safety.doseProtocol",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Write the reason to continue above the maximum dose.",
+      "kh": "សូមសរសេរមូលហេតុ ដើម្បីបន្តលើសកម្រិតថ្នាំអតិបរមា។",
+      "key": "safety.doseReasonOnSave",
+      "source": "docs/translations-needed.csv"
     }
   ]
 }

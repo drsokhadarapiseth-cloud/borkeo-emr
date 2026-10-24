@@ -1,9 +1,9 @@
 // v41.2 - /api/medication-administrations (MAR), /api/prescribing-overrides and
 // /api/drug-safety (interaction and maximum-dose tables).
 import {
-  DRUG_SAFETY_EDIT_ROLES, DRUG_SAFETY_VIEW_ROLES, MAR_WRITE_ROLES, OVERRIDE_ROLES,
+  DRUG_SAFETY_APPROVE_ROLES, DRUG_SAFETY_EDIT_ROLES, DRUG_SAFETY_VIEW_ROLES, MAR_WRITE_ROLES, OVERRIDE_ROLES,
   addInteraction, addMaxDose, drugSafetyTables, listAdministrations, recordAdministration,
-  recordOverride, removeDrugSafetyRow, voidAdministration,
+  recordOverride, recordUnconvertedDose, removeDrugSafetyRow, reviewMaxDose, updateMaxDose, voidAdministration,
 } from '../medication-safety.mjs';
 
 export function mountMedicationSafetyRoutes(router) {
@@ -68,7 +68,44 @@ export function mountMedicationSafetyRoutes(router) {
     if (!session) return fail(ctx, 401, 'Authentication required.');
     const role = requireContext(session);
     if (!DRUG_SAFETY_VIEW_ROLES.has(role)) return fail(ctx, 403, 'Your role cannot view this.');
-    return sendJson(response, 200, { ...drugSafetyTables(database), canEdit: DRUG_SAFETY_EDIT_ROLES.has(role) }, { secure: config.cookieSecure });
+    return sendJson(response, 200, { ...drugSafetyTables(database), canEdit: DRUG_SAFETY_EDIT_ROLES.has(role), canApprove: DRUG_SAFETY_APPROVE_ROLES.has(role) }, { secure: config.cookieSecure });
+  });
+
+  // v42.5: POST /api/drug-safety/max-doses/:id/{update|approve|reject}
+  // update: administrators (the line goes back to draft); approve / reject:
+  // the Head of Pharmacy or the Director (name and time saved, audited).
+  router.post(/^\/api\/drug-safety\/max-doses\/([0-9a-f-]{36})\/(update|approve|reject)$/, async (ctx) => {
+    const { request, session, database, requireContext, readJson, audit, routeParams, sendJson, response, config } = ctx;
+    if (!session) return fail(ctx, 401, 'Authentication required.');
+    const role = requireContext(session);
+    const [, id, action] = routeParams;
+    const allowed = action === 'update' ? DRUG_SAFETY_EDIT_ROLES : DRUG_SAFETY_APPROVE_ROLES;
+    if (!allowed.has(role)) return fail(ctx, 403, action === 'update' ? 'Only an administrator can change these tables.' : 'Only the Head of Pharmacy or the Director can approve.');
+    const body = await readJson(request, 20_000);
+    try {
+      const actor = { ...session, activeRole: role, active_role: role };
+      const entry = action === 'update' ? updateMaxDose(database, actor, id, body) : reviewMaxDose(database, actor, id, action);
+      if (!entry) return fail(ctx, 404, 'Not found.');
+      const event = { update: 'DRUG_MAX_DOSE_UPDATED', approve: 'DRUG_MAX_DOSE_APPROVED', reject: 'DRUG_MAX_DOSE_REJECTED' }[action];
+      audit(database, request, event, { userId: session.user_id, subjectUsername: session.username, details: { id, doseKey: entry.doseKey, status: entry.status } });
+      return sendJson(response, 200, { ...drugSafetyTables(database), canEdit: DRUG_SAFETY_EDIT_ROLES.has(role), canApprove: DRUG_SAFETY_APPROVE_ROLES.has(role) }, { secure: config.cookieSecure });
+    } catch (error) {
+      return fail(ctx, 400, error.message);
+    }
+  });
+
+  // v42.5: a prescribed dose the check could not convert to the unit of the
+  // limit; the pharmacist sees the list on the drug safety page.
+  router.post('/api/drug-safety/unconverted', async (ctx) => {
+    const { request, session, database, requireContext, readJson, sendJson, response, config } = ctx;
+    if (!session) return fail(ctx, 401, 'Authentication required.');
+    if (!OVERRIDE_ROLES.has(requireContext(session))) return fail(ctx, 403, 'Your role cannot do this.');
+    const body = await readJson(request, 5_000);
+    try {
+      return sendJson(response, 201, { entry: recordUnconvertedDose(database, session, body) }, { secure: config.cookieSecure });
+    } catch (error) {
+      return fail(ctx, 400, error.message);
+    }
   });
 
   // POST /api/drug-safety/{interactions|max-doses}[/:id/delete] (administrators)

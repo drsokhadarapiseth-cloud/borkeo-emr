@@ -1,0 +1,154 @@
+================================================================================
+Borkeo EMR Update Note: Version 44.2.0
+Update plan #2: two-step prescription picker and maximum dose check
+================================================================================
+
+Date: 2026-10-24
+Previous Version: 44.1.0
+New Version: 44.2.0
+Source: re-applies the v42.5.0 work (commit 1c6d23e) on top of v44.1.0.
+Patient data: not touched. Saved prescriptions are not rewritten. Database:
+additive only (new columns in drug_max_doses, new table drug_dose_unconverted).
+
+Verified in a disposable copy with synthetic data:
+- npm test: 936 / 936 pass.
+- npm run check:khmer: passes.
+- Every account signs in and opens its page in demo mode (34 accounts),
+  hospital mode (24 accounts, password 1234) and online mode (Superuser with
+  SUPERUSER_PASSWORD, all 65 role/ward choices). Same result as v44.1.0.
+
+1. WHAT WAS WRONG
+--------------------------------------------------------------------------------
+a) The medicine search showed every form and strength of every medicine at
+   once ("par" gave a long list of paracetamol lines and other medicines), and
+   it showed medicines that do not fit the patient (adult tablets for a small
+   child, oxytocin for a man, newborn caffeine for an adult).
+b) The medicine list file had the other name in brackets in the name and no
+   marks for children, adults, women only or newborns only.
+c) The route list had six different injection choices; doctors chose them
+   differently for the same medicine.
+d) The maximum-dose table was empty: no dose was checked, for adults or for
+   children. A total with no number of medicine showed 0.
+
+--------------------------------------------------------------------------------
+2. WHAT CHANGED
+--------------------------------------------------------------------------------
+a) Medicine list: the owner's new file (704 lines, 339 medicine names, other
+   names, route, adult / child / women-only / newborn-only marks, age limits,
+   notes) replaces the list of v42.3.
+b) Two-step search in every prescription form (OPD, IPD admission and protocol
+   rows, daily note, discharge medicines):
+   - step 1: each medicine name once (name, other names, CMS code).
+     "para" shows only Paracetamol; "acetam" also finds it; "cotrim" finds
+     Sulfamethoxazole + trimethoprim.
+   - step 2: the forms and strengths of that name for this patient, as
+     "CMS code · Form · Strength"; a note shows as an orange line, for example
+     "⚠ កុមារ៖ Children > 6 months". One allowed line is chosen automatically.
+   - a full CMS code (e.g. AA0410) goes straight to its line.
+   - arrows and Enter in both steps; Backspace from step 2 back to the names;
+     Esc closes; no match: រកមិនឃើញឱសថ. Free text is still allowed.
+   - after choosing: CMS-Name-Form-Strength in the name box, the number of
+     medicine is cleared and gets the cursor, the unit is set. The route is
+     never filled.
+c) Filter by the open patient: child (0-14 years, or Pediatric ward / NCU) sees
+   child lines, adult sees adult lines, unknown age sees everything. Women-only
+   lines: women from 15 years, or a pregnant girl (EDD), Obstetric / Gynecology
+   ward, ANC, PNC or family planning; never a man. Newborn-only lines: under 28
+   days or NCU. Lines with an age or weight limit are shown with the orange
+   note. A saved prescription is never changed by the filter.
+d) Routes for a NEW line: ចាក់សរសៃ (IV), ចាក់សាច់ដុំ (IM), ចាក់ក្រោមស្បែក (SC),
+   លេប (PO), លាប, បន្តក់, ស្រូប, តាមទ្វារមាស, តាមទ្វារធំ (PR), ក្រោមអណ្តាត (SL).
+   Old lines with the old injection values open unchanged and are shown as
+   IV / IM (also in Pharmacy, staff messages, printing). Nothing saved is
+   rewritten; PMRS2 import still accepts the old values.
+e) Maximum dose check (adult and child): the draft table (395 lines) is loaded
+   into the drug safety table. Only lines APPROVED by the Head of Pharmacy or
+   the Director are used. Page "Drug safety tables" (/admin/drug-safety, also
+   opened from the Pharmacy dispensing page): filters; the administrator edits
+   (the line goes back to draft); the Head of Pharmacy or the Director clicks
+   Approve or Reject (name and time saved). When a doctor or midwife enters a
+   dose, and again on save:
+   - dose = number x strength (tablets x mg; mL x mg per mL; mg as typed),
+     per day = per dose x doses per day (QD, BID, TID, QID, qH);
+   - adult: maximum per dose / per day, and per kg x Triage weight when given
+     (the lower one); child: per kg x weight, never above the child maximum;
+   - child without a weight: orange note បញ្ចូលទម្ងន់ ដើម្បីពិនិត្យកម្រិតថ្នាំ;
+   - above the maximum: red warning with the dose and the maximum; to continue
+     the prescriber writes the reason; it is saved with the line and in the
+     audit. Without the reason the record is not saved.
+   - a dose that cannot be converted gives no warning; it is listed for the
+     pharmacist on the drug safety page.
+f) Totals stay empty until the number of medicine is typed.
+g) Khmer: the drug safety page and the warning window now show Khmer. Texts the
+   owner did not give are marked "draft Khmer, owner to review" in
+   docs/translations-needed.csv.
+
+Checked in a test copy with synthetic patients only, in Microsoft Edge
+(tests/v425-medicine-list-browser.mjs): an adult man (IPD admission: search,
+choose, red warning 2000 mg / 6000 mg, save refused without a reason, reason
+saved, oxytocin not offered; nursing chart; daily note; discharge with a
+duplicate warning), a 5-year-old girl (OPD: adult tablet hidden, child syrup
+offered, orange weight note, red warning at 10 kg) and a pregnant woman
+(Obstetric ward: oxytocin chosen automatically, unit IU, routes IV / IM / SC).
+Each: "+", dose, save, reopen, print.
+npm test: 936 of 936 pass. npm run check:khmer passes.
+
+--------------------------------------------------------------------------------
+3. FILES
+--------------------------------------------------------------------------------
+New:
+  public/medication-routes.js       one route table for every page
+  public/medicine-dose-check.js     the dose calculation (no page code)
+  server/catalogues/dose-limits-draft.json   the draft maximum doses (your file)
+  tests/v425-medicine-list-dose-check.test.mjs   new tests
+Renamed and updated:
+  tests/v423-medicine-list-browser.mjs -> tests/v425-medicine-list-browser.mjs
+Changed:
+  server/catalogues/medicines-eml-2024.json  your new medicine list file
+  public/medicine-autocomplete.js, .css      two steps, patient filter, notes
+  public/medication-safety.js       dose check, orange notes, reason on save,
+                                    midwives, discharge medicines
+  public/drug-safety.js, .css, protected/drug-safety.html
+                                    maximum dose table, filters, approve
+  server/medication-safety.mjs      dose table columns, draft loading, edit,
+                                    approve / reject, not-converted list
+  server/routes/medication-safety.mjs   approve / reject / edit / not-converted
+  server/access.mjs                 Head of Pharmacy may open the page
+  protected/pharmacy-opd.html       link to the drug safety page
+  protected/EMR.html                routes, nursing chart order, empty total,
+                                    reason saved with the line, check on save
+  public/emr-patient-record.js      check on save
+  public/emr-inpatient-workflow.js  discharge: routes, reason, check on save
+  public/messages.js, public/pharmacy-opd.js   route labels from the table
+  server/server.mjs                 serves the new files; discharge reason;
+                                    version comment v44.2
+  scripts/khmer-lib.mjs, docs/khmer-approved-changes.md
+                                    route labels ordered by the owner; the
+                                    borkeo-update-files folder is not scanned
+  docs/translations-needed.csv, docs/approved-new-khmer.json,
+  public/new-text-data.js, public/emr-language-data.js   Khmer texts
+  package.json, public/login.html, CHANGELOG.md   version 44.2.0
+  tests/accessibility-quality-smoke.test.mjs, tests/v1200-regression.test.mjs,
+  tests/v412-medication-safety.test.mjs, tests/v423-medicine-list.test.mjs
+
+--------------------------------------------------------------------------------
+4. INSTALLATION (one step at a time)
+--------------------------------------------------------------------------------
+The files are already updated in this folder. If you use this folder as is,
+only steps 1 to 4 are needed.
+
+Step 1: Close the EMR server window (or press Ctrl + C in it).
+Step 2: Double-click "Start-Borkeo-WiFi.bat". At the first start the draft
+        maximum-dose table is added to the database (all lines "draft").
+Step 3: In the browser press Ctrl + F5 once, open a patient's prescription and
+        type "par" in a medicine name box: one name, Paracetamol. Press Enter
+        to see its forms.
+Step 4: The Head of Pharmacy logs in, opens Pharmacy dispensing, clicks
+        "តារាងសុវត្ថិភាពឱសថ" and approves the lines that are correct
+        (the Director can do the same). Until a line is approved, that
+        medicine is not checked.
+
+For Antigravity: this folder already contains the update. To get it on another
+computer, run "git pull" in the project folder, then steps 1 to 4 above, then
+"npm test" and "npm run check:khmer". The full code change is the Git commit
+"v44.2.0" on master (git show HEAD).
