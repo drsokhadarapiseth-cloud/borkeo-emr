@@ -1,5 +1,5 @@
 /**
- * Test Suite: v43.2 Modern Clinical Consultation Workspace & Task Checklist
+ * Test Suite: v43.3 Integrated Clinical Consultation Workspace & View Switcher
  * Aligned with WCAG 2.2 AA and IEC 62366-1.
  */
 
@@ -17,17 +17,17 @@ function read(relPath) {
   return fs.readFileSync(path.join(rootDir, relPath), 'utf8');
 }
 
-test('v43.2: Version consistency across package.json, server.mjs, and login.html', () => {
+test('v43.3: Version consistency across package.json, server.mjs, and login.html', () => {
   const pkg = JSON.parse(read('package.json'));
   const serverCode = read('server/server.mjs');
   const loginHtml = read('public/login.html');
 
-  assert.equal(pkg.version, '43.2.0', 'package.json version must be 43.2.0');
-  assert.match(serverCode, /Borkeo EMR v43\.2/, 'server.mjs must declare v43.2');
-  assert.match(loginHtml, /data-app-version[^>]*>v43\.2<\/span>/, 'login.html must display v43.2');
+  assert.equal(pkg.version, '43.3.0', 'package.json version must be 43.3.0');
+  assert.match(serverCode, /Borkeo EMR v43\.3/, 'server.mjs must declare v43.3');
+  assert.match(loginHtml, /data-app-version[^>]*>v43\.3<\/span>/, 'login.html must display v43.3');
 });
 
-test('v43.2: Modern consultation workspace presentation assets exist and are registered in server.mjs', () => {
+test('v43.3: Modern consultation workspace presentation assets exist and are registered in server.mjs', () => {
   const cssPath = 'public/emr-consultation-workspace.css';
   const jsPath = 'public/emr-consultation-workspace.js';
 
@@ -37,11 +37,11 @@ test('v43.2: Modern consultation workspace presentation assets exist and are reg
   const serverCode = read('server/server.mjs');
   assert.ok(serverCode.includes('emr-consultation-workspace.css'), 'server.mjs must reference emr-consultation-workspace.css');
   assert.ok(serverCode.includes('emr-consultation-workspace.js'), 'server.mjs must reference emr-consultation-workspace.js');
-  assert.match(serverCode, /emr-consultation-workspace\.css\?v=4320/, 'server.mjs must inject stylesheet with cache buster v=4320');
-  assert.match(serverCode, /emr-consultation-workspace\.js\?v=4320/, 'server.mjs must inject script with cache buster v=4320');
+  assert.match(serverCode, /emr-consultation-workspace\.css\?v=4330/, 'server.mjs must inject stylesheet with cache buster v=4330');
+  assert.match(serverCode, /emr-consultation-workspace\.js\?v=4330/, 'server.mjs must inject script with cache buster v=4330');
 });
 
-test('v43.2: All presentation-layer inputs declare data-emr-transient to protect frozen storage keys', () => {
+test('v43.3: All presentation-layer inputs declare data-emr-transient to protect frozen storage keys', () => {
   const jsCode = read('public/emr-consultation-workspace.js');
   const inputs = jsCode.match(/<(?:input|textarea)\b[^>]*>/g) || [];
 
@@ -52,7 +52,7 @@ test('v43.2: All presentation-layer inputs declare data-emr-transient to protect
   }
 });
 
-test('v43.2: Consultation workspace defines the agreed 2-column layout and vital signs metrics', () => {
+test('v43.3: Consultation workspace defines the agreed 2-column layout and vital signs metrics', () => {
   const jsCode = read('public/emr-consultation-workspace.js');
   const cssCode = read('public/emr-consultation-workspace.css');
 
@@ -79,5 +79,25 @@ test('v43.2: Consultation workspace defines the agreed 2-column layout and vital
   // Verify CSS responsive & print rules
   assert.match(cssCode, /@media screen and \(max-width: 1024px\)/, 'Must define tablet breakpoint');
   assert.match(cssCode, /@media screen and \(max-width: 640px\)/, 'Must define mobile breakpoint');
-  assert.match(cssCode, /@media print\s*\{\s*\.emr-consultation-workspace\s*\{\s*display:\s*none\s*!important;\s*\}\s*\}/, 'Print media must hide modern consultation overlay to preserve authentic paper forms');
+  assert.match(cssCode, /@media print\s*\{\s*\.emr-consultation-workspace[\s\S]*display:\s*none\s*!important;/, 'Print media must hide modern consultation overlay to preserve authentic paper forms');
+});
+
+test('v43.3: Integrated view mode switcher and seamless integration of detailed clinical modules', () => {
+  const jsCode = read('public/emr-consultation-workspace.js');
+  const cssCode = read('public/emr-consultation-workspace.css');
+
+  // View modes
+  assert.match(jsCode, /cw-view-mode-bar/, 'Must render view mode switcher container');
+  assert.match(jsCode, /cw_mode_integrated/, 'Must render integrated view mode button');
+  assert.match(jsCode, /cw_mode_compact/, 'Must render compact view mode button');
+  assert.match(jsCode, /cw_mode_classic/, 'Must render classic view mode button');
+  assert.match(jsCode, /insert-rx-to-plan/, 'Must include insert prescription to plan dropdown action');
+  assert.match(jsCode, /cw_classic_return_bar/, 'Must support return bar for classic mode');
+
+  // CSS integration styles
+  assert.match(cssCode, /consultation-mode-integrated[\s\S]*#opd_soap_record\s*\{[\s\S]*display:\s*flex\s*!important;/, 'Integrated mode must display legacy SOAP record');
+  assert.match(cssCode, /consultation-mode-compact[\s\S]*#opd_soap_record\s*\{[\s\S]*display:\s*none\s*!important;/, 'Compact mode must hide legacy SOAP record');
+  assert.match(cssCode, /consultation-mode-classic[\s\S]*#emr-consultation-workspace\s*\{[\s\S]*display:\s*none\s*!important;/, 'Classic mode must hide modern overlay');
+  assert.match(cssCode, /consultation-mode-integrated[\s\S]*\.emr-tb-screening/, 'Must style TB screening matrix in integrated mode');
+  assert.match(cssCode, /consultation-mode-integrated[\s\S]*#opd_rx_compact_block/, 'Must style prescription table in integrated mode');
 });

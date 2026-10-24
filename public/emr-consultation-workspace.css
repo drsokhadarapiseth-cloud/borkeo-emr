@@ -1,5 +1,5 @@
 /**
- * Borkeo EMR v43.2.0 - Modern Clinical Consultation Workspace
+ * Borkeo EMR v43.3.0 - Integrated Clinical Consultation Workspace
  * Screen presentation layer aligned with WCAG 2.2 AA & IEC 62366-1.
  * Screen only: existing paper printing templates remain 100% intact.
  */
@@ -46,12 +46,90 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
+/* Top Bar: Title & View Mode Selector */
+.consultation-card-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
 .consultation-heading {
   font-size: 20px;
   font-weight: 800;
   color: var(--cw-text-main);
-  margin: 0 0 18px;
+  margin: 0;
   line-height: 1.35;
+}
+
+.cw-view-mode-bar {
+  display: inline-flex;
+  background: var(--cw-bg-soft);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 4px;
+  border: 1px solid var(--cw-border);
+}
+
+.cw-view-mode-btn {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--cw-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  transition: all 0.15s ease-in-out;
+}
+
+.cw-view-mode-btn:hover {
+  color: var(--cw-text-main);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.cw-view-mode-btn.is-active {
+  background: #ffffff;
+  color: var(--cw-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+/* Classic Return Bar */
+.cw-classic-return-bar {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--cw-radius-input);
+  padding: 10px 16px;
+  margin: 12px 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cw-btn-return-integrated {
+  background: var(--cw-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  transition: background-color 0.15s;
+}
+
+.cw-btn-return-integrated:hover {
+  background: var(--cw-primary-hover);
 }
 
 .consultation-label {
@@ -121,38 +199,33 @@
 
 .vital-metric-label {
   font-size: 11px;
+  font-weight: 700;
   color: var(--cw-text-muted);
-  font-weight: 600;
-  line-height: 1.25;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  line-height: 1.3;
 }
 
 .vital-metric-input {
   width: 100%;
-  background: #ffffff;
   border: 1px solid var(--cw-border-input);
   border-radius: 6px;
-  padding: 6px 4px;
-  font-size: 14px;
+  background: #ffffff;
+  font-size: 14.5px;
   font-weight: 700;
-  color: var(--cw-text-main);
+  color: var(--cw-primary);
   text-align: center;
+  padding: 6px 4px;
   box-sizing: border-box;
   font-family: inherit;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s;
 }
 
 .vital-metric-input:focus {
   border-color: var(--cw-primary);
   outline: none;
-  box-shadow: 0 0 0 2px rgba(8, 127, 168, 0.18);
+  box-shadow: 0 0 0 2px rgba(8, 127, 168, 0.15);
 }
 
-/* 2-Column Clinical Rows */
+/* Form Fields Rows */
 .consultation-fields-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -171,29 +244,29 @@
   border-radius: var(--cw-radius-input);
   padding: 10px 14px;
   font-size: 13.5px;
-  line-height: 1.55;
+  line-height: 1.5;
   color: var(--cw-text-body);
   background: #ffffff;
-  min-height: 124px;
+  min-height: 96px;
   box-sizing: border-box;
   font-family: inherit;
   resize: vertical;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-/* Action Bar */
+/* Actions Bar */
 .consultation-actions-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 22px;
+  margin-top: 24px;
   padding-top: 18px;
   border-top: 1px solid var(--cw-border);
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-/* NPCA Switch Toggle */
+/* NPCA Switch */
 .npca-toggle-group {
   display: inline-flex;
   align-items: center;
@@ -203,9 +276,9 @@
 }
 
 .npca-toggle-label {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
-  color: #334155;
+  color: var(--cw-text-body);
 }
 
 .cw-switch {
@@ -213,25 +286,28 @@
   display: inline-block;
   width: 44px;
   height: 24px;
-  flex-shrink: 0;
 }
 
 .cw-switch input {
   opacity: 0;
   width: 0;
   height: 0;
+  position: absolute;
 }
 
 .cw-slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #cbd5e1;
+  transition: .2s;
   border-radius: 24px;
-  transition: background-color 0.2s ease;
 }
 
-.cw-slider::before {
+.cw-slider:before {
   position: absolute;
   content: "";
   height: 18px;
@@ -239,8 +315,8 @@
   left: 3px;
   bottom: 3px;
   background-color: white;
+  transition: .2s;
   border-radius: 50%;
-  transition: transform 0.2s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
@@ -248,76 +324,61 @@
   background-color: var(--cw-primary);
 }
 
-.cw-switch input:checked + .cw-slider::before {
+.cw-switch input:checked + .cw-slider:before {
   transform: translateX(20px);
 }
 
 .cw-info-bubble {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 1.5px solid #94a3b8;
-  color: #64748b;
-  font-size: 11px;
+  color: var(--cw-text-muted);
+  font-size: 13px;
   font-weight: bold;
-  cursor: help;
-  line-height: 1;
 }
 
-/* Buttons */
+/* Action Buttons */
 .consultation-buttons-group {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
 }
 
 .btn-consultation-save {
   background: var(--cw-primary);
   color: #ffffff;
-  border: 0;
+  border: none;
   border-radius: var(--cw-radius-input);
-  padding: 9px 20px;
+  padding: 10px 22px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: background-color 0.15s, opacity 0.15s;
   font-family: inherit;
+  transition: background-color 0.15s;
 }
 
 .btn-consultation-save:hover {
   background: var(--cw-primary-hover);
 }
 
-.btn-consultation-save:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
 .btn-consultation-print {
-  background: #ffffff;
-  color: #334155;
+  background: #f1f5f9;
+  color: var(--cw-text-body);
   border: 1px solid var(--cw-border-input);
   border-radius: var(--cw-radius-input);
-  padding: 9px 18px;
+  padding: 10px 20px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: background-color 0.15s;
   font-family: inherit;
+  transition: background-color 0.15s;
 }
 
 .btn-consultation-print:hover {
-  background: #f1f5f9;
+  background: #e2e8f0;
 }
 
 .consultation-actions-dropdown-wrap {
@@ -327,35 +388,35 @@
 
 .btn-consultation-other {
   background: #ffffff;
-  color: #334155;
+  color: var(--cw-text-body);
   border: 1px solid var(--cw-border-input);
   border-radius: var(--cw-radius-input);
-  padding: 9px 16px;
+  padding: 10px 16px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: background-color 0.15s;
   font-family: inherit;
+  transition: background-color 0.15s;
 }
 
 .btn-consultation-other:hover {
-  background: #f1f5f9;
+  background: #f8fafc;
 }
 
 .consultation-menu {
   position: absolute;
+  top: calc(100% + 6px);
   right: 0;
-  bottom: calc(100% + 6px);
   background: #ffffff;
-  border: 1px solid var(--cw-border-input);
+  border: 1px solid var(--cw-border);
   border-radius: var(--cw-radius-input);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   min-width: 220px;
-  z-index: 1000;
-  overflow: hidden;
+  z-index: 50;
+  padding: 6px 0;
   display: flex;
   flex-direction: column;
 }
@@ -365,29 +426,24 @@
 }
 
 .consultation-menu-item {
-  width: 100%;
+  background: none;
+  border: none;
+  padding: 9px 16px;
   text-align: left;
-  padding: 10px 14px;
   font-size: 13.5px;
   font-weight: 600;
-  color: #1e293b;
-  background: transparent;
-  border: 0;
+  color: var(--cw-text-body);
   cursor: pointer;
-  font-family: inherit;
-  transition: background-color 0.12s;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  font-family: inherit;
+  width: 100%;
 }
 
 .consultation-menu-item:hover {
-  background: #f1f5f9;
+  background: var(--cw-bg-soft);
   color: var(--cw-primary);
-}
-
-.consultation-menu-item:not(:last-child) {
-  border-bottom: 1px solid #f1f5f9;
 }
 
 /* Right Card: Tasks Checklist */
@@ -395,7 +451,7 @@
   background: var(--cw-surface);
   border: 1px solid var(--cw-border);
   border-radius: var(--cw-radius-card);
-  padding: 18px;
+  padding: 20px 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
@@ -407,40 +463,32 @@
 }
 
 .tasks-card-title {
-  margin: 0;
   font-size: 16px;
   font-weight: 800;
   color: var(--cw-text-main);
-  line-height: 1.35;
+  margin: 0;
 }
 
 .tasks-collapse-btn {
-  background: transparent;
-  border: 0;
+  background: none;
+  border: none;
   color: var(--cw-text-muted);
   cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-}
-
-.tasks-collapse-btn:hover {
-  color: var(--cw-text-main);
+  padding: 4px 6px;
+  font-size: 14px;
 }
 
 .tasks-progress-summary {
   font-size: 12.5px;
+  font-weight: 700;
   color: var(--cw-text-muted);
-  font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .tasks-progress-track {
-  height: 8px;
+  height: 6px;
   background: #e2e8f0;
-  border-radius: 999px;
+  border-radius: 3px;
   overflow: hidden;
   margin-bottom: 16px;
 }
@@ -448,9 +496,8 @@
 .tasks-progress-fill {
   height: 100%;
   background: var(--cw-primary);
-  border-radius: 999px;
+  border-radius: 3px;
   transition: width 0.3s ease;
-  width: 50%;
 }
 
 .tasks-list {
@@ -464,22 +511,21 @@
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid #f1f5f9;
   background: var(--cw-bg-soft);
+  border: 1px solid var(--cw-border);
+  border-radius: var(--cw-radius-input);
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 
 .task-item:hover {
   background: #f1f5f9;
-  border-color: var(--cw-border-input);
-  transform: translateX(2px);
+  border-color: #cbd5e1;
 }
 
 .task-item-icon {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -541,22 +587,91 @@
   flex-shrink: 0;
 }
 
-/* Hide legacy redundant sections on screen when modern workspace is active */
+/* Screen View Modes: Integrated, Compact, Classic */
 @media screen {
-  body:not(.print-mode) .modern-consultation-active #opd_soap_record {
+  /* Common: Hide duplicate legacy elements */
+  body:not(.print-mode).modern-consultation-active #sub_opd > .moul-font[data-key="opd_title"] {
     display: none !important;
   }
-  body:not(.print-mode) .modern-consultation-active .opd-patient-banner {
+  body:not(.print-mode).modern-consultation-active .opd-patient-banner {
     display: none !important;
   }
-  body:not(.print-mode) .modern-consultation-active #sub_opd > .moul-font[data-key="opd_title"] {
+  body:not(.print-mode).modern-consultation-active #sub_opd > .action-bar {
     display: none !important;
   }
-  body:not(.print-mode) .modern-consultation-active #sub_opd > .action-bar {
+  body:not(.print-mode).modern-consultation-active #sub_opd > .emr-save-bar {
     display: none !important;
   }
-  body:not(.print-mode) .modern-consultation-active #opd-doctor-esign {
+
+  /* Compact Mode: Hide old form completely */
+  body:not(.print-mode).consultation-mode-compact #opd_soap_record {
     display: none !important;
+  }
+  body:not(.print-mode).consultation-mode-compact #opd-doctor-esign {
+    display: none !important;
+  }
+
+  /* Integrated Mode (Default): Style old form sections as integrated modules below modern card */
+  body:not(.print-mode).consultation-mode-integrated #opd_soap_record {
+    display: flex !important;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 20px;
+  }
+  body:not(.print-mode).consultation-mode-integrated .emr-soap-record-box {
+    background: #ffffff;
+    border: 1px solid var(--cw-border);
+    border-radius: var(--cw-radius-card);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    padding: 20px 24px;
+  }
+  body:not(.print-mode).consultation-mode-integrated .emr-tb-screening {
+    background: var(--cw-bg-soft);
+    border: 1px solid var(--cw-border);
+    border-radius: var(--cw-radius-input);
+    padding: 14px 16px;
+    margin: 10px 0;
+  }
+  body:not(.print-mode).consultation-mode-integrated #opd_rx_compact_block {
+    background: #ffffff;
+    border: 1px solid var(--cw-border);
+    border-radius: var(--cw-radius-input);
+    padding: 16px;
+  }
+  body:not(.print-mode).consultation-mode-integrated #opd-doctor-esign {
+    display: block !important;
+    background: #ffffff;
+    border: 1px solid var(--cw-border);
+    border-radius: var(--cw-radius-card);
+    padding: 16px 24px;
+    margin-top: 16px;
+  }
+  /* In integrated view, suppress duplicate raw vitals row in SOAP O (since modern cards show them) */
+  body:not(.print-mode).consultation-mode-integrated #opd_soap_o_body > .opd-section:first-child > div:first-of-type {
+    display: none !important;
+  }
+
+  /* Classic Mode: Hide modern workspace, show classic form completely */
+  body:not(.print-mode).consultation-mode-classic #emr-consultation-workspace {
+    display: none !important;
+  }
+  body:not(.print-mode).consultation-mode-classic #sub_opd > .moul-font[data-key="opd_title"] {
+    display: block !important;
+  }
+  body:not(.print-mode).consultation-mode-classic .opd-patient-banner {
+    display: flex !important;
+  }
+  body:not(.print-mode).consultation-mode-classic #sub_opd > .action-bar {
+    display: flex !important;
+  }
+  body:not(.print-mode).consultation-mode-classic #sub_opd > .emr-save-bar {
+    display: flex !important;
+  }
+  body:not(.print-mode).consultation-mode-classic #opd_soap_record {
+    display: block !important;
+  }
+  body:not(.print-mode).consultation-mode-classic #opd-doctor-esign {
+    display: block !important;
   }
 }
 
@@ -584,7 +699,9 @@
 
 /* Print Isolation: 100% untouched print layout */
 @media print {
-  .emr-consultation-workspace {
+  .emr-consultation-workspace,
+  .cw-classic-return-bar,
+  .cw-view-mode-bar {
     display: none !important;
   }
 }

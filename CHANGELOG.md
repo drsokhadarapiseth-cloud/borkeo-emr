@@ -1,3 +1,13 @@
+## 43.3.0 - Integrated clinical consultation and legacy form workspace
+
+Seamlessly integrates the modern consultation workspace (vitals metric cards, HPI/PE, quick diagnosis & treatment plan, actions, tasks checklist) with the detailed clinical hospital forms:
+- 3 View Modes with instant switching: «ទម្រង់រួមបញ្ចូលគ្នា» (Integrated Form - default), «ទម្រង់សង្ខេប» (Modern Compact View), and «ទម្រង់ពិស្ដារពេញលេញ» (Full Classic Form View).
+- In Integrated View: Modern card displays at top, with TB Screening Matrix (ការពិនិត្យស្វែងរកជំងឺរបេង), ICD-10 multi-diagnosis picker, full medication prescription table (តារាងវេជ្ជបញ្ជាឱសថ), paraclinic investigation builder, and doctor e-signature embedded seamlessly below with unified rounded card styling.
+- Two-way live synchronization across modern inputs and frozen legacy storage fields (`data-emr-transient` and `data-emr-no-save`).
+- Dropdown action «បញ្ចូលវេជ្ជបញ្ជាទៅក្នុងផែនការ» formats prescribed medicines into the treatment plan notes.
+- Quick return bar in classic view to switch back immediately.
+- 100% preservation of authentic A4 paper printing templates and frozen patient data. See docs/ui-43.3.md.
+
 ## 43.2.0 - Modern patient record consultation workspace
 
 Modern clinical consultation workspace matching requested UI design: 2-column consultation interface with chief complaint, vital signs metric cards, HPI, physical exam, diagnosis, treatment plan, NPCA certification toggle, and action buttons. Interactive tasks checklist widget tracking real-time documentation completion. Patient banner and 6 record navigation tabs. All existing clinical data, frozen storage keys, and paper printout templates preserved. See docs/ui-43.2.md for details.

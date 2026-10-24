@@ -1,5 +1,5 @@
 /**
- * Borkeo EMR v43.2.0 - Modern Clinical Consultation Workspace Controller
+ * Borkeo EMR v43.3.0 - Integrated Clinical Consultation Workspace Controller
  * Aligned with WCAG 2.2 AA and IEC 62366-1.
  * Screen presentation layer providing two-way sync with frozen form fields.
  */
@@ -9,12 +9,65 @@
 (function initConsultationWorkspace() {
   if (typeof window === 'undefined') return;
 
+  const VIEW_MODE_KEY = 'borkeo_consultation_view_mode';
+  let currentViewMode = 'integrated';
+
   function isConsultationActive() {
     return window.location.pathname === '/emr' && Boolean(document.getElementById('sub_opd'));
   }
 
-  function escapeHtml(str) {
-    return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  function getViewMode() {
+    try {
+      const mode = localStorage.getItem(VIEW_MODE_KEY);
+      if (mode === 'compact' || mode === 'classic' || mode === 'integrated') return mode;
+      return 'integrated';
+    } catch {
+      return 'integrated';
+    }
+  }
+
+  function setViewMode(mode) {
+    currentViewMode = mode;
+    try {
+      localStorage.setItem(VIEW_MODE_KEY, mode);
+    } catch {}
+
+    const body = document.body;
+    body.classList.remove('consultation-mode-integrated', 'consultation-mode-compact', 'consultation-mode-classic');
+    body.classList.add(`consultation-mode-${mode}`);
+
+    document.querySelectorAll('.cw-view-mode-btn').forEach(btn => {
+      const active = btn.dataset.viewMode === mode;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-pressed', String(active));
+    });
+
+    ensureClassicReturnBar(mode === 'classic');
+  }
+
+  function ensureClassicReturnBar(show) {
+    let bar = document.getElementById('cw_classic_return_bar');
+    if (show) {
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'cw_classic_return_bar';
+        bar.className = 'cw-classic-return-bar no-print';
+        bar.innerHTML = `
+          <button type="button" class="cw-btn-return-integrated" id="cw_btn_return_integrated">
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+            <span>ត្រឡប់ទៅទម្រង់រួមបញ្ចូលគ្នា</span>
+          </button>
+        `;
+        const host = document.getElementById('sub_opd');
+        if (host) host.prepend(bar);
+        bar.querySelector('#cw_btn_return_integrated')?.addEventListener('click', () => {
+          setViewMode('integrated');
+        });
+      }
+      bar.hidden = false;
+    } else if (bar) {
+      bar.hidden = true;
+    }
   }
 
   // 1. Build the Modern Consultation Workspace HTML
@@ -30,7 +83,23 @@
       <div class="emr-consultation-grid">
         <!-- Left: Clinical Consultation Form Card -->
         <article class="emr-consultation-card">
-          <h2 class="consultation-heading">ការពិនិត្យព្យាបាល</h2>
+          <div class="consultation-card-top-bar">
+            <h2 class="consultation-heading">ការពិនិត្យព្យាបាល</h2>
+            <div class="cw-view-mode-bar" role="group" aria-label="ទម្រង់បង្ហាញ">
+              <button type="button" class="cw-view-mode-btn is-active" id="cw_mode_integrated" data-view-mode="integrated" aria-pressed="true" title="ទម្រង់រួមបញ្ចូលគ្នា">
+                <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                <span>ទម្រង់រួមបញ្ចូលគ្នា</span>
+              </button>
+              <button type="button" class="cw-view-mode-btn" id="cw_mode_compact" data-view-mode="compact" aria-pressed="false" title="ទម្រង់សង្ខេប">
+                <i class="fa-solid fa-table-columns" aria-hidden="true"></i>
+                <span>ទម្រង់សង្ខេប</span>
+              </button>
+              <button type="button" class="cw-view-mode-btn" id="cw_mode_classic" data-view-mode="classic" aria-pressed="false" title="ទម្រង់ពិស្ដារពេញលេញ">
+                <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+                <span>ទម្រង់ពិស្ដារពេញលេញ</span>
+              </button>
+            </div>
+          </div>
 
           <!-- Chief Complaint -->
           <div class="consultation-field-wrap">
@@ -193,6 +262,10 @@
                   <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                 </button>
                 <div class="consultation-menu" id="consultation_menu_actions" hidden>
+                  <button type="button" class="consultation-menu-item" data-action="insert-rx-to-plan">
+                    <i class="fa-solid fa-file-prescription" aria-hidden="true"></i>
+                    <span>បញ្ចូលវេជ្ជបញ្ជាទៅក្នុងផែនការ</span>
+                  </button>
                   <button type="button" class="consultation-menu-item" data-action="print-rx">
                     <i class="fa-solid fa-prescription" aria-hidden="true"></i>
                     <span>បោះពុម្ពវេជ្ជបញ្ជា</span>
@@ -284,10 +357,18 @@
     attachEventListeners(workspace);
     syncFromLegacy();
     updateChecklist();
+    setViewMode(getViewMode());
   }
 
   // 2. Attach Interactive Listeners & Live Two-Way Sync
   function attachEventListeners(workspace) {
+    // View mode switcher buttons
+    workspace.querySelectorAll('.cw-view-mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setViewMode(btn.dataset.viewMode);
+      });
+    });
+
     // Chief Complaint sync
     const modernCc = workspace.querySelector('#consultation_chief_complaint');
     if (modernCc) {
@@ -452,7 +533,9 @@
           menuEl.setAttribute('hidden', '');
           otherBtn.setAttribute('aria-expanded', 'false');
           const action = item.dataset.action;
-          if (action === 'print-rx' && typeof window.printSignedOpdPrescription === 'function') {
+          if (action === 'insert-rx-to-plan') {
+            insertPrescriptionsToPlan();
+          } else if (action === 'print-rx' && typeof window.printSignedOpdPrescription === 'function') {
             window.printSignedOpdPrescription();
           } else if (action === 'print-admission' && typeof window.printAdmissionOnly === 'function') {
             window.printAdmissionOnly();
@@ -467,6 +550,44 @@
           }
         });
       });
+    }
+
+    // Helper: Insert prescribed medicines into plan textarea
+    function insertPrescriptionsToPlan() {
+      const rows = document.querySelectorAll('#opd_rx_table tbody tr');
+      const medLines = [];
+      rows.forEach(tr => {
+        const nameInput = tr.querySelector('input[type="text"][list]') || tr.querySelector('input[type="text"]');
+        const medName = nameInput?.value?.trim();
+        if (medName) {
+          const dose = tr.querySelector('[data-col="dose"] input, .opd-rx-dose')?.value?.trim();
+          const route = tr.querySelector('[data-col="route"] select, .opd-rx-route')?.value?.trim();
+          const sched = tr.querySelector('[data-col="schedule"] select, .opd-rx-schedule')?.value?.trim();
+          const dur = tr.querySelector('[data-col="dur"] input, .opd-rx-dur')?.value?.trim();
+          const qty = tr.querySelector('[data-col="qty"] input, .opd-rx-qty')?.value?.trim();
+          let line = `- ${medName}`;
+          const details = [dose, route, sched, dur ? `${dur}ថ្ងៃ` : '', qty ? `សរុប ${qty}` : ''].filter(Boolean).join(', ');
+          if (details) line += ` (${details})`;
+          medLines.push(line);
+        }
+      });
+
+      if (medLines.length > 0) {
+        const planEl = workspace.querySelector('#consultation_plan');
+        if (planEl) {
+          const current = planEl.value.trim();
+          const header = 'ឱសថព្យាបាល៖';
+          const newBlock = `${header}\n${medLines.join('\n')}`;
+          if (current.includes(header)) {
+            planEl.value = current + '\n\n' + newBlock;
+          } else {
+            planEl.value = current ? `${current}\n\n${newBlock}` : newBlock;
+          }
+          planEl.dispatchEvent(new Event('input', { bubbles: true }));
+          planEl.dispatchEvent(new Event('change', { bubbles: true }));
+          updateChecklist();
+        }
+      }
     }
 
     // Tasks checklist collapse toggle
@@ -501,6 +622,27 @@
         }
       });
     });
+
+    // Listen to legacy fields changes to update modern inputs dynamically
+    const legacyDiag = document.getElementById('emr_pmrs_opd_diagnosis');
+    if (legacyDiag) {
+      legacyDiag.addEventListener('input', () => {
+        if (modernDiag && modernDiag.value !== legacyDiag.value) {
+          modernDiag.value = legacyDiag.value;
+          updateChecklist();
+        }
+      });
+    }
+
+    const legacyPlan = document.getElementById('opd_plan_notes');
+    if (legacyPlan) {
+      legacyPlan.addEventListener('input', () => {
+        if (modernPlan && modernPlan.value !== legacyPlan.value) {
+          modernPlan.value = legacyPlan.value;
+          updateChecklist();
+        }
+      });
+    }
   }
 
   // 3. Sync initial/loaded data from legacy inputs into modern inputs
@@ -749,6 +891,8 @@
   window.EmrConsultationWorkspace = {
     init,
     syncFromLegacy,
-    updateChecklist
+    updateChecklist,
+    setViewMode,
+    getViewMode: () => currentViewMode
   };
 })();

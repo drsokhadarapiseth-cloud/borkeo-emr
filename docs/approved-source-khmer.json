@@ -3620,6 +3620,51 @@
       "kh": "ដង្ហើម",
       "key": "file:public/emr-consultation-workspace.js",
       "source": "v43.2 owner mockup requested strings"
+    },
+    {
+      "kh": "ទម្រង់រួមបញ្ចូលគ្នា",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.3 owner requested integrated form strings"
+    },
+    {
+      "kh": "ទម្រង់សង្ខេប",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.3 owner requested integrated form strings"
+    },
+    {
+      "kh": "ទម្រង់ពិស្ដារពេញលេញ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.3 owner requested integrated form strings"
+    },
+    {
+      "kh": "ផ្នែកពិនិត្យលម្អិតបន្ថែម",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.3 owner requested integrated form strings"
+    },
+    {
+      "kh": "បញ្ចូលវេជ្ជបញ្ជាទៅក្នុងផែនការ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.3 owner requested integrated form strings"
+    },
+    {
+      "kh": "ការពិនិត្យស្វែងរកជំងឺរបេង",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.3 owner requested integrated form strings"
+    },
+    {
+      "kh": "តារាងវេជ្ជបញ្ជាឱសថ",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.3 owner requested integrated form strings"
+    },
+    {
+      "kh": "ត្រឡប់ទៅទម្រង់រួមបញ្ចូលគ្នា",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.3 owner requested integrated form strings"
+    },
+    {
+      "kh": "ឱសថព្យាបាល៖",
+      "key": "file:public/emr-consultation-workspace.js",
+      "source": "v43.3 owner requested integrated form strings"
     }
   ]
 }
