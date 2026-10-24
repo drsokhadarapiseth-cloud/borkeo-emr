@@ -1,3 +1,11 @@
+## v42.9.0 - Login and work-context recovery
+
+- Disable work-context submission until the session is loaded; offer an explicit retry after network/server failures.
+- Refresh cookie-bound CSRF before selection, recover expired sessions, and reject a selection if the browser account changed.
+- Show safe Khmer errors for login/context failures without exposing backend exception text; retain backend authorization and CSRF enforcement.
+- Make two legacy demo assertions seed isolated in-memory fixtures instead of opening a local demo database.
+- Add synthetic behavior and explicit Chromium coverage. See docs/ai-handoff for verified scope and the remaining master requirements; this release does not complete the master task.
+
 ## v42.8.0 (NPCA v1.4 clinical payment-certification integration, disabled by default)
 - Adds configurable NPCA endpoints, OAuth token cache/refresh, beneficiary selection and verified SPID links, official Excel reference mappings, local visit payload validation, durable authorized submission queue, retry/reconciliation, processing-status polling and review pages.
 - Adds optional NPCA assessment/referral fields, record/Billing status badges, and small server-authenticated metadata on changed daily notes. Existing clinical, stock and financial calculations are preserved.

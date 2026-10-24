@@ -97,7 +97,7 @@ test('v39.9 sign-in page shows a Khmer change-password form instead of redirecti
   assert.match(html, /<form id="password-change-form"[^>]*hidden/);
   assert.match(html, /ប្តូរពាក្យសម្ងាត់/);
   assert.match(html, /id="password-change-next"[^>]*autocomplete="new-password"/);
-  assert.match(html, /login\.js\?v=3990/);
+  assert.match(html, /login\.js\?v=4290/);
   assert.doesNotMatch(html, /<script>(?!<\/script>)/, 'no inline scripts (CSP)');
   assert.match(script, /result\.mustChangePassword[\s\S]*showPasswordChange/);
   assert.match(script, /result\.user\?\.mustChangePassword\) \{ showPasswordChange/);

@@ -1920,6 +1920,11 @@
       "kh": "តំណលិខិតបញ្ជូន",
       "en": "NPCA referral 346",
       "key": "npca.346"
+    },
+    {
+      "en": "Retry context session loading",
+      "kh": "ព្យាយាមម្តងទៀត",
+      "key": "context.retry"
     }
   ]
 }

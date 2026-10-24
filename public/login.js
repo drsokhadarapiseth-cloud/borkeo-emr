@@ -231,7 +231,7 @@ form.addEventListener('submit', async event => {
         : { username: username.value, password: password.value }),
     });
     const result = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(result.error || 'មិនអាចចូលប្រព័ន្ធបានទេ។');
+    if (!response.ok) throw new Error('មិនអាចចូលប្រព័ន្ធបានទេ។');
     if (result.mustChangePassword) {
       showPasswordChange(result.user, password.value);
       password.value = '';
@@ -243,7 +243,7 @@ form.addEventListener('submit', async event => {
   } catch (error) {
     setStatus(error.message === 'Failed to fetch'
       ? 'មិនអាចភ្ជាប់ទៅម៉ាស៊ីនមេបានទេ។'
-      : error.message);
+      : 'មិនអាចចូលប្រព័ន្ធបានទេ។');
     password.value = '';
     (demoMode ? username : password).focus();
   } finally {
