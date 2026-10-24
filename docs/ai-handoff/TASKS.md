@@ -3,7 +3,7 @@ Source requirements: BORKEO_EMR_MASTER_TASK.txt sections 1-10 and acceptance lis
 - CONT-01 VERIFIED: create five checkpoints and reconcile baseline.
 - AUTH-01 VERIFIED: local login/context network recovery, cookie persistence, fresh CSRF, session expiry/account change and safe Khmer errors; synthetic Chromium/API coverage with NPCA disabled. Deployment fault is separate AUTH-02.
 - AUTH-02 TODO: obtain actual deployment request URL/status/origin/proxy/browser evidence for the reported screenshot; do not equate local reproduction with production resolution. Continue ACCESS-01 independently.
-- ACCESS-01 TODO: inventory all roles, contexts, navigation/actions and authorized/denied direct API matrix; audit findings with reproductions.
+- ACCESS-01 IN_PROGRESS: inventory all roles, contexts, navigation/actions and authorized/denied direct API matrix; audit findings with reproductions.
 - ROLE-01 TODO: separate Obstetric/Gynecology doctors; explicit authorized midwife contexts; clinical routing and distinct miscarriage diagnoses.
 - GYN-01 TODO: nursing assessment then valid bed placement; durable doctor task, explicit acknowledgement and service scoping.
 - GYN-02 TODO: retries/restarts/unassigned doctors/transfers/audit and urgent escalation before bed; reconcile later placement.
@@ -20,3 +20,8 @@ Source requirements: BORKEO_EMR_MASTER_TASK.txt sections 1-10 and acceptance lis
 - RELEASE-02 TODO: bump visible/package version once for completed approved update; combined Antigravity update with manifest; safe staged review, verified commit/push; installation guidance.
 
 - REL429-01 VERIFIED: 42.8.0 -> 42.9.0 local recovery increment; full 974/974 tests, Khmer and Chromium pass; combined patch reverse/forward checks pass. Code commit c858abe2b51bda86bc59738c1657f542dc9cac12 pushed to origin/master; publication VERIFIED. RELEASE-01/02 above refer to full master acceptance, still TODO.
+
+- ACCESS-01A VERIFIED: built-in role/context/menu/page/API-module source inventory in docs/access-audit.md;15roles/19contexts representative HTTP and Chromium checks. Live custom assignments intentionally not inspected.
+- ACCESS-01B VERIFIED: focused doctor cross-service order read/create and specialist direct order/attachment modality fixes; targeted tests pass. Preserve emergency/transfer exceptions and explicit multi-ward selection.
+- ACCESS-01C TODO: remaining action/endpoint review, forms/search/filter/save/reopen, maternal referral signer scoping, notifications, specialist pages and full print inventory/visual verification. Parent ACCESS-01 remains IN_PROGRESS.
+- REL430-01 IMPLEMENTED_UNVERIFIED:43.0 incremental access fixes VERIFIED(full976/976,Khmer,Chromium,patch checks PASS); publication pending. Parent ACCESS-01/remaining master tasks remain unfinished.

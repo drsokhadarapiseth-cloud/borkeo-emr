@@ -21,7 +21,7 @@ test('photo persistence reports its new version; stale saves and another ward ca
  const origin='http://127.0.0.1:32719';const app=createEmrServer({demoMode:true,host:'127.0.0.1',port:32719,appOrigin:origin,databasePath:':memory:',autoDatabase:false,nodeEnv:'test'});await new Promise(r=>app.server.listen(32719,'127.0.0.1',r));
  try {
   async function login(username){const r=await fetch(origin+'/api/auth/login',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({username})});assert.equal(r.status,200);const Cookie=r.headers.get('set-cookie').split(';')[0];const me=await(await fetch(origin+'/api/auth/me',{headers:{Cookie}})).json();return {Cookie,Origin:origin,'Content-Type':'application/json','X-CSRF-Token':me.csrfToken}}
-  const admin=await login('admin'),doctor=await login('doctor_medicine'),nurse=await login('nurse_medicine');
+  const admin=await login('admin'),doctor=await login('doctor_surgery'),otherDoctor=await login('doctor_medicine'),nurse=await login('nurse_medicine');
   const call=(path,method,headers,body)=>fetch(origin+path,{method,headers,body:JSON.stringify(body)});
   const key='case:CATCHUP309',summary={caseNumber:'CATCHUP309',healthId:'PATIENT-309',fullName:'Original Requisition Patient',sex:'ប្រុស',age:'35',dateOfBirth:'1991-03-04',departmentCode:'surgery',departmentNameKh:'វះកាត់',serviceMode:'ipd',entryDate:new Date().toISOString().slice(0,10)};
   let r=await call('/api/patient-record','PUT',admin,{patientKey:key,summary,data:{'scope:registration:id:web_village':'Original Village'}});assert.equal(r.status,200);let version=(await r.json()).patient.version;
@@ -30,8 +30,9 @@ test('photo persistence reports its new version; stale saves and another ward ca
   r=await call('/api/patient-photo','POST',admin,{patientKey:key,photo,expectedVersion:version});assert.equal(r.status,200);const saved=await r.json();assert.equal(saved.patientVersion,version+1);
   r=await call('/api/patient-photo','POST',admin,{patientKey:key,photo,expectedVersion:version});assert.equal(r.status,409);
   r=await call('/api/patient-record','PUT',admin,{patientKey:key,summary,expectedVersion:saved.patientVersion,data:{'scope:medical:id:emr_pmrs_ipd_diagnosis':'Follow-up diagnosis'}});assert.equal(r.status,200,await r.clone().text());
+  r=await call('/api/paraclinic/orders','POST',otherDoctor,{patientKey:key,modality:'LAB',request:{items:[{code:'HGB'}]}});assert.equal(r.status,403,'a doctor in another ward cannot create the order');
   r=await call('/api/paraclinic/orders','POST',doctor,{patientKey:key,modality:'LAB',request:{items:[{code:'HGB'}],clinicalInfo:'Original diagnosis',patientSnapshot:{fullName:'FORGED'},requesterSignature:{signerName:'FORGED'}}});assert.equal(r.status,201,await r.clone().text());const order=(await r.json()).order;
-  assert.equal(order.request.patientSnapshot.fullName,summary.fullName);assert.equal(order.request.patientSnapshot.dateOfBirth,summary.dateOfBirth);assert.equal(order.request.patientSnapshot.village,'Original Village');assert.equal(order.request.requesterSignature.username,'doctor_medicine');assert.ok(order.request.requesterSignature.signatureDataUrl);
+  assert.equal(order.request.patientSnapshot.fullName,summary.fullName);assert.equal(order.request.patientSnapshot.dateOfBirth,summary.dateOfBirth);assert.equal(order.request.patientSnapshot.village,'Original Village');assert.equal(order.request.requesterSignature.username,'doctor_surgery');assert.ok(order.request.requesterSignature.signatureDataUrl);
   r=await call('/api/lab-catalog/HGB','PATCH',admin,{active:false});assert.equal(r.status,200);
   r=await call('/api/paraclinic/orders','POST',doctor,{patientKey:key,modality:'LAB',request:{items:[{code:'HGB'},{code:'GLU'}]}});assert.equal(r.status,400,'must reject the whole unavailable selection instead of silently removing HGB');
   r=await call('/api/imaging-catalog/CT','PATCH',admin,{active:false});assert.equal(r.status,200);

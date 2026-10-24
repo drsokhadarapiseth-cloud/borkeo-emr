@@ -1,3 +1,10 @@
+## v43.0.0 - Scoped paraclinic access and role audit
+
+- Enforce existing patient access for doctors creating or directly reading laboratory/imaging orders; keep Obstetric and Gynecology active contexts separate.
+- Match direct specialist order and attachment reads to the modality restrictions already used by their worklists.
+- Add synthetic cross-service, multi-ward selection, attachment and all-role menu/API regressions; inventory role contexts, 37 protected pages and API modules in docs/access-audit.md.
+- Preserve existing emergency/transfer exceptions, permissions, clinical/financial logic and stored data. No migration. Broader master-task workflows and full action/print verification remain pending in docs/ai-handoff.
+
 ## v42.9.0 - Login and work-context recovery
 
 - Disable work-context submission until the session is loaded; offer an explicit retry after network/server failures.

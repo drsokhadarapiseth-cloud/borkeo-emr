@@ -14,3 +14,11 @@ Release metadata updated consistently to 42.9.0 (package/login/server header and
 Additional release files: CHANGELOG.md, package.json, public/login.html, server/server.mjs, tests/accessibility-quality-smoke.test.mjs and tests/v399-password-change-loop.test.mjs (release metadata/cache expectation), docs/translations-needed.csv (new retry-label provenance). Fixes to translation insertion order/CSV are recorded in TEST_RESULTS. No unrelated source edits.
 
 Release 42.9.0 code committed as c858abe2b51bda86bc59738c1657f542dc9cac12 and pushed to origin/master. Patient data and all initial user-owned untracked files remain excluded. Next phase ACCESS-01; full master task remains incomplete. Handoff/publication records and combined-update snapshot refreshed after push; no runtime source edits.
+
+2026-10-24 08:44:46 +07:00 resume baseline ba812ed, version42.9.0. No live data/.env touched. No background process started. Prior untracked files preserved. Planned scope: access matrix, focused paraclinic permission regression fix/tests, release/checkpoint records.
+
+ACCESS-01: tests/access-audit.test.mjs added for cross-service direct reads/writes, no side effects on denial, own-service access and explicit multi-ward doctor context switch. server/routes/paraclinic.mjs aligns create/read/attachment permissions with existing patient and modality policies. No schema or data migration.
+
+Added docs/access-audit.md and scripts/write-access-audit.mjs: reproducible source inventory of15 built-in roles,19 representative contexts,37protected pages and API-module counts, with explicit incomplete-action boundaries/findings. Added tests/access-audit-browser.mjs and tests/helpers/access-audit-contexts.mjs. Metadata advances42.9->43.0 per decimal minor-step rule; public/login.html/server header/package/version smoke agree. scripts/build-v430-update.mjs prepares one safe allowlisted update from ba812ed. No new UI strings/dependencies/data migrations. Headless Edge test completed and closed; synthetic test logs/profile/attachment fixtures remain in TEMP.
+
+Updated tests/v309-release-catchup.test.mjs to order with Surgery context for its Surgery fixture, plus explicit cross-ward Medicine denial. No runtime-source changes after initial targeted/browser passes.
