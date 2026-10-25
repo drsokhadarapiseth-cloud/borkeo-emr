@@ -30,7 +30,10 @@
 
   function fieldList(root) {
     if (root.tagName === 'FORM') return Array.from(root.elements).filter(field => field.matches(controls));
-    return [ ...(root.matches?.(controls) ? [root] : []), ...root.querySelectorAll(controls) ];
+    return [ ...(root.matches?.(controls) ? [root] : []), ...root.querySelectorAll(controls) ].filter(field => {
+      const island = field.closest('[data-required-island]');
+      return !island || island === root || island.contains(root);
+    });
   }
 
   // Resolve visual asterisks at action time, so dynamic and conditional forms
@@ -148,7 +151,7 @@
     const doc = action.ownerDocument;
     const explicit = action.getAttribute('data-required-scope');
     if (explicit) { try { const scope = doc.querySelector(explicit); if (scope) return scope; } catch {} }
-    return action.form || action.closest('form,dialog,[role="dialog"],.modal-content') ||
+    return action.form || action.closest('[data-required-island]') || action.closest('form,dialog,[role="dialog"],.modal-content') ||
       action.closest('.sub-tab,.page') || action.closest('section,.panel,.card,main') || doc.body;
   }
 

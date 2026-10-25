@@ -41,6 +41,7 @@ test('only a successful new registration opens the card, before the transfer red
     const element = { classList: { contains: () => false } };
     const window = { emrSession: { user: { activeRole: 'REGISTRATION' } }, history: { replaceState() {} }, location: { href: 'http://localhost/emr', assign: () => calls.push('redirect') }, previewRegisteredPatientCard: () => { calls.push('preview'); return new Promise(resolve => { closePreview = resolve; }); } };
     const context = {
+      patientLoading: false,
       window, URL, CustomEvent: class {}, loadedPatient: scenario === 'existing' ? patient : null,
       registrationVisitSourceKey: scenario === 'returning' ? 'old-visit' : '',
       activeEditorScope: () => scenario === 'triage' ? 'triage' : 'registration',

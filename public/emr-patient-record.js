@@ -58,6 +58,8 @@
   let storagePrepared = false;
   let nursingOrganized = false;
   let loadedPatient = null;
+  let patientLoadGeneration = 0;
+  let patientLoading = false;
   let registrationVisitSourceKey = '';
   let currentSessionSignature = null;
   let editorHistory = [];
@@ -196,6 +198,7 @@
   }
 
   function storageScope(control) {
+    if (['pmrs_chief_complaint', 'pmrs_chief_complaint_items'].includes(control.id)) return 'triage';
     if (control.closest('#page1')) return 'registration';
     if (control.closest('#page2')) return 'triage';
     if (control.closest('#sub_nursing')) return 'nursing';
@@ -282,6 +285,7 @@
       }
     });
     document.querySelectorAll('[data-emr-storage-key]').forEach(control => {
+      if (control.dataset.sharedTriageId) return;
       const key = control.dataset.emrStorageKey;
       if (control.matches('input[type="checkbox"], input[type="radio"]')) {
         data[key] = control.checked;
@@ -1243,6 +1247,7 @@
   }
 
   async function savePatientRecord(options = {}) {
+    if (patientLoading) return false;
     if(window.EmrEncounterEditor?.canWrite()===false)return false;
     const requiredScope = options.transferToTriage ? document.getElementById('sub_reg') :
       document.querySelector('.page.active .sub-tab.active') || document.querySelector('.page.active');
@@ -1264,7 +1269,7 @@
       setStatus('error', doseError);
       return false;
     }
-    const validation = validatePatient(context, options);
+    const validation = validatePatient(context, { ...options, allowMissingDepartment: options.allowMissingDepartment || activeEditorScope() === 'registration' });
     if (validation) {
       setStatus('error', validation);
       window.alert(validation);
@@ -1290,6 +1295,8 @@
         body: JSON.stringify({
           submitOpdPrescription: options.submitOpdPrescription === true,
           transferToTriage: options.transferToTriage === true,
+          registrationOnly: activeEditorScope() === 'registration' && options.transferToTriage !== true,
+          sharedTriage: activeEditorScope() === 'medical' && activeSubTab === 'opd' ? window.EmrSharedEncounter?.changes() : undefined,
           editOnly: options.editOnly === true,
           triageSave: options.triageSave === true,
           triageEdit: options.triageEdit === true,
@@ -1325,7 +1332,9 @@
       if (String(window.emrSession?.user?.activeRole || '').toUpperCase() === 'TRIAGE') {
         const ward = getSelectedTriageWard();
         if (ward) {
-          if (ward === 'opd') {
+          if (ward === 'opd' && result.patient.workflowStage === 'OPD_PARACLINIC_ORDERING') {
+            window.alert('បានបញ្ជូនទៅគ្រូពេទ្យពិគ្រោះក្រៅដើម្បីកំណត់តេស្ត');
+          } else if (ward === 'opd') {
             window.alert('បានបញ្ជូនទៅបញ្ជរបង់ប្រាក់ដើម្បីពិគ្រោះជំងឺ');
           } else {
             window.alert(`បានបញ្ជូនអ្នកជំងឺទៅកាន់ ${ward} រួចរាល់ហើយ`);
@@ -1420,6 +1429,9 @@
 
   async function loadPatientRecord(patientKey) {
     if (!patientKey) return;
+    const loadGeneration = ++patientLoadGeneration;
+    patientLoading = true;
+    document.dispatchEvent(new CustomEvent('emr:patient-loading'));
     setStatus('loading', language() === 'khmer' ? 'កំពុងបើកទិន្នន័យ…' : 'Loading patient…');
     try {
       const response = await fetch(`/api/patient-record?patientKey=${encodeURIComponent(patientKey)}&readOnly=${new URLSearchParams(location.search).get('mode')==='edit'?'0':'1'}`, {
@@ -1431,16 +1443,20 @@
         setStatus('error', t('loadError'));
         return;
       }
+      if (loadGeneration !== patientLoadGeneration) return;
       loadedPatient = result.patient;
       restoreRecordData(result.patient.data || {});
+      await window.restorePatientAddress?.(result.patient.data || {}, () => loadGeneration === patientLoadGeneration);
+      if (loadGeneration !== patientLoadGeneration) return;
       if (result.patient.data?.['system:previousPatientKey']) {
         document.querySelectorAll('input[name="emr_pmrs_case_type"]').forEach(control => {control.checked=control.value==='old';control.disabled=true;});
         document.getElementById('web_health_id').readOnly=true;
       }
       restorePatientSex(result.patient);
-      window.requestAnimationFrame(() => restorePatientSex(result.patient));
-      window.setTimeout(() => restorePatientSex(result.patient), 100);
-      window.setTimeout(() => restorePatientSex(result.patient), 300);
+      const restoreCurrentSex = () => { if (loadGeneration === patientLoadGeneration) restorePatientSex(result.patient); };
+      window.requestAnimationFrame(restoreCurrentSex);
+      window.setTimeout(restoreCurrentSex, 100);
+      window.setTimeout(restoreCurrentSex, 300);
       const photo = result.patient.photo || result.patient.data?.['system:patientPhoto'] || result.patient.data?.['scope:registration:id:web_patient_photo'] || result.patient.data?.['scope:registration:id:patient_photo'] || '';
       if (photo) {
         const photoInput = document.getElementById('web_patient_photo');
@@ -1449,6 +1465,7 @@
           window.updatePatientPhotoDisplay(photo);
         }
         const forcePhotoRender = () => {
+          if (loadGeneration !== patientLoadGeneration) return;
           if (typeof window.updatePatientPhotoDisplay === 'function') {
             window.updatePatientPhotoDisplay(photo);
           }
@@ -1467,6 +1484,7 @@
         window.setTimeout(forcePhotoRender, 300);
       }
       await loadEditorHistory();
+      if (loadGeneration !== patientLoadGeneration) return;
       renderRecordSignatures();
       setStatus(document.body.classList.contains('emr-opd-workspace') ? 'ready' : 'saved', `${result.patient.fullName}${result.opdQueue ? ` · OPD លេខរៀង ${result.opdQueue.number}` : ''}`);
       document.dispatchEvent(new CustomEvent('emr:patient-loaded', { detail: { patient: loadedPatient } }));
@@ -1474,8 +1492,8 @@
       applyTriageWorkspaceRestrictions();
       updateTriageSaveButtonState();
     } catch (error) {
-      setStatus('error', `${t('loadError')} ${error.message}`);
-    }
+      if (loadGeneration === patientLoadGeneration) setStatus('error', `${t('loadError')} ${error.message}`);
+    } finally { if (loadGeneration === patientLoadGeneration) patientLoading = false; }
   }
 
   function parsedSignature(scope) {

@@ -1,0 +1,218 @@
+[
+  {
+    "key": "scope:medical:auto:32",
+    "legacyKey": "auto:199",
+    "label": "ករណីជំងឺ",
+    "type": "radio",
+    "name": "anc_case_type",
+    "option": "ថ្មី"
+  },
+  {
+    "key": "scope:medical:auto:33",
+    "legacyKey": "auto:200",
+    "label": "ករណីជំងឺ",
+    "type": "radio",
+    "name": "anc_case_type",
+    "option": "ចាស់"
+  },
+  {
+    "key": "scope:medical:auto:34",
+    "legacyKey": "auto:201",
+    "label": "សេវាអមវេជ្ជសាស្ត្រ",
+    "type": "radio",
+    "name": "anc_ancillary",
+    "option": "មាន"
+  },
+  {
+    "key": "scope:medical:auto:35",
+    "legacyKey": "auto:202",
+    "label": "សេវាអមវេជ្ជសាស្ត្រ",
+    "type": "radio",
+    "name": "anc_ancillary",
+    "option": "មិនមាន"
+  },
+  {
+    "key": "scope:medical:auto:36",
+    "legacyKey": "auto:203",
+    "label": "រោគសញ្ញា",
+    "type": "text",
+    "name": ""
+  },
+  {
+    "key": "scope:medical:auto:37",
+    "legacyKey": "auto:204",
+    "label": "រោគវិនិច្ឆ័យចូល ICD10",
+    "type": "select-one",
+    "name": "",
+    "options": [
+      "Z36.4.0 - ពិនិត្យផ្ទៃពោះមុនពេលសម្រាលលើកទី១"
+    ]
+  },
+  {
+    "key": "scope:medical:auto:38",
+    "legacyKey": "auto:205",
+    "label": "ចំនួនផ្ទៃពោះ",
+    "type": "number",
+    "name": ""
+  },
+  {
+    "key": "scope:medical:auto:39",
+    "legacyKey": "auto:206",
+    "label": "អាយុផ្ទៃពោះ",
+    "type": "number",
+    "name": ""
+  },
+  {
+    "key": "scope:medical:auto:40",
+    "legacyKey": "auto:207",
+    "label": "ថ្ងៃមករដូវចុងក្រោយ",
+    "type": "date",
+    "name": ""
+  },
+  {
+    "key": "scope:medical:auto:41",
+    "legacyKey": "auto:208",
+    "label": "ការពិនិត្យផ្ទៃពោះ",
+    "type": "select-one",
+    "name": "",
+    "options": [
+      "ពិនិត្យផ្ទៃពោះលើក ទី១",
+      "ពិនិត្យផ្ទៃពោះលើក ទី២",
+      "ពិនិត្យផ្ទៃពោះលើក ទី៣",
+      "ពិនិត្យផ្ទៃពោះលើក ទី៤"
+    ]
+  },
+  {
+    "key": "scope:medical:auto:42",
+    "legacyKey": "auto:209",
+    "label": "បានទទួលគ្រាប់ថ្នាំសសៃឈាម (ជាតិដែក/អាស៊ីតហ្វូលិក)",
+    "type": "number",
+    "name": ""
+  },
+  {
+    "key": "scope:medical:auto:43",
+    "legacyKey": "auto:210",
+    "label": "បានទទួលគ្រាប់ថ្នាំទម្លាក់ព្រូន",
+    "type": "number",
+    "name": ""
+  },
+  {
+    "key": "scope:medical:auto:44",
+    "legacyKey": "auto:211",
+    "label": "ទទួលថ្នាំការពាររោគតេតាណូស",
+    "type": "select-one",
+    "name": "",
+    "options": [
+      "គ្រប់",
+      "មិនគ្រប់"
+    ]
+  },
+  {
+    "key": "scope:medical:auto:45",
+    "legacyKey": "auto:212",
+    "label": "បានទទួលមុងជ្រលក់ថ្នាំ",
+    "type": "radio",
+    "name": "anc_net",
+    "option": "បានទទួល"
+  },
+  {
+    "key": "scope:medical:auto:46",
+    "legacyKey": "auto:213",
+    "label": "បានទទួលមុងជ្រលក់ថ្នាំ",
+    "type": "radio",
+    "name": "anc_net",
+    "option": "មិនបានទទួល"
+  },
+  {
+    "key": "scope:medical:auto:47",
+    "legacyKey": "auto:214",
+    "label": "បានទទួលអាហារបំប៉ន",
+    "type": "radio",
+    "name": "anc_nut",
+    "option": "បានទទួល"
+  },
+  {
+    "key": "scope:medical:auto:48",
+    "legacyKey": "auto:215",
+    "label": "បានទទួលអាហារបំប៉ន",
+    "type": "radio",
+    "name": "anc_nut",
+    "option": "មិនបានទទួល"
+  },
+  {
+    "key": "scope:medical:auto:49",
+    "legacyKey": "auto:216",
+    "label": "ស្ថានភាពមេរោគអេដស៍",
+    "type": "radio",
+    "name": "anc_hiv_status",
+    "option": "រួចរាល់"
+  },
+  {
+    "key": "scope:medical:auto:50",
+    "legacyKey": "auto:217",
+    "label": "ស្ថានភាពមេរោគអេដស៍",
+    "type": "radio",
+    "name": "anc_hiv_status",
+    "option": "មិនធ្លាប់"
+  },
+  {
+    "key": "scope:medical:auto:51",
+    "legacyKey": "auto:218",
+    "label": "ព័ត៌មានមុនពេលធ្វើតេស្ត",
+    "type": "text",
+    "name": ""
+  },
+  {
+    "key": "scope:medical:auto:52",
+    "legacyKey": "auto:219",
+    "label": "លេខកូដសំណាកឈាម",
+    "type": "text",
+    "name": ""
+  },
+  {
+    "key": "scope:medical:auto:53",
+    "legacyKey": "auto:220",
+    "label": "ថ្ងៃខែឆ្នាំកំណត់យកលទ្ធផលឈាម",
+    "type": "date",
+    "name": ""
+  },
+  {
+    "key": "scope:medical:auto:54",
+    "legacyKey": "auto:221",
+    "label": "ថ្ងៃខែឆ្នាំទទួលលទ្ធផល",
+    "type": "date",
+    "name": ""
+  },
+  {
+    "key": "scope:medical:auto:55",
+    "legacyKey": "auto:222",
+    "label": "លទ្ធផលមេរោគអេដស៍",
+    "type": "radio",
+    "name": "anc_hiv_res",
+    "option": "វិជ្ជមាន"
+  },
+  {
+    "key": "scope:medical:auto:56",
+    "legacyKey": "auto:223",
+    "label": "លទ្ធផលមេរោគអេដស៍",
+    "type": "radio",
+    "name": "anc_hiv_res",
+    "option": "អវិជ្ជមាន"
+  },
+  {
+    "key": "scope:medical:auto:57",
+    "legacyKey": "auto:224",
+    "label": "លទ្ធផលមេរោគស្វាយ",
+    "type": "radio",
+    "name": "anc_syph_res",
+    "option": "វិជ្ជមាន"
+  },
+  {
+    "key": "scope:medical:auto:58",
+    "legacyKey": "auto:225",
+    "label": "លទ្ធផលមេរោគស្វាយ",
+    "type": "radio",
+    "name": "anc_syph_res",
+    "option": "អវិជ្ជមាន"
+  }
+]

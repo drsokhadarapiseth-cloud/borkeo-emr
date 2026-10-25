@@ -13,6 +13,7 @@ import { listStock, syncMedicineStock } from './stock.mjs';
 import { sameMedicineUnit } from './medicine-units.mjs';
 import { medicineCatalogue } from './medicine-catalogue.mjs';
 import { listOpdQueue, opdLocalDate } from './opd-queue.mjs';
+import { cleanAncSupplemental } from './anc-legacy.mjs';
 
 const readJson = (file) => JSON.parse(fs.readFileSync(new URL(file, import.meta.url), 'utf8'));
 let cachedChart = null, cachedSchedule = null, cachedLabels = null;
@@ -152,6 +153,12 @@ function samePersonKeys(database, row) {
 }
 
 export function findPregnancy(database, row, { openOnly = false } = {}) {
+  if (!openOnly) {
+    const linked = database.sqlite.prepare(`SELECT p.* FROM anc_pregnancies p
+      WHERE p.patient_key=? OR EXISTS (SELECT 1 FROM anc_visits v WHERE v.pregnancy_id=p.id AND v.patient_key=?)
+      ORDER BY p.opened_at DESC LIMIT 1`).get(row.patient_key, row.patient_key);
+    if (linked) return pregnancyFromRow(linked);
+  }
   const keys = samePersonKeys(database, row);
   const marks = keys.map(() => '?').join(',');
   const statusSql = openOnly ? "AND status='open'" : '';
@@ -260,7 +267,7 @@ export function saveRecord(database, pregnancyId, session, body, today = opdLoca
 }
 
 const VISIT_KEYS = ['uh', 'fp', 'fhr', 'bp', 'pulse', 'temperature', 'spo2', 'weight', 'wp', 'proteinuria', 'glucosuria', 'varices', 'fer',
-  'complaint', 'diagnosis', 'appointment', 'rapid', 'imported', 'notScheduled'];
+  'complaint', 'diagnosis', 'appointment', 'rapid', 'imported', 'notScheduled', 'legacyDetails'];
 
 // One visit per patient record (this day's encounter); the midwife name comes from the login.
 export function saveVisit(database, pregnancyId, row, session, body, today = opdLocalDate()) {
@@ -270,6 +277,7 @@ export function saveVisit(database, pregnancyId, row, session, body, today = opd
   const status = statusFor(database, pregnancy, today);
   const data = {};
   for (const key of VISIT_KEYS) if (body?.visit && Object.prototype.hasOwnProperty.call(body.visit, key)) data[key] = body.visit[key];
+  if (data.legacyDetails !== undefined) data.legacyDetails = cleanAncSupplemental(data.legacyDetails);
   data.staffName = staffName(session);
   const now = Date.now();
   const existing = database.sqlite.prepare('SELECT id FROM anc_visits WHERE pregnancy_id=? AND patient_key=? AND visit_date=?').get(pregnancyId, row.patient_key, today);

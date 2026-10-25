@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import { selectionFor, beneficiaryPayment, saveBeneficiaryLink } from '../npca/beneficiaries.mjs';
 import { mapCode } from '../npca/codes.mjs';
 import { roleCanPage, patientWorkWard, sessionRole } from '../access.mjs';
+import { mergeSharedEncounterFields } from '../shared-encounter-fields.mjs';
 import { listAppointments, createAppointment, updateAppointmentStatus } from '../appointments.mjs';
 import { listOrders } from '../paraclinic.mjs';
 import { listEditorHistory, saveEditorHistory, patientRecordChangeNotes } from '../editor-history.mjs';
@@ -317,6 +318,9 @@ export function mountPatientsRoutes(router) {
       if (existingPatient || patientKey === visitSourceKey) return sendJson(response, 409, { error: 'Use a new case number for this visit. The previous record must remain unchanged.' }, { secure: config.cookieSecure });
     }
     const registrationSave = activeRoleBeforeSave === 'REGISTRATION' || (RECORD_MANAGEMENT.includes(activeRoleBeforeSave) && body.editorScope === 'registration');
+    if (body.registrationOnly === true && (!registrationSave || body.transferToTriage === true || body.triageSave === true || body.submitOpdPrescription === true)) {
+      return sendJson(response, 400, { error: 'Invalid registration-only action.' }, { secure: config.cookieSecure });
+    }
     if (activeRoleBeforeSave === 'TRIAGE' && !existingPatient) {
       return sendJson(response, 400, { error: 'This patient must be registered first. Triage cannot create a new patient record.' }, { secure: config.cookieSecure });
     }
@@ -386,7 +390,16 @@ export function mountPatientsRoutes(router) {
     const maternalMidwife = activeRoleBeforeSave === 'MIDWIFE' && Boolean(existingPatient) && isMaternalService(existingPatient);
     const effectiveRoleForMerge = registrationSave ? 'REGISTRATION' : (activeRoleBeforeSave === 'TRIAGE' || triageSave || editorScope === 'triage' ? 'TRIAGE' : RECORD_MANAGEMENT.includes(activeRoleBeforeSave) ? (body.editorScope === 'nursing' ? 'NURSE' : 'DOCTOR') : maternalMidwife ? 'DOCTOR' : activeRoleBeforeSave);
     summary = mergePatientSummaryForRole(existingPatient, submittedSummary, effectiveRoleForMerge);
-    const data = mergeRecordDataForRole(existingData, submittedData, effectiveRoleForMerge, Boolean(existingPatient));
+    let data = mergeRecordDataForRole(existingData, submittedData, effectiveRoleForMerge, Boolean(existingPatient));
+    if (body.registrationOnly === true) data = { ...existingData, ...Object.fromEntries(Object.entries(submittedData).filter(([key]) => key.startsWith('scope:registration:'))) };
+    if (body.sharedTriage !== undefined) {
+      if (!existingPatient || existingPatient.service_mode !== 'opd' || !['DOCTOR', ...RECORD_MANAGEMENT].includes(activeClinicalRole) || body.editorScope !== 'medical' || body.clinicalSubTab !== 'opd') {
+        return sendJson(response, 403, { error: 'Shared clinical fields require OPD doctor edit access.' }, { secure: config.cookieSecure });
+      }
+      if (body.expectedVersion !== existingPatient.version) return sendJson(response, 409, { error: 'Reload the current encounter before editing shared fields.' }, { secure: config.cookieSecure });
+      try { data = mergeSharedEncounterFields(data, body.sharedTriage); }
+      catch (error) { return sendJson(response, 400, { error: error.message }, { secure: config.cookieSecure }); }
+    }
     // NPCA identity is taken only from a recent server-side beneficiary search.
     for (const key of Object.keys(data)) if (key.startsWith('system:npca')) { delete data[key]; if (key in existingData) data[key]=existingData[key]; }
     const npcaSelectionId = registrationSave ? submittedData['scope:registration:id:npca_selection'] : '';
@@ -472,9 +485,9 @@ export function mountPatientsRoutes(router) {
         summary.departmentNameEn = '';
         summary.serviceMode = '';
       }
-      if (!existingData['system:triageStatus']) {
-        data['system:triageStatus'] = 'WAITING';
-        data['system:workflowStage'] = 'TRIAGE_WAITING';
+      if (!existingData['system:triageStatus'] || existingData['system:triageStatus'] === 'REGISTERED' && body.transferToTriage === true) {
+        data['system:triageStatus'] = body.registrationOnly === true ? 'REGISTERED' : 'WAITING';
+        data['system:workflowStage'] = body.registrationOnly === true ? 'REGISTRATION_SAVED' : 'TRIAGE_WAITING';
         data['system:registeredAt'] = existingData['system:registeredAt'] || savedAt;
       }
     } else if (triageSave) {

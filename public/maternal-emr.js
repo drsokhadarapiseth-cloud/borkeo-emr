@@ -102,4 +102,9 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', oldAncReadOnly, { once: true });
   else oldAncReadOnly();
   window.EmrMaternal = { apply, oldAncReadOnly, sendCervix };
+  document.addEventListener('change', event => {
+    if (event.target.id !== 'opd-module-select' || event.target.value !== 'anc') return;
+    const key = patient()?.patientKey;
+    if (key) { event.stopImmediatePropagation(); window.location.assign(`/anc-record?patient=${encodeURIComponent(key)}`); }
+  }, true);
 })();

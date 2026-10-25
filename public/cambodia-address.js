@@ -518,8 +518,8 @@
       this.selectedVillage = villageItem;
     }
 
-    async restoreAddress(recordData) {
-      if (!recordData) return;
+    async restoreAddress(recordData, stillCurrent = () => true) {
+      if (!recordData || !stillCurrent()) return;
       const pCode = recordData['scope:registration:id:web_province_code'] || recordData['id:web_province_code'];
       const pName = recordData['scope:registration:id:web_province'] || recordData['id:web_province'];
 
@@ -561,6 +561,7 @@
       // Load district options
       try {
         const districts = await this.fetchProvinceDetail(provItem);
+        if (!stillCurrent()) return;
         this.currentDistrictsData = districts;
         const districtOptions = districts.map(d => ({
           id: d.id,
@@ -633,13 +634,16 @@
 
   // Global instance
   const addressManager = new CambodiaAddressManager();
+  let ready = null;
+  const ensureReady = () => ready || (ready = addressManager.init());
 
   window.initCambodiaAddress = function () {
-    addressManager.init();
+    return ensureReady();
   };
 
-  window.restorePatientAddress = function (recordData) {
-    addressManager.restoreAddress(recordData);
+  window.restorePatientAddress = async function (recordData, stillCurrent) {
+    await ensureReady();
+    return addressManager.restoreAddress(recordData, stillCurrent);
   };
 
   // Prepare the complete local hierarchy before changing any registration controls.
@@ -671,8 +675,8 @@
 
   // Auto-initialize when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => addressManager.init());
+    document.addEventListener('DOMContentLoaded', ensureReady);
   } else {
-    setTimeout(() => addressManager.init(), 0);
+    setTimeout(ensureReady, 0);
   }
 })();
