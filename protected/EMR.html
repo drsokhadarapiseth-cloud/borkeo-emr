@@ -7316,6 +7316,7 @@
                     <button class="btn-blue no-print" onclick="printAdmissionOnly()" style="margin-left:8px;"><i class="fa-solid fa-file-medical"></i>
                         បោះពុម្ភលិខិតចូល</button>
                     <button type="button" class="btn-blue emr-save-button no-print" id="triage_save_btn" onclick="handleTriageSaveOrEdit()"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <span data-key="save_and_transfer">រក្សាទុក និងបញ្ជូនទៅផ្នែក</span></button>
+                    <button type="button" class="btn-secondary no-print" onclick="handleTriageDiscard()" data-key="btn_discard">បោះបង់ការកែប្រែ</button>
                     <button type="button" class="btn-next" onclick="savePatientRecord({ continueTo: 3 })" data-key="btn_next_Form">បន្តទៅទម្រង់ព្យាបាល ➔</button>
                 </div>
             </div>
@@ -7328,16 +7329,16 @@
 
             <!-- INNER TABS FOR PAGE 3 -->
             <div class="inner-tabs no-print" style="margin-bottom: 20px;">
-                <button class="inner-tab active" id="btn_sub_opd" onclick="switchOpdTab('opd')"><i
+                <button class="inner-tab" id="btn_sub_opd" onclick="switchOpdTab('opd')"><i
                         class="fa-solid fa-stethoscope"></i> <span data-key="tab_opd">ពិគ្រោះក្រៅ</span></button>
-                <button class="inner-tab" id="btn_sub_ipd" onclick="switchOpdTab('ipd')"><i
+                <button class="inner-tab active" id="btn_sub_ipd" onclick="switchOpdTab('ipd')"><i
                         class="fa-solid fa-bed-pulse"></i> <span data-key="tab_ipd">សម្រាកពេទ្យ (IPD)</span></button>
                 <button type="button" class="inner-tab" id="btn_sub_nursing" onclick="switchOpdTab('nursing')"><i
                         class="fa-solid fa-user-nurse"></i> <span data-key="tab_nursing">ដំណើរការថែទាំ</span></button>
             </div>
 
             <!-- ================= SUB-TAB: OPD ================= -->
-            <div id="sub_opd" class="sub-tab active">
+            <div id="sub_opd" class="sub-tab">
                 <!-- OPD Patient Header Banner with Photo -->
                 <div class="opd-patient-banner no-print" id="opd-header-patient-card">
                     <div class="patient-header-photo-frame opd-patient-photo-frame" id="opd_patient_photo_frame" data-action="capture-patient-photo" title="ចុចដើម្បីពិនិត្យ ឬ ប្តូររូបថតអ្នកជំងឺ (Patient Photo)">
