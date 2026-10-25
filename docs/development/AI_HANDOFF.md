@@ -1,5 +1,26 @@
 # Task context for Codex, Gemini or OpenCode
 
+## ANC triage transfer correction - v47.2.0, 26 October 2026
+
+User explicitly requested fixing the triage ANC transfer that opened a JSON
+permission-denied page. Clean master baseline 061288a (47.1.0); branch
+fix/triage-anc-transfer. Pre-update code snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v47.1.0-061288a9-3a066948
+
+The ANC module-change listener was navigating on programmatic changes caused
+by care-path synchronization, including the hidden OPD selector during triage.
+It now checks role/workspace before opening the clinical ANC page. Triage and
+registration never navigate there from that listener; management using their
+triage/registration workspace also stays in place. Authorized clinical ANC
+opening is retained. The legacy notice does not offer an inaccessible ANC link.
+
+Server page/API authorization and ANC fees/cashier/midwife routing are unchanged.
+Triage saves and returns to its list; the patient follows the existing cashier
+step and then appears in the midwife queue. No patient migration or live-data
+test occurred. Required ANC fields from 47.1 remain intact. Midwife list direct
+opening and colour-chart checkbox synchronization remain separate pending work.
+See TRIAGE_ANC_V472_VALIDATION.md and the combined v47.2 update TXT.
+
 ## ANC required entries - v47.1.0, 26 October 2026
 
 The user confirmed the FIRST of four proposed ANC changes. Only required
