@@ -14,7 +14,18 @@ const js=read('public/interface-theme.js');assert.match(js,/form\.addEventListen
 }));
 test('management menu removes EMR/TV and groups Pharmacy, Cashier and accounts without changing staff counter access',()=>{
 const src=read('public/emr-session.js'),start=src.indexOf('  function allowedLinks('),end=src.indexOf('  function createPasswordDialog',start),context=vm.createContext({});vm.runInContext(src.slice(start,end)+'\nthis.links=allowedLinks;',context);
-for(const activeRole of ['ADMIN','DIRECTOR','VICE_DIRECTOR']){const links=context.links({activeRole});assert(!links.some(([p])=>p==='/emr'||p.includes('display')));assert(links.some(([p])=>p==='/billing'));assert(links.some(([p])=>p==='/admin/organization'));}assert(context.links({activeRole:'TRIAGE'}).some(([p])=>p.includes('/queue-display')));assert.match(src,/label:'ផ្នែកឱសថ'/);assert.match(src,/emr-sub-nav/);assert.doesNotMatch(read('protected/home.html'),/id="admin-dashboard"/);assert.match(src,/អនុប្រធានមន្ទីរពេទ្យ/);assert.match(src,/emr-brand-eyebrow/);
+for(const activeRole of ['ADMIN','DIRECTOR','VICE_DIRECTOR']){const links=context.links({activeRole});assert(!links.some(([p])=>p==='/emr'||p.includes('display')));assert(links.some(([p])=>p==='/billing'));assert(links.some(([p])=>p==='/admin/organization'));}assert(context.links({activeRole:'TRIAGE'}).some(([p])=>p.includes('/queue-display')));assert.match(src,/label:'ផ្នែកឱសថ'/);assert.doesNotMatch(read('protected/home.html'),/id="admin-dashboard"/);assert.match(src,/អនុប្រធានមន្ទីរពេទ្យ/);assert.match(src,/emr-brand-eyebrow/);
+const nav=vm.createContext({});vm.runInContext(read('public/nav-config.js'),nav);
+for(const activeRole of ['ADMIN','DIRECTOR','VICE_DIRECTOR']){
+  const groups=nav.EmrNavConfig.visibleGroups({activeRole});
+  assert(!groups.flatMap(g=>g.items).some(i=>i.href==='/emr'||i.href.includes('display')));
+  assert(groups.find(g=>g.id==='pharmacy').items.some(i=>i.id==='pharmacy-opd'));
+  assert(groups.find(g=>g.id==='finance').items.some(i=>i.id==='billing'));
+  assert(groups.find(g=>g.id==='admin').items.some(i=>i.id==='admin-users'));
+}
+assert(nav.EmrNavConfig.visibleItemIds({activeRole:'TRIAGE'}).includes('queue-display-triage'));
+assert(nav.EmrNavConfig.visibleItemIds({activeRole:'DOCTOR',activeWard:{code:'opd'}}).includes('queue-display-opd'));
+assert.match(read('public/app-shell.js'),/emr-sidebar-section/);
 });
 test('OPD list preserves registration number 2 after number 1 is routed to Medicine, while consultation stays cashier gated',()=>fixture(async({db,origin,login,call})=>{
 const rows=db.listPatients().slice(0,2),triage=await login('triage');for(let i=0;i<2;i++){const p=rows[i],d=JSON.parse(p.record_json);d['system:registrationQueueNumber']=String(i+1);db.sqlite.prepare('UPDATE patient_records SET record_json=? WHERE patient_key=?').run(JSON.stringify(d),p.patient_key);

@@ -608,8 +608,12 @@
       item.addEventListener('click', () => {
         const target = item.dataset.target;
         if (target === 'allergy') {
-          const bannerBtn = document.querySelector('[data-banner-details-toggle]');
-          if (bannerBtn) bannerBtn.click();
+          window.switchOpdTab?.('ipd');
+          const allergySlot = document.querySelector('[data-soap-slot="structured-allergy"]');
+          if (allergySlot) {
+            allergySlot.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            allergySlot.querySelector('[data-allergy-field="substance"], button')?.focus();
+          }
         } else if (target === 'exam') {
           const el = workspace.querySelector('#consultation_exam');
           if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.focus(); }

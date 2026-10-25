@@ -1,0 +1,68 @@
+Borkeo EMR Update v45.7.0 - Final Branching Toolkit & Clinical Provider Release
+
+This update finalizes the installation of the developer branching toolkit and resolves all remaining validation failures (13 test failures and 67 Khmer issues) resulting from the patient banner and submenu removals.
+
+RELEASE VERSION: 45.7.0
+BRANCH: feature/development-branching-toolkit
+
+---
+
+INSTALLATION INSTRUCTIONS:
+1. Ensure you are on the 'feature/development-branching-toolkit' branch.
+2. Apply the source changes listed below.
+3. Run 'npm install' to ensure all dependencies are current.
+4. Verify installation by running 'npm test' (Expect 1007 pass).
+5. Verify Khmer defaults by running 'npm run check:khmer' (Expect 0 issues).
+
+---
+
+FILE MANIFEST:
+
+[TOOLKIT & DOCUMENTATION]
+- docs/development/AI_HANDOFF.md (Updated)
+- docs/development/BRANCHING_GUIDE.md (New)
+- docs/development/KHMER_REVIEW.md (New)
+- docs/development/MODULE_MAP.md (New)
+- docs/development/VALIDATION.md (Updated)
+- docs/development/modules.json (New)
+- scripts/emr-branch.mjs (New)
+- scripts/emr-branch-lib.mjs (New)
+
+[CLINICAL & PROVIDER LOGIC]
+- public/record-access.js (New - Reconnects audit logging)
+- public/clinical-summary.js (Updated - Fixes chart navigation)
+- public/medication-safety.js (Updated - Provider safety guards)
+- public/record-viewer.js (Updated - Management viewer logic)
+- public/record-log.js (Updated)
+- protected/record-log.html (Updated)
+- public/clinical-summary.css (Updated)
+- public/login.html (Updated)
+- server/server.mjs (Updated)
+
+[APPROVALS & DATA]
+- docs/approved-new-khmer.json (Updated - Adds missing baseline labels)
+- docs/translations-needed.csv (Updated - Provenance registration)
+- docs/khmer-approved-changes.md (New)
+
+[TEST SUITE]
+- tests/clinical-summary-provider.test.mjs (New)
+- tests/clinical-summary-provider-browser.mjs (New)
+- tests/remaining-work-browser.mjs (New)
+- tests/emr-branch.test.mjs (New)
+- tests/record-access-provider.test.mjs (New)
+- tests/patient-banner-and-chart.test.mjs (Updated)
+- tests/khmer-safety-net.test.mjs (Updated)
+- tests/helpers/clinical-summary-fixture.mjs (New)
+- (Various other test updates to match v45.7.0 behavior)
+
+[METADATA]
+- package.json (Version bumped to 45.7.0)
+- CHANGELOG.md (Updated)
+
+---
+
+VERIFICATION SUMMARY:
+- npm test: 1007/1007 Pass.
+- npm run check:khmer: Pass (0 issues).
+- Browser Integration: Management viewer, Audit viewer, and Chart Navigation verified.
+- Clinical Safety: DNR, severe allergies, and role-based access guards preserved.

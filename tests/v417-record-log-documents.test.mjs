@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { createEmrServer } from '../server/server.mjs';
@@ -35,6 +36,8 @@ async function login(username) {
 
 test('v41.7 record view log and scanned documents through the API', async () => {
   const app = createEmrServer({ demoMode: true, host: '127.0.0.1', port, appOrigin: origin, databasePath: ':memory:', autoDatabase: false, nodeEnv: 'test' });
+  const uploads = fs.mkdtempSync(path.join(os.tmpdir(), 'borkeo-record-access-'));
+  app.config.dataDirectory = uploads;
   try {
     await new Promise((resolve, reject) => { app.server.once('error', reject); app.server.listen(port, '127.0.0.1', resolve); });
     patient(app, 'case:V417');
@@ -106,6 +109,8 @@ test('v41.7 record view log and scanned documents through the API', async () => 
   } finally {
     await new Promise((resolve) => app.server.close(resolve));
     app.database.close();
+    assert.equal(path.dirname(fs.realpathSync(uploads)), fs.realpathSync(os.tmpdir()));
+    fs.rmSync(uploads, { recursive: true, force: true });
   }
 });
 
@@ -141,9 +146,10 @@ test('viewer page, navigation and page wiring', () => {
   const server = read('server/server.mjs');
   assert.match(server, /patient-documents\.js\?v=4170/);
   assert.match(read('public/report-print.js'), /window\.logRecordAccess\?\.\('print', title\)/);
-  const banner = read('public/patient-banner.js');
-  assert.match(banner, /window\.logRecordAccess = /);
-  assert.match(banner, /addEventListener\('beforeprint'/);
+  const provider = read('public/record-access.js');
+  assert.match(provider, /window\.logRecordAccess = /);
+  assert.match(provider, /addEventListener\('beforeprint'/);
+  assert.match(server, /record-access\.js\?v=4570/);
   const documents = read('public/patient-documents.js');
   assert.match(documents, /'ភ្ជាប់ឯកសារស្កេន'/);
   assert.ok((documents.match(/<input|<select/g) || []).every(Boolean));

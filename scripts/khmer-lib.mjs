@@ -90,7 +90,7 @@ export function readApprovedChanges(file = approvedChangesPath) {
   for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
     if (line.startsWith('#')) { ordered = /\(owner's order\)/.test(line); continue; }
     if (!line.trim().startsWith('|')) continue;
-    const cells = line.trim().replace(/^\||\|$/g, '').split('|').map((cell) => cell.replace(EDGE_SPACE, ''));
+    const cells = line.trim().replace(/^\||\|$/g, '').split(/(?<!\\)\|/).map((cell) => cell.replaceAll('\\|', '|').replace(EDGE_SPACE, ''));
     if (cells.length < 4 || !hasKhmer(cells[2])) continue;
     rows.push({ file: cells[0], line: cells[1], before: cells[2], after: cells[3], ordered });
   }
@@ -114,11 +114,24 @@ export function readApprovedNew(file = approvedNewPath) {
 export function checkAgainstBaseline({ baseline, current, approvedChanges, approvedNew }) {
   const before = countByText(baseline);
   const now = countByText(current);
-  const changes = new Map(approvedChanges.map((row) => [row.before, row]));
-  const allowedAfter = new Set(approvedChanges.map((row) => row.after));
+  const removals = approvedChanges.filter(row => row.ordered && row.after === '[removed]');
+  const changes = new Map(approvedChanges.filter(row => row.after !== '[removed]').map((row) => [row.before, row]));
+  const allowedAfter = new Set(approvedChanges.filter(row => row.after !== '[removed]').map((row) => row.after));
   const problems = [];
   for (const [text, count] of before) {
-    const missing = count - (now.get(text) || 0);
+    let missing = count - (now.get(text) || 0);
+    if (missing <= 0) continue;
+    // An authorized removal covers only exact baseline occurrences at the listed
+    // file/lines, and only an actual loss within that file. It cannot excuse an
+    // additional missing copy elsewhere or an extra copy removed in the same file.
+    const rows = removals.filter(row => row.before === text);
+    for (const file of new Set(rows.map(row => row.file))) {
+      const lines = new Set(rows.filter(row => row.file === file).flatMap(row => row.line.split(',').map(value => Number(value.trim()))).filter(Number.isInteger));
+      const original = baseline.filter(item => item.file === file && item.text === text);
+      const authorized = original.filter(item => lines.has(item.line)).length;
+      const remaining = current.filter(item => item.file === file && item.text === text).length;
+      missing -= Math.min(authorized, Math.max(0, original.length - remaining));
+    }
     if (missing <= 0) continue;
     const change = changes.get(text);
     if (change && change.after === stripSectionNumber(text) && now.has(change.after)) continue;

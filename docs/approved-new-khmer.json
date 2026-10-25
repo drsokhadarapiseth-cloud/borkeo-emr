@@ -1925,6 +1925,171 @@
       "en": "Retry context session loading",
       "kh": "ព្យាយាមម្តងទៀត",
       "key": "context.retry"
+    },
+    {
+      "en": "Remove",
+      "kh": "ដកចេញ",
+      "key": "clinical.remove"
+    },
+    {
+      "en": "Reason for removal",
+      "kh": "មូលហេតុនៃការដកចេញ",
+      "key": "clinical.removeReason"
+    },
+    {
+      "en": "Confirm removal",
+      "kh": "បញ្ជាក់ការដកចេញ",
+      "key": "clinical.confirmRemove"
+    },
+    {
+      "en": "Please enter the reason for removal.",
+      "kh": "សូមបញ្ចូលមូលហេតុនៃការដកចេញ។",
+      "key": "clinical.removeReasonRequired"
+    },
+    {
+      "en": "Please save the patient record first.",
+      "kh": "សូមរក្សាទុកកំណត់ត្រាអ្នកជំងឺជាមុនសិន។",
+      "key": "clinical.unsaved"
+    },
+    {
+      "en": "Information cannot be verified. Please try again.",
+      "kh": "មិនអាចផ្ទៀងផ្ទាត់ព័ត៌មានបាន។ សូមព្យាយាមម្ដងទៀត។",
+      "key": "clinical.requestError"
+    },
+    {
+      "en": "No entries have been recorded in this allergy list yet.",
+      "kh": "មិនទាន់មានកំណត់ត្រាក្នុងបញ្ជីអាលែកហ្ស៊ីនេះទេ។",
+      "key": "clinical.allergy.none"
+    },
+    {
+      "en": "Add an allergy",
+      "kh": "បន្ថែមប្រតិកម្មអាលែកហ្ស៊ី",
+      "key": "clinical.allergy.add"
+    },
+    {
+      "en": "Please enter the substance.",
+      "kh": "សូមបញ្ចូលសារធាតុ។",
+      "key": "clinical.allergy.substanceRequired"
+    },
+    {
+      "en": "No health problems are recorded as ongoing.",
+      "kh": "មិនមានបញ្ហាសុខភាពដែលបានកត់ត្រាថាកំពុងបន្តមានទេ។",
+      "key": "clinical.problem.none"
+    },
+    {
+      "en": "Resolved health problems",
+      "kh": "បញ្ហាសុខភាពដែលបានដោះស្រាយ",
+      "key": "clinical.problem.resolved"
+    },
+    {
+      "en": "Mark as resolved",
+      "kh": "សម្គាល់ថាបានដោះស្រាយ",
+      "key": "clinical.problem.resolve"
+    },
+    {
+      "en": "Set as active again",
+      "kh": "កំណត់ជាសកម្មឡើងវិញ",
+      "key": "clinical.problem.reactivate"
+    },
+    {
+      "en": "Add a health problem",
+      "kh": "បន្ថែមបញ្ហាសុខភាព",
+      "key": "clinical.problem.add"
+    },
+    {
+      "en": "Please enter the health problem.",
+      "kh": "សូមបញ្ចូលបញ្ហាសុខភាព។",
+      "key": "clinical.problem.required"
+    },
+    {
+      "en": "Mild",
+      "kh": "ស្រាល",
+      "key": "severity.mild"
+    },
+    {
+      "en": "Moderate",
+      "kh": "មធ្យម",
+      "key": "severity.moderate"
+    },
+    {
+      "en": "Life-threatening",
+      "kh": "គំរាមកំហែងដល់ជីវិត",
+      "key": "severity.life-threatening"
+    },
+    {
+      "en": "Unknown",
+      "kh": "មិនទាន់ដឹង",
+      "key": "severity.unknown"
+    },
+    {
+      "en": "Information cannot be displayed",
+      "kh": "មិនអាចបង្ហាញព័ត៌មានបាន",
+      "key": "clinical.missingLabel"
+    },
+    {
+      "en": "Allergy history cannot be verified. Review the allergy record before prescribing.",
+      "kh": "មិនអាចផ្ទៀងផ្ទាត់ប្រវត្តិអាលែកហ្ស៊ីបាន។ សូមពិនិត្យកំណត់ត្រាអាលែកហ្ស៊ីមុនចេញវេជ្ជបញ្ជា។",
+      "key": "safety.allergyVerification"
+    },
+    {
+      "en": "HTML-escaped test text",
+      "kh": "&lt;សាកល្បង&gt;",
+      "testOnly": true,
+      "note": "Test-only HTML escaping assertion in tests/clinical-summary-provider.test.mjs; exact checker value, not a clinical UI label."
+    },
+    {
+      "en": "Other actions",
+      "kh": "សកម្មភាពផ្សេងៗ",
+      "key": "consultation.otherActions",
+      "note": "EMR_FINISH_REMAINING.txt Work E: existing v45.1 consultation actions menu label; classification (c), no clinical meaning or policy change."
+    },
+    {
+      "en": "Full resuscitation",
+      "kh": "សង្គ្រោះជីវិតពេញលេញ",
+      "key": "clinical.resuscitation.full",
+      "note": "EMR_FINISH_REMAINING.txt Work C/E: read-only display of existing explicit full code from authorized clinical summary API. Reuses existing resuscitation terminology; creates no order, editing workflow or policy."
+    },
+    {
+      "en": "Patient (code or name)",
+      "kh": "អ្នកជំងឺ (លេខកូដ ឬឈ្មោះ)",
+      "key": "recordLog.patient",
+      "note": "Work D/E: narrowly scoped Khmer-default localization of the existing audit viewer; nonclinical filter label."
+    },
+    {
+      "en": "Staff (username or name)",
+      "kh": "បុគ្គលិក (គណនី ឬឈ្មោះ)",
+      "key": "recordLog.user",
+      "note": "Work D/E: existing audit-viewer filter; nonclinical localization."
+    },
+    {
+      "en": "Opened",
+      "kh": "បើកមើល",
+      "key": "recordLog.open",
+      "note": "Work D/E: existing server audit action, no event or permission change."
+    },
+    {
+      "en": "Exported",
+      "kh": "នាំចេញ",
+      "key": "recordLog.export",
+      "note": "Work D/E: existing server audit action, no export functionality or policy added."
+    },
+    {
+      "en": "Scanned document opened",
+      "kh": "បើកមើលឯកសារស្កេន",
+      "key": "recordLog.document",
+      "note": "Work D/E: existing scanned-document audit action, nonclinical localization."
+    },
+    {
+      "en": "From",
+      "kh": "ចាប់ពី",
+      "key": "recordLog.from",
+      "note": "Work D/E: existing audit date filter, nonclinical localization."
+    },
+    {
+      "en": "Date and time",
+      "kh": "កាលបរិច្ឆេទ និងម៉ោង",
+      "key": "recordLog.time",
+      "note": "Work D/E: existing audit timestamp column, nonclinical localization."
     }
   ]
 }

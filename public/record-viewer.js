@@ -2,7 +2,10 @@
 (async function managementRecordViewer() {
   const $=id=>document.getElementById(id),escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const key=new URLSearchParams(location.search).get('patient');
-  let encounters=[],kind='ipd',generation=0;
+  let encounters=[],kind='ipd',generation=0,activePatient=null;
+  // The audit provider must identify the displayed encounter, not the initial URL.
+  window.getLoadedEmrPatient=()=>activePatient;
+  const unavailable=()=>window.getBorkeoLanguage?.()==='en'?'Information cannot be verified. Please try again.':'មិនអាចផ្ទៀងផ្ទាត់ព័ត៌មានបាន។ សូមព្យាយាមម្ដងទៀត។';
   const date=value=>value?String(value).replace('T',' ').slice(0,19):'—';
   const readArray=value=>{try{const list=typeof value==='string'?JSON.parse(value):value;return Array.isArray(list)?list:[]}catch{return []}};
   function labHtml(orders){
@@ -49,10 +52,10 @@
   async function loadSource(entry,ticket){
     const frame=document.createElement('iframe');frame.className='viewer-report-source';frame.setAttribute('aria-hidden','true');frame.tabIndex=-1;
     const loaded=new Promise((resolve,reject)=>{
-      const timer=setTimeout(()=>reject(Error('ការផ្ទុកទម្រង់ចំណាយពេលយូរ។ សូមសាកល្បងម្តងទៀត។')),20000);
+      const timer=setTimeout(()=>reject(Error('ការផ្ទុកទម្រង់ចំណាយពេលយូរ។ សូមសាកល្បងម្តងទៀត។')),60000);
       frame.addEventListener('load',()=>{
         const check=()=>{if(ticket!==generation){clearTimeout(timer);reject(Error('cancelled'));return;}
-          try{const patient=frame.contentWindow.getLoadedEmrPatient?.();if(patient?.patientKey===entry.patient.patientKey){clearTimeout(timer);resolve(frame);return;}}catch{}
+          try{const patient=frame.contentWindow.getLoadedEmrPatient?.(),summary=frame.contentWindow.EmrClinicalSummary?.get();if(patient?.patientKey===entry.patient.patientKey&&(!summary||summary.patientKey===patient.patientKey&&['ready','error'].includes(summary.status))){clearTimeout(timer);resolve(frame);return;}}catch{}
           setTimeout(check,60);
         };check();
       },{once:true});
@@ -63,6 +66,7 @@
   }
   function matches(entry){return entry.patient.serviceMode===kind || kind==='opd'&&Boolean(entry.patient.data?.['system:opdEncounterAt']);}
   async function render(){
+    activePatient=null;
     const ticket=++generation,entry=encounters.find(item=>item.patient.patientKey===$('viewer-encounter').value);if(!entry)return;
     $('viewer-status').textContent='កំពុងរៀបចំកំណត់ត្រាសម្រាប់មើល…';$('viewer-document').replaceChildren();$('viewer-pages').replaceChildren();
     try{
@@ -82,15 +86,15 @@
         $('viewer-document').append(page);
         const jump=document.createElement('button');jump.type='button';jump.textContent='ទំព័រទី '+(index+1);jump.onclick=()=>page.scrollIntoView({block:'start'});$('viewer-pages').append(jump);
       }
-      frame.remove();$('viewer-status').textContent='មើលបានតែប៉ុណ្ណោះ។ កំណត់ត្រាពិនិត្យ៖ '+date(entry.patient.entryDate)+' · '+(entry.patient.caseNumber||'');
-    }catch(error){if(ticket===generation)$('viewer-status').textContent=error.message;}
+      frame.remove();activePatient=entry.patient;$('viewer-status').textContent='មើលបានតែប៉ុណ្ណោះ។ កំណត់ត្រាពិនិត្យ៖ '+date(entry.patient.entryDate)+' · '+(entry.patient.caseNumber||'');
+    }catch(error){if(ticket===generation)$('viewer-status').textContent=unavailable();}
   }
-  function choose(next){kind=next;const options=encounters.filter(matches);$('viewer-encounter').replaceChildren(...options.map(entry=>new Option(date(entry.patient.entryDate)+' · '+(entry.patient.caseNumber||entry.patient.healthId),entry.patient.patientKey)));
+  function choose(next){activePatient=null;++generation;kind=next;const options=encounters.filter(matches);$('viewer-encounter').replaceChildren(...options.map(entry=>new Option(date(entry.patient.entryDate)+' · '+(entry.patient.caseNumber||entry.patient.healthId),entry.patient.patientKey)));
     if(options.some(entry=>entry.patient.patientKey===key))$('viewer-encounter').value=key;
     document.querySelectorAll('[data-view-kind]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.viewKind===kind)));
     if(options.length)render();else{$('viewer-document').replaceChildren();$('viewer-pages').replaceChildren();$('viewer-status').textContent='មិនមានកំណត់ត្រាប្រភេទនេះសម្រាប់អ្នកជំងឺនេះទេ។'}
   }
   $('viewer-print').onclick=()=>window.print();$('viewer-encounter').onchange=render;
   document.querySelectorAll('[data-view-kind]').forEach(button=>button.onclick=()=>choose(button.dataset.viewKind));
-  try{const response=await fetch('/api/record-viewer?'+new URLSearchParams({patientKey:key||''}),{cache:'no-store',credentials:'same-origin'});const result=await response.json();if(!response.ok)throw Error(result.error);encounters=result.encounters||[];const initial=encounters.find(item=>item.patient.patientKey===key);choose(initial?.patient.serviceMode==='opd'?'opd':'ipd');}catch(error){$('viewer-status').textContent=error.message;}
+  try{const response=await fetch('/api/record-viewer?'+new URLSearchParams({patientKey:key||''}),{cache:'no-store',credentials:'same-origin'});const result=await response.json();if(!response.ok)throw Error(result.error);encounters=result.encounters||[];const initial=encounters.find(item=>item.patient.patientKey===key);choose(initial?.patient.serviceMode==='opd'?'opd':'ipd');}catch(error){$('viewer-status').textContent=unavailable();}
 })();
