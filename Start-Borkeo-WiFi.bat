@@ -26,6 +26,10 @@ if not defined NODE_EXE (
 )
 
 if not defined PORT set "PORT=3001"
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr /r /c:":%PORT% .*LISTENING"') do (
+  echo [INFO] Port %PORT% is occupied by PID %%a. Cleaning up...
+  taskkill /F /PID %%a >nul 2>&1
+)
 netstat -ano | findstr /r /c:":%PORT% .*LISTENING" >nul
 if not errorlevel 1 (
   echo.
