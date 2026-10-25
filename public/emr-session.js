@@ -228,8 +228,6 @@
       menu.push([items[0][0],group.label]);
     }
     const activeGroup=menuGroups.find(g=>g.items.some(([href])=>href===window.location.pathname));
-    const subnav=document.createElement('nav');subnav.id='emr-sub-nav';subnav.className='portal-main-nav emr-sub-nav no-print';subnav.setAttribute('aria-label','ផ្ទាំងរង');
-    if(activeGroup)for(const [href,label] of allowed.filter(([href])=>activeGroup.items.some(([url])=>url===href))){const link=document.createElement('a');link.href=href;link.textContent=label;if(href===window.location.pathname){link.classList.add('active');link.setAttribute('aria-current','page');}subnav.append(link);}
     menu.forEach(([href,label]) => {
       const link=document.createElement('a');link.href=href;link.textContent=label;
       let isActive = Boolean(activeGroup && activeGroup.label===label);
@@ -277,7 +275,7 @@
       banner.querySelectorAll('h1,.clinical-brand,.cashier-brand,.topbar-title,.banner-copy').forEach(node=>node.classList.add('emr-legacy-banner-copy'));
       const brand=document.createElement('div');brand.className='emr-unified-brand no-print';brand.dataset.languageExclude='';
       brand.innerHTML='<span class="emr-brand-mark"><img src="/api/organization/logo" alt="Hospital logo"></span><div class="emr-brand-copy"><p class="emr-brand-eyebrow">ប្រព័ន្ធកំណត់ត្រាវេជ្ជសាស្ត្រអេឡិចត្រូនិក</p><h1>មន្ទីរពេទ្យបង្អែក បរកែវ</h1></div>';
-      banner.prepend(brand);banner.append(control);banner.insertAdjacentElement('afterend',nav);if(subnav.children.length)nav.insertAdjacentElement('afterend',subnav);
+      banner.prepend(brand);banner.append(control);banner.insertAdjacentElement('afterend',nav);
     }else{
       control.classList.add('session-control-fallback');document.body.prepend(control);control.insertAdjacentElement('afterend',nav);
     }

@@ -797,67 +797,7 @@
     const tabsWrapper = document.getElementById('emr-chart-tabs-wrapper');
     if (!tabsWrapper) return;
 
-    // The 6 tabs matching the design
-    const recordTabsNav = tabsWrapper.querySelector('.emr-chart-tabs');
-    if (recordTabsNav && !recordTabsNav.dataset.enhancedV432) {
-      recordTabsNav.dataset.enhancedV432 = 'true';
-      recordTabsNav.innerHTML = `
-        <button type="button" class="emr-chart-tab" role="tab" data-record-tab="general" aria-selected="false">
-          <span>ទិន្នន័យទូទៅ</span>
-        </button>
-        <button type="button" class="emr-chart-tab is-active" role="tab" data-record-tab="consultation" aria-selected="true">
-          <span>ការពិនិត្យព្យាបាល</span>
-        </button>
-        <button type="button" class="emr-chart-tab" role="tab" data-record-tab="referral" aria-selected="false">
-          <span>ការបញ្ជូន/សុខាភិបាល</span>
-        </button>
-        <button type="button" class="emr-chart-tab" role="tab" data-record-tab="meds" aria-selected="false">
-          <span>ថ្នាំព្យាបាល</span>
-        </button>
-        <button type="button" class="emr-chart-tab" role="tab" data-record-tab="labs" aria-selected="false">
-          <span>លទ្ធផលមន្ទីរពិសោធន៍</span>
-        </button>
-        <button type="button" class="emr-chart-tab" role="tab" data-record-tab="history" aria-selected="false">
-          <span>ប្រវត្តិវេជ្ជសាស្ត្រ</span>
-        </button>
-      `;
-
-      recordTabsNav.querySelectorAll('.emr-chart-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          recordTabsNav.querySelectorAll('.emr-chart-tab').forEach(t => {
-            const active = t === tab;
-            t.classList.toggle('is-active', active);
-            t.setAttribute('aria-selected', String(active));
-          });
-          handleRecordTabSwitch(tab.dataset.recordTab);
-        });
-      });
-    }
-  }
-
-  function handleRecordTabSwitch(tabId) {
-    if (tabId === 'consultation') {
-      window.switchOpdTab?.('opd');
-      const ws = document.getElementById('emr-consultation-workspace');
-      if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else if (tabId === 'general') {
-      const summaryBtn = document.querySelector('[data-banner-details-toggle]');
-      if (summaryBtn) summaryBtn.click();
-    } else if (tabId === 'referral') {
-      const wardSelect = document.getElementById('web_opd_transfer_ward');
-      if (wardSelect) wardSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else if (tabId === 'meds') {
-      const rxContainer = document.getElementById('opd_rx_container');
-      if (rxContainer) rxContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else if (tabId === 'labs') {
-      const labPanel = document.getElementById('paraclinic_results_panel') || document.getElementById('paraclinic-orders-section');
-      if (labPanel) labPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else if (tabId === 'history') {
-      const historyEl = document.getElementById('encounter-history-list') || document.getElementById('mgmt-history-dialog');
-      if (historyEl) historyEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
-
+  
   // 6. Bootstrap Initializer
   function init() {
     if (!isConsultationActive()) return;

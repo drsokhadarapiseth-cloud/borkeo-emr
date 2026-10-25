@@ -140,31 +140,6 @@ index 5a04344..31847c4 100644
 +      "source": "v43.2 owner mockup requested strings"
 +    },
 +    {
-+      "kh": "ទិន្នន័យទូទៅ",
-+      "key": "file:public/emr-consultation-workspace.js",
-+      "source": "v43.2 owner mockup requested strings"
-+    },
-+    {
-+      "kh": "ការបញ្ជូន/សុខាភិបាល",
-+      "key": "file:public/emr-consultation-workspace.js",
-+      "source": "v43.2 owner mockup requested strings"
-+    },
-+    {
-+      "kh": "ថ្នាំព្យាបាល",
-+      "key": "file:public/emr-consultation-workspace.js",
-+      "source": "v43.2 owner mockup requested strings"
-+    },
-+    {
-+      "kh": "ប្រវត្តិវេជ្ជសាស្ត្រ",
-+      "key": "file:public/emr-consultation-workspace.js",
-+      "source": "v43.2 owner mockup requested strings"
-+    },
-+    {
-+      "kh": "មិនទាន់កត់ត្រាអាឡែកស៊ី",
-+      "key": "file:public/emr-consultation-workspace.js",
-+      "source": "v43.2 owner mockup requested strings"
-+    },
-+    {
 +      "kh": "បោះពុម្ភទម្រង់ពិគ្រោះក្រៅ",
 +      "key": "file:public/emr-consultation-workspace.js",
 +      "source": "v43.2 owner mockup requested strings"
@@ -245,43 +220,7 @@ index 0000000..e6420db
 +# 43.2.0 Modern Patient Record Consultation Workspace
 +
 +Baseline: Borkeo EMR v43.1.0, package 43.1.0 -> 43.2.0.
-+
-+## Overview
-+This approved release implements the modern patient record consultation interface requested by the user, adhering to WCAG 2.2 AA and IEC 62366-1 standards:
-+
-+1. **Two-Column Consultation Grid**:
-+   - **Left Column: Clinical Consultation Card**:
-+     - Modern heading: `ការពិនិត្យព្យាបាល`
-+     - Chief Complaint (`ហេតុផលមកពេទ្យ *`): clean rounded textarea linked to `#pmrs_chief_complaint` and symptom catalog.
-+     - Vital Signs Metric Cards (`សញ្ញាសំខាន់`): 6 individual metric input cards (Blood Pressure `120/80`, Heart Rate `78`, Temperature `36.8`, SpO2 `98`, Respiration `18`, Weight `62`) with two-way sync to existing vitals fields.
-+     - Side-by-side textareas for History of Present Illness (`ប្រវត្តិឫសគល់រោគ`) and Physical Examination (`ការពិនិត្យរាងកាយ`).
-+     - Side-by-side textareas for Diagnosis (`រោគវិនិច្ឆ័យ *`) and Treatment Plan (`ផែនការព្យាបាល *`).
-+     - Actions toolbar featuring an NPCA international implementation toggle switch, primary Save button (`រក្សាទុក`), Print button (`បោះពុម្ព`), and an Actions dropdown (`សកម្មភាពផ្សេងៗ`).
-+   - **Right Column: Interactive Checklist Widget (`ការងារត្រូវបំពេញ`)**:
-+     - Dynamic progress bar with live completion tracking (`បានបំពេញ X/4`).
-+     - Real-time status indicators for:
-+       - ⚠️ `ប្រវត្តិអាឡែកស៊ី` (Allergy History)
-+       -  `ការពិនិត្យរាងកាយ` (Physical Examination)
-+       - ◯ `រោគវិនិច្ឆ័យ` (Diagnosis)
-+       - ◯ `ផែនការព្យាបាល` (Treatment Plan)
-+     - Interactive click-to-scroll navigation that smoothly focuses the matching field in the consultation form.
-+
-+2. **Navigation & Banner**:
-+   - Modern record navigation tabs:
-+     - `ទិន្នន័យទូទៅ` (General Information / Demographics)
-+     - `ការពិនិត្យព្យាបាល` (Clinical Consultation - Active)
-+     - `ការបញ្ជូន/សុខាភិបាល` (Referrals & Transfers)
-+     - `ថ្នាំព្យាបាល` (Medications / Prescriptions)
-+     - `លទ្ធផលមន្ទីរពិសោធន៍` (Laboratory Results)
-+     - `ប្រវត្តិវេជ្ជសាស្ត្រ` (Medical History)
-+   - Breadcrumb navigation: `អ្នកជំងឺ > [ឈ្មោះអ្នកជំងឺ] > ការពិនិត្យព្យាបាល`.
-+   - Compact glanceable patient banner displaying patient identification, demographics, case number, health ID, ward/bed, allergy warning badge (`⚠️ មិនទាន់កត់ត្រាអាឡែកស៊ី`), and expandable details button.
-+
-+3. **Data Integrity & Safety**:
-+   - All interactive controls declare `data-emr-transient` and `data-emr-no-save` attributes to guarantee that position-based storage keys remain strictly frozen and never shift.
-+   - Screen-only presentation layer: Authentic hospital A4 paper printout templates remain 100% intact and print without modification under `@media print`.
-+   - Existing role permissions, NPCA payloads, audit logs, drug safety checks, dose checks, and financial calculations remain preserved.
-+
+
 +## Verification
 +- `npm test`: 981/981 tests passing (0 failures).
 +- `npm run check:khmer`: passed (0 errors, all strings verified).
@@ -1556,67 +1495,6 @@ index 0000000..8de35f2
 +  function enhanceRecordNavigation() {
 +    const tabsWrapper = document.getElementById('emr-chart-tabs-wrapper');
 +    if (!tabsWrapper) return;
-+
-+    // The 6 tabs matching the design
-+    const recordTabsNav = tabsWrapper.querySelector('.emr-chart-tabs');
-+    if (recordTabsNav && !recordTabsNav.dataset.enhancedV432) {
-+      recordTabsNav.dataset.enhancedV432 = 'true';
-+      recordTabsNav.innerHTML = `
-+        <button type="button" class="emr-chart-tab" role="tab" data-record-tab="general" aria-selected="false">
-+          <span>ទិន្នន័យទូទៅ</span>
-+        </button>
-+        <button type="button" class="emr-chart-tab is-active" role="tab" data-record-tab="consultation" aria-selected="true">
-+          <span>ការពិនិត្យព្យាបាល</span>
-+        </button>
-+        <button type="button" class="emr-chart-tab" role="tab" data-record-tab="referral" aria-selected="false">
-+          <span>ការបញ្ជូន/សុខាភិបាល</span>
-+        </button>
-+        <button type="button" class="emr-chart-tab" role="tab" data-record-tab="meds" aria-selected="false">
-+          <span>ថ្នាំព្យាបាល</span>
-+        </button>
-+        <button type="button" class="emr-chart-tab" role="tab" data-record-tab="labs" aria-selected="false">
-+          <span>លទ្ធផលមន្ទីរពិសោធន៍</span>
-+        </button>
-+        <button type="button" class="emr-chart-tab" role="tab" data-record-tab="history" aria-selected="false">
-+          <span>ប្រវត្តិវេជ្ជសាស្ត្រ</span>
-+        </button>
-+      `;
-+
-+      recordTabsNav.querySelectorAll('.emr-chart-tab').forEach(tab => {
-+        tab.addEventListener('click', () => {
-+          recordTabsNav.querySelectorAll('.emr-chart-tab').forEach(t => {
-+            const active = t === tab;
-+            t.classList.toggle('is-active', active);
-+            t.setAttribute('aria-selected', String(active));
-+          });
-+          handleRecordTabSwitch(tab.dataset.recordTab);
-+        });
-+      });
-+    }
-+  }
-+
-+  function handleRecordTabSwitch(tabId) {
-+    if (tabId === 'consultation') {
-+      window.switchOpdTab?.('opd');
-+      const ws = document.getElementById('emr-consultation-workspace');
-+      if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
-+    } else if (tabId === 'general') {
-+      const summaryBtn = document.querySelector('[data-banner-details-toggle]');
-+      if (summaryBtn) summaryBtn.click();
-+    } else if (tabId === 'referral') {
-+      const wardSelect = document.getElementById('web_opd_transfer_ward');
-+      if (wardSelect) wardSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
-+    } else if (tabId === 'meds') {
-+      const rxContainer = document.getElementById('opd_rx_container');
-+      if (rxContainer) rxContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-+    } else if (tabId === 'labs') {
-+      const labPanel = document.getElementById('paraclinic_results_panel') || document.getElementById('paraclinic-orders-section');
-+      if (labPanel) labPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-+    } else if (tabId === 'history') {
-+      const historyEl = document.getElementById('encounter-history-list') || document.getElementById('mgmt-history-dialog');
-+      if (historyEl) historyEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-+    }
-+  }
 +
 +  // 6. Bootstrap Initializer
 +  function init() {
