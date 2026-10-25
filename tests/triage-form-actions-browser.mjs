@@ -5,7 +5,7 @@ import { createEmrServer } from '../server/server.mjs';
 import { resetAndSeedThirtyTriagePatients } from '../scripts/seed-v301-thirty-triage-patients.mjs';
 import { openBrowser } from './helpers/context-browser.mjs';
 
-test('triage heading stays inside the form and cancel returns without saving', { timeout: 120000 }, async () => {
+test('triage actions preserve unsaved data and older records skip and reopen directly', { timeout: 120000 }, async () => {
   const app = createEmrServer({ demoMode: true, databasePath: ':memory:', host: '127.0.0.1', port: 0,
     appOrigin: 'http://127.0.0.1:0', nodeEnv: 'test', npca: { enabled: false } });
   let browser;
@@ -19,6 +19,11 @@ test('triage heading stays inside the form and cancel returns without saving', {
     await browser.waitFor("document.getElementById('login-form')", 'login');
     assert.equal(await browser.evaluate(`(async()=>{const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:'triage'})});return r.status})()`), 200);
     const patientKey = await browser.evaluate("(async()=>{const d=await (await fetch('/api/triage/queue')).json();return (d.waiting||d.patients)[0].patientKey})()");
+    // Match older records: the calling board has the number, not registration JSON.
+    const olderData = JSON.parse(app.database.findPatient(patientKey).record_json);
+    delete olderData['system:registrationQueueNumber'];
+    delete olderData['scope:registration:id:registration_queue_number'];
+    app.database.sqlite.prepare('UPDATE patient_records SET record_json=? WHERE patient_key=?').run(JSON.stringify(olderData), patientKey);
     const before = app.database.findPatient(patientKey).record_json;
     await browser.send('Page.navigate', { url: origin + '/emr?' + new URLSearchParams({ patient: patientKey, view: 'triage', edit: '1' }) });
     await browser.waitFor(`window.getLoadedEmrPatient?.()?.patientKey===${JSON.stringify(patientKey)} && document.body.dataset.encounterView==='triage'`, 'triage patient', 60000);
@@ -48,6 +53,8 @@ test('triage heading stays inside the form and cancel returns without saving', {
     };
     await browser.waitFor("document.querySelector('#triage-body-waiting a.triage-open')", 'waiting patients');
     await openPatient();
+    const activeNumber = app.database.sqlite.prepare("SELECT queue_number FROM queue_board_calls WHERE service='TRIAGE' AND patient_key=? AND active=1 ORDER BY called_at DESC LIMIT 1").get(patientKey)?.queue_number;
+    assert.ok(activeNumber > 0);
     assert.equal(await browser.evaluate("Boolean(document.querySelector('#page2 button[onclick*=\"printAdmissionOnly\"]'))"), false);
     assert.equal(await browser.evaluate("Boolean(document.getElementById('print-admission'))"), true, 'admission form is preserved');
     await browser.evaluate(`(()=>{window.realFetch=window.fetch;window.fetch=(url,options)=>String(url)==='/api/queue/skip'?Promise.resolve(new Response(JSON.stringify({error:'PRIVATE DIAGNOSTIC'}),{status:503})):realFetch(url,options);document.getElementById('p2_temp').value='';document.getElementById('p2_temp').dispatchEvent(new Event('input',{bubbles:true}));document.getElementById('triage_skip_btn').click()})()`);
@@ -60,6 +67,7 @@ test('triage heading stays inside the form and cancel returns without saving', {
     assert.deepEqual(skipped, { text: '\u1794\u17c6\u1796\u17c1\u1789\u1791\u17d2\u179a\u17b8\u1799\u17c9\u17b6', edit: '1', view: 'triage' });
     assert.equal(await browser.evaluate(`[...document.querySelectorAll('#triage-body-waiting a.triage-open')].some(a=>new URL(a.href).searchParams.get('patient')===${JSON.stringify(patientKey)})`), false, 'skipped patient is removed from the waiting list');
     assert.equal(app.database.findPatient(patientKey).record_json, before, 'skip must not save unfinished fields');
+    assert.equal(app.database.sqlite.prepare("SELECT queue_number FROM queue_board_skips WHERE service='TRIAGE' AND patient_key=? AND active=1").get(patientKey)?.queue_number, activeNumber, 'skip retains the active queue number for an older record');
     await openPatient();
     assert.equal(await browser.evaluate("window.EmrEncounterEditor.canWrite() && !document.getElementById('p2_temp').disabled"), true, 'skipped patients reopen directly without requesting edit');
   } catch (error) {
