@@ -119,7 +119,7 @@ test('Phase 4: Khmer-only chart tabs filter by role and navigate without a patie
   const roles = [
     ...['ADMIN', 'DIRECTOR', 'VICE_DIRECTOR'].map(role => [role, all]),
     ...['DOCTOR', 'WARD_HEAD', 'CHIEF_WARD', 'NURSE', 'MIDWIFE'].map(role => [role, clinical]),
-    ...['TRIAGE', 'REGISTRATION'].map(role => [role, ['summary', 'vitals']]),
+    ['TRIAGE', ['vitals']], ['REGISTRATION', ['summary', 'vitals']],
     ...['CLERK', 'ACCOUNTANT'].map(role => [role, ['summary', 'billing']]),
     ['PHARMACY', ['summary', 'meds']],
     ...['LAB', 'IMAGING'].map(role => [role, ['summary', 'orders', 'results']]),
@@ -214,13 +214,12 @@ test('Phase 4: Khmer-only chart tabs filter by role and navigate without a patie
   changedRole.wrapper().querySelectorAll().find(tab => tab.dataset.chartTab === 'billing').click();
   changedRole.window.emrSession.user.activeRole = 'TRIAGE';
   changedRole.window.setupChartTabs(patient);
-  assert.deepEqual(changedRole.wrapper().querySelectorAll().map(tab => tab.dataset.chartTab), ['summary', 'vitals']);
-  assert.equal(changedRole.wrapper().querySelector().dataset.chartTab, 'summary', 'a disallowed selection falls back to summary');
+  assert.deepEqual(changedRole.wrapper().querySelectorAll().map(tab => tab.dataset.chartTab), ['vitals']);
+  assert.equal(changedRole.wrapper().querySelector().dataset.chartTab, 'vitals', 'a disallowed selection falls back to vitals');
   changedRole.actions.length = 0;
-  const tampered = changedRole.wrapper().querySelectorAll()[1];
+  const tampered = changedRole.wrapper().querySelectorAll()[0];
   tampered.dataset.chartTab = 'billing'; tampered.click();
-  assert.deepEqual(changedRole.actions, [], 'a disallowed tab cannot navigate');
-  assert.equal(changedRole.wrapper().querySelector().dataset.chartTab, 'summary');
+  assert.deepEqual(changedRole.actions, [['page', 2]], 'a disallowed tab falls back to the allowed vitals page');
   const unsaved = fixture('CLERK');
   unsaved.window.setupChartTabs(null);
   unsaved.wrapper().querySelectorAll().find(tab => tab.dataset.chartTab === 'billing').click();

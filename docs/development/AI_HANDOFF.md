@@ -1,5 +1,24 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Current triage update - 25 October 2026
+
+The historical pause instructions below have been superseded by merged master
+at bff56ec. The working tree was clean and origin fetched before creating
+feature/triage-remove-summary. The user authorized a separate triage branch,
+verification, publication and merge for the next release.
+
+Following the one-change-at-a-time instruction, this update implements item 1:
+remove the Summary tab for TRIAGE only, retaining Vitals and every other role's
+existing tabs. Package/login/server versions advance from 45.7 to 45.8.0;
+the earlier master commit title mentioned 45.8 but did not update metadata.
+
+Items 2-4 (white page coverage, footer buttons/cancel placement, skip-to-late
+action) remain for individual agreement and coding authorization. Do not claim
+that this release implements them. Patient records and clinical logic are unchanged.
+
+Validation and release evidence: docs/development/TRIAGE_SUMMARY_VALIDATION.md.
+Delivery: Borkeo-EMR-v45.8.0-triage-summary-update.txt.
+
 User goal: safely create a branch or a separate working copy for one EMR module, edit it, test it, and merge it back. The agreed first scope is to map modules and establish a branching workflow. Large physical extraction of forms is a later task.
 
 Completed: inspected supplied Borkeo_EMR_v45.5.0.zip; mapped 23 areas; added cross-platform Node branch helper, worktree helper and change-scope review; tested with disposable Git repositories. Clinical forms, backend runtime, saved keys, patient data and .gitignore are unchanged.

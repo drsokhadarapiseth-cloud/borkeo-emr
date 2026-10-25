@@ -30,7 +30,10 @@
     if (['NURSE', 'MIDWIFE'].includes(r)) {
       return ['summary', 'vitals', 'orders', 'results', 'meds', 'notes'];
     }
-    if (r === 'TRIAGE' || r === 'REGISTRATION') {
+    if (r === 'TRIAGE') {
+      return ['vitals'];
+    }
+    if (r === 'REGISTRATION') {
       return ['summary', 'vitals'];
     }
     if (['CLERK', 'ACCOUNTANT'].includes(r)) {
