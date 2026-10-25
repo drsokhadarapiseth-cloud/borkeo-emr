@@ -49,7 +49,7 @@
   }
   async function skipPatient(patientKey,queueNumber){
     const token=await csrfToken();
-    const response=await fetch('/api/queue/skip',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF-Token':token},body:JSON.stringify({service:'TRIAGE',counter:getCounter(),patientKey,queueNumber})});
+    const response=await fetch('/api/queue/skip',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF-Token':token},body:JSON.stringify({service:'TRIAGE',counter:getCounter(),patientKey,queueNumber,status:'LATE'})});
     const result=await response.json().catch(()=>({}));
     if(!response.ok)throw new Error(result.error||'Unable to skip patient.');
   }
