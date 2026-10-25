@@ -275,3 +275,16 @@
  #page2 #triage_save_btn { grid-column:1; }
  #page2 #triage_discard_btn { grid-column:2; }
 }
+
+@media screen {
+ body[data-encounter-view="register"] #emr-chart-tabs-wrapper, body[data-encounter-view="opd"] #emr-chart-tabs-wrapper, body[data-encounter-view="opd-paraclinic"] #emr-chart-tabs-wrapper { display:none!important; }
+ body[data-encounter-view="opd"] #opd-disposition-panel, body[data-encounter-view="opd"] #sub_opd > .periop-launcher {display:none!important}
+ .opd-shared-complaint { position:relative; margin:12px 0; padding:12px; background:#f5fbfe; border:1px solid #d7eaf0; border-radius:10px; }
+ .opd-shared-complaint > label {display:block;font-weight:700;margin-bottom:8px}
+ .opd-shared-complaint .cc-tag-box {min-height:44px;width:100%}
+ .opd-shared-complaint-print {display:none}
+}
+@media print {
+ .opd-shared-complaint > :not(label):not(.opd-shared-complaint-print) {display:none!important}
+ .opd-shared-complaint-print {display:block;white-space:pre-wrap}
+}

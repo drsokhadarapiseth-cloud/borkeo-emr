@@ -184,7 +184,7 @@
         <td>${escapeHtml(a.recordedBy || '—')}</td>
         ${editable ? `<td class="clinical-actions">
           <button type="button" class="clinical-button secondary" data-allergy-remove="${escapeHtml(a.id)}">${label('clinical.remove', 'Remove')}</button>
-          <span class="clinical-remove-form" data-allergy-remove-form="${escapeHtml(a.id)}" hidden>
+          <span class="clinical-remove-form" data-required-island data-allergy-remove-form="${escapeHtml(a.id)}" hidden>
             <input type="text" data-emr-transient maxlength="300" data-allergy-remove-reason aria-label="${escapeHtml(plain('clinical.removeReason', 'Reason for removing'))}" placeholder="${escapeHtml(plain('clinical.removeReason', 'Reason for removing'))}">
             <button type="button" class="clinical-button danger" data-allergy-remove-confirm="${escapeHtml(a.id)}">${label('clinical.confirmRemove', 'Confirm remove')}</button>
           </span>
@@ -198,7 +198,7 @@
             <th>${label('clinical.allergy.type', 'Type')}</th><th>${label('', 'Substance', 'សារធាតុ')}</th><th>${label('', 'Reaction', 'ប្រតិកម្ម')}</th>
             <th>${label('', 'Severity', 'កម្រិតធ្ងន់ធ្ងរ')}</th><th>${label('', 'Date', 'កាលបរិច្ឆេទ')}</th><th>${label('', 'Recorded by', 'អ្នកកត់ត្រា')}</th>${editable ? '<th></th>' : ''}
         </tr></thead><tbody>${rows}</tbody></table></div>` : `<p class="clinical-empty">${label('clinical.allergy.none', 'No entries have been recorded in this allergy list yet.')}</p>`}
-        ${summary && editable ? `<div class="clinical-add-form" data-allergy-add-form>
+        ${summary && editable ? `<div class="clinical-add-form" data-required-island data-allergy-add-form>
           <label><span>${label('clinical.allergy.type', 'Type')}</span>
             <select data-emr-transient data-allergy-field="allergyType">${options.allergyTypes.map((code) => `<option value="${escapeHtml(code)}">${escapeHtml(plainOption('allergyType', code))}</option>`).join('')}</select></label>
           <label class="wide"><span>${label('', 'Substance', 'សារធាតុ')}</span>
@@ -252,7 +252,7 @@
             : `<p class="clinical-empty">${label('clinical.problem.none', 'No health problems are recorded as ongoing.')}</p>`}
         ${resolved.length ? `<details class="clinical-resolved"><summary>${label('clinical.problem.resolved', 'Resolved problems')} (${resolved.length})</summary>
           <ul class="clinical-problem-list">${resolved.map((p) => item(p, 'active', 'clinical.problem.reactivate', 'Make active again')).join('')}</ul></details>` : ''}
-        ${summary && editable ? `<div class="clinical-add-form" data-problem-add-form>
+        ${summary && editable ? `<div class="clinical-add-form" data-required-island data-problem-add-form>
           <label class="wide"><span>${label('clinical.problem.name', 'Problem')}</span>
             <input type="text" data-emr-transient data-problem-field="problem" maxlength="300" required></label>
           <label><span>ICD-10</span>

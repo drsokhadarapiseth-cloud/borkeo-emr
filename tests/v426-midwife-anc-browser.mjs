@@ -228,19 +228,11 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies, 
 
     // ---------- Cervical screening ----------
     await open(`/emr?patient=${encodeURIComponent(cervix)}&view=opd`, `Boolean(document.querySelector('#cervix-result-panel'))`);
-    await browser.waitFor(`(document.querySelector('.emr-banner-details-button')?.getBoundingClientRect().width||0)>50`, 'visible patient header with readable details label').catch(async error => {
-      await screenshot('patient-header-failure');
-      throw new Error(error.message + ' ' + JSON.stringify(await browser.evaluate(`({buttons:[...document.querySelectorAll('.emr-banner-details-button')].map(b=>({width:b.getBoundingClientRect().width,style:getComputedStyle(b).width,parent:b.parentElement.className})),styles:[...document.styleSheets].map(s=>s.href),media:matchMedia('screen').matches})`)));
-    });
-    assert.ok(await browser.evaluate(`document.querySelector('.emr-banner-details-button').getBoundingClientRect().width>50`), 'details label has room beyond the old icon width');
+    // v47 removes the duplicate consultation header; check the canonical banner.
+    await browser.waitFor("document.getElementById('opd_banner_patient_name')?.textContent.includes('B426-C1')", 'canonical patient identity');
+    assert.equal(await browser.evaluate("Boolean(document.getElementById('emr-consultation-workspace'))"), false);
     await screenshot('patient-desktop');
-    await click('.emr-banner-details-button');
-    await browser.waitFor(`Boolean(document.querySelector('#emr-banner-summary-panel'))`, 'patient details');
-    await screenshot('patient-details-desktop');
     await browser.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
-    await sleep(400);
-    await screenshot('patient-details-mobile');
-    await click('.emr-banner-details-button');
     await screenshot('patient-mobile');
     await browser.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
     // The record opens in view mode; the midwife presses Edit (v37.8).

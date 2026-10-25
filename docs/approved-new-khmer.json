@@ -2120,6 +2120,90 @@
       "kh": "រួចរាល់ហើយ",
       "key": "reviewed.existing464.done",
       "note": "Preserved current supplied source from 29d9fca; metadata only, no wording or workflow change."
+    },
+    {
+      "key": "anc.sections.pregnancy",
+      "en": "Pregnancy record",
+      "kh": "ព័ត៌មានផ្ទៃពោះ",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.sections.tests",
+      "en": "Tests and ultrasound",
+      "kh": "តេស្ត និងអេកូសាស្ត្រ",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.sections.care",
+      "en": "Care and treatment",
+      "kh": "ការថែទាំ និងការព្យាបាល",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.sections.history",
+      "en": "Visit history",
+      "kh": "ប្រវត្តិការពិនិត្យ",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.sections.risk",
+      "en": "Risk assessment",
+      "kh": "ចំណាត់ថ្នាក់ហានិភ័យ",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.sections.legacy",
+      "en": "Previous ANC form",
+      "kh": "កំណត់ត្រា ANC ចាស់",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.legacyNotice",
+      "en": "Saved values from this encounter are read only and are not copied into another pregnancy.",
+      "kh": "ទិន្នន័យចាស់សម្រាប់មើលតែប៉ុណ្ណោះ។ មិនត្រូវបានចម្លងទៅផ្ទៃពោះផ្សេងទេ។",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.legacyEmpty",
+      "en": "No saved old ANC form for this encounter.",
+      "kh": "មិនមានទិន្នន័យ ANC ចាស់សម្រាប់ការជួបព្យាបាលនេះទេ។",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.extraVisit",
+      "en": "Additional visit details",
+      "kh": "ព័ត៌មានបន្ថែមសម្រាប់ការពិនិត្យនេះ",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.ga",
+      "en": "Gestational age",
+      "kh": "អាយុគភ៌",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.reloadConflict",
+      "en": "The record changed or is closed. Reload it.",
+      "kh": "កំណត់ត្រាបានផ្លាស់ប្តូរ ឬត្រូវបានបិទ។ សូមបើកកំណត់ត្រាឡើងវិញ។",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.accessDenied",
+      "en": "You do not have permission for this action.",
+      "kh": "អ្នកមិនមានសិទ្ធិធ្វើសកម្មភាពនេះទេ។",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "anc.requestFailed",
+      "en": "The request failed. Please try again.",
+      "kh": "មិនអាចបំពេញសំណើបានទេ។ សូមព្យាយាមម្តងទៀត។",
+      "note": "Owner-approved combined ANC workspace navigation and safe status wording; clinical rules unchanged."
+    },
+    {
+      "key": "triage.doctorFirst",
+      "en": "Sent to the OPD doctor to select the required tests.",
+      "kh": "បានបញ្ជូនទៅគ្រូពេទ្យពិគ្រោះក្រៅដើម្បីកំណត់តេស្ត",
+      "note": "Owner-approved OPD plus paraclinic doctor-first routing message."
     }
   ]
 }

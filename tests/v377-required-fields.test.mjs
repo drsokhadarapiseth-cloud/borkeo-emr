@@ -32,7 +32,7 @@ test('a direct Registration save/transfer validates before clinical synchronizat
   const registration = {}, active = {};
   const seen = [];
   let allow = false;
-  const context = vm.createContext({ window: { BorkeoRequiredFields: { validate: scope => { seen.push(scope); return allow; } } },
+  const context = vm.createContext({ patientLoading: false, window: { BorkeoRequiredFields: { validate: scope => { seen.push(scope); return allow; } } },
     document: { getElementById: id => { assert.equal(id, 'sub_reg'); return registration; }, querySelector: () => active } });
   vm.runInContext(source.slice(start, end) + 'return "allowed";\n}', context);
   assert.equal(await context.savePatientRecord({ transferToTriage: true }), false);
@@ -40,6 +40,8 @@ test('a direct Registration save/transfer validates before clinical synchronizat
   assert.deepEqual(seen, [registration, active]);
   allow = true;
   assert.equal(await context.savePatientRecord({ transferToTriage: true }), 'allowed');
+  context.patientLoading = true;
+  assert.equal(await context.savePatientRecord({ transferToTriage: true }), false, 'loading a different patient cannot submit partially restored controls');
 });
 
 test('required validation assets are served through the public allowlist', () => {

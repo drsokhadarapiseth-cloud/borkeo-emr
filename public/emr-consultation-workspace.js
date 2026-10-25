@@ -13,7 +13,9 @@
   let currentViewMode = 'integrated';
 
   function isConsultationActive() {
-    return window.location.pathname === '/emr' && Boolean(document.getElementById('sub_opd'));
+    // The canonical SOAP form now owns consultation controls and shared fields.
+    // Retain legacy helper definitions for compatibility, without creating a duplicate UI.
+    return false;
   }
 
   function getViewMode() {

@@ -1,5 +1,42 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Combined approved updates - v47.0.0, 25 October 2026
+
+User explicitly requested every pending discussed update. Base is clean master
+cd41efd (46.5.0); development branch feature/unified-anc-workspace. Five pending
+minor steps are delivered together as 47.0.0, with package/login/server aligned.
+Earlier notes below are historical; registration separation and backups are
+now included. Preserve all supplied 46.2-46.5 triage and fixture improvements.
+
+- Registration Save writes registration only and leaves a new patient REGISTERED;
+  explicit Send to Triage changes that patient to WAITING. Already transferred
+  patients retain their clinical state. Registration chart navigation is hidden.
+- OPD plus paraclinic retains the doctor-first ordering flow; OPD alone retains
+  direct cashier routing. The notification now explains the correct destination.
+- The duplicate OPD consultation editor/navigation and top auxiliary controls
+  shown in the screenshot are hidden. Native SOAP remains. Chief complaint is
+  editable in Subjective; eight vital measurements and complaint use canonical
+  triage fields in the same encounter. Explicit clearing is supported. Existing
+  role, ward, payment, discharge and version guards remain; earlier visits and
+  protected registration demographics are not overwritten by doctor edits.
+- ANC opens one workspace from the old entry point, with current visit,
+  pregnancy, tests, care, history, risk and legacy sections. Old-only fields are
+  available as supplemental per-visit details. Existing legacy encounter values
+  are shown read-only without silently copying a different pregnancy. Record
+  and visit Save are atomic; previous encounter links retain their own pregnancy.
+- npm run backup:code archives committed code with a checksum. Restore extracts
+  into a new folder and never overwrites hospital data or the current app.
+
+The address loader now waits for linked address restoration before enabling
+shared editing/saving; stale patient loads cannot apply a prior address/photo.
+Independent allergy/problem editors validate their own actions rather than
+blocking the main encounter Save with an empty, unrelated draft.
+
+Pre-update verified code snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v46.5.0-cd41efdd-72a766bc
+Restored successfully to a separate temporary folder with version/commit intact.
+See COMBINED_UPDATE_V470_VALIDATION.md for verification and installation.
+
 ## Current synthetic-registration task - v46.5.0, 25 October 2026
 
 User selected 30 synthetic test patients, not updates to real registrations,

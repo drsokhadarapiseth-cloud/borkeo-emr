@@ -12,6 +12,7 @@ import { opdLocalDate, updateOpdQueueStatus } from '../opd-queue.mjs';
 import { prepareOpdPrescription, submitOpdPrescription } from '../pharmacy-prescriptions.mjs';
 import { signatureSnapshot } from '../esign.mjs';
 import { syncMedicineStock } from '../stock.mjs';
+import { legacyAncFields, readLegacyAnc } from '../anc-legacy.mjs';
 
 const READ_ROLES = new Set(['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'MIDWIFE', 'DOCTOR', 'CHIEF_WARD', 'NURSE']);
 
@@ -47,7 +48,7 @@ export function mountMaternalRoutes(router) {
     const options = maternalOptions();
     const allowed = new Set(options.midwifeMedicines.map((name) => name.toLowerCase()));
     return ok(ctx, 200, {
-      chart: ancColourChart(), schedule: ancVisitSchedule(), labels: ancRecordLabels(), options,
+      chart: ancColourChart(), schedule: ancVisitSchedule(), labels: ancRecordLabels(), options, legacyFields: legacyAncFields,
       vaccines: vaccineLines(), midwifeMedicines: medicineCatalogue().items.filter((item) => allowed.has(item.name.toLowerCase())),
       canSignReferral: canSignReferral(who.session, who.ward), role: who.role, today: opdLocalDate(),
     });
@@ -76,7 +77,7 @@ export function mountMaternalRoutes(router) {
     const today = opdLocalDate();
     const body = {
       patient: { patientKey: row.patient_key, fullName: row.full_name, healthId: row.health_id, caseNumber: row.case_number, sex: row.sex, age: row.age, departmentCode: row.department_code },
-      imported: importedValues(row), released: releasedResults(ctx.database, row), pregnancy: null, visits: [], colourHistory: [], status: null, vaccinations: [],
+      imported: importedValues(row), released: releasedResults(ctx.database, row), legacyAnc: readLegacyAnc(row), pregnancy: null, visits: [], colourHistory: [], status: null, vaccinations: [],
       canEdit: canUseMaternalPatient(who.session, row, who.ward) && who.role === 'MIDWIFE' || ['ADMIN', 'VICE_DIRECTOR'].includes(who.role),
       canSignReferral: canSignReferral(who.session, who.ward), today,
     };
@@ -125,11 +126,12 @@ export function mountMaternalRoutes(router) {
     return ok(ctx, result.created ? 201 : 200, { pregnancy: result.pregnancy, status: statusFor(ctx.database, result.pregnancy, opdLocalDate()) });
   }));
 
-  router.post(/^\/api\/anc\/record\/([0-9a-f-]{36})\/(save|visit|task|referral|sign|close|prescription)$/, async (ctx) => {
+  router.post(/^\/api\/anc\/record\/([0-9a-f-]{36})\/(save|save-all|visit|task|referral|sign|close|prescription)$/, async (ctx) => {
     const [, id, action] = ctx.routeParams;
     return pregnancyAction(ctx, ({ who, row, body }) => {
       const pregnancy = getPregnancy(ctx.database, id);
       if (!pregnancy) return fail(ctx, 404, 'ANC record not found.');
+      if (pregnancy.patientKey !== row.patient_key && !(pregnancy.healthId && pregnancy.healthId === row.health_id)) return fail(ctx, 403, 'The pregnancy does not belong to this patient.');
       const today = opdLocalDate();
       const event = (name, details = {}) => ctx.audit(ctx.database, ctx.request, name, { userId: who.session.user_id, subjectUsername: who.session.username, details: { patientKey: row.patient_key, pregnancyId: id, ...details } });
       if (action === 'sign') {
@@ -139,6 +141,18 @@ export function mountMaternalRoutes(router) {
         return ok(ctx, 200, { ...signed, pregnancy: getPregnancy(ctx.database, id) });
       }
       if (!midwifeOnly(ctx, who)) return true;
+      if (action === 'save-all') {
+        if (Number(body.expectedVersion) !== pregnancy.version) return fail(ctx, 409, 'The ANC record changed. Reload it before saving.');
+        ctx.database.sqlite.exec('BEGIN IMMEDIATE');
+        try {
+          saveRecord(ctx.database, id, who.session, body, today);
+          saveVisit(ctx.database, id, row, who.session, body, today);
+          ctx.database.sqlite.exec('COMMIT');
+        } catch (error) { ctx.database.sqlite.exec('ROLLBACK'); throw error; }
+        try { updateOpdQueueStatus(ctx.database, row.patient_key, 'IN_CONSULTATION'); } catch { /* no queue entry */ }
+        event('ANC_VISIT_SAVED', { unified: true });
+        return ok(ctx, 200, { pregnancy: getPregnancy(ctx.database, id), visits: listVisits(ctx.database, id), colourHistory: colourHistory(ctx.database, id) });
+      }
       if (action === 'save') {
         const saved = saveRecord(ctx.database, id, who.session, body, today);
         event('ANC_RECORD_SAVED', { colour: saved.colour });

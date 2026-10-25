@@ -1,5 +1,11 @@
 # Borkeo EMR update preferences
 
+Before each approved code update, run `npm run backup:code` on the clean baseline
+and record the backup directory and Git commit in the handoff. If that command is
+not available yet, create a code-only Git archive of the baseline. Never include
+hospital databases, uploads, backups, password exports or .env. The restore tool
+must restore code into a new folder and must not overwrite live data or secrets.
+
 For future development, discuss requested changes with the user one at a time. Confirm the agreed behavior and wait for an explicit instruction to code before editing. An explicit instruction such as "yes code it" authorizes the agreed update.
 
 Use the latest project supplied by the user as the base. Preserve unrelated customizations and clinical, pharmacy, laboratory, and financial logic. Do not replace patient data when applying a code update.

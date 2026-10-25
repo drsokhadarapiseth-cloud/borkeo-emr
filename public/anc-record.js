@@ -20,13 +20,64 @@ let draft = {};          // today's visit
 let prescription = [];   // today's prescription lines
 let tasksShown = false;
 let csrf = '';
+let activeSection = 'visit';
+const sections = () => [
+  ['visit', t('anc.todayVisit', "Today's visit")], ['pregnancy', t('anc.sections.pregnancy', 'Pregnancy record')],
+  ['tests', t('anc.sections.tests', 'Tests and ultrasound')], ['care', t('anc.sections.care', 'Care and treatment')],
+  ['history', t('anc.sections.history', 'Visit history')], ['risk', t('anc.sections.risk', 'Risk assessment')],
+  ['legacy', t('anc.sections.legacy', 'Previous ANC form')],
+];
+function selectSection(name, focus = false) {
+  const available = [...document.querySelectorAll('[data-anc-section]')].map(node => node.dataset.ancSection);
+  activeSection = available.includes(name) ? name : (available[0] || 'legacy');
+  document.querySelectorAll('[data-anc-section]').forEach(node => { node.hidden = node.dataset.ancSection !== activeSection; });
+  document.querySelectorAll('[data-anc-nav]').forEach(node => {
+    const selected = node.dataset.ancNav === activeSection;
+    node.setAttribute('aria-selected', String(selected)); node.tabIndex = selected ? 0 : -1;
+    if (selected && focus) node.focus();
+  });
+}
+function renderNavigation() {
+  const host = $('anc-sections');
+  host.setAttribute('aria-label', L().title);
+  host.setAttribute('role', 'tablist');
+  host.innerHTML = sections().filter(([name]) => document.querySelector(`[data-anc-section="${name}"]`)).map(([name, label]) =>
+    `<button type="button" role="tab" id="anc-nav-${name}" data-anc-nav="${name}" aria-controls="anc-pane-${name}">${esc(label)}</button>`).join('');
+  selectSection(activeSection);
+}
+const pane = (name, content) => `<div id="anc-pane-${name}" role="tabpanel" aria-labelledby="anc-nav-${name}" data-anc-section="${name}">${content}</div>`;
+function legacySection() {
+  const legacy = data.legacyAnc;
+  return `<section class="anc-page anc-legacy"><h2>${esc(t('anc.sections.legacy', 'Previous ANC form'))}</h2>
+    <p class="anc-hint">${esc(t('anc.legacyNotice', 'Saved values from this encounter are read only and are not copied into another pregnancy.'))}</p>
+    <p>${esc(legacy?.caseNumber || '')} · ${esc(legacy?.date || '')}</p>
+    ${legacy?.entries?.length ? `<dl class="anc-legacy-values">${legacy.entries.map(item => `<div><dt>${esc(item.label)}</dt><dd>${esc(item.value)}</dd></div>`).join('')}</dl>`
+      : `<p>${esc(t('anc.legacyEmpty', 'No saved old ANC form for this encounter.'))}</p>`}</section>`;
+}
+function supplementalVisit() {
+  const starts = [32, 34, 43, 44, 45, 47, 49, 51, 52, 53, 54];
+  const fields = cfg.legacyFields || [];
+  return `<section class="anc-page anc-supplemental"><h2>${esc(t('anc.extraVisit', 'Additional visit details'))}</h2><div class="anc-visit-grid">${starts.map(index => {
+    const field = fields.find(item => item.key === `scope:medical:auto:${index}`);
+    if (!field) return '';
+    const value = draft.legacyDetails?.[index] || '';
+    const options = field.type === 'radio' ? fields.filter(item => item.name === field.name).map(item => item.option) : field.options;
+    const control = options ? `<select data-visit="legacyDetails.${index}"${canEdit() ? '' : ' disabled'}><option value=""></option>${options.map(option => `<option value="${esc(option)}"${value === option ? ' selected' : ''}>${esc(option)}</option>`).join('')}</select>`
+      : vfield(`legacyDetails.${index}`, { type: field.type === 'date' ? 'date' : 'text' });
+    return `<label>${esc(field.label)} ${control}</label>`;
+  }).join('')}</div></section>`;
+}
 
 async function api(path, body) {
   if (body && !csrf) csrf = (await fetch('/api/auth/me', { credentials: 'same-origin', cache: 'no-store' }).then((r) => r.json())).csrfToken;
   const response = await fetch(path, body ? { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf }, body: JSON.stringify(body) }
     : { credentials: 'same-origin', cache: 'no-store' });
   const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw Object.assign(new Error(result.error || String(response.status)), { body: result, status: response.status });
+  if (!response.ok) {
+    const fallback = response.status === 409 ? t('anc.reloadConflict', 'The record changed or is closed. Reload it.')
+      : response.status === 403 ? t('anc.accessDenied', 'You do not have permission for this action.') : t('anc.requestFailed', 'The request failed. Please try again.');
+    throw Object.assign(new Error(english() ? result.error || fallback : fallback), { body: result, status: response.status });
+  }
   return result;
 }
 
@@ -43,7 +94,7 @@ function setPath(object, path, value) {
   const keys = path.split('.');
   let node = object;
   keys.slice(0, -1).forEach((key, index) => {
-    if (node[key] == null || typeof node[key] !== 'object') node[key] = /^\d+$/.test(keys[index + 1]) ? [] : {};
+    if (node[key] == null || typeof node[key] !== 'object') node[key] = key !== 'legacyDetails' && /^\d+$/.test(keys[index + 1]) ? [] : {};
     node = node[key];
   });
   node[keys[keys.length - 1]] = value;
@@ -86,11 +137,12 @@ function renderSummary(status) {
   const closed = data.pregnancy.status !== 'open' ? `<span class="anc-closed">${esc(t(`anc.status.${data.pregnancy.status}`, data.pregnancy.status))}</span>` : '';
   host.innerHTML = `
     <div class="anc-summary-line"><strong>${esc(data.patient.fullName)}</strong> · ${esc(data.patient.healthId || data.patient.caseNumber || '')} ${closed}</div>
-    <div class="anc-summary-line">${esc(L().identity.edd)} <strong>${esc(status.dating.edd || '—')}</strong> <small>${esc(source)}</small> · GA <strong>${esc(ga)}</strong></div>
+    <div class="anc-summary-line">${esc(L().identity.edd)} <strong>${esc(status.dating.edd || '—')}</strong> <small>${esc(source)}</small> · ${esc(t('anc.ga', 'Gestational age'))} <strong>${esc(ga)}</strong></div>
     <div class="anc-colour-note anc-note-${esc(status.colour)}">${esc(colourNote)}${status.flags.includes('height-check') ? ` · ${esc(t('anc.heightCheck', 'Height under 145 cm: check'))}` : ''}</div>
     ${status.reasons.length ? `<ul class="anc-reasons">${status.reasons.map((reason) => `<li class="anc-reason-${esc(reason.level)}">${esc(reason.kh)}</li>`).join('')}</ul>` : ''}
     <div class="anc-actions no-print">
-      ${canEdit() ? `<button type="button" data-action="save-record">${esc(t('anc.saveRecord', 'Save the record'))}</button>` : ''}
+      ${data.canEdit && data.pregnancy.status !== 'open' && data.pregnancy.patientKey !== patientKey && !(data.visits || []).some(visit => visit.patientKey === patientKey) ? `<button type="button" data-action="open">${esc(t('anc.open', 'Open the ANC record'))}</button>` : ''}
+      ${canEdit() ? `<button type="button" data-action="save-visit">${esc(t('anc.saveVisit', 'Save the visit'))}</button>` : ''}
       <button type="button" class="secondary" data-action="print">${esc(t('form.print', 'Print'))}</button>
       ${canEdit() && status.colour === 'red' && !pendingReferral ? `<button type="button" class="danger" data-action="referral">${esc(t('anc.requestReferral', 'Refer to CPA3 (doctor signs)'))}</button>` : ''}
       ${pendingReferral && data.canSignReferral ? `<button type="button" class="danger" data-action="sign">${esc(t('anc.signReferral', 'Sign the referral'))}</button>` : ''}
@@ -196,7 +248,7 @@ function ultrasoundTable() {
   const released = data.released?.ultrasounds || [];
   const typed = Array.from({ length: Math.max(3, (record.ultrasounds || []).length + 1) }, (_, index) => index);
   return `<div class="anc-box-panel"><h3>${esc(u.title)}</h3><div class="anc-table-wrap"><table class="anc-table">
-    <thead><tr>${u.columns.map((c) => `<th>${esc(c.kh)}<br><small>${esc(c.en)}</small></th>`).join('')}</tr></thead>
+    <thead><tr>${u.columns.map((c) => `<th>${esc(english() ? c.en : c.kh)}</th>`).join('')}</tr></thead>
     <tbody>${released.map((row) => `<tr class="anc-readonly">${u.columns.map((c) => `<td>${esc(row[c.key] || '')}</td>`).join('')}</tr>`).join('')}
     ${typed.map((i) => `<tr>${u.columns.map((c) => `<td>${field(`ultrasounds.${i}.${c.key}`, { type: ['date', 'edd'].includes(c.key) ? 'date' : 'text', size: 'small' })}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
 }
@@ -218,7 +270,7 @@ function weightGain(weight) {
 function visitTable() {
   const columns = L().visits.columns;
   return `<div class="anc-box-panel"><div class="anc-table-wrap"><table class="anc-table anc-visit-table">
-    <thead><tr>${columns.map((c) => `<th>${esc(c.kh)}<br><small>${esc(c.en)}</small></th>`).join('')}</tr></thead>
+    <thead><tr>${columns.map((c) => `<th>${esc(english() ? c.en : c.kh)}</th>`).join('')}</tr></thead>
     <tbody>${(data.visits || []).map((visit) => `<tr class="${visit.referred ? 'anc-referred' : ''}">${columns.map((c) => `<td>${esc(visitValue(visit, c.key))}</td>`).join('')}</tr>`).join('')
       || `<tr><td colspan="${columns.length}">—</td></tr>`}</tbody></table></div></div>`;
 }
@@ -226,7 +278,7 @@ function visitTable() {
 // ---------------------------------------------------------------- today's visit
 function visitForm(status) {
   const cols = Object.fromEntries(L().visits.columns.map((c) => [c.key, c]));
-  const label = (key) => `${esc(cols[key].kh)} <small>${esc(cols[key].en)}</small>`;
+  const label = (key) => esc(english() ? cols[key].en : cols[key].kh);
   const imported = data.imported || {};
   const visitName = status.scheduled ? `${t('anc.visitOf', 'Visit')} ${status.visit.visit}/${status.visitsPlanned} · ${status.visit.label}` : t('anc.notScheduled', 'Not a scheduled visit');
   const ironOptions = (cfg.midwifeMedicines || []).map((item) => `<option value="${esc(item.id)}">${esc(item.label)}</option>`).join('');
@@ -265,7 +317,7 @@ function visitForm(status) {
       ${canEdit() ? `<select id="anc-rx-pick"><option value=""></option>${ironOptions}</select> <button type="button" class="secondary" data-action="rx-add">+</button>
         <button type="button" data-action="rx-send"${prescription.length ? '' : ' disabled'}>${esc(t('anc.sendPharmacy', 'Send to Pharmacy'))}</button>` : ''}
     </fieldset>
-    ${canEdit() ? `<div class="anc-actions"><button type="button" data-action="save-visit">${esc(t('anc.saveVisit', 'Save the visit'))}</button>
+    ${canEdit() ? `<div class="anc-actions">
       <a class="secondary-link" href="/vaccination?patient=${encodeURIComponent(patientKey)}">${esc(t('anc.giveVaccine', 'Open the vaccination'))}</a></div>` : ''}
   </section>`;
 }
@@ -325,12 +377,12 @@ function renderTasks(status) {
   const header = status.scheduled ? `${t('anc.visitOf', 'Visit')} ${status.visit.visit}/${status.visitsPlanned} · ${status.visit.label}` : t('anc.notScheduled', 'Not a scheduled visit');
   const next = status.next ? `${t('anc.nextVisit', 'Next scheduled visit')}: ${status.next.label} · ${status.appointment}` : '';
   const stateOf = (task) => ({ ...task, state: record.tasks?.[task.key] || null });
-  const html = `<h2 id="anc-tasks-title">${esc(t('anc.todo', 'To do at this visit'))}</h2>
+  const html = `
     <p class="anc-task-visit">${esc(header)}</p>${next ? `<p class="anc-task-next">${esc(next)}</p>` : ''}
     ${status.tasks.length ? `<ul class="anc-task-list">${status.tasks.map((task) => taskItem(stateOf(task))).join('')}</ul>` : ''}
     ${status.overdue.length ? `<h3 class="anc-overdue-title">${esc(t('anc.overdue', 'Overdue from earlier visits'))}</h3><ul class="anc-task-list">${status.overdue.map((task) => taskItem(stateOf(task), true)).join('')}</ul>` : ''}`;
   const wasClosed = host.querySelector('details')?.open === false;
-  host.innerHTML = `<details class="anc-task-disclosure"${wasClosed ? '' : ' open'}><summary>${esc(t('anc.todo', 'To do at this visit'))}</summary><div>${html}</div></details>`;
+  host.innerHTML = `<details class="anc-task-disclosure"${wasClosed ? '' : ' open'}><summary id="anc-tasks-title">${esc(t('anc.todo', 'To do at this visit'))} <span class="anc-task-count">${status.tasks.filter(task => task.autoDone || record.tasks?.[task.key]?.status === 'done').length}/${status.tasks.length}</span></summary><div>${html}</div></details>`;
   // v43.1: tasks stay inline; opening a patient never launches a blocking modal.
   tasksShown = true;
 }
@@ -339,13 +391,20 @@ function renderTasks(status) {
 function renderMain() {
   const main = $('anc-main');
   if (!data.pregnancy) {
-    main.innerHTML = `<section class="anc-page"><p>${esc(t('anc.noRecord', 'No ANC record for this pregnancy yet.'))}</p>
-      ${data.canEdit ? `<button type="button" data-action="open">${esc(t('anc.open', 'Open the ANC record'))}</button>` : ''}</section>`;
+    main.innerHTML = pane('pregnancy', `<section class="anc-page"><p>${esc(t('anc.noRecord', 'No ANC record for this pregnancy yet.'))}</p>
+      ${data.canEdit ? `<button type="button" data-action="open">${esc(t('anc.open', 'Open the ANC record'))}</button>` : ''}</section>`) + pane('legacy', legacySection());
+    renderNavigation();
     return;
   }
   const status = currentStatus();
-  main.innerHTML = `${data.pregnancy.status === 'open' ? visitForm(status) : ''}${page2()}
-    <section class="anc-page" data-page="3">${labTable()}${ultrasoundTable()}${visitTable()}</section>${chartSection(status)}${historySection()}`;
+  main.innerHTML = `${data.pregnancy.status === 'open' ? pane('visit', visitForm(status)) : ''}${pane('pregnancy', page2())}
+    ${pane('tests', `<section class="anc-page" data-page="3">${labTable()}${ultrasoundTable()}</section>`)}
+    ${pane('care', supplementalVisit())}${pane('history', `<section class="anc-page" id="anc-visit-history">${visitTable()}</section>${historySection()}`)}
+    ${pane('risk', chartSection(status))}${pane('legacy', legacySection())}`;
+  const rapid = main.querySelector('.anc-rapid'), rx = main.querySelector('.anc-rx');
+  if (rapid) main.querySelector('#anc-pane-tests > section').prepend(rapid);
+  if (rx) main.querySelector('#anc-pane-care > section').append(rx);
+  renderNavigation();
 }
 function refreshLive() {
   if (!data?.pregnancy) { renderTop(null); return; }
@@ -407,9 +466,15 @@ document.addEventListener('change', (event) => {
 });
 
 const body = (extra = {}) => ({ patientKey, ...extra });
+let busy = false;
 async function run(action) {
+  if (busy) return;
+  busy = true;
+  const buttons = [...document.querySelectorAll('.anc-actions button:not(:disabled)')];
+  buttons.forEach(button => { button.disabled = true; });
   setStatus('…');
   try { await action(); setStatus(t('anc.saved', 'Saved.')); } catch (error) { setStatus(error.message, true); }
+  finally { busy = false; buttons.forEach(button => { button.disabled = false; }); }
 }
 
 function addLine(item) {
@@ -450,6 +515,7 @@ function askCloseReason(key) {
 document.addEventListener('click', async (event) => {
   const button = event.target.closest('button, a.link');
   if (!button) return;
+  if (button.dataset.ancNav) { selectSection(button.dataset.ancNav); return; }
   if (button.hasAttribute('data-dialog-close')) { closeDialog(event); return; }
   const action = button.dataset.action;
   const id = data?.pregnancy?.id;
@@ -460,11 +526,10 @@ document.addEventListener('click', async (event) => {
     record = JSON.parse(JSON.stringify(result.pregnancy.record)); renderAll();
   });
   if (action === 'save-visit') return run(async () => {
-    await api(`/api/anc/record/${id}/save`, body({ record, expectedVersion: data.pregnancy.version }));
     const status = currentStatus();
     const visit = { ...draft, wp: weightGain(draft.weight), notScheduled: !status.scheduled };
     delete visit.id;
-    await api(`/api/anc/record/${id}/visit`, body({ visit }));
+    await api(`/api/anc/record/${id}/save-all`, body({ record, visit, expectedVersion: data.pregnancy.version }));
     await load();
   });
   if (action === 'print') { printRecord(); return; }
@@ -508,6 +573,8 @@ document.addEventListener('click', async (event) => {
   if (button.dataset.focus) {
     const map = { hiv: 'rapid.hiv', syphilis: 'rapid.syphilis', hb: 'rapid.hb', urine: 'proteinuria' };
     const input = document.querySelector(`[data-visit="${map[button.dataset.focus]}"]`);
+    const section = input?.closest('[data-anc-section]')?.dataset.ancSection;
+    if (section) selectSection(section);
     input?.scrollIntoView({ block: 'center' }); input?.focus();
     $('anc-tasks-dialog').close?.();
     return;
@@ -535,7 +602,9 @@ function printRecord() {
     <div class="anc-colour-boxes">${['green', 'yellow', 'red'].map((key) => `<span class="anc-colour-box anc-box-${key}"><span class="anc-box">${status.colour === key ? '✓' : ''}</span>${esc(colourWord(key))}</span>`).join('')}</div></header>`;
   const footer = `<footer class="anc-print-foot">${esc(L().footer)}</footer>`;
   const snapshot = $('anc-main').cloneNode(true);
-  snapshot.querySelectorAll('.anc-visit, .anc-chart, .anc-history, .anc-hint').forEach((node) => node.remove());
+  snapshot.querySelectorAll('.anc-visit, .anc-chart, .anc-history, .anc-hint, .anc-rapid').forEach((node) => node.remove());
+  const visitHistory = snapshot.querySelector('#anc-visit-history .anc-box-panel');
+  if (visitHistory) snapshot.querySelector('[data-page="3"]')?.append(visitHistory);
   snapshot.querySelectorAll('input').forEach((input) => {
     const span = document.createElement('span');
     span.className = 'anc-print-value';
@@ -543,7 +612,7 @@ function printRecord() {
     input.replaceWith(span);
   });
   snapshot.querySelectorAll('select').forEach((select) => { const span = document.createElement('span'); span.textContent = select.selectedOptions[0]?.textContent || ''; select.replaceWith(span); });
-  const pages = Array.from(snapshot.querySelectorAll('.anc-page')).map((page) => `<div class="anc-print-page">${header}${page.innerHTML}${footer}</div>`).join('');
+  const pages = Array.from(snapshot.querySelectorAll('.anc-page[data-page]')).map((page) => `<div class="anc-print-page">${header}${page.innerHTML}${footer}</div>`).join('');
   $('anc-print').innerHTML = pages;
   document.body.classList.add('anc-printing');
   window.addEventListener('afterprint', () => document.body.classList.remove('anc-printing'), { once: true });
@@ -561,4 +630,11 @@ function printReferral() {
 }
 
 window.addEventListener('borkeo-language-change', () => data && renderAll());
+document.addEventListener('keydown', event => {
+  if (!event.target.matches('[data-anc-nav]') || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  event.preventDefault();
+  const tabs = [...document.querySelectorAll('[data-anc-nav]')], index = tabs.indexOf(event.target);
+  const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length;
+  selectSection(tabs[next].dataset.ancNav, true);
+});
 load();

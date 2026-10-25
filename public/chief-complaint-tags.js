@@ -19,7 +19,7 @@
     const node = document.getElementById('cc_catalog_status');
     if (node) { node.textContent = text; node.hidden = !text; }
   }
-  function editable() { const input=getTargetInput(); return Boolean(input && !input.disabled && !input.readOnly); }
+  function editable() { const input=getTargetInput(); return Boolean(input && !input.disabled && !input.readOnly && window.EmrSharedEncounter?.chiefEditable() !== false); }
   function remember(item) {
     const name = item.nameKh || item.nameEn;
     const key = normalize(name);
