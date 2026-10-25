@@ -1,5 +1,15 @@
 # Borkeo EMR Changelog
 
+## v45.4.0 - Complete removal of patient header banner and chart tab positioning update
+
+- Completely removed the persistent sticky patient banner (`public/patient-banner.js` and `public/patient-banner.css`).
+- Updated the patient chart navigation tabs (`emr-chart-tabs-wrap`) to stick directly to the topbar, eliminating the layout gap previously reserved for the banner.
+- Removed all related banner-specific logic and styling to ensure a clean UI and reduced DOM overhead.
+
+## v45.3.0 - Automatic port cleanup in Start-Borkeo-WiFi.bat
+
+- Updated `Start-Borkeo-WiFi.bat` to automatically detect and kill any existing Node.js process occupying port 3001 before starting the server, preventing "port already in use" errors.
+
 ## v45.1.0 - Patient list deduplication, edit choice action dialog & return navigation
 
 - Patient list deduplication: In `public/patient-list.js`, when multiple patient records share the same Health ID (`healthId`), the list displays exactly one row representing their latest visit.
