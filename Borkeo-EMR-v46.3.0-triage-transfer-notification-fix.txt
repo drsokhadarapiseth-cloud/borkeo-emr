@@ -1,0 +1,14 @@
+Borkeo EMR Update v46.3.0
+--------------------------
+Date: 2026-10-25
+Author: Claude Code
+
+Changes:
+- Fixed issue where transfer notifications were not appearing due to immediate page redirection.
+- Moved notification logic from handleTriageSaveOrEdit to savePatientRecord to ensure alert triggers before navigation.
+- Maintains specific message for OPD: "បានបញ្ជូនទៅបញ្ជរបង់ប្រាក់ដើម្បីពិគ្រោះជំងឺ"
+- Maintains general message for other wards: "បានបញ្ជូនអ្នកជំងឺទៅកាន់ [Ward Name] រួចរាល់ហើយ"
+
+Files Modified:
+- public/emr-patient-record.js: Relocated alert logic to savePatientRecord.
+- package.json: Bumped version from 46.2.0 to 46.3.0.
