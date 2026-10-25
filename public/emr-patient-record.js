@@ -904,10 +904,15 @@
   window.updateTriageSaveButtonState = updateTriageSaveButtonState;
 
   function handleTriageSaveOrEdit() {
+    console.log('[TriageSave] Button clicked');
     const btn = document.getElementById('triage_save_btn') || document.querySelector('#page2 .emr-save-button');
-    if (!btn || btn.disabled) return;
+    if (!btn || btn.disabled) {
+      console.log('[TriageSave] Button missing or disabled');
+      return;
+    }
 
     if (btn.dataset.mode === 'edit') {
+      console.log('[TriageSave] Mode is edit');
       btn.dataset.userEditing = 'true';
       btn.dataset.mode = 'save';
       updateTriageSaveButtonState();
@@ -919,24 +924,31 @@
 
     const isTransferred = isTriageTransferred();
     const currentWard = getSelectedTriageWard();
+    console.log('[TriageSave] Current Ward:', currentWard);
     const wardChanged = Boolean(window._initialTriageWard && window._initialTriageWard !== currentWard);
     const currentRole = String(window.emrSession?.user?.activeRole || window.userRole || '').toUpperCase();
+    console.log('[TriageSave] User Role:', currentRole);
 
     btn.disabled = true;
+    console.log('[TriageSave] Calling savePatientRecord...');
     savePatientRecord({
       triageSave: true,
       triageEdit: isTransferred,
       triageWardChanged: wardChanged,
       previousWard: window._initialTriageWard,
-      continueTo: currentRole === 'TRIAGE' ? undefined : 3
+      continueTo: currentRole === 'TRIAGE' ? '/triage' : 3
     }).then(saved => {
+      console.log('[TriageSave] Save result:', saved);
       if (saved) {
         delete btn.dataset.userEditing;
         updateTriageSaveButtonState();
       } else {
+        console.log('[TriageSave] Save returned false (likely validation failure)');
         btn.dataset.userEditing = 'true';
+        window.alert('សូមបំពេញគ្រប់ចន្លោះដែលចាំបាច់ មុននឹងបញ្ជូនអ្នកជំងឺ');
       }
     }).catch(err => {
+      console.error('[TriageSave] Error during save:', err);
       btn.dataset.userEditing = 'true';
       setStatus('error', String(err?.message || err));
     }).finally(() => {
