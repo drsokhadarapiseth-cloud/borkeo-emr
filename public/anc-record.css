@@ -115,6 +115,8 @@ button.link, a.link, a.secondary-link { font: inherit; font-size: 13px; backgrou
 }
 
 /* Unified ANC screen; official print layout above stays independent. */
+.anc-required-mark {color:#c02727;font-weight:700}
+@media print {.anc-required-mark {display:none}}
 @media screen {
  body.anc-page { background:#f2f6fa; color:#19394c; line-height:1.7; font-size:14px; }
  .anc-shell { max-width:1400px; padding:16px 20px 40px; }

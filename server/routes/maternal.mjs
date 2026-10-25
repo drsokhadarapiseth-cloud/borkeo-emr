@@ -13,6 +13,7 @@ import { prepareOpdPrescription, submitOpdPrescription } from '../pharmacy-presc
 import { signatureSnapshot } from '../esign.mjs';
 import { syncMedicineStock } from '../stock.mjs';
 import { legacyAncFields, readLegacyAnc } from '../anc-legacy.mjs';
+import { missingAncFields } from '../../public/anc-required-fields.mjs';
 
 const READ_ROLES = new Set(['ADMIN', 'VICE_DIRECTOR', 'DIRECTOR', 'MIDWIFE', 'DOCTOR', 'CHIEF_WARD', 'NURSE']);
 
@@ -143,6 +144,8 @@ export function mountMaternalRoutes(router) {
       if (!midwifeOnly(ctx, who)) return true;
       if (action === 'save-all') {
         if (Number(body.expectedVersion) !== pregnancy.version) return fail(ctx, 409, 'The ANC record changed. Reload it before saving.');
+        const missing = missingAncFields(body.record, body.visit);
+        if (missing.length) return fail(ctx, 400, 'Required ANC information is missing.', { missing });
         ctx.database.sqlite.exec('BEGIN IMMEDIATE');
         try {
           saveRecord(ctx.database, id, who.session, body, today);

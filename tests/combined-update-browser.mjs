@@ -6,6 +6,7 @@ import path from 'node:path';
 import { createEmrServer } from '../server/server.mjs';
 import { buildCompleteRegistrationPatients } from '../scripts/create-complete-registration-fixture.mjs';
 import { openBrowser } from './helpers/context-browser.mjs';
+import { completeAncRequired } from './helpers/anc-complete.mjs';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function until(check, label, timeout = 30000) {
@@ -101,6 +102,10 @@ test('registration actions, shared OPD fields and integrated ANC work on desktop
     await browser.evaluate("document.querySelector('[data-action=open]').click()");
     await browser.waitFor("document.querySelector('[data-anc-nav=visit]') && document.querySelector('[data-action=save-visit]')", 'ANC record open');
     const type = async (selector, value) => browser.evaluate(`(()=>{const input=document.querySelector(${JSON.stringify(selector)});input.value=${JSON.stringify(value)};input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+    await browser.evaluate("document.querySelector('[data-action=save-visit]').click()");
+    await browser.waitFor("document.querySelector('[data-anc-nav=pregnancy]').getAttribute('aria-selected')==='true'", 'missing required field reveals its section');
+    assert.equal(app.database.sqlite.prepare('SELECT COUNT(*) AS n FROM anc_visits').get().n, 0);
+    assert.ok(await browser.evaluate("document.querySelectorAll('.anc-required-mark').length>=18"));
     await browser.evaluate("document.querySelector('[data-anc-nav=pregnancy]').click()");
     assert.equal(await browser.evaluate("document.querySelector('[data-path=lmp]').value"), '', 'legacy LMP is not migrated');
     await type('[data-path=lmp]', '2026-08-01');
@@ -108,11 +113,21 @@ test('registration actions, shared OPD fields and integrated ANC work on desktop
     await type('[data-visit=weight]', '54'); await type('[data-visit=complaint]', 'Synthetic current visit');
     await browser.evaluate("document.querySelector('[data-anc-nav=care]').click()");
     await type('[data-visit="legacyDetails.43"]', '1');
+    await completeAncRequired(browser);
     await browser.evaluate("document.querySelector('[data-anc-nav=visit]').click()");
     assert.equal(await browser.evaluate("document.querySelector('[data-visit=complaint]').value"), 'Synthetic current visit');
     await browser.evaluate("document.querySelector('[data-action=save-visit]').click()");
     await until(() => app.database.sqlite.prepare('SELECT COUNT(*) AS n FROM anc_visits').get().n === 1, 'atomic ANC save');
     await browser.waitFor("document.getElementById('anc-status').textContent===window.newText('anc.saved','Saved.')", 'ANC saved');
+    const savedAnc = await call('nurse_obstetric', 'GET', '/api/anc/record?patientKey=' + encodeURIComponent(maternal.patientKey));
+    assert.equal(savedAnc.visits[0].legacyDetails['37'], 'Z36.4.0');
+    assert.equal(savedAnc.visits[0].legacyDetails['41'], '1');
+    assert.equal(savedAnc.visits[0].legacyDetails['44'], 'TT2');
+    assert.equal(savedAnc.visits[0].fer, '0');
+    await browser.evaluate("document.querySelector('[data-anc-nav=care]').click()");
+    await screenshot('anc-required-care.png');
+    await browser.evaluate("document.querySelector('[data-anc-nav=pregnancy]').click()");
+    await screenshot('anc-required-pregnancy.png');
     assert.equal(app.database.findPatient(maternal.patientKey).record_json, maternalBefore);
     await browser.evaluate("document.querySelector('[data-anc-nav=legacy]').click()");
     assert.equal(await browser.evaluate("document.querySelector('.anc-legacy').textContent.includes('SYNTHETIC OLD ANC NOTE') && !document.querySelector('.anc-legacy img')"), true);

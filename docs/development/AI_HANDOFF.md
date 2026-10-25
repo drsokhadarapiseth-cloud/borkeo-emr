@@ -1,5 +1,32 @@
 # Task context for Codex, Gemini or OpenCode
 
+## ANC required entries - v47.1.0, 26 October 2026
+
+The user confirmed the FIRST of four proposed ANC changes. Only required
+entries/missing fields are included. Direct ANC opening from the midwife list,
+the triage redirect error, and automatic colour-chart checkbox synchronization
+remain pending separate approvals. Do not claim this release fixes those.
+
+Clean baseline master b21d28da7cf1f51361cf3f4116433269324a4d88 (47.0.0), branch
+feature/anc-required-fields. Code-only backup before edits:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v47.0.0-b21d28da-288d8800
+
+Added required stars/accessible attributes and a shared client/server completion
+check for the unified Save visit action. A missing entry reveals its section,
+shows the existing Khmer required-field message and does not save. No values
+are invented or backfilled. Zero supplements are accepted. Existing pregnancy
+records remain readable; opening a draft, legacy partial-record APIs, referral,
+prescribing and other independent actions retain their existing behavior.
+
+Added missing encounter ICD10 text entry and visit number (1-8), with tetanus
+status entered as text to preserve values such as TT2. Gestational age uses the
+existing dating engine and is displayed as completed weeks plus days, updated
+when dates change. Existing complaint, gravida, LMP, iron and vital fields are
+reused rather than duplicated. Supplemental values are per visit. Pending lab
+samples/results are not universally required; no clinical rules were changed.
+
+See ANC_REQUIRED_V471_VALIDATION.md and the v47.1 combined update file.
+
 ## Combined approved updates - v47.0.0, 25 October 2026
 
 User explicitly requested every pending discussed update. Base is clean master
