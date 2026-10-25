@@ -1,5 +1,26 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Latest correction - v46.1.0, 25 October 2026
+
+User explicitly authorized fixing Skip for an older patient whose active call
+has a valid queue number but registration JSON lacks it. Base: clean fetched
+master 838f069. Branch: fix/triage-skip-active-queue-number.
+
+skipQueuePatient retains valid supplied/saved numbers. If they are missing or
+invalid it reads the latest active call for exactly the same patient and
+normalized service, validates that number, and uses it for the existing skip
+operation. It never allocates a new number or rewrites registration/clinical
+JSON. A missing valid active number still fails rather than borrowing another
+patient, an inactive call or another service. Existing role/ward/CSRF guards,
+the skipped-list direct-edit action, admission form and UI are unchanged.
+
+The regression and Chromium fixture now remove both registration queue-number
+keys before testing, matching the reported older-record case. The previous
+46.0 fixture always had saved numbers and therefore missed this case.
+Release versions advance together from 46.0.0 to 46.1.0 / visible 46.1.
+See TRIAGE_SKIP_ACTIVE_NUMBER_VALIDATION.md and the combined
+Borkeo-EMR-v46.1.0-triage-skip-fix-update.txt. Earlier notes are historical.
+
 ## Latest update - v46.0.0 triage skip, 25 October 2026
 
 User authorized adding Skip to the bottom triage action row, returning to the

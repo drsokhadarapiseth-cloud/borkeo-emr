@@ -84,7 +84,14 @@ export function skipQueuePatient(database, { service, patientKey, userId, queueN
   const patient = database.findPatient(patientKey);
   if (!patient) throw new Error('Patient was not found.');
   const data = jsonRecord(patient);
-  const number = Number(queueNumber || data['system:registrationQueueNumber'] || data['scope:registration:id:registration_queue_number'] || 0);
+  let number = Number(queueNumber || data['system:registrationQueueNumber'] || data['scope:registration:id:registration_queue_number'] || 0);
+  if (!Number.isInteger(number) || number < 1) {
+    // Older records can have a valid active call without a saved registration number.
+    const call = database.sqlite.prepare(`SELECT queue_number FROM queue_board_calls
+      WHERE service=? AND patient_key=? AND active=1 ORDER BY called_at DESC LIMIT 1`)
+      .get(normalizedService, patientKey);
+    number = Number(call?.queue_number || 0);
+  }
   if (!Number.isInteger(number) || number < 1) throw new Error('This patient does not have a valid queue number.');
   const current = database.sqlite.prepare('SELECT id FROM queue_board_skips WHERE service=? AND patient_key=?').get(normalizedService, patientKey);
   if (current) {
