@@ -64,7 +64,7 @@ test('v40.1 chart tabs: role-based visibility rules in patient-banner.js', () =>
   }
 
   // 4. Triage and Registration
-  assert.deepEqual(getTabs('TRIAGE'), ['summary', 'vitals'], 'TRIAGE must see summary and vitals');
+  assert.deepEqual(getTabs('TRIAGE'), ['vitals'], 'TRIAGE must see vitals without the summary button');
   assert.deepEqual(getTabs('REGISTRATION'), ['summary', 'vitals'], 'REGISTRATION must see summary and vitals');
 
   // 5. Billing / Finance roles
