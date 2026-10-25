@@ -796,7 +796,7 @@
   function enhanceRecordNavigation() {
     const tabsWrapper = document.getElementById('emr-chart-tabs-wrapper');
     if (!tabsWrapper) return;
-
+  }
   
   // 6. Bootstrap Initializer
   function init() {
