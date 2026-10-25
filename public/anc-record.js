@@ -5,6 +5,7 @@
 // code with its history, the visit schedule and the "to do at this visit"
 // panel, the referral to CPA3 and printing (A4 landscape).
 import * as anc from '/public/anc-engine.mjs';
+import { ANC_REQUIRED_FIELDS, missingAncFields } from '/public/anc-required-fields.mjs';
 import { referralLetterHtml } from '/public/anc-referral-letter.mjs';
 
 const $ = (id) => document.getElementById(id);
@@ -55,15 +56,15 @@ function legacySection() {
       : `<p>${esc(t('anc.legacyEmpty', 'No saved old ANC form for this encounter.'))}</p>`}</section>`;
 }
 function supplementalVisit() {
-  const starts = [32, 34, 43, 44, 45, 47, 49, 51, 52, 53, 54];
+  const starts = [32, 34, 37, 41, 43, 44, 45, 47, 49, 51, 52, 53, 54];
   const fields = cfg.legacyFields || [];
   return `<section class="anc-page anc-supplemental"><h2>${esc(t('anc.extraVisit', 'Additional visit details'))}</h2><div class="anc-visit-grid">${starts.map(index => {
     const field = fields.find(item => item.key === `scope:medical:auto:${index}`);
     if (!field) return '';
     const value = draft.legacyDetails?.[index] || '';
-    const options = field.type === 'radio' ? fields.filter(item => item.name === field.name).map(item => item.option) : field.options;
+    const options = [37, 44].includes(index) ? null : index === 41 ? Array.from({ length: 8 }, (_, i) => String(i + 1)) : field.type === 'radio' ? fields.filter(item => item.name === field.name).map(item => item.option) : field.options;
     const control = options ? `<select data-visit="legacyDetails.${index}"${canEdit() ? '' : ' disabled'}><option value=""></option>${options.map(option => `<option value="${esc(option)}"${value === option ? ' selected' : ''}>${esc(option)}</option>`).join('')}</select>`
-      : vfield(`legacyDetails.${index}`, { type: field.type === 'date' ? 'date' : 'text' });
+      : vfield(`legacyDetails.${index}`, { type: field.type === 'date' ? 'date' : field.type === 'number' ? 'number' : 'text' });
     return `<label>${esc(field.label)} ${control}</label>`;
   }).join('')}</div></section>`;
 }
@@ -284,6 +285,7 @@ function visitForm(status) {
   const ironOptions = (cfg.midwifeMedicines || []).map((item) => `<option value="${esc(item.id)}">${esc(item.label)}</option>`).join('');
   return `<section class="anc-page anc-visit" id="anc-visit-form">
     <h2>${esc(t('anc.todayVisit', "Today's visit"))} · ${esc(data.today)} · <span class="anc-visit-name">${esc(visitName)}</span></h2>
+    <p>${esc(cfg.legacyFields?.find(item => item.key === 'scope:medical:auto:39')?.label || t('anc.ga', 'GA'))}<span class="anc-required-mark" aria-hidden="true"> *</span> <output data-anc-ga>${esc(status.ga ? status.ga.label : '—')}</output></p>
     <p class="anc-hint">${esc(t('anc.importedHint', 'Values from Registration and from Triage of this visit; the midwife can correct them (the Triage value stays saved).'))}
       ${esc([imported.weightKg && `${imported.weightKg} kg`, imported.bp && `${imported.bp} mmHg`, imported.pulse && `${imported.pulse}/min`, imported.temperature && `${imported.temperature} °C`, imported.spo2 && `SpO2 ${imported.spo2}%`].filter(Boolean).join(' · '))}</p>
     <div class="anc-visit-grid">
@@ -404,6 +406,13 @@ function renderMain() {
   const rapid = main.querySelector('.anc-rapid'), rx = main.querySelector('.anc-rx');
   if (rapid) main.querySelector('#anc-pane-tests > section').prepend(rapid);
   if (rx) main.querySelector('#anc-pane-care > section').append(rx);
+  for (const [scope, path] of ANC_REQUIRED_FIELDS) {
+    const input = main.querySelector(`[data-${scope === 'record' ? 'path' : 'visit'}="${path}"]`);
+    if (!input) continue;
+    input.required = true; input.setAttribute('aria-required', 'true');
+    const marker = document.createElement('span'); marker.className = 'anc-required-mark'; marker.textContent = ' *'; marker.setAttribute('aria-hidden', 'true');
+    input.before(marker);
+  }
   renderNavigation();
 }
 function refreshLive() {
@@ -412,6 +421,7 @@ function refreshLive() {
   renderTop(status);
   renderSummary(status);
   renderTasks(status);
+  document.querySelectorAll('[data-anc-ga]').forEach(node => { node.textContent = status.ga?.label || ''; });
   document.querySelectorAll('.anc-visit-name').forEach((node) => { node.textContent = status.scheduled ? `${t('anc.visitOf', 'Visit')} ${status.visit.visit}/${status.visitsPlanned} · ${status.visit.label}` : t('anc.notScheduled', 'Not a scheduled visit'); });
 }
 function renderAll() { renderMain(); refreshLive(); }
@@ -473,7 +483,7 @@ async function run(action) {
   const buttons = [...document.querySelectorAll('.anc-actions button:not(:disabled)')];
   buttons.forEach(button => { button.disabled = true; });
   setStatus('…');
-  try { await action(); setStatus(t('anc.saved', 'Saved.')); } catch (error) { setStatus(error.message, true); }
+  try { const result = await action(); setStatus(result === false ? '' : t('anc.saved', 'Saved.')); } catch (error) { setStatus(error.message, true); }
   finally { busy = false; buttons.forEach(button => { button.disabled = false; }); }
 }
 
@@ -526,6 +536,16 @@ document.addEventListener('click', async (event) => {
     record = JSON.parse(JSON.stringify(result.pregnancy.record)); renderAll();
   });
   if (action === 'save-visit') return run(async () => {
+    const missing = missingAncFields(record, draft);
+    if (missing.length) {
+      const [scope, path] = missing[0];
+      const input = document.querySelector(`[data-${scope === 'record' ? 'path' : 'visit'}="${path}"]`);
+      const pane = input?.closest('[data-anc-section]');
+      if (pane) selectSection(pane.dataset.ancSection);
+      window.BorkeoRequiredFields?.validate(pane || $('anc-main'));
+      input?.focus();
+      return false;
+    }
     const status = currentStatus();
     const visit = { ...draft, wp: weightGain(draft.weight), notScheduled: !status.scheduled };
     delete visit.id;

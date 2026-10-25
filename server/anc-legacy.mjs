@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 export const legacyAncFields = Object.freeze(JSON.parse(fs.readFileSync(new URL('./catalogues/anc-legacy-fields.json', import.meta.url), 'utf8')));
-export const ANC_SUPPLEMENTAL_FIELDS = Object.freeze([32, 34, 43, 44, 45, 47, 49, 51, 52, 53, 54].map(String));
+export const ANC_SUPPLEMENTAL_FIELDS = Object.freeze([32, 34, 37, 41, 43, 44, 45, 47, 49, 51, 52, 53, 54].map(String));
 // Only the selected encounter; never migrate another pregnancy by Health ID.
 export function readLegacyAnc(row) {
   let stored = {};

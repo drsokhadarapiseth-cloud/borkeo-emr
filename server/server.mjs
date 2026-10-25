@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v47.0 - Electronic Medical Record System
+// Borkeo EMR v47.1 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -166,6 +166,7 @@ const publicFiles = new Map([
   ['/public/medicine-units.js', ['medicine-units.js', 'text/javascript; charset=utf-8']],
   ['/public/medication-routes.js', ['medication-routes.js', 'text/javascript; charset=utf-8']],
   ['/public/anc-engine.mjs', ['anc-engine.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/anc-required-fields.mjs', ['anc-required-fields.mjs', 'text/javascript; charset=utf-8']],
   ['/public/anc-referral-letter.mjs', ['anc-referral-letter.mjs', 'text/javascript; charset=utf-8']],
   ['/public/maternal.js', ['maternal.js', 'text/javascript; charset=utf-8']],
   ['/public/maternal.css', ['maternal.css', 'text/css; charset=utf-8']],

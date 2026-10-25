@@ -3,6 +3,7 @@
 // Synthetic patients only, in-memory database: green, yellow and red pregnancies
 // across visits, a vaccination, a cervical screening and a safe abortion.
 import test from 'node:test';
+import { completeAncRequired } from './helpers/anc-complete.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -145,6 +146,7 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies, 
     await typeInto('[data-visit="rapid.hiv"]', 'Negative');
     await typeInto('[data-visit="rapid.syphilis"]', 'Negative');
     await typeInto('[data-visit="rapid.hb"]', hb);
+    await completeAncRequired(browser);
     await click('[data-action="save-visit"]');
     await browser.waitFor(`(document.getElementById('anc-status').textContent||'').length>1 && document.getElementById('anc-status').textContent!=='…'`, 'visit saved');
     await sleep(500);
