@@ -7,9 +7,9 @@
 'use strict';
 
 (function initPatientBannerAndChart() {
-  if (window.location.pathname === '/login' || window.location.pathname === '/print-preview') {
-    return;
-  }
+  // COMPLETELY DISABLED: UI component removed per request.
+  return;
+
 
   const escapeHtml = window.escapeHtml || function (v) {
     return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

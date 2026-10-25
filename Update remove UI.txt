@@ -1,0 +1,13 @@
+"I need to completely remove the global 'Patient Header' (or 'Patient Banner') component from all pages in my EMR frontend project (located in the ux/ directory). This component acts as a persistent top bar and contains patient demographics, allergy alerts, a triage score ('Low'), an 'OPD' badge, and a row of navigation tabs.
+
+To help you find the exact file, the component renders the following text/labels (some in Khmer):
+
+    'លេខប័ណ្ណសុខភាព' (Health Card Number)
+
+    'ប្រតិកម្មអាលែកហ្ស៊ី' (Allergy alert)
+
+    'ពិគ្រោះក្រៅ (OPD)'
+
+    '≥0 • Low'
+
+Please search the codebase to identify the name of this component and the main Layout or Router file where it is imported. Then, provide the code changes required to completely remove or hide it from the global layout."
