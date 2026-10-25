@@ -1,5 +1,14 @@
 # Borkeo EMR Changelog
 
+## v45.7.0 - Banner-free clinical safety, audit reconnection and development workflow
+
+- Preserve the installed 23-area branching toolkit and the completed package-derived version checks, clinical summary provider, wording corrections and 22 reviewed Khmer approvals from the 45.5/45.6 working increments.
+- Retarget obsolete banner tests to current chart navigation, allergy states, transient storage keys and doctor/read-only editor behavior.
+- Show only existing recorded resuscitation status and severe/life-threatening allergy warnings in the read-only IPD clinical summary. DNR remains explicit-source-only; no new orders, editing workflow, lock rules or EWS thresholds.
+- Reconnect print/export access logging through a nonvisual provider; retain server-owned open logging, access checks and the management viewer.
+- Review each original Khmer difference against removed banner/submenu history. Exact file/line removal approvals cannot hide extra lost copies. Preserve the baseline JSON and existing approvals.
+- Keep previous update artifacts as history; final disposable synthetic and Chromium results are recorded in docs/development/VALIDATION.md and AI_HANDOFF.md.
+
 ## v45.4.0 - Complete removal of patient header banner and chart tab positioning update
 
 - Completely removed the persistent sticky patient banner (`public/patient-banner.js` and `public/patient-banner.css`).

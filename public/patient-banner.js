@@ -92,12 +92,18 @@
         window.switchPage?.(2);
       } else if (tabName === 'notes') {
         window.switchPage?.(3);
-      } else if (tabName === 'orders') {
-        document.getElementById('paraclinic_orders_panel')?.scrollIntoView({ behavior: 'smooth' });
-      } else if (tabName === 'results') {
-        document.getElementById('paraclinic_results_panel')?.scrollIntoView({ behavior: 'smooth' });
-      } else if (tabName === 'meds') {
-        document.getElementById('ipd-medications-panel')?.scrollIntoView({ behavior: 'smooth' });
+      } else if (['orders', 'results', 'meds'].includes(tabName)) {
+        window.switchPage?.(3);
+        const view = document.body.dataset.encounterView;
+        const host = document.getElementById(view === 'opd' ? 'sub_opd' : view === 'nursing' ? 'sub_nursing' : 'sub_ipd');
+        const target = tabName === 'meds'
+          ? host?.querySelector('#ipd_rx_container, #opd_rx_compact_block, .nursing-medication-source-cell')
+          : host?.querySelector('.paraclinic-inline');
+        if (tabName === 'results') {
+          const recent = target?.querySelector('details.paraclinic-recent');
+          if (recent) recent.open = true;
+        }
+        target?.scrollIntoView({ behavior: 'smooth' });
       } else if (tabName === 'billing') {
         if (patient?.patientKey && ['CLERK', 'ACCOUNTANT', 'ADMIN', 'DIRECTOR', 'VICE_DIRECTOR'].includes(currentRole)) {
           window.location.assign(`/billing?patient=${encodeURIComponent(patient.patientKey)}`);

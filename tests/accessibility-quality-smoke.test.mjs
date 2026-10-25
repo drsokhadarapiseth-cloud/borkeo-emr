@@ -17,11 +17,18 @@ test('Phase 8: Version consistency across package.json, server.mjs, and login.ht
   const serverCode = read('server/server.mjs');
   const loginHtml = read('public/login.html');
 
-  assert.equal(pkg.version, '45.1.0', 'package.json version must be 45.1.0');
-  assert.match(serverCode, /Borkeo EMR v(?:39\.[6-9]|4[0-9]\.[0-9])/, 'server.mjs must declare v39.6 or above');
+  assert.match(pkg.version, /^\d+\.\d+\.\d+$/, 'package.json must have semver version');
+  const majorMinor = pkg.version.split('.').slice(0, 2).join('.');
+  const serverVersion = serverCode.match(/^\/\/ Borkeo EMR v(\d+\.\d+) -/m);
+  assert.ok(serverVersion, 'server.mjs must declare a current version header');
+  assert.equal(serverVersion[1], majorMinor, 'server.mjs version must match package.json major.minor');
   assert.match(serverCode, /design-system\.css\?v=3970/, 'server.mjs must inject design-system.css with v=3970');
   assert.match(serverCode, /worklists-feedback\.css\?v=3970/, 'server.mjs must inject worklists-feedback.css with v=3970');
-  assert.match(loginHtml, /data-app-version[^>]*>v45\.1<\/span>/, 'login.html must display v45.1');
+  const loginVersions = [...loginHtml.matchAll(/<span\b[^>]*\bdata-app-version\b[^>]*>v(\d+\.\d+)<\/span>/g)];
+  assert.equal(loginVersions.length, 2, 'login.html must contain both current version labels');
+  for (const [, version] of loginVersions) {
+    assert.equal(version, majorMinor, 'login.html version must match package.json major.minor');
+  }
 });
 
 test('Phase 8: Complete presentation-layer suite of assets is present and registered', () => {

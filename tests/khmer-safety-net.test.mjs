@@ -44,3 +44,15 @@ test('check:khmer - new Khmer is allowed only from the approved list', () => {
   assert.match(run('<b>x</b>', `<b>${KH}</b>`)[0], /NEW, NOT APPROVED/);
   assert.deepEqual(run('<b>x</b>', `<b>${KH}</b>`, { approved: [KH] }), []);
 });
+
+test('check:khmer - documented removals are confined to exact baseline file/line counts', () => {
+  const a = { file: 'removed.js', line: 10, text: KH }, b = { file: 'kept.js', line: 20, text: KH };
+  const check = (baseline, current, changes) => checkAgainstBaseline({ baseline, current, approvedChanges: changes, approvedNew: new Set() });
+  const approval = { file: 'removed.js', line: '10', before: KH, after: '[removed]', ordered: true };
+  assert.deepEqual(check([a, b], [b], [approval]), []);
+  assert.match(check([a, b], [], [approval])[0], /CHANGED OR REMOVED \(1 of 2\)/);
+  assert.match(check([a, b], [a], [approval])[0], /CHANGED OR REMOVED/);
+  assert.match(check([a], [], [{ ...approval, line: '11' }])[0], /CHANGED OR REMOVED/);
+  assert.match(check([a], [], [{ ...approval, ordered: false }])[0], /CHANGED OR REMOVED/);
+  assert.match(check([a, { ...a, line: 11 }], [], [approval])[0], /CHANGED OR REMOVED \(1 of 2\)/);
+});

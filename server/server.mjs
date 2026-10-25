@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v45.1 - Electronic Medical Record System
+// Borkeo EMR v45.7 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -187,6 +187,7 @@ const publicFiles = new Map([
   ['/public/patient-documents.css', ['patient-documents.css', 'text/css; charset=utf-8']],
   ['/public/patient-documents.js', ['patient-documents.js', 'text/javascript; charset=utf-8']],
   ['/public/record-log.js', ['record-log.js', 'text/javascript; charset=utf-8']],
+  ['/public/record-access.js', ['record-access.js', 'text/javascript; charset=utf-8']],
   ['/public/fluid-balance.js', ['fluid-balance.js', 'text/javascript; charset=utf-8']],
   ['/public/early-warning.js', ['early-warning.js', 'text/javascript; charset=utf-8']],
   ['/public/soap-note.css', ['soap-note.css', 'text/css; charset=utf-8']],
@@ -527,6 +528,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=3980"><link rel="stylesheet" href="/public/patient-banner.css?v=4100"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><link rel="stylesheet" href="/public/npca.css?v=4280"><script src="/public/npca-widget.js?v=4280" defer></script><script src="/public/npca-forms.js?v=4280" defer></script><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=3980" defer></script><script src="/public/app-shell.js?v=3980" defer></script><script src="/public/patient-banner.js?v=4170" defer></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
   // v42.3: one medication unit table for every page (old Khmer unit labels shown as mg, mL, mcg, g, IU).
+  html = html.replace('</head>', '<script src="/public/record-access.js?v=4570" defer></script></head>');
   html = html.replace('</head>', '<script src="/public/medicine-units.js?v=4230"></script></head>');
   // v42.5: one medication route table for every page (new lines: IV, IM, SC and the simple routes).
   html = html.replace('</head>', '<script src="/public/medication-routes.js?v=4250"></script></head>');

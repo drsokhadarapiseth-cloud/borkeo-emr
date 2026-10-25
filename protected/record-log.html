@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Record view log</title>
+<title>កំណត់ត្រាអ្នកបើកមើលឯកសារ</title>
 <link rel="stylesheet" href="/public/emr-session.css?v=3700">
 <link rel="stylesheet" href="/public/responsive-layout.css?v=3045">
 <link rel="stylesheet" href="/public/drug-safety.css?v=4120">
@@ -17,22 +17,22 @@
   <div data-session-host></div>
   <header class="ds-hero">
     <h1>កំណត់ត្រាអ្នកបើកមើលឯកសារ</h1>
-    <p data-new-text="recordLog.intro">Who opened, printed or exported a patient record, and when.</p>
+    <p data-record-log-text="recordLog.intro">កំណត់ត្រាអ្នកបើកមើលឯកសារ</p>
   </header>
   <section class="ds-panel">
     <form class="ds-form" id="rl-filters">
-      <label><span data-new-text="recordLog.patient">Patient (code or name)</span><input name="patient" maxlength="120"></label>
-      <label><span data-new-text="recordLog.user">Staff (username or name)</span><input name="user" maxlength="120"></label>
-      <label><span data-new-text="recordLog.action">Action</span><select name="action">
+      <label><span data-record-log-text="recordLog.patient">អ្នកជំងឺ (លេខកូដ ឬឈ្មោះ)</span><input name="patient" maxlength="120"></label>
+      <label><span data-record-log-text="recordLog.user">បុគ្គលិក (គណនី ឬឈ្មោះ)</span><input name="user" maxlength="120"></label>
+      <label><span data-record-log-text="recordLog.action">សកម្មភាព</span><select name="action">
         <option value=""></option>
-        <option value="open" data-new-text="recordLog.open">Opened</option>
-        <option value="print" data-new-text="recordLog.print">Printed</option>
-        <option value="export" data-new-text="recordLog.export">Exported</option>
-        <option value="document" data-new-text="recordLog.document">Scanned document opened</option>
+        <option value="open" data-record-log-text="recordLog.open">បើកមើល</option>
+        <option value="print" data-record-log-text="recordLog.print">បោះពុម្ព</option>
+        <option value="export" data-record-log-text="recordLog.export">នាំចេញ</option>
+        <option value="document" data-record-log-text="recordLog.document">បើកមើលឯកសារស្កេន</option>
       </select></label>
-      <label><span data-new-text="recordLog.from">From</span><input name="from" type="date"></label>
-      <label><span data-new-text="recordLog.to">To</span><input name="to" type="date"></label>
-      <button type="submit" data-new-text="recordLog.search">Search</button>
+      <label><span data-record-log-text="recordLog.from">ចាប់ពី</span><input name="from" type="date"></label>
+      <label><span data-record-log-text="recordLog.to">ដល់</span><input name="to" type="date"></label>
+      <button type="submit" data-record-log-text="recordLog.search">ស្វែងរក</button>
     </form>
     <p id="ds-status" role="status" aria-live="polite"></p>
     <div class="ds-table-wrap"><table class="ds-table" id="rl-table"></table></div>

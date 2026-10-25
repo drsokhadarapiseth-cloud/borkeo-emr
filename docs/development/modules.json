@@ -1,0 +1,1453 @@
+{
+  "schemaVersion": 1,
+  "sourceArchive": "Borkeo_EMR_v45.5.0.zip",
+  "sourcePackageVersion": "45.4.0",
+  "modules": [
+    {
+      "id": "registration",
+      "label": "Registration",
+      "primary": [
+        "public/patient-list.*",
+        "public/patient-photo.*",
+        "public/patient-card-print.*",
+        "public/cambodia-address.*",
+        "public/cambodia-phone.js",
+        "public/nationalities.*",
+        "public/hef-lookup.*",
+        "public/nssf-lookup.*",
+        "public/appointment*",
+        "server/appointments.mjs",
+        "server/patient-photo.mjs",
+        "server/gazetteer.mjs",
+        "server/cambodia-phone.mjs",
+        "server/hef-lookup.mjs",
+        "server/nssf-lookup.mjs",
+        "protected/patient-list.html"
+      ],
+      "shared": [
+        "protected/EMR.html",
+        "server/server.mjs",
+        "server/database.mjs",
+        "server/routes/patients.mjs",
+        "public/emr-encounter-editor.js",
+        "public/npca-registration.js"
+      ],
+      "testPatterns": [
+        "tests/*registration*.test.mjs",
+        "tests/v427*.test.mjs",
+        "tests/v438*.test.mjs"
+      ],
+      "manualChecks": [
+        "Register and edit patient; duplicate prevention; patient card print; send to triage; HEF/NSSF link."
+      ],
+      "primaryFiles": [
+        "protected/patient-list.html",
+        "public/appointment-list.js",
+        "public/appointments.js",
+        "public/cambodia-address.css",
+        "public/cambodia-address.js",
+        "public/cambodia-phone.js",
+        "public/hef-lookup.css",
+        "public/hef-lookup.js",
+        "public/nationalities.css",
+        "public/nationalities.js",
+        "public/nssf-lookup.css",
+        "public/nssf-lookup.js",
+        "public/patient-card-print.css",
+        "public/patient-card-print.js",
+        "public/patient-list.css",
+        "public/patient-list.js",
+        "public/patient-photo.css",
+        "public/patient-photo.js",
+        "server/appointments.mjs",
+        "server/cambodia-phone.mjs",
+        "server/gazetteer.mjs",
+        "server/hef-lookup.mjs",
+        "server/nssf-lookup.mjs",
+        "server/patient-photo.mjs"
+      ],
+      "sharedFiles": [
+        "protected/EMR.html",
+        "public/emr-encounter-editor.js",
+        "public/npca-registration.js",
+        "server/database.mjs",
+        "server/routes/patients.mjs",
+        "server/server.mjs"
+      ],
+      "suggestedTests": [
+        "tests/v191-registration-appointments.test.mjs",
+        "tests/v192-registration-policy.test.mjs",
+        "tests/v293-registration-direct-edit.test.mjs",
+        "tests/v296-registration-layout.test.mjs",
+        "tests/v297-registration-cards-position.test.mjs",
+        "tests/v302-registration-sex-photo-and-patient-list.test.mjs",
+        "tests/v303-triage-and-registration-photo-sync.test.mjs",
+        "tests/v367-registration-caregiver-info.test.mjs",
+        "tests/v427-registration-card.test.mjs",
+        "tests/v435-registration-same-row-actions.test.mjs",
+        "tests/v438-patient-list-dedup-and-actions.test.mjs"
+      ]
+    },
+    {
+      "id": "triage",
+      "label": "Triage",
+      "primary": [
+        "public/triage.*",
+        "protected/triage.html"
+      ],
+      "shared": [
+        "protected/EMR.html",
+        "server/server.mjs",
+        "server/database.mjs",
+        "server/routes/patients.mjs",
+        "server/routes/clinical.mjs",
+        "public/emr-patient-record.js",
+        "public/emr-session.js",
+        "public/emr-encounter-editor.js",
+        "public/emr-permissions.js",
+        "public/soap-note.js",
+        "public/patient-photo.js"
+      ],
+      "testPatterns": [
+        "tests/*triage*.test.mjs"
+      ],
+      "manualChecks": [
+        "Save vital signs; reload encounter; send to correct OPD; print; verify registration photo."
+      ],
+      "primaryFiles": [
+        "protected/triage.html",
+        "public/triage.css",
+        "public/triage.js"
+      ],
+      "sharedFiles": [
+        "protected/EMR.html",
+        "public/emr-encounter-editor.js",
+        "public/emr-patient-record.js",
+        "public/emr-permissions.js",
+        "public/emr-session.js",
+        "public/patient-photo.js",
+        "public/soap-note.js",
+        "server/database.mjs",
+        "server/routes/clinical.mjs",
+        "server/routes/patients.mjs",
+        "server/server.mjs"
+      ],
+      "suggestedTests": [
+        "tests/demo-triage-ready.test.mjs",
+        "tests/triage-flow.test.mjs",
+        "tests/triage-ui.test.mjs",
+        "tests/v132-triage-print.test.mjs",
+        "tests/v239-remove-triage-requests-tab.test.mjs",
+        "tests/v270-remove-triage-skip-button.test.mjs",
+        "tests/v299-triage-header-and-thirty-patients.test.mjs",
+        "tests/v300-patient-sex-and-triage-photo.test.mjs",
+        "tests/v303-triage-and-edit-photo-sync.test.mjs",
+        "tests/v303-triage-and-registration-photo-sync.test.mjs",
+        "tests/v317-triage-layout-spacing-and-save-button.test.mjs",
+        "tests/v318-triage-id-generation-and-json.test.mjs",
+        "tests/v323-triage-glucose-and-meal-timing.test.mjs",
+        "tests/v324-triage-glucose-separate-cell.test.mjs",
+        "tests/v325-triage-print-button-and-form.test.mjs",
+        "tests/v326-triage-vertical-metadata-and-encounter-id.test.mjs",
+        "tests/v332-triage-button-and-hef-dialog.test.mjs",
+        "tests/v351-case-reg-triage-sync-and-button-style.test.mjs",
+        "tests/v355-triage-dropdown-hef-and-coverage-area.test.mjs",
+        "tests/v356-triage-contraception-and-hef-code.test.mjs",
+        "tests/v357-triage-auto-plot-docking-and-edit-button.test.mjs",
+        "tests/v359-triage-edit-button-state-and-locking.test.mjs",
+        "tests/v362-triage-patient-list-actions.test.mjs",
+        "tests/v364-performance-and-triage-workflow.test.mjs",
+        "tests/v365-triage-free-edit.test.mjs",
+        "tests/v366-triage-services-and-photo-workflow.test.mjs",
+        "tests/v402-triage-direct-editing.test.mjs"
+      ]
+    },
+    {
+      "id": "opd",
+      "label": "OPD consultation",
+      "primary": [
+        "public/opd-*",
+        "public/emr-consultation-workspace.*"
+      ],
+      "shared": [
+        "protected/EMR.html",
+        "server/server.mjs",
+        "server/database.mjs",
+        "server/routes/patients.mjs",
+        "server/routes/clinical.mjs",
+        "public/emr-patient-record.js",
+        "public/emr-session.js",
+        "public/emr-encounter-editor.js",
+        "public/emr-permissions.js",
+        "public/soap-note.js",
+        "public/emr-diagnoses.js",
+        "public/emr-icd10.js",
+        "public/medicine-autocomplete.js",
+        "public/paraclinic.js",
+        "server/opd-queue.mjs",
+        "server/pharmacy-prescriptions.mjs",
+        "server/paraclinic.mjs",
+        "server/finance.mjs",
+        "public/clinical-summary.js",
+        "public/clinical-summary.css",
+        "server/clinical-summary.mjs",
+        "server/routes/clinical-summary.mjs"
+      ],
+      "testPatterns": [
+        "tests/*opd*.test.mjs",
+        "tests/v408*.test.mjs",
+        "tests/v432*.test.mjs"
+      ],
+      "manualChecks": [
+        "Queue to consultation; save/reopen SOAP; diagnosis/prescription; lab/imaging request; cashier release; admission or discharge; print."
+      ],
+      "primaryFiles": [
+        "public/emr-consultation-workspace.css",
+        "public/emr-consultation-workspace.js",
+        "public/opd-clinical-storage.js",
+        "public/opd-paraclinic-nurse.css",
+        "public/opd-paraclinic-nurse.js",
+        "public/opd-queue.css",
+        "public/opd-queue.js",
+        "public/opd-specialty-theme.js"
+      ],
+      "sharedFiles": [
+        "protected/EMR.html",
+        "public/emr-diagnoses.js",
+        "public/emr-encounter-editor.js",
+        "public/emr-icd10.js",
+        "public/emr-patient-record.js",
+        "public/emr-permissions.js",
+        "public/emr-session.js",
+        "public/medicine-autocomplete.js",
+        "public/paraclinic.js",
+        "public/soap-note.js",
+        "server/database.mjs",
+        "server/finance.mjs",
+        "server/opd-queue.mjs",
+        "server/paraclinic.mjs",
+        "server/pharmacy-prescriptions.mjs",
+        "server/routes/clinical.mjs",
+        "server/routes/patients.mjs",
+        "server/server.mjs"
+      ],
+      "suggestedTests": [
+        "tests/opd-consult-paraclinic-cashier.test.mjs",
+        "tests/opd-paraclinic-prepayment.test.mjs",
+        "tests/opd-prepayment-ui-v126.test.mjs",
+        "tests/opd-queue-dispensing.test.mjs",
+        "tests/v131-opd-lab-direct.test.mjs",
+        "tests/v131-opd-lab-message.test.mjs",
+        "tests/v155-opd-transfer-alerts.test.mjs",
+        "tests/v158-opd-form-transfers.test.mjs",
+        "tests/v177-opd-discharge.test.mjs",
+        "tests/v249-imaging-dropdown-english-specialties.test.mjs",
+        "tests/v251-imaging-group-dropdown-buttons.test.mjs",
+        "tests/v252-uniform-group-buttons-and-dropdown-fix.test.mjs",
+        "tests/v260-opd-refined-report.test.mjs",
+        "tests/v262-no-duplicate-opd-report.test.mjs",
+        "tests/v267-opd-payment-status-on-home.test.mjs",
+        "tests/v268-opd-queue-button-and-rename.test.mjs",
+        "tests/v315-opd-to-ipd-bed-assignment-fix.test.mjs",
+        "tests/v347-ethnicity-nationality-dropdown.test.mjs",
+        "tests/v355-triage-dropdown-hef-and-coverage-area.test.mjs",
+        "tests/v408-opd-soap-record.test.mjs",
+        "tests/v432-modern-consultation-workspace.test.mjs",
+        "tests/clinical-summary-provider.test.mjs",
+        "tests/clinical-summary-provider-browser.mjs",
+        "tests/v410-clinical-summary-ui.test.mjs"
+      ]
+    },
+    {
+      "id": "ipd",
+      "label": "IPD admission and medical record",
+      "primary": [
+        "public/emr-inpatient-workflow.*",
+        "public/ipd-transfer.*",
+        "protected/ipd-transfer.html",
+        "server/admission-approvals.mjs",
+        "server/patient-transfers.mjs"
+      ],
+      "shared": [
+        "protected/EMR.html",
+        "server/server.mjs",
+        "server/database.mjs",
+        "server/routes/patients.mjs",
+        "server/routes/clinical.mjs",
+        "public/emr-patient-record.js",
+        "public/emr-session.js",
+        "public/emr-encounter-editor.js",
+        "public/emr-permissions.js",
+        "public/soap-note.js",
+        "server/bed-management.mjs",
+        "server/daily-report.mjs",
+        "server/requests.mjs",
+        "server/finance.mjs",
+        "public/clinical-summary.js",
+        "public/clinical-summary.css",
+        "server/clinical-summary.mjs",
+        "server/routes/clinical-summary.mjs"
+      ],
+      "testPatterns": [
+        "tests/*ipd*.test.mjs",
+        "tests/v407*.test.mjs"
+      ],
+      "manualChecks": [
+        "Admit and approve; retain OPD history; medical record and daily notes; ward transfer; discharge and print."
+      ],
+      "primaryFiles": [
+        "protected/ipd-transfer.html",
+        "public/emr-inpatient-workflow.css",
+        "public/emr-inpatient-workflow.js",
+        "public/ipd-transfer.css",
+        "public/ipd-transfer.js",
+        "server/admission-approvals.mjs",
+        "server/patient-transfers.mjs"
+      ],
+      "sharedFiles": [
+        "protected/EMR.html",
+        "public/emr-encounter-editor.js",
+        "public/emr-patient-record.js",
+        "public/emr-permissions.js",
+        "public/emr-session.js",
+        "public/soap-note.js",
+        "server/bed-management.mjs",
+        "server/daily-report.mjs",
+        "server/database.mjs",
+        "server/finance.mjs",
+        "server/requests.mjs",
+        "server/routes/clinical.mjs",
+        "server/routes/patients.mjs",
+        "server/server.mjs"
+      ],
+      "suggestedTests": [
+        "tests/v162-ipd-paraclinic-workflow.test.mjs",
+        "tests/v245-ipd-discharge-top-diagnoses.test.mjs",
+        "tests/v287-restore-ipd-access-and-director-approval-view.test.mjs",
+        "tests/v288-ipd-medical-record-access.test.mjs",
+        "tests/v289-ipd-panel-structure.test.mjs",
+        "tests/v315-opd-to-ipd-bed-assignment-fix.test.mjs",
+        "tests/v3211-ipd-form-and-obgyn-history.test.mjs",
+        "tests/v3212-ipd-clean-header-and-photo.test.mjs",
+        "tests/v3213-rename-ipd-title.test.mjs",
+        "tests/v407-ipd-soap-record.test.mjs",
+        "tests/clinical-summary-provider.test.mjs",
+        "tests/clinical-summary-provider-browser.mjs",
+        "tests/v410-clinical-summary-ui.test.mjs"
+      ]
+    },
+    {
+      "id": "nursing",
+      "label": "Nursing care",
+      "primary": [
+        "public/fluid-balance.js",
+        "public/early-warning.js"
+      ],
+      "shared": [
+        "protected/EMR.html",
+        "server/server.mjs",
+        "server/database.mjs",
+        "server/routes/patients.mjs",
+        "server/routes/clinical.mjs",
+        "public/emr-patient-record.js",
+        "public/emr-session.js",
+        "public/emr-encounter-editor.js",
+        "public/emr-permissions.js",
+        "public/soap-note.js",
+        "public/emr-inpatient-workflow.js",
+        "server/clinical-summary.mjs",
+        "public/clinical-summary.js",
+        "public/clinical-summary.css",
+        "server/routes/clinical-summary.mjs"
+      ],
+      "testPatterns": [
+        "tests/*nursing*.test.mjs",
+        "tests/v410*.test.mjs"
+      ],
+      "manualChecks": [
+        "Open #sub_nursing; save/reopen notes and observations; fluid balance; ward permissions; print. Nursing form is embedded in protected/EMR.html."
+      ],
+      "primaryFiles": [
+        "public/early-warning.js",
+        "public/fluid-balance.js"
+      ],
+      "sharedFiles": [
+        "protected/EMR.html",
+        "public/emr-encounter-editor.js",
+        "public/emr-inpatient-workflow.js",
+        "public/emr-patient-record.js",
+        "public/emr-permissions.js",
+        "public/emr-session.js",
+        "public/soap-note.js",
+        "server/clinical-summary.mjs",
+        "server/database.mjs",
+        "server/routes/clinical.mjs",
+        "server/routes/patients.mjs",
+        "server/server.mjs"
+      ],
+      "suggestedTests": [
+        "tests/v354-nursing-khmer-and-remove-ambulance.test.mjs",
+        "tests/v410-clinical-summary-ui.test.mjs",
+        "tests/v410-clinical-summary.test.mjs",
+        "tests/clinical-summary-provider.test.mjs",
+        "tests/clinical-summary-provider-browser.mjs"
+      ]
+    },
+    {
+      "id": "maternity",
+      "label": "Midwife, ANC, PNC and maternal care",
+      "primary": [
+        "public/anc-*",
+        "public/maternal*",
+        "protected/anc-record.html",
+        "protected/maternal.html",
+        "server/maternal.mjs",
+        "server/routes/maternal.mjs",
+        "server/catalogues/anc-*.json"
+      ],
+      "shared": [
+        "protected/EMR.html",
+        "server/server.mjs",
+        "server/database.mjs",
+        "server/routes/patients.mjs",
+        "server/routes/clinical.mjs",
+        "public/emr-patient-record.js",
+        "public/emr-session.js",
+        "public/emr-encounter-editor.js",
+        "public/emr-permissions.js",
+        "public/soap-note.js",
+        "server/finance.mjs",
+        "server/payment-policy.mjs"
+      ],
+      "testPatterns": [
+        "tests/*midwife*.test.mjs"
+      ],
+      "manualChecks": [
+        "Midwife queue; ANC record and visit schedule; risk classification; linked maternal encounter; fee exemptions; print. Other maternal forms remain embedded in shared EMR/legacy files."
+      ],
+      "primaryFiles": [
+        "protected/anc-record.html",
+        "protected/maternal.html",
+        "public/anc-engine.mjs",
+        "public/anc-record.css",
+        "public/anc-record.js",
+        "public/anc-referral-letter.mjs",
+        "public/maternal-emr.js",
+        "public/maternal.css",
+        "public/maternal.js",
+        "server/catalogues/anc-color-chart.json",
+        "server/catalogues/anc-record-labels.json",
+        "server/catalogues/anc-visit-schedule.json",
+        "server/maternal.mjs",
+        "server/routes/maternal.mjs"
+      ],
+      "sharedFiles": [
+        "protected/EMR.html",
+        "public/emr-encounter-editor.js",
+        "public/emr-patient-record.js",
+        "public/emr-permissions.js",
+        "public/emr-session.js",
+        "public/soap-note.js",
+        "server/database.mjs",
+        "server/finance.mjs",
+        "server/payment-policy.mjs",
+        "server/routes/clinical.mjs",
+        "server/routes/patients.mjs",
+        "server/server.mjs"
+      ],
+      "suggestedTests": [
+        "tests/v426-midwife-anc.test.mjs"
+      ]
+    },
+    {
+      "id": "vaccination",
+      "label": "Vaccination",
+      "primary": [
+        "public/vaccination.js",
+        "protected/vaccination.html"
+      ],
+      "shared": [
+        "server/maternal.mjs",
+        "server/routes/maternal.mjs",
+        "server/access.mjs"
+      ],
+      "testPatterns": [
+        "tests/*midwife*.test.mjs"
+      ],
+      "manualChecks": [
+        "Save vaccination and reopen correct patient; verify maternal linkage and role access."
+      ],
+      "primaryFiles": [
+        "protected/vaccination.html",
+        "public/vaccination.js"
+      ],
+      "sharedFiles": [
+        "server/access.mjs",
+        "server/maternal.mjs",
+        "server/routes/maternal.mjs"
+      ],
+      "suggestedTests": [
+        "tests/v426-midwife-anc.test.mjs"
+      ]
+    },
+    {
+      "id": "beds",
+      "label": "Beds and wards",
+      "primary": [
+        "server/bed-management.mjs",
+        "public/departments.*",
+        "protected/departments.html"
+      ],
+      "shared": [
+        "protected/EMR.html",
+        "server/server.mjs",
+        "server/database.mjs",
+        "server/routes/patients.mjs",
+        "server/daily-report.mjs",
+        "server/patient-transfers.mjs",
+        "public/emr-inpatient-workflow.js"
+      ],
+      "testPatterns": [
+        "tests/*bed*.test.mjs",
+        "tests/v208*.test.mjs"
+      ],
+      "manualChecks": [
+        "Assign vacant bed; block double occupancy; transfer ward/bed; open correct encounter; discharge releases bed."
+      ],
+      "primaryFiles": [
+        "protected/departments.html",
+        "public/departments.css",
+        "public/departments.js",
+        "server/bed-management.mjs"
+      ],
+      "sharedFiles": [
+        "protected/EMR.html",
+        "public/emr-inpatient-workflow.js",
+        "server/daily-report.mjs",
+        "server/database.mjs",
+        "server/patient-transfers.mjs",
+        "server/routes/patients.mjs",
+        "server/server.mjs"
+      ],
+      "suggestedTests": [
+        "tests/v208-bed-transfer.test.mjs",
+        "tests/v209-bed-modal.test.mjs",
+        "tests/v315-opd-to-ipd-bed-assignment-fix.test.mjs",
+        "tests/v404-ward-bed-patient-photo.test.mjs"
+      ]
+    },
+    {
+      "id": "lab",
+      "label": "Laboratory",
+      "primary": [
+        "public/lab.*",
+        "protected/lab.html",
+        "server/lab-reference-defaults.mjs"
+      ],
+      "shared": [
+        "public/paraclinic*",
+        "public/request-badges.js",
+        "server/paraclinic.mjs",
+        "server/routes/paraclinic.mjs",
+        "server/stock.mjs",
+        "server/finance.mjs",
+        "server/access.mjs",
+        "server/critical-escalation.mjs"
+      ],
+      "testPatterns": [
+        "tests/*lab*.test.mjs",
+        "tests/*paraclinic*.test.mjs",
+        "tests/v203*.test.mjs"
+      ],
+      "manualChecks": [
+        "Order, pay/release, enter result, critical alert, clinician review, print and lab material stock."
+      ],
+      "primaryFiles": [
+        "protected/lab.html",
+        "public/lab.css",
+        "public/lab.js",
+        "server/lab-reference-defaults.mjs"
+      ],
+      "sharedFiles": [
+        "public/paraclinic-print.css",
+        "public/paraclinic-workspace.css",
+        "public/paraclinic.css",
+        "public/paraclinic.js",
+        "public/request-badges.js",
+        "server/access.mjs",
+        "server/critical-escalation.mjs",
+        "server/finance.mjs",
+        "server/paraclinic.mjs",
+        "server/routes/paraclinic.mjs",
+        "server/stock.mjs"
+      ],
+      "suggestedTests": [
+        "tests/access-paraclinic.test.mjs",
+        "tests/opd-consult-paraclinic-cashier.test.mjs",
+        "tests/opd-paraclinic-prepayment.test.mjs",
+        "tests/paraclinic-ui.test.mjs",
+        "tests/v127-queue-paraclinic.test.mjs",
+        "tests/v128-queue-paraclinic.test.mjs",
+        "tests/v131-opd-lab-direct.test.mjs",
+        "tests/v131-opd-lab-message.test.mjs",
+        "tests/v162-ipd-paraclinic-workflow.test.mjs",
+        "tests/v168-language-lab-print.test.mjs",
+        "tests/v203-lab-reference.test.mjs",
+        "tests/v216-lab-material-catalog.test.mjs",
+        "tests/v257-professional-paraclinic-buttons.test.mjs",
+        "tests/v258-home-report-box-labels.test.mjs",
+        "tests/v259-home-report-box-unbracketed-labels.test.mjs",
+        "tests/v290-photo-and-paraclinic.test.mjs",
+        "tests/v304-lab-imaging-master-detail-and-activation.test.mjs",
+        "tests/v305-paper-style-lab-form-and-clean-imaging.test.mjs",
+        "tests/v306-refined-lab-form-and-khmer-ui.test.mjs",
+        "tests/v334-card-label-ruler-and-multi-print.test.mjs",
+        "tests/v346-disability-label-rename.test.mjs"
+      ]
+    },
+    {
+      "id": "imaging",
+      "label": "Imaging",
+      "primary": [
+        "public/imaging.*",
+        "protected/imaging.html"
+      ],
+      "shared": [
+        "public/paraclinic*",
+        "server/paraclinic.mjs",
+        "server/routes/paraclinic.mjs",
+        "server/stock.mjs",
+        "server/finance.mjs",
+        "server/access.mjs"
+      ],
+      "testPatterns": [
+        "tests/*imaging*.test.mjs",
+        "tests/*paraclinic*.test.mjs"
+      ],
+      "manualChecks": [
+        "Order modality; payment release; specialist access; result/report signature; review; film stock and print."
+      ],
+      "primaryFiles": [
+        "protected/imaging.html",
+        "public/imaging.css",
+        "public/imaging.js"
+      ],
+      "sharedFiles": [
+        "public/paraclinic-print.css",
+        "public/paraclinic-workspace.css",
+        "public/paraclinic.css",
+        "public/paraclinic.js",
+        "server/access.mjs",
+        "server/finance.mjs",
+        "server/paraclinic.mjs",
+        "server/routes/paraclinic.mjs",
+        "server/stock.mjs"
+      ],
+      "suggestedTests": [
+        "tests/access-paraclinic.test.mjs",
+        "tests/opd-consult-paraclinic-cashier.test.mjs",
+        "tests/opd-paraclinic-prepayment.test.mjs",
+        "tests/paraclinic-ui.test.mjs",
+        "tests/v127-queue-paraclinic.test.mjs",
+        "tests/v128-queue-paraclinic.test.mjs",
+        "tests/v162-ipd-paraclinic-workflow.test.mjs",
+        "tests/v205-imaging-signatures.test.mjs",
+        "tests/v217-imaging-film-stock.test.mjs",
+        "tests/v218-imaging-navigation-tabs.test.mjs",
+        "tests/v219-imaging-status-subtabs.test.mjs",
+        "tests/v220-imaging-two-tier-toolbar.test.mjs",
+        "tests/v248-specialist-imaging-subtypes-and-signatures.test.mjs",
+        "tests/v249-imaging-dropdown-english-specialties.test.mjs",
+        "tests/v251-imaging-group-dropdown-buttons.test.mjs",
+        "tests/v255-imaging-films-unified-toolbar.test.mjs",
+        "tests/v257-professional-paraclinic-buttons.test.mjs",
+        "tests/v276-nested-imaging-role-subtypes.test.mjs",
+        "tests/v277-direct-imaging-modality-selection.test.mjs",
+        "tests/v290-photo-and-paraclinic.test.mjs",
+        "tests/v304-lab-imaging-master-detail-and-activation.test.mjs",
+        "tests/v305-paper-style-lab-form-and-clean-imaging.test.mjs"
+      ]
+    },
+    {
+      "id": "pharmacy",
+      "label": "Pharmacy and medication dispensing",
+      "primary": [
+        "public/pharmacy-*",
+        "protected/pharmacy-*.html",
+        "server/pharmacy-prescriptions.mjs",
+        "server/pharmacy-discharge.mjs",
+        "server/routes/pharmacy.mjs"
+      ],
+      "shared": [
+        "server/stock.mjs",
+        "server/medicine-catalogue.mjs",
+        "server/medication-safety.mjs",
+        "server/finance.mjs",
+        "server/ward-medicines.mjs",
+        "public/medicine-*",
+        "public/clinical-summary.js",
+        "public/clinical-summary.css",
+        "server/clinical-summary.mjs",
+        "server/routes/clinical-summary.mjs"
+      ],
+      "testPatterns": [
+        "tests/*pharmacy*.test.mjs",
+        "tests/*dispensing*.test.mjs"
+      ],
+      "manualChecks": [
+        "OPD prescription receipt; correct patient/dose; dispensing; stock deduction; discharge medicines and return flow."
+      ],
+      "primaryFiles": [
+        "protected/pharmacy-display.html",
+        "protected/pharmacy-opd.html",
+        "public/pharmacy-display.css",
+        "public/pharmacy-display.js",
+        "public/pharmacy-opd.css",
+        "public/pharmacy-opd.js",
+        "server/pharmacy-discharge.mjs",
+        "server/pharmacy-prescriptions.mjs",
+        "server/routes/pharmacy.mjs"
+      ],
+      "sharedFiles": [
+        "public/medicine-autocomplete.css",
+        "public/medicine-autocomplete.js",
+        "public/medicine-dose-check.js",
+        "public/medicine-units.js",
+        "server/finance.mjs",
+        "server/medication-safety.mjs",
+        "server/medicine-catalogue.mjs",
+        "server/stock.mjs",
+        "server/ward-medicines.mjs"
+      ],
+      "suggestedTests": [
+        "tests/opd-queue-dispensing.test.mjs",
+        "tests/pharmacy-prescriptions.test.mjs",
+        "tests/v150-pharmacy-queue.test.mjs",
+        "tests/v215-pharmacy-stock-catalog.test.mjs",
+        "tests/v269-pharmacy-queue-button-and-display.test.mjs",
+        "tests/clinical-summary-provider.test.mjs",
+        "tests/clinical-summary-provider-browser.mjs",
+        "tests/v410-clinical-summary-ui.test.mjs"
+      ]
+    },
+    {
+      "id": "stock",
+      "label": "Medicine and material inventory",
+      "primary": [
+        "public/stock.*",
+        "protected/stock.html",
+        "server/stock.mjs",
+        "server/medicine-catalogue.mjs",
+        "server/pmrs2-medicine-import.mjs",
+        "public/pmrs-import.js",
+        "protected/pmrs-import.html",
+        "server/catalogues/medicines-eml-2024.json"
+      ],
+      "shared": [
+        "server/paraclinic.mjs",
+        "server/pharmacy-prescriptions.mjs",
+        "server/ward-medicines.mjs"
+      ],
+      "testPatterns": [
+        "tests/*stock*.test.mjs",
+        "tests/*medicine-import*.test.mjs",
+        "tests/v216*.test.mjs"
+      ],
+      "manualChecks": [
+        "Catalogue import preview; medicine units; stock receive/use; lab materials; imaging films; stock history."
+      ],
+      "primaryFiles": [
+        "protected/pmrs-import.html",
+        "protected/stock.html",
+        "public/pmrs-import.js",
+        "public/stock.css",
+        "public/stock.js",
+        "server/catalogues/medicines-eml-2024.json",
+        "server/medicine-catalogue.mjs",
+        "server/pmrs2-medicine-import.mjs",
+        "server/stock.mjs"
+      ],
+      "sharedFiles": [
+        "server/paraclinic.mjs",
+        "server/pharmacy-prescriptions.mjs",
+        "server/ward-medicines.mjs"
+      ],
+      "suggestedTests": [
+        "tests/pmrs2-medicine-import.test.mjs",
+        "tests/v195-language-stock.test.mjs",
+        "tests/v215-pharmacy-stock-catalog.test.mjs",
+        "tests/v216-lab-material-catalog.test.mjs",
+        "tests/v217-imaging-film-stock.test.mjs"
+      ]
+    },
+    {
+      "id": "cashier",
+      "label": "Cashier, invoices and billing",
+      "primary": [
+        "public/billing.*",
+        "protected/billing.html",
+        "public/cashier-notifications.*",
+        "public/payment-*",
+        "public/staff-invoices.*",
+        "public/receipt.css",
+        "server/invoice-edits.mjs",
+        "server/payment-policy.mjs",
+        "server/hef-tariffs.mjs"
+      ],
+      "shared": [
+        "server/finance.mjs",
+        "server/routes/finance.mjs",
+        "server/paraclinic.mjs",
+        "server/routes/patients.mjs",
+        "server/requests.mjs"
+      ],
+      "testPatterns": [
+        "tests/finance.test.mjs",
+        "tests/*cashier*.test.mjs",
+        "tests/*prepayment*.test.mjs"
+      ],
+      "manualChecks": [
+        "Charges and payer rules; payment receipt; concessions/approval; paid order release; invoice history; discharge settlement."
+      ],
+      "primaryFiles": [
+        "protected/billing.html",
+        "public/billing.css",
+        "public/billing.js",
+        "public/cashier-notifications.css",
+        "public/cashier-notifications.js",
+        "public/payment-approvals.js",
+        "public/payment-policy.css",
+        "public/payment-prices.js",
+        "public/receipt.css",
+        "public/staff-invoices.css",
+        "public/staff-invoices.js",
+        "server/hef-tariffs.mjs",
+        "server/invoice-edits.mjs",
+        "server/payment-policy.mjs"
+      ],
+      "sharedFiles": [
+        "server/finance.mjs",
+        "server/paraclinic.mjs",
+        "server/requests.mjs",
+        "server/routes/finance.mjs",
+        "server/routes/patients.mjs"
+      ],
+      "suggestedTests": [
+        "tests/finance.test.mjs",
+        "tests/opd-consult-paraclinic-cashier.test.mjs",
+        "tests/opd-paraclinic-prepayment.test.mjs",
+        "tests/opd-prepayment-ui-v126.test.mjs",
+        "tests/v140-cashier-ui.test.mjs",
+        "tests/v182-cashier-delete.test.mjs",
+        "tests/v183-cashier-workflow.test.mjs",
+        "tests/v307-cashier-history-discharge-and-photo-auto-apply.test.mjs",
+        "tests/v308-cashier-header-icd10-and-mgmt-history.test.mjs",
+        "tests/v309-cashier-and-management.test.mjs"
+      ]
+    },
+    {
+      "id": "finance",
+      "label": "Finance and expenses",
+      "primary": [
+        "public/finance.*",
+        "public/expenses.*",
+        "protected/finance.html",
+        "protected/expenses.html",
+        "server/finance.mjs",
+        "server/routes/finance.mjs"
+      ],
+      "shared": [
+        "server/payment-policy.mjs",
+        "server/invoice-edits.mjs"
+      ],
+      "testPatterns": [
+        "tests/finance.test.mjs",
+        "tests/*finance*.test.mjs"
+      ],
+      "manualChecks": [
+        "Cashflow; expenses; exchange rate approvals; day/month totals and receipts."
+      ],
+      "primaryFiles": [
+        "protected/expenses.html",
+        "protected/finance.html",
+        "public/expenses.css",
+        "public/expenses.js",
+        "public/finance.css",
+        "public/finance.js",
+        "server/finance.mjs",
+        "server/routes/finance.mjs"
+      ],
+      "sharedFiles": [
+        "server/invoice-edits.mjs",
+        "server/payment-policy.mjs"
+      ],
+      "suggestedTests": [
+        "tests/finance.test.mjs",
+        "tests/v272-single-unified-finance-table.test.mjs",
+        "tests/v273-finance-period-range-reports.test.mjs"
+      ]
+    },
+    {
+      "id": "reports",
+      "label": "Reports and printing",
+      "primary": [
+        "public/report-print.*",
+        "protected/print-preview.html",
+        "server/daily-report.mjs",
+        "public/ward-medicines.*",
+        "protected/ward-medicines.html",
+        "server/ward-medicines.mjs",
+        "server/ward-medicine-matrix.mjs",
+        "server/ward-medicine-approvals.mjs",
+        "public/ward-medicine-table.js"
+      ],
+      "shared": [
+        "protected/EMR.html",
+        "server/finance.mjs",
+        "server/routes/clinical.mjs",
+        "public/record-access.js",
+        "public/record-viewer.js",
+        "public/record-log.js"
+      ],
+      "testPatterns": [
+        "tests/*report*.test.mjs",
+        "tests/*ward*.test.mjs"
+      ],
+      "manualChecks": [
+        "Patient/encounter filters; daily movements; ward medicine totals; print page breaks and signatures."
+      ],
+      "primaryFiles": [
+        "protected/print-preview.html",
+        "protected/ward-medicines.html",
+        "public/report-print.css",
+        "public/report-print.js",
+        "public/ward-medicine-table.js",
+        "public/ward-medicines.css",
+        "public/ward-medicines.js",
+        "server/daily-report.mjs",
+        "server/ward-medicine-approvals.mjs",
+        "server/ward-medicine-matrix.mjs",
+        "server/ward-medicines.mjs"
+      ],
+      "sharedFiles": [
+        "protected/EMR.html",
+        "server/finance.mjs",
+        "server/routes/clinical.mjs"
+      ],
+      "suggestedTests": [
+        "tests/default-ward-users.test.mjs",
+        "tests/report-print.test.mjs",
+        "tests/v1510-ward-service-fees.test.mjs",
+        "tests/v243-home-dashboard-reports.test.mjs",
+        "tests/v244-custom-roles-wards-clean-home.test.mjs",
+        "tests/v247-clean-reports-ward-scope-requests.test.mjs",
+        "tests/v258-home-report-box-labels.test.mjs",
+        "tests/v259-home-report-box-unbracketed-labels.test.mjs",
+        "tests/v260-opd-refined-report.test.mjs",
+        "tests/v261-department-report-styles.test.mjs",
+        "tests/v262-no-duplicate-opd-report.test.mjs",
+        "tests/v265-combined-home-reports-no-tabs.test.mjs",
+        "tests/v271-professional-cashflow-report.test.mjs",
+        "tests/v273-finance-period-range-reports.test.mjs",
+        "tests/v403-ward-direct-editing.test.mjs",
+        "tests/v404-ward-bed-patient-photo.test.mjs",
+        "tests/ward-medicine-approval.test.mjs",
+        "tests/ward-medicine-matrix.test.mjs",
+        "tests/ward-medicine-notification.test.mjs",
+        "tests/ward-medicines.test.mjs",
+        "tests/record-access-provider.test.mjs",
+        "tests/v417-record-log-documents.test.mjs",
+        "tests/remaining-work-browser.mjs"
+      ]
+    },
+    {
+      "id": "permissions",
+      "label": "Users, roles and authentication",
+      "primary": [
+        "public/admin-users.*",
+        "protected/admin-users.html",
+        "public/login.*",
+        "server/access.mjs",
+        "server/encounter-access.mjs",
+        "server/record-access.mjs",
+        "server/security.mjs",
+        "server/password.mjs",
+        "server/totp.mjs",
+        "server/superuser.mjs",
+        "server/routes/auth.mjs",
+        "server/routes/admin.mjs",
+        "server/routes/record-access.mjs",
+        "public/emr-permissions.js"
+      ],
+      "shared": [
+        "server/server.mjs",
+        "public/emr-session.js",
+        "public/record-access.js",
+        "public/record-viewer.js",
+        "public/record-log.js"
+      ],
+      "testPatterns": [
+        "tests/*access*.test.mjs",
+        "tests/*auth*.test.mjs",
+        "tests/*security*.test.mjs"
+      ],
+      "manualChecks": [
+        "Positive and negative role access; ward boundaries; locked encounter corrections; login/session and audit trail."
+      ],
+      "primaryFiles": [
+        "protected/admin-users.html",
+        "public/admin-users.css",
+        "public/admin-users.js",
+        "public/emr-permissions.js",
+        "public/login.css",
+        "public/login.html",
+        "public/login.js",
+        "server/access.mjs",
+        "server/encounter-access.mjs",
+        "server/password.mjs",
+        "server/record-access.mjs",
+        "server/routes/admin.mjs",
+        "server/routes/auth.mjs",
+        "server/routes/record-access.mjs",
+        "server/security.mjs",
+        "server/superuser.mjs",
+        "server/totp.mjs"
+      ],
+      "sharedFiles": [
+        "public/emr-session.js",
+        "server/server.mjs"
+      ],
+      "suggestedTests": [
+        "tests/access-audit.test.mjs",
+        "tests/access-paraclinic.test.mjs",
+        "tests/accessibility-quality-smoke.test.mjs",
+        "tests/auth.test.mjs",
+        "tests/v222-mobile-lan-access.test.mjs",
+        "tests/v287-restore-ipd-access-and-director-approval-view.test.mjs",
+        "tests/v288-ipd-medical-record-access.test.mjs",
+        "tests/v378-encounter-access.test.mjs",
+        "tests/v381-auth-production-security.test.mjs",
+        "tests/record-access-provider.test.mjs",
+        "tests/v417-record-log-documents.test.mjs",
+        "tests/remaining-work-browser.mjs"
+      ]
+    },
+    {
+      "id": "npca",
+      "label": "NPCA and PMRS integration",
+      "primary": [
+        "public/npca*",
+        "protected/npca.html",
+        "server/npca/*",
+        "server/routes/npca.mjs",
+        "server/pmrs2-mapping.mjs",
+        "server/pmrs2-transfer.mjs",
+        "docs/npca/*"
+      ],
+      "shared": [
+        "server/routes/patients.mjs",
+        "server/config.mjs",
+        "server/finance.mjs"
+      ],
+      "testPatterns": [
+        "tests/*npca*.test.mjs",
+        "tests/pmrs2-mapping.test.mjs"
+      ],
+      "manualChecks": [
+        "Use mocks; validate beneficiary and visit mappings; submission status; retry/idempotency; no real patient submissions in tests."
+      ],
+      "primaryFiles": [
+        "docs/npca/INTEGRATION.md",
+        "docs/npca/OPEN-QUESTIONS.md",
+        "docs/npca/VERIFICATION.md",
+        "protected/npca.html",
+        "public/npca-forms.js",
+        "public/npca-registration.js",
+        "public/npca-widget.js",
+        "public/npca.css",
+        "public/npca.js",
+        "server/npca/address.mjs",
+        "server/npca/beneficiaries.mjs",
+        "server/npca/client.mjs",
+        "server/npca/codes.mjs",
+        "server/npca/integration.mjs",
+        "server/npca/settings.mjs",
+        "server/npca/source.mjs",
+        "server/npca/standards.json",
+        "server/npca/storage.mjs",
+        "server/npca/validation.mjs",
+        "server/npca/visit-builder.mjs",
+        "server/pmrs2-mapping.mjs",
+        "server/pmrs2-transfer.mjs",
+        "server/routes/npca.mjs"
+      ],
+      "sharedFiles": [
+        "server/config.mjs",
+        "server/finance.mjs",
+        "server/routes/patients.mjs"
+      ],
+      "suggestedTests": [
+        "tests/pmrs2-mapping.test.mjs",
+        "tests/v428-npca.test.mjs"
+      ]
+    },
+    {
+      "id": "requests",
+      "label": "Admission/discharge/fee approvals",
+      "primary": [
+        "public/requests.*",
+        "protected/requests.html",
+        "server/requests.mjs",
+        "server/admission-approvals.mjs"
+      ],
+      "shared": [
+        "server/routes/clinical.mjs",
+        "server/invoice-edits.mjs",
+        "server/ward-medicine-approvals.mjs",
+        "server/messages.mjs"
+      ],
+      "testPatterns": [
+        "tests/*request*.test.mjs",
+        "tests/*approval*.test.mjs"
+      ],
+      "manualChecks": [
+        "Submit, approve, reject; role restrictions; no duplicate processing; reflect status in original encounter."
+      ],
+      "primaryFiles": [
+        "protected/requests.html",
+        "public/requests.css",
+        "public/requests.js",
+        "server/admission-approvals.mjs",
+        "server/requests.mjs"
+      ],
+      "sharedFiles": [
+        "server/invoice-edits.mjs",
+        "server/messages.mjs",
+        "server/routes/clinical.mjs",
+        "server/ward-medicine-approvals.mjs"
+      ],
+      "suggestedTests": [
+        "tests/admission-approval.test.mjs",
+        "tests/v196-requests.test.mjs",
+        "tests/v206-requests-language.test.mjs",
+        "tests/v213-requests-toolbar-signatures.test.mjs",
+        "tests/v239-remove-triage-requests-tab.test.mjs",
+        "tests/v247-clean-reports-ward-scope-requests.test.mjs",
+        "tests/v285-bulk-approve-executive-requests.test.mjs",
+        "tests/v287-restore-ipd-access-and-director-approval-view.test.mjs",
+        "tests/v298-remove-admission-approval-panel.test.mjs",
+        "tests/ward-medicine-approval.test.mjs"
+      ]
+    },
+    {
+      "id": "messages",
+      "label": "Staff messages and alerts",
+      "primary": [
+        "public/messages.*",
+        "server/messages.mjs",
+        "server/routes/messages.mjs"
+      ],
+      "shared": [
+        "server/critical-escalation.mjs",
+        "server/requests.mjs",
+        "server/record-access.mjs"
+      ],
+      "testPatterns": [
+        "tests/*message*.test.mjs"
+      ],
+      "manualChecks": [
+        "Recipient access; unread state; attachments; critical result alerts and completion."
+      ],
+      "primaryFiles": [
+        "public/messages.css",
+        "public/messages.js",
+        "server/messages.mjs",
+        "server/routes/messages.mjs"
+      ],
+      "sharedFiles": [
+        "server/critical-escalation.mjs",
+        "server/record-access.mjs",
+        "server/requests.mjs"
+      ],
+      "suggestedTests": [
+        "tests/admin-messages-transfers.test.mjs",
+        "tests/shared-messages.test.mjs",
+        "tests/v131-opd-lab-message.test.mjs",
+        "tests/v284-khmer-messages-admission-structured-view.test.mjs"
+      ]
+    },
+    {
+      "id": "surgery",
+      "label": "Surgery and perioperative forms",
+      "primary": [
+        "public/periop-forms.*",
+        "server/periop-forms.mjs",
+        "server/routes/periop-forms.mjs"
+      ],
+      "shared": [
+        "protected/EMR.html",
+        "server/server.mjs",
+        "server/database.mjs",
+        "server/routes/patients.mjs",
+        "server/routes/clinical.mjs",
+        "public/emr-patient-record.js",
+        "public/emr-session.js",
+        "public/emr-encounter-editor.js",
+        "public/emr-permissions.js",
+        "public/soap-note.js"
+      ],
+      "testPatterns": [
+        "tests/*periop*.test.mjs",
+        "tests/*consent*.test.mjs"
+      ],
+      "manualChecks": [
+        "Correct patient and encounter; consent and perioperative form persistence; signatures and print."
+      ],
+      "primaryFiles": [
+        "public/periop-forms.css",
+        "public/periop-forms.js",
+        "server/periop-forms.mjs",
+        "server/routes/periop-forms.mjs"
+      ],
+      "sharedFiles": [
+        "protected/EMR.html",
+        "public/emr-encounter-editor.js",
+        "public/emr-patient-record.js",
+        "public/emr-permissions.js",
+        "public/emr-session.js",
+        "public/soap-note.js",
+        "server/database.mjs",
+        "server/routes/clinical.mjs",
+        "server/routes/patients.mjs",
+        "server/server.mjs"
+      ],
+      "suggestedTests": [
+        "tests/v413-periop-forms.test.mjs"
+      ]
+    },
+    {
+      "id": "shell",
+      "label": "Navigation, design and language",
+      "primary": [
+        "public/app-shell.*",
+        "public/nav-config.js",
+        "public/emr-language*",
+        "public/new-text*",
+        "public/design-system.css",
+        "public/components.*",
+        "public/shared-controls.css",
+        "public/responsive-layout.css",
+        "public/interface-theme.*",
+        "server/interface-theme.mjs",
+        "server/navigation-settings.mjs",
+        "public/patient-banner.js",
+        "public/patient-banner.css"
+      ],
+      "shared": [
+        "protected/*.html",
+        "server/access.mjs",
+        "server/server.mjs"
+      ],
+      "testPatterns": [
+        "tests/*nav*.test.mjs",
+        "tests/*language*.test.mjs",
+        "tests/*khmer*.test.mjs"
+      ],
+      "manualChecks": [
+        "All role menus; desktop/mobile; KH/EN; form save and print; no accidental cross-module CSS changes."
+      ],
+      "primaryFiles": [
+        "public/app-shell.css",
+        "public/app-shell.js",
+        "public/components.css",
+        "public/components.js",
+        "public/design-system.css",
+        "public/emr-language-data.js",
+        "public/emr-language-lock.js",
+        "public/emr-language.css",
+        "public/emr-language.js",
+        "public/interface-theme.css",
+        "public/interface-theme.js",
+        "public/nav-config.js",
+        "public/new-text-data.js",
+        "public/new-text.css",
+        "public/new-text.js",
+        "public/responsive-layout.css",
+        "public/shared-controls.css",
+        "server/interface-theme.mjs",
+        "server/navigation-settings.mjs"
+      ],
+      "sharedFiles": [
+        "protected/EMR.html",
+        "protected/admin-users.html",
+        "protected/anc-record.html",
+        "protected/billing.html",
+        "protected/context.html",
+        "protected/departments.html",
+        "protected/drug-safety.html",
+        "protected/expenses.html",
+        "protected/finance.html",
+        "protected/health-facility.html",
+        "protected/home.html",
+        "protected/imaging.html",
+        "protected/interface-theme.html",
+        "protected/ipd-transfer.html",
+        "protected/lab.html",
+        "protected/maternal.html",
+        "protected/npca.html",
+        "protected/opd-paraclinic-nurse.html",
+        "protected/opd-queue.html",
+        "protected/organization-branding.html",
+        "protected/patient-list.html",
+        "protected/pharmacy-display.html",
+        "protected/pharmacy-opd.html",
+        "protected/pmrs-import.html",
+        "protected/print-preview.html",
+        "protected/queue-display.html",
+        "protected/record-log.html",
+        "protected/record-viewer.html",
+        "protected/requests.html",
+        "protected/stock.html",
+        "protected/styleguide.html",
+        "protected/triage.html",
+        "protected/vaccination.html",
+        "protected/ward-medicines.html",
+        "server/access.mjs",
+        "server/server.mjs"
+      ],
+      "suggestedTests": [
+        "tests/app-shell-and-navigation.test.mjs",
+        "tests/khmer-safety-net.test.mjs",
+        "tests/v168-language-lab-print.test.mjs",
+        "tests/v195-language-stock.test.mjs",
+        "tests/v206-requests-language.test.mjs",
+        "tests/v218-imaging-navigation-tabs.test.mjs",
+        "tests/v227-khmer-voice-standard.test.mjs",
+        "tests/v229-khmer-voice-online.test.mjs",
+        "tests/v231-khmer-patient-names.test.mjs",
+        "tests/v232-khmer-number-pronunciation.test.mjs",
+        "tests/v233-khmer-exact-number-reading.test.mjs",
+        "tests/v253-top-nav-tab-style-modality-buttons.test.mjs",
+        "tests/v256-khmer-default-invoice-and-en-print.test.mjs",
+        "tests/v282-khmer-invoice-service.test.mjs",
+        "tests/v284-khmer-messages-admission-structured-view.test.mjs",
+        "tests/v286-patient-photo-and-smart-navigation.test.mjs",
+        "tests/v294-khmer-numbers-convert.test.mjs",
+        "tests/v306-refined-lab-form-and-khmer-ui.test.mjs",
+        "tests/v328-symptom-language-display.test.mjs",
+        "tests/v350-nationality-single-language.test.mjs",
+        "tests/v354-nursing-khmer-and-remove-ambulance.test.mjs",
+        "tests/v369-hef-msg-and-od-khmer.test.mjs",
+        "tests/v372-navigation-performance.test.mjs",
+        "tests/v373-language-performance.test.mjs",
+        "tests/v374-language-observer.test.mjs",
+        "tests/v375-khmer-pure-performance.test.mjs",
+        "tests/v376-no-language-buttons.test.mjs",
+        "tests/v398-side-navigation.test.mjs",
+        "tests/patient-banner-and-chart.test.mjs",
+        "tests/clinical-summary-provider-browser.mjs"
+      ]
+    },
+    {
+      "id": "platform",
+      "label": "Database, configuration and hosting",
+      "primary": [
+        "server/config.mjs",
+        "server/database.mjs",
+        "server/persistent-data.mjs",
+        "server/backup.mjs",
+        "server/router.mjs",
+        "server/server.mjs",
+        "Dockerfile",
+        ".dockerignore",
+        ".env.example"
+      ],
+      "shared": [
+        "server/routes/*"
+      ],
+      "testPatterns": [
+        "tests/*hosting*.test.mjs",
+        "tests/*production*.test.mjs"
+      ],
+      "manualChecks": [
+        "Backup/restore in disposable data; startup and migrations; static asset routes; persistent volume; existing tests."
+      ],
+      "primaryFiles": [
+        ".dockerignore",
+        ".env.example",
+        "Dockerfile",
+        "server/backup.mjs",
+        "server/config.mjs",
+        "server/database.mjs",
+        "server/persistent-data.mjs",
+        "server/router.mjs",
+        "server/server.mjs"
+      ],
+      "sharedFiles": [
+        "server/routes/admin.mjs",
+        "server/routes/auth.mjs",
+        "server/routes/clinical-summary.mjs",
+        "server/routes/clinical.mjs",
+        "server/routes/finance.mjs",
+        "server/routes/maternal.mjs",
+        "server/routes/medication-safety.mjs",
+        "server/routes/messages.mjs",
+        "server/routes/npca.mjs",
+        "server/routes/paraclinic.mjs",
+        "server/routes/patients.mjs",
+        "server/routes/periop-forms.mjs",
+        "server/routes/pharmacy.mjs",
+        "server/routes/queue.mjs",
+        "server/routes/record-access.mjs"
+      ],
+      "suggestedTests": [
+        "tests/v381-auth-production-security.test.mjs",
+        "tests/v424-hosting.test.mjs"
+      ]
+    },
+    {
+      "id": "development",
+      "label": "Git workflow and developer documentation",
+      "primary": [
+        "scripts/emr-branch.mjs",
+        "scripts/emr-branch-lib.mjs",
+        "docs/development/*",
+        "tests/emr-branch.test.mjs"
+      ],
+      "shared": [
+        "AGENTS.md",
+        "package.json",
+        "CHANGELOG.md",
+        "scripts/khmer-lib.mjs",
+        "docs/khmer-approved-changes.md",
+        "docs/approved-new-khmer.json"
+      ],
+      "testPatterns": [
+        "tests/emr-branch.test.mjs"
+      ],
+      "manualChecks": [
+        "Create branch in disposable Git repository; reject dirty/stale checkout; review committed/staged/untracked changes; verify runtime files unchanged."
+      ],
+      "primaryFiles": [
+        "docs/development/AI_HANDOFF.md",
+        "docs/development/BRANCHING_GUIDE.md",
+        "docs/development/MODULE_MAP.md",
+        "docs/development/VALIDATION.md",
+        "docs/development/modules.json",
+        "scripts/emr-branch-lib.mjs",
+        "scripts/emr-branch.mjs",
+        "tests/emr-branch.test.mjs"
+      ],
+      "sharedFiles": [
+        "AGENTS.md",
+        "CHANGELOG.md",
+        "package.json"
+      ],
+      "suggestedTests": [
+        "tests/emr-branch.test.mjs",
+        "tests/khmer-safety-net.test.mjs"
+      ]
+    }
+  ],
+  "currentReleaseVersion": "45.7.0"
+}

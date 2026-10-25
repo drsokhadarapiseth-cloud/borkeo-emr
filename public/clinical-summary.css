@@ -255,3 +255,10 @@
 .ews-table th, .ews-table td { padding: 2px 10px 2px 0; text-align: left; }
 .emr-banner-clinical-item.ews-medium .emr-banner-field-value,
 .emr-banner-clinical-item.ews-high .emr-banner-field-value { color: #b91c1c; font-weight: 800; }
+.clinical-recorded-warning {
+  border-inline-start: 4px solid #b91c1c;
+  padding: 8px 12px;
+  background: #fff1f2;
+  color: #881337;
+  font-weight: 700;
+}

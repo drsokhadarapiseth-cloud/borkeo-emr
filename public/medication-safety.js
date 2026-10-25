@@ -392,7 +392,23 @@
     note.textContent = `⚠ ${text}`;
   }
 
+  function showAllergyVerification(row) {
+    const state = window.EmrClinicalSummary?.allergyState?.()?.state;
+    const uncertain = Boolean(row.querySelector(NAME)?.value?.trim()) && state !== 'allergy' && state !== 'none';
+    let note = row.querySelector('[data-allergy-verification]');
+    if (!uncertain) { note?.remove(); return; }
+    if (!note) {
+      note = document.createElement('span');
+      note.setAttribute('data-allergy-verification', '');
+      note.setAttribute('data-emr-transient', '');
+      note.setAttribute('role', 'status');
+      row.querySelector(NAME)?.insertAdjacentElement('afterend', note);
+    }
+    note.textContent = plain('', 'Allergy history cannot be verified. Review the allergy record before prescribing.', 'មិនអាចផ្ទៀងផ្ទាត់ប្រវត្តិអាលែកហ្ស៊ីបាន។ សូមពិនិត្យកំណត់ត្រាអាលែកហ្ស៊ីមុនចេញវេជ្ជបញ្ជា។');
+  }
+
   function warningsFor(row) {
+    showAllergyVerification(row);
     const medicine = row.querySelector(NAME)?.value?.trim();
     if (!medicine) { showDoseNote(row, ''); return []; }
     const warnings = [];
@@ -431,6 +447,10 @@
   };
 
   function askOverride(row, field, medicine, warnings) {
+    const warningPatientKey = patientKey();
+    const warningRevision = window.EmrClinicalSummary?.get()?.revision;
+    const stillCurrent = () => patientKey() === warningPatientKey
+      && window.EmrClinicalSummary?.get()?.revision === warningRevision && field.isConnected;
     const dialog = dialogShell('safety-warning-dialog');
     dialog.innerHTML = `
       <form method="dialog" class="mar-form safety-form">
@@ -448,6 +468,7 @@
     const ack = JSON.stringify(warnings);
     const nameInput = row.querySelector(NAME) || field;
     dialog.querySelector('[data-safety-cancel]').addEventListener('click', () => {
+      if (!stillCurrent()) { dialog.close(); return; }
       nameInput.value = '';
       nameInput.dispatchEvent(new Event('input', { bubbles: true }));
       dialog.close();
@@ -455,6 +476,7 @@
     });
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      if (!stillCurrent()) { dialog.close(); return; }
       const reason = form.elements['safety-reason'].value.trim();
       if (!reason) { dialog.querySelector('.mar-message').textContent = plain('safety.reasonRequired', 'Write the override reason to continue.'); return; }
       const entry = { medicine, warnings, reason };
@@ -465,7 +487,7 @@
       // Back to the row: the number of medicine when it is still empty.
       const quantity = row.querySelector('[data-med="doseAmount"], .rx-dose, .prx-dose, .mrx-dose, .mprx-dose, .orx-dose');
       if (quantity && !quantity.value) quantity.focus();
-      if (patientKey()) await api('/api/prescribing-overrides', { patientKey: patientKey(), ...entry }).catch(() => pendingOverrides.push(entry));
+      if (warningPatientKey) await api('/api/prescribing-overrides', { patientKey: warningPatientKey, ...entry }).catch(() => pendingOverrides.push({ ...entry, patientKey: warningPatientKey }));
       else pendingOverrides.push(entry);
     });
     dialog.addEventListener('cancel', (event) => event.preventDefault(), { once: true });
@@ -476,9 +498,14 @@
 
   async function checkPrescription(field) {
     if (!isPrescriber()) return;
+    const key = patientKey();
+    const revision = window.EmrClinicalSummary?.get()?.revision;
     const row = field.closest('tr');
     if (!row?.querySelector(NAME)) return;
+    showAllergyVerification(row);
     await loadTables();
+    await window.EmrClinicalSummary?.ready?.();
+    if (patientKey() !== key || window.EmrClinicalSummary?.get()?.revision !== revision || !field.isConnected) return;
     const warnings = warningsFor(row);
     // Back under the maximum: the reason written for the higher dose no longer applies.
     if (safetyTables && window.BorkeoMedicine?.ready?.() && !warnings.some((warning) => warning.kind === 'max-dose')) delete row.querySelector(NAME).dataset.doseReason;
@@ -510,7 +537,29 @@
     if (field && (field.closest('#page3') || field.closest('#emr-discharge-rx-body'))) checkPrescription(field);
   });
 
+  document.addEventListener('emr:clinical-summary', () => {
+    // An override dialog and its captured medicine belong to the old revision.
+    const dialog = document.getElementById('safety-warning-dialog');
+    if (dialog?.open) dialog.close();
+    document.querySelectorAll(NAME).forEach(field => {
+      if (!(field.closest('#page3') || field.closest('#emr-discharge-rx-body'))) return;
+      const row = field.closest('tr');
+      if (!row) return;
+      delete row.dataset.safetyAck;
+      showAllergyVerification(row);
+      const allergies = window.EmrClinicalSummary?.get()?.summary?.allergies || [];
+      if (field.value.trim() && allergies.some(allergy => names(field.value, allergy.substance))) checkPrescription(field);
+    });
+  });
+
   // A new record gets its key on the first save; overrides made before are sent then.
+  const discardUnsavedOverrides = () => {
+    for (let i = pendingOverrides.length - 1; i >= 0; i--) {
+      if (!pendingOverrides[i].patientKey) pendingOverrides.splice(i, 1);
+    }
+  };
+  document.addEventListener('emr:patient-loaded', discardUnsavedOverrides);
+  document.addEventListener('emr:new-registration-ready', discardUnsavedOverrides);
   document.addEventListener('emr:patient-saved', () => {
     const key = patientKey();
     if (!key) return;
