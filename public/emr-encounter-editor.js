@@ -44,7 +44,7 @@
     const page=root.closest('.page') || root;
     document.querySelectorAll('.page').forEach(item=>{item.hidden=item!==page;item.classList.toggle('active',item===page)});
     if(page.id==='page3')document.querySelectorAll('#page3 > .sub-tab').forEach(panel=>{panel.hidden=panel!==root;panel.classList.toggle('active',panel===root)});
-    if(!bar && !report){
+    if(!bar && !report && current !== 'triage'){
       bar=document.createElement('div');bar.className='emr-encounter-toolbar no-print';bar.dataset.emrTransient='';
       bar.innerHTML='<button type="button" data-editor-toggle data-required-bypass></button><button type="button" data-editor-cancel data-required-bypass>បោះបង់ការកែប្រែ</button><button type="button" data-editor-print data-required-bypass>បោះពុម្ព</button><span data-editor-status role="status"></span>';
       const regActionBar = current === 'register' ? (root.querySelector('.action-bar') || document.getElementById('reg_action_bar') || document.querySelector('#sub_reg .action-bar')) : null;
