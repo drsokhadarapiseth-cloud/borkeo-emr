@@ -1,0 +1,13 @@
+Borkeo EMR Update v46.2.0
+--------------------------
+Date: 2026-10-25
+Author: Claude Code
+
+Changes:
+- Added notification alerts when saving and transferring patients from the Triage module.
+- If transferred to OPD, the alert displays: "បានបញ្ជូនទៅបញ្ជរបង់ប្រាក់ដើម្បីពិគ្រោះជំងឺ"
+- If transferred to other wards, the alert displays: "បានបញ្ជូនអ្នកជំងឺទៅកាន់ [Ward Name] រួចរាល់ហើយ"
+
+Files Modified:
+- public/emr-patient-record.js: Updated handleTriageSaveOrEdit to trigger window.alert on successful save.
+- package.json: Bumped version from 46.1.0 to 46.2.0.

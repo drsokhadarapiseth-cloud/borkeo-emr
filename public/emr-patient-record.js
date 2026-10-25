@@ -931,6 +931,14 @@
       continueTo: currentRole === 'TRIAGE' ? undefined : 3
     }).then(saved => {
       if (saved) {
+        const ward = getSelectedTriageWard();
+        if (ward) {
+          if (ward === 'opd') {
+            window.alert('បានបញ្ជូនទៅបញ្ជរបង់ប្រាក់ដើម្បីពិគ្រោះជំងឺ');
+          } else {
+            window.alert(`បានបញ្ជូនអ្នកជំងឺទៅកាន់ ${ward} រួចរាល់ហើយ`);
+          }
+        }
         delete btn.dataset.userEditing;
         updateTriageSaveButtonState();
       } else {
