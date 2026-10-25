@@ -38,14 +38,15 @@ export function mountQueueRoutes(router) {
     const occupiedElsewhere = new Set(getActiveCalls(database)
       .filter(call => call.service === 'TRIAGE' && counter && call.counter !== counter)
       .map(call => call.patientKey));
-    const waiting = patients.filter(patient => (patient.triageStatus === 'WAITING' || (!patient.triageStatus && !patient.departmentCode && !patient.serviceMode)) && !occupiedElsewhere.has(patient.patientKey));
+    const skipped = getSkipped(database, 'TRIAGE').filter(item => !occupiedElsewhere.has(item.patientKey));
+    const skippedKeys = new Set(skipped.map(item => item.patientKey));
+    const waiting = patients.filter(patient => (patient.triageStatus === 'WAITING' || (!patient.triageStatus && !patient.departmentCode && !patient.serviceMode)) && !occupiedElsewhere.has(patient.patientKey) && !skippedKeys.has(patient.patientKey));
     const completed = allPatients.filter(patient => patient.triageStatus === 'COMPLETED' &&
       patient.triageCompletedAt && getOpdLocalDate(patient.triageCompletedAt) === today);
     completed.forEach(patient => {
       patient.canOpenRecord = true;
       patient.recordAccess = encounterAccess(database, session, database.findPatient(patient.patientKey));
     });
-    const skipped = getSkipped(database, 'TRIAGE').filter(item => !occupiedElsewhere.has(item.patientKey));
     return sendJson(response, 200, { date: today, patients: waiting, waiting, completed, skipped }, { secure: config.cookieSecure });
   });
 

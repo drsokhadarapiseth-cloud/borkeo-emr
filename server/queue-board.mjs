@@ -108,7 +108,7 @@ export function listSkippedQueue(database, service) {
   const normalizedService = normalizeService(service);
   return database.sqlite.prepare(`SELECT s.*, p.full_name, p.health_id, p.case_number, p.sex, p.age
     FROM queue_board_skips s JOIN patient_records p ON p.patient_key=s.patient_key
-    WHERE s.service=? AND s.active=1 AND p.discharge_date IS NULL
+    WHERE s.service=? AND s.active=1 AND (p.discharge_date IS NULL OR TRIM(p.discharge_date)='')
     ORDER BY s.skipped_at, s.queue_number`).all(normalizedService).map(row => ({
       id: row.id, service: row.service, patientKey: row.patient_key, queueNumber: row.queue_number,
       fullName: row.full_name, healthId: row.health_id, caseNumber: row.case_number, sex: row.sex, age: row.age,

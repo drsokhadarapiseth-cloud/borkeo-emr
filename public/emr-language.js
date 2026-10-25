@@ -594,6 +594,7 @@
     ["មើលវេជ្ជបញ្ជា", "View Prescription"],
     ["បោះពុម្ពបង្កាន់ដៃ", "Print Receipt"],
     ["រំលង", "Skip"],
+    ['មិនអាចរំលងអ្នកជំងឺបានទេ។ សូមព្យាយាមម្តងទៀត។', 'Unable to skip the patient. Please try again.'],
     ["+ បន្ថែមការណាត់", "+ Add Appointment"],
     ["ហៅ", "Call"],
     ["ហៅ / Call", "Call"],

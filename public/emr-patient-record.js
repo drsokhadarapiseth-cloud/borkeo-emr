@@ -877,6 +877,8 @@
     const isEditParam = new URLSearchParams(window.location.search).get('edit') === '1';
     const isTriageView = new URLSearchParams(window.location.search).get('view') === 'triage' && !isEditParam;
     const transferred = isTriageTransferred();
+    const skipButton = document.getElementById('triage_skip_btn');
+    if (skipButton) skipButton.hidden = currentRole !== 'TRIAGE' || transferred || new URLSearchParams(window.location.search).get('mode') === 'view';
     if (currentRole === 'TRIAGE' && isTriageView && transferred && !btn.dataset.userEditing) {
       if (false) setTriageControlsLocked(true);
     }
@@ -946,6 +948,31 @@
   // Leave the form without calling a save or transfer endpoint.
   window.handleTriageDiscard = function () {
     window.location.assign('/triage');
+  };
+
+  window.handleTriageSkip = async function () {
+    const button = document.getElementById('triage_skip_btn');
+    if (!button || button.hidden || button.disabled || !loadedPatient?.patientKey) return;
+    const controls = [button, document.getElementById('triage_save_btn'), document.getElementById('triage_discard_btn')].filter(Boolean);
+    const priorDisabled = controls.map(control => control.disabled);
+    const status = document.getElementById('triage_skip_status');
+    if (status) status.textContent = '';
+    controls.forEach(control => { control.disabled = true; });
+    try {
+      const token = await getCsrfToken();
+      const counter = window.sessionStorage.getItem('borkeo-counter-number') || window.emrCounterNumber || document.getElementById('session-counter')?.value || '1';
+      const response = await fetch('/api/queue/skip', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+        body: JSON.stringify({ service: 'TRIAGE', counter, patientKey: loadedPatient.patientKey, status: 'LATE' }),
+      });
+      if (!response.ok) throw new Error('skip failed');
+      window.location.assign('/triage');
+    } catch {
+      if (status) status.textContent = 'មិនអាចរំលងអ្នកជំងឺបានទេ។ សូមព្យាយាមម្តងទៀត។';
+    } finally {
+      controls.forEach((control, index) => { control.disabled = priorDisabled[index]; });
+    }
   };
 
   document.addEventListener('input', (e) => {
