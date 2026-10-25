@@ -1,5 +1,38 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Current synthetic-registration task - v46.5.0, 25 October 2026
+
+User selected 30 synthetic test patients, not updates to real registrations,
+and approved IDs 160201-YYYYMMDD-### with a daily three-digit sequence. Explicit
+coding approval received. Branch: feature/complete-synthetic-registration.
+Actual clean base is 28f763a, including the supplied 46.2/46.3/46.4 triage changes
+after our last 46.1 release. Preserve those changes. Package was already 46.4
+while visible/server version labels were 46.1; this release aligns all at 46.5.
+
+Added a standalone generator that creates a new temporary SQLite file only.
+The legacy reset/seed helper runs exclusively in a newly created in-memory
+template database. The generated output never targets the hospital database,
+and the CLI accepts no destination arguments. All 30 Health IDs and case
+numbers use the requested format, with Khmer sex, age/DOB, linked gazetteer
+addresses, required marital/occupation/disability/coverage/other-ID choices and
+caregiver information. Registration is complete and triage remains waiting;
+no clinical measurements are fabricated in the new fixture.
+
+Ollama Claude received the no-tools implementation prompt through ollama launch
+claude using local qwen3.5:4b. Its proposal contained mismatched dates/address
+formats and age restrictions; those were not adopted. The implementation uses
+the actual project form/storage keys and gazetteer, verified in Chromium.
+
+Four existing 46.4 labels were absent from approval metadata. Exact existing
+wording was preserved and narrowly registered with translation provenance;
+no baseline or runtime triage logic changed. The existing record loader does
+not call its linked-address helper; the fixture browser harness invokes that
+helper explicitly. No unrelated production loading fix is included.
+
+Registration button/save separation and the proposed backup/rollback tool are
+still separate pending updates. Do not claim they are implemented by this task.
+See COMPLETE_REGISTRATION_FIXTURE_VALIDATION.md and the combined update TXT.
+
 ## Latest correction - v46.1.0, 25 October 2026
 
 User explicitly authorized fixing Skip for an older patient whose active call

@@ -2096,6 +2096,30 @@
       "kh": "មិនអាចរំលងអ្នកជំងឺបានទេ។ សូមព្យាយាមម្តងទៀត។",
       "key": "triage.skipFailed",
       "note": "v46.0 owner-authorized triage skip action; safe localized retry message instead of raw backend errors."
+    },
+    {
+      "en": "Please complete all required fields before transferring the patient.",
+      "kh": "សូមបំពេញគ្រប់ចន្លោះដែលចាំបាច់ មុននឹងបញ្ជូនអ្នកជំងឺ",
+      "key": "reviewed.existing464.required",
+      "note": "Preserved current supplied source from 29d9fca; metadata only, no wording or workflow change."
+    },
+    {
+      "en": "Sent to the cashier for consultation.",
+      "kh": "បានបញ្ជូនទៅបញ្ជរបង់ប្រាក់ដើម្បីពិគ្រោះជំងឺ",
+      "key": "reviewed.existing464.cashier",
+      "note": "Preserved current supplied source from 29d9fca; metadata only, no wording or workflow change."
+    },
+    {
+      "en": "Patient sent to",
+      "kh": "បានបញ្ជូនអ្នកជំងឺទៅកាន់",
+      "key": "reviewed.existing464.sent",
+      "note": "Preserved current supplied source from 29d9fca; metadata only, no wording or workflow change."
+    },
+    {
+      "en": "successfully",
+      "kh": "រួចរាល់ហើយ",
+      "key": "reviewed.existing464.done",
+      "note": "Preserved current supplied source from 29d9fca; metadata only, no wording or workflow change."
     }
   ]
 }

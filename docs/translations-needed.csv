@@ -491,3 +491,7 @@ context.retry,Retry context session loading,Authorized master-task context recov
 "reviewed.recordLog.from","From","Explicit owner-reviewed/provider completion wording; see docs/development/KHMER_REVIEW.md","public/record-log.js","ចាប់ពី"
 "reviewed.recordLog.time","Date and time","Explicit owner-reviewed/provider completion wording; see docs/development/KHMER_REVIEW.md","public/record-log.js","កាលបរិច្ឆេទ និងម៉ោង"
 "reviewed.triage.skipFailed","Unable to skip the patient. Please try again.","v46.0 owner-authorized triage skip action; safe localized retry message instead of raw backend errors.","public/emr-patient-record.js","មិនអាចរំលងអ្នកជំងឺបានទេ។ សូមព្យាយាមម្តងទៀត។"
+"reviewed.existing464.required","Please complete all required fields before transferring the patient.","Preserved existing 29d9fca wording; metadata only","public/emr-patient-record.js","សូមបំពេញគ្រប់ចន្លោះដែលចាំបាច់ មុននឹងបញ្ជូនអ្នកជំងឺ"
+"reviewed.existing464.cashier","Sent to the cashier for consultation.","Preserved existing 29d9fca wording; metadata only","public/emr-patient-record.js","បានបញ្ជូនទៅបញ្ជរបង់ប្រាក់ដើម្បីពិគ្រោះជំងឺ"
+"reviewed.existing464.sent","Patient sent to","Preserved existing 29d9fca wording; metadata only","public/emr-patient-record.js","បានបញ្ជូនអ្នកជំងឺទៅកាន់"
+"reviewed.existing464.done","successfully","Preserved existing 29d9fca wording; metadata only","public/emr-patient-record.js","រួចរាល់ហើយ"
