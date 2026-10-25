@@ -7313,10 +7313,10 @@
                 <div class="triage-form-actions" style="display: flex; gap: 8px; align-items: center;">
                     <button class="btn-blue no-print" onclick="printTriageOnly()"><i class="fa-solid fa-print"></i>
                         បោះពុម្ពទម្រង់ទ្រីយ៉ា</button>
-                    <button class="btn-blue no-print" onclick="printAdmissionOnly()" style="margin-left:8px;"><i class="fa-solid fa-file-medical"></i>
-                        បោះពុម្ភលិខិតចូល</button>
                     <button type="button" class="btn-blue emr-save-button no-print" id="triage_save_btn" onclick="handleTriageSaveOrEdit()"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> <span data-key="save_and_transfer">រក្សាទុក និងបញ្ជូនទៅផ្នែក</span></button>
                     <button type="button" class="btn-secondary no-print" id="triage_discard_btn" onclick="handleTriageDiscard()" data-key="btn_discard" data-required-bypass>បោះបង់ការកែប្រែ</button>
+                    <button type="button" class="btn-secondary no-print" id="triage_skip_btn" onclick="handleTriageSkip()" data-required-bypass data-emr-transient data-emr-no-auto-index hidden>រំលង</button>
+                    <span id="triage_skip_status" class="no-print" role="status" aria-live="polite" data-emr-transient data-emr-no-auto-index></span>
                     <button type="button" class="btn-next" onclick="savePatientRecord({ continueTo: 3 })" data-key="btn_next_Form">បន្តទៅទម្រង់ព្យាបាល ➔</button>
                 </div>
             </div>

@@ -490,3 +490,4 @@ context.retry,Retry context session loading,Authorized master-task context recov
 "reviewed.recordLog.document","Scanned document opened","Explicit owner-reviewed/provider completion wording; see docs/development/KHMER_REVIEW.md","public/record-log.js","បើកមើលឯកសារស្កេន"
 "reviewed.recordLog.from","From","Explicit owner-reviewed/provider completion wording; see docs/development/KHMER_REVIEW.md","public/record-log.js","ចាប់ពី"
 "reviewed.recordLog.time","Date and time","Explicit owner-reviewed/provider completion wording; see docs/development/KHMER_REVIEW.md","public/record-log.js","កាលបរិច្ឆេទ និងម៉ោង"
+"reviewed.triage.skipFailed","Unable to skip the patient. Please try again.","v46.0 owner-authorized triage skip action; safe localized retry message instead of raw backend errors.","public/emr-patient-record.js","មិនអាចរំលងអ្នកជំងឺបានទេ។ សូមព្យាយាមម្តងទៀត។"

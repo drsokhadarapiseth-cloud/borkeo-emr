@@ -166,3 +166,12 @@ See docs/development/KHMER_REVIEW.md for source evidence and classification.
 | tests/patient-banner-and-chart.test.mjs | 112 | assert.match(js, /អាលែកហ្ស៊ី/); | [removed] |
 | tests/patient-banner-and-chart.test.mjs | 113 | assert.match(js, /មូលនិធិសមធម៌/); | [removed] |
 | tests/patient-banner-and-chart.test.mjs | 114 | assert.match(js, /មិនបានបញ្ជាក់/); | [removed] |
+
+## v46.0 triage-only print button removal (owner's order)
+
+Owner explicitly authorized removing the blank admission-print button from the
+triage action row. The admission form and the other print action remain intact.
+
+| file | line | before | after |
+|------|------|--------|-------|
+| protected/EMR.html | 7316 | បោះពុម្ភលិខិតចូល | [removed] |

@@ -1,5 +1,28 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Latest update - v46.0.0 triage skip, 25 October 2026
+
+User authorized adding Skip to the bottom triage action row, returning to the
+skipped-patient list without saving unfinished form edits, keeping the existing
+Complete Triage action in that list as direct edit without an approval request,
+and removing only the triage admission-print button while preserving the
+admission form. Base: clean fetched master a8c666c. Development branch:
+feature/triage-skip-action. Version rolls from 45.9.0 to 46.0.0.
+
+The UI uses the existing authenticated/CSRF-protected queue skip endpoint.
+Skip is available for the TRIAGE role on unfinished editable triage, and its
+failure message is visible beside the button. No unfinished clinical fields
+are saved. The skipped row retains its existing direct edit=1 link and label.
+Corrected skipped-list filtering for blank discharge dates (the current schema
+stores empty strings, not NULL) and excluded active skips from triage waiting.
+Discharged patients remain excluded. Existing role, ward, CSRF and edit policies
+are unchanged. No patient data or ignore rules were altered.
+
+One exact baseline print-label removal and one safe retry-message translation
+are narrowly recorded in the Khmer approval/provenance files. Baseline unchanged.
+Validation and delivery: docs/development/TRIAGE_SKIP_VALIDATION.md and
+Borkeo-EMR-v46.0.0-triage-skip-update.txt. Earlier sections are historical.
+
 ## Latest approved update - v45.9.0, 25 October 2026
 
 Based on clean fetched master 8539292, developed on feature/triage-form-actions.

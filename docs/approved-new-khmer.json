@@ -2090,6 +2090,12 @@
       "kh": "កាលបរិច្ឆេទ និងម៉ោង",
       "key": "recordLog.time",
       "note": "Work D/E: existing audit timestamp column, nonclinical localization."
+    },
+    {
+      "en": "Unable to skip the patient. Please try again.",
+      "kh": "មិនអាចរំលងអ្នកជំងឺបានទេ។ សូមព្យាយាមម្តងទៀត។",
+      "key": "triage.skipFailed",
+      "note": "v46.0 owner-authorized triage skip action; safe localized retry message instead of raw backend errors."
     }
   ]
 }
