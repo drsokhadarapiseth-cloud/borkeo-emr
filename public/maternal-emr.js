@@ -18,6 +18,10 @@
   const t = (key, en) => (english() ? en : (window.newText ? window.newText(key, en) : en));
   const role = () => String(window.emrSession?.user?.activeRole || '').toUpperCase();
   const patient = () => window.getLoadedEmrPatient?.() || null;
+  // Restoring a triage destination also changes the hidden OPD module selector.
+  // That synchronization must never navigate the triage/registration workspace.
+  const canOpenAnc = () => !['triage', 'register'].includes(document.body.dataset.encounterView) &&
+    ['MIDWIFE', 'DOCTOR', 'CHIEF_WARD', 'NURSE', 'ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'].includes(role());
   let options = null;
 
   async function loadOptions() {
@@ -39,7 +43,7 @@
     const notice = document.createElement('p');
     notice.className = 'anc-old-notice no-print';
     const key = patient()?.patientKey || new URLSearchParams(window.location.search).get('patient') || '';
-    notice.innerHTML = `${esc(t('anc.oldForm', 'Old ANC form (read only). Use the official ANC record.'))} ${key ? `<a href="/anc-record?patient=${encodeURIComponent(key)}">${esc(t('anc.open', 'Open the ANC record'))}</a>` : ''}`;
+    notice.innerHTML = `${esc(t('anc.oldForm', 'Old ANC form (read only). Use the official ANC record.'))} ${key && canOpenAnc() ? `<a href="/anc-record?patient=${encodeURIComponent(key)}">${esc(t('anc.open', 'Open the ANC record'))}</a>` : ''}`;
     panel.insertAdjacentElement('beforebegin', notice);
   }
 
@@ -104,6 +108,7 @@
   window.EmrMaternal = { apply, oldAncReadOnly, sendCervix };
   document.addEventListener('change', event => {
     if (event.target.id !== 'opd-module-select' || event.target.value !== 'anc') return;
+    if (!canOpenAnc()) return;
     const key = patient()?.patientKey;
     if (key) { event.stopImmediatePropagation(); window.location.assign(`/anc-record?patient=${encodeURIComponent(key)}`); }
   }, true);
