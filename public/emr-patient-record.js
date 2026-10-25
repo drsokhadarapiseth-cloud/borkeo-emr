@@ -943,6 +943,11 @@
   }
   window.handleTriageSaveOrEdit = handleTriageSaveOrEdit;
 
+  // Leave the form without calling a save or transfer endpoint.
+  window.handleTriageDiscard = function () {
+    window.location.assign('/triage');
+  };
+
   document.addEventListener('input', (e) => {
     if (e.target && ['web_caregiver_name', 'web_caregiver_phone'].includes(e.target.id)) {
       if (e.target.value.trim()) e.target.classList.remove('field-missing');

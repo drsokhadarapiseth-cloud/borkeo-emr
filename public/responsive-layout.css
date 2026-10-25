@@ -256,3 +256,22 @@
  body .table-scroll,body .table-wrap,body .nursing-form-scroll{width:100%;overflow-x:auto}
 }
 
+
+/* Triage form: contain Khmer glyphs and keep the primary actions together. */
+@media screen {
+ body[data-encounter-view="triage"] #emr-chart-tabs-wrapper { display:none !important; }
+ body[data-encounter-view="triage"] #page2 { background:#fff; padding:24px 20px !important; border:1px solid #d7eaf0; border-radius:18px; }
+ #page2 .triage-form-heading { gap:12px; align-items:flex-start; }
+ #page2 .triage-form-heading > div { min-width:0; }
+ #page2 [data-key="page2_title"] { display:block; line-height:2.2; padding:.25em .2em; overflow-wrap:anywhere; }
+ #page2 .triage-form-actions { flex-wrap:wrap; }
+ #page2 #triage_save_btn, #page2 #triage_discard_btn { white-space:normal; }
+}
+@media screen and (max-width:760px) {
+ body[data-encounter-view="triage"] #page2 { padding:20px 10px !important; }
+ #page2 .triage-form-heading { flex-wrap:wrap; }
+ #page2 .triage-form-heading > div { width:100% !important; margin-top:0 !important; }
+ #page2 .triage-form-actions { display:grid !important; grid-template-columns:minmax(0,1fr) minmax(0,1fr); width:100%; }
+ #page2 #triage_save_btn { grid-column:1; }
+ #page2 #triage_discard_btn { grid-column:2; }
+}

@@ -1,5 +1,28 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Latest approved update - v45.9.0, 25 October 2026
+
+Based on clean fetched master 8539292, developed on feature/triage-form-actions.
+The user approved removing the three shared editor toolbar buttons and the
+remaining Vitals tab from the triage view, using the native cancel beside Save
+and Transfer to return to /triage without saving, and containing the Khmer form
+heading inside its white box. Routine implementation choices were delegated
+to the assistant. Other roles retain their editor toolbars and chart tabs.
+
+Implemented the previously undefined handleTriageDiscard without a save call,
+marked cancel as a required-field bypass, suppressed triage's duplicate toolbar
+and tab strip, and added screen-only heading padding/wrapping plus responsive
+save/cancel layout. No saved field IDs, clinical rules, queue logic or patient
+data were changed. Skip-to-late and permanent startup changes are outside this
+approved update. Versions are consistently 45.9.0 / visible 45.9.
+
+Validation: 1007/1007 npm tests and check:khmer pass in a disposable synthetic
+copy; explicit Chromium test passes at 1440px and 390px, including cancellation
+with an empty required field and unchanged persisted patient data. See
+docs/development/TRIAGE_FORM_VALIDATION.md and the single combined
+Borkeo-EMR-v45.9.0-triage-form-update.txt delivery artifact. Earlier continuation
+instructions below are historical; do not repeat their branch setup or releases.
+
 ## Current triage update - 25 October 2026
 
 The historical pause instructions below have been superseded by merged master
