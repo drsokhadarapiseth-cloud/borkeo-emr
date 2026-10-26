@@ -14,7 +14,8 @@
 export const DEFAULT_OPTIONS = Object.freeze({
   datingUltrasoundMaxWeeks: 14,
   datingUltrasoundMaxDifferenceDays: 7,
-  prePregnancyWeightFromTriageMaxWeeks: 12,
+  // v47.4: null = the Triage weight fills an empty pre-pregnancy weight at any GA (owner decision).
+  prePregnancyWeightFromTriageMaxWeeks: null,
   singleWeekVisitTolerance: 1,
   levelOverrides: { twins_y: 'red' },
   heightCheckBelowCm: 145,
@@ -153,6 +154,31 @@ const CHRONIC = ['diabetes', 'heart', 'respiratory', 'hypertension', 'thyroid'];
 
 // Facts the automatic chart items use. record = the ANC record; visits = saved
 // visits (oldest first); today = date of the check.
+// v47.4 - Age in completed years. Registration saves text ('13 <year word>', '13 Yrs',
+// Khmer digits, '5 <month word>' for babies); a valid date of birth is used first.
+const KH_YEAR = String.fromCharCode(0x1786, 0x17d2, 0x1793, 0x17b6, 0x17c6);
+const KH_MONTH = String.fromCharCode(0x1781, 0x17c2);
+const KH_DAY = String.fromCharCode(0x1790, 0x17d2, 0x1784, 0x17c3);
+const westernDigits = (value) => [...String(value ?? '')].map((c) => {
+  const code = c.charCodeAt(0);
+  return code >= 0x17e0 && code <= 0x17e9 ? String(code - 0x17e0) : c;
+}).join('');
+export function ageYears(age, dateOfBirth = '', onDate = '') {
+  const born = parseDate(dateOfBirth), at = parseDate(onDate);
+  if (born !== null && at !== null && born <= at) {
+    const b = new Date(born), d = new Date(at);
+    let years = d.getUTCFullYear() - b.getUTCFullYear();
+    if (d.getUTCMonth() < b.getUTCMonth() || (d.getUTCMonth() === b.getUTCMonth() && d.getUTCDate() < b.getUTCDate())) years -= 1;
+    return years;
+  }
+  const text = westernDigits(age).trim().toLowerCase();
+  const match = /(\d+(?:[.,]\d+)?)/.exec(text);
+  if (!match) return null;
+  const hasYears = text.includes(KH_YEAR) || /y(ea)?rs?\b|\by\b|^\s*\d+(?:[.,]\d+)?\s*$/.test(text);
+  if (!hasYears && (text.includes(KH_MONTH) || text.includes(KH_DAY) || /mo|day/.test(text))) return 0;
+  return Math.floor(Number(match[1].replace(',', '.')));
+}
+
 export function ancFacts(record = {}, visits = [], today = '') {
   const identity = record.identity || {};
   const previous = Array.isArray(record.previous) ? record.previous.filter((row) => row && Object.values(row).some(Boolean)) : [];
@@ -205,7 +231,7 @@ export function ancFacts(record = {}, visits = [], today = '') {
     fhr: num(lastVisit?.fhr),
     uterineHeight: num(lastVisit?.uh),
     gaAtVisit: gaAtVisit ? gaAtVisit.weeks : null,
-    age: num(identity.age),
+    age: ageYears(identity.age, identity.dateOfBirth, today),
     heightCm: num(record.heightCm),
     prePregnancyBmi: bmi(record.prePregnancyWeightKg, record.heightCm),
     bp,
