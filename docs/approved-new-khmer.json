@@ -2288,6 +2288,18 @@
       "kh": "អប់រំរួច",
       "key": "anc.educationDone",
       "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Blood pressure",
+      "kh": "សម្ពាធឈាម",
+      "key": "anc.bp",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Pulse",
+      "kh": "ជីពចរ",
+      "key": "anc.pulse",
+      "source": "docs/translations-needed.csv"
     }
   ]
 }

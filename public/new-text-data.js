@@ -260,4 +260,6 @@ window.BORKEO_NEW_TEXT_KH = {
   "anc.unit.grams": "ក្រាម",
   "anc.unit.perMinute": "ដង/នាទី",
   "anc.educationDone": "អប់រំរួច",
+  "anc.bp": "សម្ពាធឈាម",
+  "anc.pulse": "ជីពចរ",
 };
