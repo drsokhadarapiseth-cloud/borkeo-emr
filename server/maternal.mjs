@@ -227,7 +227,8 @@ export function recordWithResults(database, pregnancy) {
 
 export function statusFor(database, pregnancy, today = opdLocalDate()) {
   const visits = listVisits(database, pregnancy.id);
-  return ancStatus({ chart: ancColourChart(), schedule: ancVisitSchedule(), record: recordWithResults(database, pregnancy), visits, today, options: maternalOptions() });
+  return ancStatus({ chart: ancColourChart(), schedule: ancVisitSchedule(), record: recordWithResults(database, pregnancy), visits, today, options: maternalOptions(),
+    vaccinations: pregnancyVaccinations(database, pregnancy) });
 }
 
 // Allowed medicines of the midwife (by list name), e.g. iron + folic acid.
@@ -267,7 +268,7 @@ export function saveRecord(database, pregnancyId, session, body, today = opdLoca
 }
 
 const VISIT_KEYS = ['uh', 'fp', 'fhr', 'bp', 'pulse', 'temperature', 'spo2', 'weight', 'wp', 'proteinuria', 'glucosuria', 'varices', 'fer',
-  'complaint', 'diagnosis', 'appointment', 'rapid', 'imported', 'notScheduled', 'legacyDetails'];
+  'complaint', 'diagnosis', 'appointment', 'rapid', 'imported', 'notScheduled', 'legacyDetails', 'educationDone'];
 
 // One visit per patient record (this day's encounter); the midwife name comes from the login.
 export function saveVisit(database, pregnancyId, row, session, body, today = opdLocalDate()) {
@@ -372,7 +373,7 @@ export function releasedResults(database, row) {
     orders = database.sqlite.prepare(`SELECT * FROM paraclinic_orders WHERE patient_key IN (${marks}) AND released_at IS NOT NULL AND cancelled_at IS NULL ORDER BY released_at`).all(...keys);
   } catch { orders = []; }
   const labs = [], ultrasounds = [];
-  const LAB_FIELDS = { HIV: 'hiv', HIV_RDT: 'hiv', SYPHILIS_RDT: 'syphilis', VDRL: 'syphilis', RPR: 'syphilis', TPHA: 'syphilis', HBSAG: 'hbsag', HBV_RDT: 'hbsag', HCV: 'hcv', HCV_RDT: 'hcv', BLOOD_GROUP: 'group', HGB: 'hb', HCT: 'hct', PLT: 'plt' };
+  const LAB_FIELDS = { HIV: 'hiv', HIV_RDT: 'hiv', SYPHILIS_RDT: 'syphilis', VDRL: 'syphilis', RPR: 'syphilis', TPHA: 'syphilis', HBSAG: 'hbsag', HBV_RDT: 'hbsag', HCV: 'hcv', HCV_RDT: 'hcv', BLOOD_GROUP: 'group', HGB: 'hb', HCT: 'hct', PLT: 'plt', OGTT: 'glucose', GTT: 'glucose', GLU: 'glucose' };
   for (const order of orders) {
     const result = parse(order.result_json);
     const date = new Date(Number(order.released_at || order.updated_at || Date.now())).toISOString().slice(0, 10);

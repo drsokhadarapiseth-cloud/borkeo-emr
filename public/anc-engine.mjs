@@ -179,6 +179,7 @@ export function ageYears(age, dateOfBirth = '', onDate = '') {
   return Math.floor(Number(match[1].replace(',', '.')));
 }
 
+const filledText = (value) => String(value ?? '').trim() !== '';
 export function ancFacts(record = {}, visits = [], today = '') {
   const identity = record.identity || {};
   const previous = Array.isArray(record.previous) ? record.previous.filter((row) => row && Object.values(row).some(Boolean)) : [];
@@ -231,6 +232,19 @@ export function ancFacts(record = {}, visits = [], today = '') {
     fhr: num(lastVisit?.fhr),
     uterineHeight: num(lastVisit?.uh),
     gaAtVisit: gaAtVisit ? gaAtVisit.weeks : null,
+    // v47.5 - for the to-do list
+    today,
+    edd: dating.edd,
+    visits,
+    hbDates: [...labs.filter((column) => filledText(column?.hb)).map((column) => column.date), ...visits.filter((item) => filledText(item?.rapid?.hb)).map((item) => item.date)].filter(Boolean),
+    glucoseDates: labs.filter((column) => filledText(column?.glucose)).map((column) => column.date).filter(Boolean),
+    scanDates: ultrasounds.map((row) => row.date).filter(Boolean),
+    datingScan: ultrasounds.some((row) => row.date) || Boolean(record.ultrasoundEdd && record.ultrasoundDate),
+    answered: {
+      anaemia: ['eyelid', 'nails', 'palms'].every((key) => ['yes', 'no'].includes(record.history?.anaemia?.[key])),
+      breast: ['yes', 'no'].includes(record.history?.mouth?.breast),
+      mouth: ['stomatitis', 'caries'].every((key) => ['yes', 'no'].includes(record.history?.mouth?.[key])),
+    },
     age: ageYears(identity.age, identity.dateOfBirth, today),
     heightCm: num(record.heightCm),
     prePregnancyBmi: bmi(record.prePregnancyWeightKg, record.heightCm),
@@ -341,17 +355,36 @@ export function planFor(colour, schedule) {
 }
 
 const CATEGORIES = ['records', 'lab', 'exam', 'ultrasound', 'care'];
+// v47.5 - Tasks done from what Registration, Triage, the midwife, the
+// Laboratory and Imaging entered (taskDoneByData). Matched on the official text.
+const TASK_DATA = [
+  ['records', /\u1780\u17c6\u178e\u178f\u17cb\u178f\u17d2\u179a\u17b6\u1780\u17b6\u179a\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799\u1795\u17d2\u1791\u17c3\u1796\u17c4\u17c7|\u1794\u17d2\u179a\u1796\u17d0\u1793\u17d2\u1792\u178c\u17b8\u1787\u17b8\u1790\u179b|\u178f\u17d2\u179a\u17bc\u179c\u1794\u1784\u17d2\u1780\u17be\u178f\u17af\u1780\u179f\u17b6\u179a\u179b\u17be\u1780\u1793\u17c1\u17c7/, 'auto:record'],
+  ['exam', /^\u1790\u17d2\u179b\u17b9\u1784\u1791\u1798\u17d2\u1784\u1793\u17cb/, 'data:weight'],
+  ['exam', /^\u179c\u17b6\u179f\u17cb\u1780\u1798\u17d2\u1796\u179f\u17cb\u179f\u17d2\u1794\u17bc\u1793/, 'data:uh'],
+  ['exam', /^\u179c\u17b6\u179f\u17cb\u1780\u1798\u17d2\u1796\u179f\u17cb$/, 'data:height'],
+  ['exam', /BMI/, 'data:bmi'],
+  ['exam', /^\u179f\u1789\u17d2\u1789\u17b6\u1787\u17b8\u179c\u17b7\u178f/, 'data:vitals'],
+  ['exam', /^\u179f\u17d2\u178f\u17b6\u1794\u17cb\u1794\u17c1\u17c7\u178a\u17bc\u1784\u1780\u17bc\u1793/, 'data:fhr'],
+  ['exam', /^\u1791\u1798\u17d2\u179a\u1784\u17cb\u1780\u17bc\u1793/, 'data:fp'],
+  ['exam', /^\u1797\u17b6\u1796\u179f\u17d2\u179b\u17c1\u1780\u179f\u17d2\u179b\u17b6\u17c6\u1784/, 'data:anaemia'],
+  ['exam', /^\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799\u179f\u17bb\u178a\u1793\u17cb/, 'data:breast'],
+  ['exam', /^\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799\u179f\u17bb\u1781\u1797\u17b6\u1796\u1798\u17b6\u178f\u17cb/, 'data:mouth'],
+  ['lab', /\u179b\u17be\u1780\u1791\u17b8\u17e2|\u1796\u17b7\u1793\u17b7\u178f\u17d2\u1799\u1788\u17b6\u1798\u178f\u17d2\u179a\u17c0\u1798\u179f\u1798\u17d2\u179a\u17b6\u179b/, 'own:hb-window'],
+  ['care', /^\u17a2\u1794\u17cb\u179a\u17c6/, 'data:education'],
+];
 
 // What a task does: own result field, a Laboratory / Imaging order, the iron
-// prescription, the tetanus vaccine, or a simple check.
+// prescription, the tetanus vaccine, data entered elsewhere, or a simple check.
 export function taskAction(category, text) {
-  const value = String(text || '');
+  const value = String(text || '').trim();
+  const data = TASK_DATA.find(([cat, pattern]) => cat === category && pattern.test(value));
+  if (data) return data[2];
   if (category === 'ultrasound') return /^\*/.test(value) ? 'check' : 'order:ULTRASOUND';
   if (category === 'lab') {
     if (/Hepatitis B/i.test(value)) return 'order:HBSAG';
     if (/OGTT/i.test(value)) return 'order:OGTT';
     if (/CBC/i.test(value)) return 'own:hb';
-    if (/^HIV$/i.test(value.trim())) return 'own:hiv';
+    if (/^HIV$/i.test(value)) return 'own:hiv';
     if (/Syphilis/i.test(value)) return 'own:syphilis';
     if (/\u1780\u17d2\u179a\u17bb\u1798\u1788\u17b6\u1798/.test(value)) return 'order:BLOOD_GROUP';
     if (/\u1791\u17b9\u1780\u1793\u17c4\u1798/.test(value)) return 'own:urine';
@@ -368,19 +401,51 @@ export function taskAction(category, text) {
 export function tasksFor(visit) {
   if (!visit) return [];
   return CATEGORIES.flatMap((category) => (visit[category] || []).map((text, index) => ({
-    key: `${visit.visit}:${category}:${index}`, visit: visit.visit, category, text, action: taskAction(category, text),
+    key: `${visit.visit}:${category}:${index}`, visit: visit.visit, gaFrom: visit.gaFrom, gaTo: visit.gaTo, category, text, action: taskAction(category, text),
   })));
 }
 
-// Automatically done from the data (results typed or released).
+const filled = (value) => String(value ?? '').trim() !== '';
+const TETANUS_COMPLETE = '\u1782\u17d2\u179a\u1794\u17cb';
+
+// Automatically done from the data. visit = today's visit (the page draft);
+// null for an earlier visit: the visit saved within that visit's weeks is used.
+// "Within the weeks" = a date from the first to the last week of the scheduled
+// visit (by the EDD), or today.
 export function taskDoneByData(task, facts, visit) {
-  if (task.action === 'own:hiv') return Boolean(facts.hiv);
-  if (task.action === 'own:syphilis') return Boolean(facts.syphilis);
-  if (task.action === 'order:HBSAG') return Boolean(facts.hbsag);
-  if (task.action === 'own:hb') return facts.hb !== null;
-  if (task.action === 'order:BLOOD_GROUP') return Boolean(facts.rhesus);
-  if (task.action === 'own:urine') return Boolean(visit && (visit.proteinuria || visit.glucosuria));
-  return false;
+  const inWindow = (date) => {
+    if (!date) return false;
+    if (facts.today && date === facts.today) return true;
+    if (!facts.edd || task.gaFrom === undefined || task.gaTo === undefined) return false;
+    return date >= dateAtGa(facts.edd, task.gaFrom) && date < dateAtGa(facts.edd, task.gaTo + 1);
+  };
+  const at = visit || (facts.visits || []).find((item) => inWindow(item.date)) || null;
+  switch (task.action) {
+    case 'own:hiv': return Boolean(facts.hiv);
+    case 'own:syphilis': return Boolean(facts.syphilis);
+    case 'order:HBSAG': return Boolean(facts.hbsag);
+    case 'own:hb': return facts.hb !== null && facts.hb !== undefined;
+    case 'own:hb-window': return (facts.hbDates || []).some(inWindow);
+    case 'order:BLOOD_GROUP': return Boolean(facts.rhesus);
+    case 'order:OGTT': return (facts.glucoseDates || []).some(inWindow);
+    case 'order:ULTRASOUND': return task.visit === 1 ? Boolean(facts.datingScan) : (facts.scanDates || []).some(inWindow);
+    case 'own:urine': return Boolean(at && (at.proteinuria || at.glucosuria));
+    case 'auto:record': return true;
+    case 'data:weight': return Number(at?.weight) > 0;
+    case 'data:height': return facts.heightCm !== null && facts.heightCm !== undefined;
+    case 'data:bmi': return facts.prePregnancyBmi !== null && facts.prePregnancyBmi !== undefined;
+    case 'data:vitals': return Boolean(at) && ['bp', 'pulse', 'temperature', 'spo2'].every((key) => filled(at[key]));
+    case 'data:fhr': return filled(at?.fhr);
+    case 'data:uh': return filled(at?.uh);
+    case 'data:fp': return filled(at?.fp);
+    case 'data:anaemia': return task.visit === 1 ? Boolean(facts.answered?.anaemia) : filled(at?.rapid?.hb) || (facts.hbDates || []).some(inWindow);
+    case 'data:breast': return Boolean(facts.answered?.breast);
+    case 'data:mouth': return Boolean(facts.answered?.mouth);
+    case 'data:education': return at?.educationDone === true;
+    case 'rx:iron': return Number(at?.fer) > 0;
+    case 'vaccine:tt': return (facts.vaccinationDates || []).some(inWindow) || at?.legacyDetails?.[44] === TETANUS_COMPLETE;
+    default: return false;
+  }
 }
 
 // The visit for a GA: { visit, next, scheduled }. doneVisits: visit numbers already seen.
@@ -407,8 +472,9 @@ export function suggestedAppointment(edd, nextVisit) {
 }
 
 // One summary for the page and the server.
-export function ancStatus({ chart, schedule, record = {}, visits = [], today, options = DEFAULT_OPTIONS }) {
-  const facts = ancFacts(record, visits, today);
+// vaccinations: tetanus doses of this pregnancy ({ givenDate }).
+export function ancStatus({ chart, schedule, record = {}, visits = [], today, options = DEFAULT_OPTIONS, vaccinations = [] }) {
+  const facts = { ...ancFacts(record, visits, today), vaccinationDates: (vaccinations || []).map((item) => item?.givenDate).filter(Boolean) };
   const colour = evaluateColour(chart, facts, record.ticks || {}, options);
   const dating = datingEdd({ lmp: record.lmp, ultrasoundEdd: record.ultrasoundEdd, ultrasoundDate: record.ultrasoundDate }, options);
   const ga = dating.edd ? gestationalAge(dating.edd, today) : null;

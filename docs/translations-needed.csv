@@ -522,3 +522,4 @@ context.retry,Retry context session loading,Authorized master-task context recov
 "anc.fluid.high","High","ANC dropdowns and units (v47.3, owner approved)","public/anc-record.js","ច្រើន"
 "anc.unit.grams","g","ANC dropdowns and units (v47.3, owner approved)","public/anc-record.js","ក្រាម"
 "anc.unit.perMinute","/min","ANC dropdowns and units (v47.3, owner approved)","public/anc-record.js","ដង/នាទី"
+"anc.educationDone","Education given","ANC today's visit: education given at this visit (v47.5, owner approved)","public/anc-record.js","អប់រំរួច"

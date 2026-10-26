@@ -259,4 +259,5 @@ window.BORKEO_NEW_TEXT_KH = {
   "anc.fluid.high": "ច្រើន",
   "anc.unit.grams": "ក្រាម",
   "anc.unit.perMinute": "ដង/នាទី",
+  "anc.educationDone": "អប់រំរួច",
 };

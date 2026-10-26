@@ -138,7 +138,7 @@ function visitsWithDraft() {
 function currentStatus() {
   const labs = [...(data.released?.labs || []), ...(record.labs || [])];
   const ultrasounds = [...(data.released?.ultrasounds || []), ...(record.ultrasounds || [])];
-  return anc.ancStatus({ chart: cfg.chart, schedule: cfg.schedule, record: { ...record, labs, ultrasounds }, visits: visitsWithDraft(), today: data.today, options: cfg.options });
+  return anc.ancStatus({ chart: cfg.chart, schedule: cfg.schedule, record: { ...record, labs, ultrasounds }, visits: visitsWithDraft(), today: data.today, options: cfg.options, vaccinations: data.vaccinations || [] });
 }
 
 // ---------------------------------------------------------------- top and summary
@@ -329,6 +329,7 @@ function visitForm(status) {
       <label>${label('glucosuria')} ${visitPick('glucosuria', OPTION_LISTS.glucosuria())}</label>
       <label>${label('varices')} ${vfield('varices', { size: 'small' })}</label>
       <label>${label('fer')} ${vfield('fer', { size: 'tiny' })}</label>
+      <label class="anc-choice"><input type="checkbox" data-visit="educationDone"${draft.educationDone === true ? ' checked' : ''}${canEdit() ? '' : ' disabled'}> ${esc(t('anc.educationDone', 'Education given'))}</label>
     </div>
     <fieldset class="anc-rapid"><legend>${esc(t('anc.rapidTests', 'Rapid tests done by the midwife'))}</legend>
       <label>HIV ${rapidSelect('hiv')}</label><label>Syphilis ${rapidSelect('syphilis')}</label><label>Hb ${vfield('rapid.hb', { size: 'tiny' })} g/dL</label>
@@ -515,7 +516,7 @@ document.addEventListener('input', (event) => {
     if (target.dataset.path === 'prePregnancyWeightKg') record.prePregnancyWeightSource = 'typed';
     refreshLive();
   } else if (target.dataset.visit) {
-    setPath(draft, target.dataset.visit, target.value);
+    setPath(draft, target.dataset.visit, target.type === 'checkbox' ? target.checked : target.value);
     refreshLive();
   } else if (target.dataset.rx !== undefined) {
     prescription[Number(target.dataset.rx)][target.dataset.rxKey] = target.value;
@@ -645,7 +646,7 @@ document.addEventListener('click', async (event) => {
   });
   if (button.dataset.askDoctor) return run(async () => { await api('/api/maternal/ask-doctor', body({ test: button.dataset.askDoctor })); });
   if (button.dataset.focus) {
-    const map = { hiv: 'rapid.hiv', syphilis: 'rapid.syphilis', hb: 'rapid.hb', urine: 'proteinuria' };
+    const map = { hiv: 'rapid.hiv', syphilis: 'rapid.syphilis', hb: 'rapid.hb', 'hb-window': 'rapid.hb', urine: 'proteinuria' };
     const input = document.querySelector(`[data-visit="${map[button.dataset.focus]}"]`);
     const section = input?.closest('[data-anc-section]')?.dataset.ancSection;
     if (section) selectSection(section);
