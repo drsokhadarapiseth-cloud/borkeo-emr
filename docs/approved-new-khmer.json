@@ -2282,6 +2282,12 @@
       "kh": "ដង/នាទី",
       "key": "anc.unit.perMinute",
       "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Education given",
+      "kh": "អប់រំរួច",
+      "key": "anc.educationDone",
+      "source": "docs/translations-needed.csv"
     }
   ]
 }

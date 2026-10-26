@@ -1,5 +1,21 @@
 # Task context for Codex, Gemini or OpenCode
 
+## ANC to-do list ticked from the data - v47.5.0, 26 October 2026
+
+User approved ("yes code it") ticking the ANC visit tasks from Registration,
+Triage, midwife, Laboratory and Imaging data. Clean master 64d2bff (47.4.0);
+branch feature/maternity-anc-task-auto-done. Pre-update code snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v47.4.0-64d2bff5-17922394
+
+Rules: TASK_DATA / taskAction / taskDoneByData in public/anc-engine.mjs;
+tasks carry gaFrom/gaTo; facts add dates of Hb, glucose, ultrasound and
+tetanus (ancStatus `vaccinations`). Vital signs need BP, pulse, temperature
+and SpO2 (owner). New visit key `educationDone` ("អប់រំរួច" box) marks the
+visit's education task. CBC 2 no longer ticks from the first Hb. Lab codes
+OGTT/GTT/GLU map to `glucose`. Paper books, "*additional examination" and
+post-term management stay manual. Next approved step: v47.6 ANC screen layout
+(fixed grid, aligned tick boxes, no wrapping). See ANC_TASKS_V475_VALIDATION.md.
+
 ## ANC age and BMI correction - v47.4.0, 26 October 2026
 
 User reported a 13-year-old not ticking "<18 / >35 years" and an empty BMI,
