@@ -365,6 +365,42 @@ export function closePregnancy(database, pregnancyId, session, body) {
 }
 
 // Released Laboratory results and Imaging reports of this person for the record tables.
+// v47.8 - ANC orders are sent once per visit. A test (Laboratory code,
+// ULTRASOUND, or a request to a doctor) counts as sent when it was sent today
+// for this woman (any of her encounters), or when an earlier order of it still
+// waits for its result. [{ code, kind: 'lab' | 'imaging' | 'doctor', date, pending }]
+export function ancSentOrders(database, row, today = opdLocalDate()) {
+  const keys = samePersonKeys(database, row);
+  const marks = keys.map(() => '?').join(',');
+  const sent = [];
+  let orders = [];
+  try {
+    orders = database.sqlite.prepare(`SELECT modality, request_json, created_at, released_at FROM paraclinic_orders WHERE patient_key IN (${marks}) AND cancelled_at IS NULL`).all(...keys);
+  } catch { orders = []; }
+  for (const order of orders) {
+    const date = opdLocalDate(Number(order.created_at));
+    const pending = !order.released_at;
+    if (!pending && date !== today) continue;
+    const lab = order.modality === 'LAB';
+    const codes = lab ? (parse(order.request_json).items || []).map((item) => String(item?.code || '').toUpperCase()) : [String(order.modality || '').toUpperCase()];
+    for (const code of codes.filter(Boolean)) sent.push({ code, kind: lab ? 'lab' : 'imaging', date, pending });
+  }
+  let messages = [];
+  try {
+    messages = database.sqlite.prepare(`SELECT subject, created_at FROM staff_messages WHERE patient_key IN (${marks}) AND subject LIKE 'ANC · %' AND created_at >= ?`).all(...keys, Date.now() - 2 * 86400000);
+  } catch { messages = []; }
+  for (const message of messages) {
+    const date = opdLocalDate(Number(message.created_at));
+    const code = String(message.subject).split(' · ')[1] || '';
+    if (date === today && code) sent.push({ code: code.toUpperCase(), kind: 'doctor', date, pending: false });
+  }
+  return sent;
+}
+export const ancOrderAlreadySent = (database, row, codes) => {
+  const sent = ancSentOrders(database, row);
+  return codes.map((code) => String(code || '').toUpperCase()).some((code) => sent.some((item) => item.code === code));
+};
+
 export function releasedResults(database, row) {
   const keys = samePersonKeys(database, row);
   const marks = keys.map(() => '?').join(',');

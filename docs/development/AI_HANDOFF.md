@@ -1,5 +1,20 @@
 # Task context for Codex, Gemini or OpenCode
 
+## ANC orders sent once per visit - v47.8.0, 26 October 2026
+
+User approved ("yes", scope once per visit) a notice after every ANC order /
+doctor request and sending each only once. Clean master d18bc5c (47.7.0);
+branch feature/maternity-anc-orders-once. Pre-update code snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v47.7.0-d18bc5c8-1f411f3c
+
+Server: ancSentOrders / ancOrderAlreadySent (server/maternal.mjs) - sent today
+for any of the woman's encounters, or an unreleased earlier order; used by the
+midwife branch of POST /api/paraclinic/orders and by POST
+/api/maternal/ask-doctor (409 code ALREADY_SENT) and returned as
+`sentOrders` by GET /api/anc/record. Page: orderButton shows the note,
+sendOnce + showToast, run() keeps a returned message. Pending: Khmer for
+anc.labsHint (shows English). See ANC_ORDERS_V478_VALIDATION.md.
+
 ## ANC to-do list as a clean checklist - v47.7.0, 26 October 2026
 
 User approved ("yes") replacing the to-do cards and buttons by a grouped

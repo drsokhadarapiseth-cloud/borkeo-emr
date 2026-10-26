@@ -1,4 +1,4 @@
-import { canUseMaternalPatient, maternalOptions } from '../maternal.mjs';
+import { ancOrderAlreadySent, canUseMaternalPatient, maternalOptions } from '../maternal.mjs';
 import { uploadDirectory } from '../config.mjs';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -413,6 +413,9 @@ export function mountParaclinicRoutes(router) {
         : options.midwifeImaging.includes(modalityRequested);
       if (!canUseMaternalPatient({ ...session, activeRole: role }, patient, sessionWard(session))) return sendJson(response, 403, { error: 'This patient is outside your service.' }, { secure: config.cookieSecure });
       if (!allowedOrder) return sendJson(response, 403, { error: 'ឆ្មបអាចស្នើតែ HBsAg និងអេកូសាស្ត្រប៉ុណ្ណោះ។' }, { secure: config.cookieSecure });
+      // v47.8: an ANC order is sent once per visit (also while an earlier one waits for its result).
+      const requested = modalityRequested === 'LAB' ? items.map(item => item?.code) : [modalityRequested];
+      if (ancOrderAlreadySent(database, patient, requested)) return sendJson(response, 409, { error: 'This order was already sent for this visit.', code: 'ALREADY_SENT' }, { secure: config.cookieSecure });
     }
     if (!canAccessPatient(database, session, patient) && !['ADMIN', 'VICE_DIRECTOR'].includes(role)) {
       return sendJson(response, 403, { error: 'This patient is outside your active ward.' }, { secure: config.cookieSecure });
