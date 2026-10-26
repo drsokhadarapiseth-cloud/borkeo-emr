@@ -1,5 +1,21 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Hosting test patients - v47.9.0, 26 October 2026
+
+User approved ("yes code it") 30 complete synthetic patients for the GitHub
+Codespace test hosting. Clean master b839489 (47.8.0); branch
+feature/registration-hosting-test-patients. Pre-update code snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v47.8.0-b8394899-5e379cfb
+
+scripts/seed-hosting-test-patients.mjs builds on the v46.5 complete
+registration fixture (IDs 160201-YYYYMMDD-###, same photos), adds street
+address, entry types, HEF / NSSF / other-card numbers (never fake
+verification), triage measurements (TRIAGE_WAITING, no service), and makes the
+1234 accounts usable. It refuses a database with any non-synthetic patient.
+Codespace steps: docs/DEPLOY.md. The previously proposed browser autosave draft
+was put aside by the user ("forget this") and is not implemented.
+See HOSTING_TEST_PATIENTS_V479_VALIDATION.md.
+
 ## ANC orders sent once per visit - v47.8.0, 26 October 2026
 
 User approved ("yes", scope once per visit) a notice after every ANC order /

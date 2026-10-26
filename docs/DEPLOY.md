@@ -153,3 +153,27 @@ after each request, so the SQLite database, uploads and backups would be lost.
 ## All settings
 
 See `.env.example` for every setting with a short explanation.
+
+---
+
+## Test hosting in a GitHub Codespace (test patients only)
+
+A Codespace is a test computer in the cloud: it stops after some idle time, its
+address cannot be chosen, and its data is lost when the codespace is deleted.
+Use it only with the synthetic test patients below, never with hospital data.
+
+1. On GitHub open the repository → **Code** → **Codespaces** → **Create
+   codespace on master**.
+2. In the terminal check `node -v` (24 or newer; otherwise `nvm install 24`).
+3. Put the 30 test patients in the test database (the EMR must be stopped):
+   `node scripts/seed-hosting-test-patients.mjs /workspaces/borkeo-data/emr.sqlite`
+   Registration is complete for each patient, Triage is measured and waits for
+   the service. The command refuses a database that holds any real patient.
+   Run it again at any time to get the 30 fresh test patients back.
+4. Start the EMR (the same 1234 accounts as on the hospital computer):
+   `HOST=0.0.0.0 PORT=3001 COOKIE_SECURE=true TRUST_PROXY=true DATA_DIR=/workspaces/borkeo-data APP_ORIGIN=https://$CODESPACE_NAME-3001.$GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN npm start`
+5. **Ports** tab → port 3001 → **Open in Browser**. To open the link without a
+   GitHub sign-in: right click port 3001 → **Port Visibility** → **Public**.
+   Anyone with the link can then log in with 1234, so share it only with
+   testers and set it back to **Private** afterwards.
+6. Update: Ctrl+C, `git pull`, step 4 again.

@@ -3650,6 +3650,11 @@
       "kh": "ជាតិស្ករក្នុងទឹកនោម",
       "key": "file:server/catalogues/anc-record-labels.json",
       "source": "v47.3 owner ordered ANC field names"
+    },
+    {
+      "kh": "ក្រសួងមហាផ្ទៃ",
+      "key": "file:scripts/seed-hosting-test-patients.mjs",
+      "source": "v47.9 synthetic test data (issuer of the national ID card), owner approved"
     }
   ]
 }
