@@ -3635,6 +3635,21 @@
       "kh": "ឱសថព្យាបាល៖",
       "key": "file:public/emr-consultation-workspace.js",
       "source": "v43.3 owner requested integrated form strings"
+    },
+    {
+      "kh": "ចំនួនទារក",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v47.3 owner ordered ANC field names"
+    },
+    {
+      "kh": "ជាតិសាច់ក្នុងទឹកនោម",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v47.3 owner ordered ANC field names"
+    },
+    {
+      "kh": "ជាតិស្ករក្នុងទឹកនោម",
+      "key": "file:server/catalogues/anc-record-labels.json",
+      "source": "v47.3 owner ordered ANC field names"
     }
   ]
 }

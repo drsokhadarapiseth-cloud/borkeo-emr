@@ -80,7 +80,11 @@ button.link, a.link, a.secondary-link { font: inherit; font-size: 13px; backgrou
 .anc-level-green { background: #f0fdf4; }
 .anc-level-yellow { background: #fefce8; }
 .anc-level-red { background: #fef2f2; }
-.anc-auto { color: #0369a1; }
+/* v47.3: boxes ticked from the patient data stay clearly ticked (locked). */
+.anc-choice.is-automatic, .anc-choice.is-automatic input { cursor: default; }
+.anc-level-green .anc-choice input { accent-color: #16a34a; }
+.anc-level-yellow .anc-choice input { accent-color: #ca8a04; }
+.anc-level-red .anc-choice input { accent-color: #dc2626; }
 .anc-history ul { margin: 0; padding-left: 18px; }
 .anc-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
 .anc-dot.anc-green { background: #16a34a; } .anc-dot.anc-yellow { background: #eab308; } .anc-dot.anc-red { background: #dc2626; }

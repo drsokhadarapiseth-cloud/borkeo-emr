@@ -116,6 +116,7 @@
     "columns": [
       { "key": "date", "kh": "កាលបរិច្ឆេទ", "en": "DATE" },
       { "key": "ga", "kh": "អាយុគភ៌", "en": "GA" },
+      { "key": "fetuses", "kh": "ចំនួនទារក", "en": "Number of fetuses" },
       { "key": "presentation", "kh": "ទម្រង់បង្ហាញ", "en": "Fetal Presentation" },
       { "key": "bpd", "kh": "ក្បាលកូន", "en": "BPD" },
       { "key": "placenta", "kh": "ទីតាំងសុក", "en": "Placenta" },
@@ -135,8 +136,8 @@
       { "key": "bp", "kh": "សម្ពាធឈាម-ជីពចរ", "en": "BP&P" },
       { "key": "weight", "kh": "ទម្ងន់", "en": "Weight" },
       { "key": "wp", "kh": "ឡើងទម្ងន់", "en": "WP" },
-      { "key": "proteinuria", "kh": "ជាតិប្រៃ", "en": "Proteinuria" },
-      { "key": "glucosuria", "kh": "ជាតិផ្អែម", "en": "Glucosuria" },
+      { "key": "proteinuria", "kh": "ជាតិសាច់ក្នុងទឹកនោម", "en": "Proteinuria" },
+      { "key": "glucosuria", "kh": "ជាតិស្ករក្នុងទឹកនោម", "en": "Glucosuria" },
       { "key": "varices", "kh": "ឡើងសរសៃវ៉ែន/ហើម", "en": "Varices" },
       { "key": "fer", "kh": "ថ្នាំគ្រាប់ជាតិដែក", "en": "Fer" },
       { "key": "vaccination", "kh": "ចាក់ថ្នាំបង្ការ", "en": "Vaccination" },
