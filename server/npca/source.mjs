@@ -6,6 +6,7 @@ import { formDefinitions } from './codes.mjs';
 import { canonicalAddress } from './address.mjs';
 import { patientBill } from '../finance.mjs';
 import { activeAllergies } from '../clinical-summary.mjs';
+import { registrationMarital, registrationOccupation, registrationDisabilities } from './registration-fields.mjs';
 export function parse(value, fallback = {}) { try { return typeof value==='string'?JSON.parse(value):value??fallback; } catch { return fallback; } }
 const list = value => { const result=parse(value,[]);return Array.isArray(result)?result:[]; };
 const num=value=>value==null||value===''?null:Number.isFinite(Number(value))?Number(value):null;
@@ -29,8 +30,8 @@ export function sourceForPatient(database, row) {
   const patient={patientKey:row.patient_key,healthId:row.health_id,surname:row.last_name||reg('web_last_name'),name:row.first_name||reg('web_first_name'),sex:row.sex,birthdate:row.date_of_birth||reg('web_dob'),phone:row.phone||reg('web_phone'),nationality:reg('web_nat'),maritalStatus:reg('web_marital'),address:{}};
   for(const level of ['province','district','commune','village'])patient.address[level]={code:String(reg('web_'+level+'_code')||''),name:String(reg('web_'+level)||'')};
   patient.address=canonicalAddress(patient.address)||patient.address;
-  const marital=['Married','Single','Widowed','Divorced'].filter((_,index)=>data['scope:registration:auto:'+(22+index)]===true);
-  if(!patient.maritalStatus&&marital.length===1)patient.maritalStatus=marital[0];
+  patient.maritalStatus||=registrationMarital(data);
+  patient.occupation=registrationOccupation(data);patient.disabilities=registrationDisabilities(data);
   patient.identifications=[];
   const link=database.sqlite.prepare('SELECT * FROM npca_patient_links WHERE patient_key=?').get(row.patient_key);
   for(const card of parse(link?.cards,[]))patient.identifications.push({card_code:String(card.card_number??card.card_code??''),card_type:card.card_type??card.type});

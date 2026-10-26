@@ -1,14 +1,15 @@
 <!doctype html>
 <html lang="km"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NPCA</title><link rel="stylesheet" href="/public/ocean-theme.css"><link rel="stylesheet" href="/public/emr-session.css?v=1208">
-<link rel="stylesheet" href="/public/responsive-layout.css?v=1310"><link rel="stylesheet" href="/public/npca.css?v=4280">
-<script src="/public/emr-session.js?v=1970" defer></script><script src="/public/npca.js?v=4280" defer></script>
+<link rel="stylesheet" href="/public/responsive-layout.css?v=1310"><link rel="stylesheet" href="/public/npca.css?v=4800">
+<script src="/public/emr-session.js?v=1970" defer></script><script src="/public/npca.js?v=4800" defer></script>
 </head><body><main class="npca-shell"><header data-session-host><h1>NPCA</h1></header>
 <p id="npca-status" role="status" aria-live="polite"></p><section id="npca-settings" hidden></section>
 <button type="button" id="npca-test" hidden></button><button type="button" id="npca-refresh"></button>
 <section id="npca-mappings" hidden><h2 id="npca-map-title"></h2>
 <label>ប្រភេទកូដ<select id="npca-map-category"><option value="service">សេវា</option><option value="payment">ការទូទាត់</option><option value="marital">ស្ថានភាពគ្រួសារ</option><option value="nationality">សញ្ជាតិ</option><option value="admission">ប្រភេទចូល</option><option value="discharge">ប្រភេទចេញ</option><option value="outcome">លទ្ធផលព្យាបាល</option></select></label>
 <label>កូដនៅមន្ទីរពេទ្យ<input id="npca-map-local" maxlength="200"></label><label>កូដ NPCA ដែលបានបញ្ជាក់<input id="npca-map-code" maxlength="100"></label><button type="button" id="npca-map-save"></button></section>
+<section id="npca-range" hidden><h2 id="npca-range-title"></h2><label><span id="npca-range-by-label"></span><select id="npca-range-by"><option value="discharged"></option><option value="admitted"></option></select></label><label><span id="npca-range-from-label"></span><input type="date" id="npca-range-from"></label><label><span id="npca-range-to-label"></span><input type="date" id="npca-range-to"></label><button type="button" id="npca-range-check"></button></section>
 <div class="npca-table"><table><thead id="npca-head"></thead><tbody id="npca-rows"></tbody></table></div>
 <dialog id="npca-review"><form method="dialog"><button>×</button></form><ul id="npca-issues"></ul><details><summary id="npca-payload-title"></summary><pre id="npca-detail"></pre></details></dialog>
 </main></body></html>

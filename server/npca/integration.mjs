@@ -8,11 +8,16 @@ import { createDiagnosisSearch } from '../icd10.mjs';
 import { medicineCatalogue } from '../medicine-catalogue.mjs';
 import { npcaAudit } from './storage.mjs';
 const hash=body=>createHash('sha256').update(JSON.stringify(body)).digest('hex');
+// The processing endpoint may answer with the number or the PDF 4.5.4 name.
+const statusNumber=value=>({processing:5,pending:3,failed:2,ready:1})[String(value??'').trim().toLowerCase()]??Number(value);
+const day=value=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&Number.isFinite(Date.parse(value+'T00:00:00Z'))&&new Date(value+'T00:00:00Z').toISOString().slice(0,10)===value;
 export class NpcaIntegration {
   constructor(config,database,{client,sourceFactory=sourceForPatient,validationOptions={},clock=Date.now}={}){
     this.config=config;this.database=database;this.client=client||new NpcaClient(config,database);this.sourceFactory=sourceFactory;this.validationOptions=validationOptions;this.clock=clock;this.running=false;this.stopped=false;
     this.diagnoses=createDiagnosisSearch();
-    this.cmsCodes=new Set(medicineCatalogue().items.map(m=>m.code).filter(Boolean));
+    // Only single CMS codes: a few catalogue rows hold two codes or a note
+    // ("Core", "Reserve 9th") in the code column and must be corrected first.
+    this.cmsCodes=new Set(medicineCatalogue().items.map(m=>m.code).filter(code=>/^[A-Z]{2}\d{3,4}$/.test(code||'')));
   }
   prepare(patientKey){
     const row=this.database.findPatient(patientKey);if(!row)throw Object.assign(new Error('រកមិនឃើញអ្នកជំងឺ។'),{status:404});
@@ -55,8 +60,8 @@ export class NpcaIntegration {
   }
   accept(row,body,{poll=false}={}){
     const result=this.responseRecord(body,row.visit_code);
-    if(!result||![1,2,3,5].includes(Number(result.status)))return false;
-    const status=Number(result.status),now=this.clock();
+    const status=statusNumber(result?.status??result?.processing_status),now=this.clock();
+    if(!result||![1,2,3,5].includes(status))return false;
     this.update(row,{status,queue_state:[1,2].includes(status)?'terminal':'waiting',visit_ulid:result.visit_ulid||result.uuld||row.visit_ulid||null,
       message:this.client.redact(result.message||body.message||''),errors:JSON.stringify({remote:this.client.redact(result.errors||body.errors||[])}),
       ...(poll?{checked_at:now}:{submitted_at:now}),next_attempt_at:now+this.config.pollHours*3600000,lease_until:0,last_http:200});
@@ -73,6 +78,28 @@ export class NpcaIntegration {
         else this.update(row,{next_attempt_at:this.clock()+this.config.pollHours*3600000,checked_at:this.clock(),lease_until:0});
       }
     }catch(error){this.update(row,{message:errorText(error),next_attempt_at:this.clock()+this.backoff(row.attempt),checked_at:this.clock(),lease_until:0});}
+  }
+  // PDF 4.4: one request for every visit discharged (or admitted) in a date
+  // range, page by page, so visits that need an update are found together.
+  // Only visits this EMR submitted are updated; Ready / Failed stop polling.
+  async checkProcessed({from,to,by='discharged'}={},actorId=null){
+    if(!this.config.enabled)throw new NpcaError('disabled');
+    if(!day(from)||!day(to)||from>to||Date.parse(to)-Date.parse(from)>366*86400000||!['discharged','admitted'].includes(by))
+      throw Object.assign(new Error('សូមជ្រើសកាលបរិច្ឆេទឱ្យត្រឹមត្រូវ។'),{status:400});
+    let page=1,lastPage=1,checked=0,updated=0;
+    do{
+      const body=await this.client.request('processed',{[by+'_at_from']:from,[by+'_at_to']:to,per_page:100,page},{actorId});
+      const rows=Array.isArray(body?.data)?body.data:Array.isArray(body?.data?.data)?body.data.data:[];
+      lastPage=Math.min(50,Number(body?.data?.last_page??body?.meta?.last_page??body?.last_page)||1);
+      for(const record of rows){
+        checked++;
+        const local=this.database.sqlite.prepare('SELECT * FROM npca_submissions WHERE visit_code=?').get(record?.visit_code||record?.code||'');
+        if(local&&!['sending','queued','retry'].includes(local.queue_state)&&this.accept(local,{data:record},{poll:true}))updated++;
+      }
+      page++;
+    }while(page<=lastPage);
+    npcaAudit(this.database,'STATUS_RANGE_CHECK',{actorId});
+    return {checked,updated};
   }
   async tick(){
     if(!this.config.enabled||this.running||this.stopped)return;

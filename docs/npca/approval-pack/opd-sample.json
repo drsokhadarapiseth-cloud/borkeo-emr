@@ -1,0 +1,288 @@
+{
+  "visits": [
+    {
+      "health_facility_code": "FACILITY-CODE-FROM-NPCA",
+      "patient_code": "SYNTHETIC-OPD",
+      "code": "BK-visit-71a6ea263af260d999fd1b43",
+      "admission_type": "ADTY-000J008",
+      "visit_type": "VITY-00L000D",
+      "admitted_at": "2026-10-20T08:00:00.000+07:00",
+      "created_at": "2026-10-20T08:00:00.000+07:00",
+      "updated_at": "2026-10-20T10:00:00.000+07:00",
+      "discharge_type": "DITY-0000E08",
+      "visit_outcome": "VIOU-000G00A",
+      "discharged_at": "2026-10-20T10:00:00.000+07:00",
+      "followup_at": "2026-10-23T08:00:00.000+07:00",
+      "patient": {
+        "code": "SYNTHETIC-OPD",
+        "surname": "Synthetic",
+        "name": "Opd",
+        "sex": "F",
+        "birthdate": "1990-05-15",
+        "phone": "012345678",
+        "nationality": "KHM",
+        "marital_status": "MAST-00M002",
+        "occupation": "Farmer",
+        "spid": "SYNTHETIC-SPID-OPD",
+        "address": {
+          "province": {
+            "code": "16",
+            "name": "ខេត្តរតនគិរី"
+          },
+          "district": {
+            "code": "1603",
+            "name": "បរកែវ"
+          },
+          "commune": {
+            "code": "160301",
+            "name": "កក់"
+          },
+          "village": {
+            "code": "16030104",
+            "name": "កក់"
+          }
+        },
+        "identifications": [
+          {
+            "card_code": "SYNTHETIC-CARD-OPD",
+            "card_type": "HEF",
+            "patient_code": "SYNTHETIC-OPD"
+          }
+        ],
+        "created_at": "2026-10-20T08:00:00.000+07:00",
+        "updated_at": "2026-10-20T10:00:00.000+07:00"
+      },
+      "outpatients": [
+        {
+          "is_new": true,
+          "name": "OPD General Medicine",
+          "service_type": "General Consultation",
+          "started_at": "2026-10-20T08:30:00.000+07:00",
+          "ended_at": "2026-10-20T10:00:00.000+07:00",
+          "encountered_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "symptoms": [
+            "Fever",
+            "Diarrhoea"
+          ],
+          "visit_code": "BK-visit-71a6ea263af260d999fd1b43",
+          "code": "BK-opd-499f69e8055aa10f7c1e0236",
+          "class": "OPD",
+          "created_at": "2026-10-20T08:00:00.000+07:00",
+          "updated_at": "2026-10-20T10:00:00.000+07:00"
+        }
+      ],
+      "inpatients": [],
+      "emergencies": [],
+      "surgeries": [],
+      "progress_notes": [],
+      "triages": [
+        {
+          "patient_code": "SYNTHETIC-OPD",
+          "visit_code": "BK-visit-71a6ea263af260d999fd1b43",
+          "code": "BK-triage-430c3721fcf29f486d179681",
+          "chief_complaint": "Synthetic complaint",
+          "height": 160,
+          "weight": 55,
+          "recorded_at": "2026-10-20T08:10:00.000+07:00",
+          "recorded_by": "Synthetic triage nurse",
+          "title": "Nurse"
+        }
+      ],
+      "vital_signs": [
+        {
+          "encounter_code": "BK-triage-430c3721fcf29f486d179681",
+          "recorded_at": "2026-10-20T08:10:00.000+07:00",
+          "recorded_by": "Synthetic triage nurse",
+          "title": "Nurse",
+          "observations": [
+            {
+              "name": "Temperature",
+              "value": 38.2
+            },
+            {
+              "name": "Heart Rate",
+              "value": 96
+            },
+            {
+              "name": "Respiratory Rate",
+              "value": 20
+            },
+            {
+              "name": "Systolic Blood Pressure",
+              "value": 118
+            },
+            {
+              "name": "Diastolic Blood Pressure",
+              "value": 76
+            },
+            {
+              "name": "Blood Oxygen",
+              "value": 97
+            }
+          ]
+        }
+      ],
+      "medical_histories": [
+        {
+          "name": "History of Present Illness",
+          "value": [
+            "Synthetic history: symptoms for 3 days."
+          ],
+          "patient_code": "SYNTHETIC-OPD",
+          "visit_code": "BK-visit-71a6ea263af260d999fd1b43",
+          "encounter_code": "BK-opd-499f69e8055aa10f7c1e0236"
+        },
+        {
+          "name": "Allergies",
+          "value": [
+            "No known drug allergy"
+          ],
+          "patient_code": "SYNTHETIC-OPD",
+          "visit_code": "BK-visit-71a6ea263af260d999fd1b43",
+          "encounter_code": "BK-opd-499f69e8055aa10f7c1e0236"
+        }
+      ],
+      "physical_examinations": [
+        {
+          "name": "General Appearance",
+          "value": [
+            "Alert, mildly ill"
+          ],
+          "value_type": "array",
+          "value_unit": null,
+          "patient_code": "SYNTHETIC-OPD",
+          "visit_code": "BK-visit-71a6ea263af260d999fd1b43",
+          "encounter_code": "BK-opd-499f69e8055aa10f7c1e0236"
+        }
+      ],
+      "laboratories": [
+        {
+          "request_code": "SYNTHETIC-LAB-1",
+          "requested_at": "2026-10-20T08:50:00.000+07:00",
+          "requested_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "results": [
+            {
+              "name": "Hemoglobin",
+              "category": "Hematology",
+              "value": 11.2,
+              "value_type": "float",
+              "value_unit": "g/dL",
+              "reference_range": "12.0-16.0",
+              "interpretation": "Low",
+              "verified_at": "2026-10-20T09:50:00.000+07:00",
+              "verified_by": "Synthetic lab doctor",
+              "recorded_at": "2026-10-20T09:50:00.000+07:00",
+              "recorded_by": "Synthetic lab technician"
+            }
+          ],
+          "patient_code": "SYNTHETIC-OPD",
+          "visit_code": "BK-visit-71a6ea263af260d999fd1b43",
+          "encounter_code": "BK-opd-499f69e8055aa10f7c1e0236"
+        }
+      ],
+      "imageries": [],
+      "diagnoses": [
+        {
+          "diagnosis_type_name": "In",
+          "diagnosis_code": "A09",
+          "diagnosis_name": "Infectious gastroenteritis and colitis, unspecified",
+          "diagnosed_at": "2026-10-20T08:40:00.000+07:00",
+          "diagnosed_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "patient_code": "SYNTHETIC-OPD",
+          "visit_code": "BK-visit-71a6ea263af260d999fd1b43",
+          "diagnosis_type": "In",
+          "encounter_code": "BK-opd-499f69e8055aa10f7c1e0236"
+        },
+        {
+          "diagnosis_type_name": "Out",
+          "diagnosis_code": "A09",
+          "diagnosis_name": "Infectious gastroenteritis and colitis, unspecified",
+          "diagnosed_at": "2026-10-20T09:50:00.000+07:00",
+          "diagnosed_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "patient_code": "SYNTHETIC-OPD",
+          "visit_code": "BK-visit-71a6ea263af260d999fd1b43",
+          "diagnosis_type": "Out",
+          "encounter_code": "BK-opd-499f69e8055aa10f7c1e0236"
+        }
+      ],
+      "soaps": [
+        {
+          "subjective": "Fever and loose stools for 3 days.",
+          "objective": "T 38.2, mild dehydration.",
+          "assessment": "Acute gastroenteritis.",
+          "plan": "Oral rehydration, paracetamol, review in 3 days.",
+          "recorded_at": "2026-10-20T08:45:00.000+07:00",
+          "recorded_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "encounter_code": "BK-opd-499f69e8055aa10f7c1e0236",
+          "code": "BK-soap-044c5ed03738faf52c2b4f2c"
+        }
+      ],
+      "prescriptions": [
+        {
+          "patient_code": "SYNTHETIC-OPD",
+          "visit_code": "BK-visit-71a6ea263af260d999fd1b43",
+          "encounter_code": null,
+          "code": "BK-rx-0c5add535f03f7c99ed1c7a4",
+          "prescribed_at": "2026-10-20T09:50:00.000+07:00",
+          "prescribed_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "medications": [
+            {
+              "code": "AA0060",
+              "medicine_code": "AA0060",
+              "medicine_name": "Amoxicillin",
+              "strength": "250 mg (as trihydrate)",
+              "form": "tablet or capsule (solid oral dosage form)",
+              "method": "Oral",
+              "unit": "Tablet",
+              "morning": 2,
+              "afternoon": 0,
+              "evening": 2,
+              "night": 0,
+              "days": 5,
+              "dispense": {
+                "quantity": 20,
+                "unit": "Tablet"
+              }
+            }
+          ]
+        }
+      ],
+      "consultations": [
+        "Drink more water",
+        "Return if fever persists"
+      ],
+      "invoices": [
+        {
+          "patient_code": "SYNTHETIC-OPD",
+          "visit_code": "BK-visit-71a6ea263af260d999fd1b43",
+          "code": "BK-invoice-68787e719c51c68b5c68a077",
+          "payment_type": "PATY-0000N09",
+          "invoice_date": "2026-10-20T10:00:00.000+07:00",
+          "total": 15000,
+          "cashier": "Synthetic cashier",
+          "created_at": "2026-10-20T08:00:00.000+07:00",
+          "updated_at": "2026-10-20T10:00:00.000+07:00",
+          "services": [
+            {
+              "service_name": "Consultation",
+              "service_category": "Consultation",
+              "quantity": 1,
+              "price": 15000,
+              "paid": false,
+              "invoice_code": "BK-invoice-68787e719c51c68b5c68a077",
+              "service_code": "NPCA-SERVICE-CODE-TO-CONFIRM"
+            }
+          ],
+          "medications": []
+        }
+      ],
+      "forms": []
+    }
+  ]
+}

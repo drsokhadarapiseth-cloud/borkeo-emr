@@ -1,0 +1,242 @@
+{
+  "visits": [
+    {
+      "health_facility_code": "FACILITY-CODE-FROM-NPCA",
+      "patient_code": "SYNTHETIC-ANC",
+      "code": "BK-visit-81528ae8d808d6cbbc0f213e",
+      "admission_type": "ADTY-000J008",
+      "visit_type": "VITY-00L000D",
+      "admitted_at": "2026-10-22T08:00:00.000+07:00",
+      "created_at": "2026-10-22T08:00:00.000+07:00",
+      "updated_at": "2026-10-22T09:00:00.000+07:00",
+      "discharge_type": "DITY-0000E08",
+      "visit_outcome": "VIOU-000G00A",
+      "discharged_at": "2026-10-22T09:00:00.000+07:00",
+      "patient": {
+        "code": "SYNTHETIC-ANC",
+        "surname": "Synthetic",
+        "name": "Anc",
+        "sex": "F",
+        "birthdate": "1998-09-09",
+        "phone": "010556677",
+        "nationality": "KHM",
+        "marital_status": "MAST-00M002",
+        "occupation": "Farmer",
+        "spid": "SYNTHETIC-SPID-ANC",
+        "address": {
+          "province": {
+            "code": "16",
+            "name": "ខេត្តរតនគិរី"
+          },
+          "district": {
+            "code": "1603",
+            "name": "បរកែវ"
+          },
+          "commune": {
+            "code": "160301",
+            "name": "កក់"
+          },
+          "village": {
+            "code": "16030104",
+            "name": "កក់"
+          }
+        },
+        "identifications": [
+          {
+            "card_code": "SYNTHETIC-CARD-ANC",
+            "card_type": "HEF",
+            "patient_code": "SYNTHETIC-ANC"
+          }
+        ],
+        "created_at": "2026-10-22T08:00:00.000+07:00",
+        "updated_at": "2026-10-22T09:00:00.000+07:00"
+      },
+      "outpatients": [
+        {
+          "is_new": false,
+          "name": "ANC",
+          "service_type": "Antenatal care",
+          "started_at": "2026-10-22T08:20:00.000+07:00",
+          "ended_at": "2026-10-22T09:00:00.000+07:00",
+          "encountered_by": "Synthetic Midwife",
+          "title": "Midwife",
+          "visit_code": "BK-visit-81528ae8d808d6cbbc0f213e",
+          "code": "BK-opd-13ee0ee16b8c58e775a55815",
+          "class": "OPD",
+          "created_at": "2026-10-22T08:00:00.000+07:00",
+          "updated_at": "2026-10-22T09:00:00.000+07:00"
+        }
+      ],
+      "inpatients": [],
+      "emergencies": [],
+      "surgeries": [],
+      "progress_notes": [],
+      "triages": [
+        {
+          "patient_code": "SYNTHETIC-ANC",
+          "visit_code": "BK-visit-81528ae8d808d6cbbc0f213e",
+          "code": "BK-triage-9b780974921cb942d3c4c942",
+          "chief_complaint": "Synthetic complaint",
+          "height": 160,
+          "weight": 55,
+          "recorded_at": "2026-10-22T08:10:00.000+07:00",
+          "recorded_by": "Synthetic triage nurse",
+          "title": "Nurse"
+        }
+      ],
+      "vital_signs": [
+        {
+          "encounter_code": "BK-triage-9b780974921cb942d3c4c942",
+          "recorded_at": "2026-10-22T08:10:00.000+07:00",
+          "recorded_by": "Synthetic triage nurse",
+          "title": "Nurse",
+          "observations": [
+            {
+              "name": "Temperature",
+              "value": 38.2
+            },
+            {
+              "name": "Heart Rate",
+              "value": 96
+            },
+            {
+              "name": "Respiratory Rate",
+              "value": 20
+            },
+            {
+              "name": "Systolic Blood Pressure",
+              "value": 118
+            },
+            {
+              "name": "Diastolic Blood Pressure",
+              "value": 76
+            },
+            {
+              "name": "Blood Oxygen",
+              "value": 97
+            }
+          ]
+        }
+      ],
+      "medical_histories": [
+        {
+          "name": "History of Present Illness",
+          "value": [
+            "Synthetic history: symptoms for 3 days."
+          ],
+          "patient_code": "SYNTHETIC-ANC",
+          "visit_code": "BK-visit-81528ae8d808d6cbbc0f213e",
+          "encounter_code": "BK-opd-13ee0ee16b8c58e775a55815"
+        },
+        {
+          "name": "Allergies",
+          "value": [
+            "No known drug allergy"
+          ],
+          "patient_code": "SYNTHETIC-ANC",
+          "visit_code": "BK-visit-81528ae8d808d6cbbc0f213e",
+          "encounter_code": "BK-opd-13ee0ee16b8c58e775a55815"
+        }
+      ],
+      "physical_examinations": [
+        {
+          "name": "General Appearance",
+          "value": [
+            "Alert, mildly ill"
+          ],
+          "value_type": "array",
+          "value_unit": null,
+          "patient_code": "SYNTHETIC-ANC",
+          "visit_code": "BK-visit-81528ae8d808d6cbbc0f213e",
+          "encounter_code": "BK-opd-13ee0ee16b8c58e775a55815"
+        }
+      ],
+      "laboratories": [],
+      "imageries": [],
+      "diagnoses": [
+        {
+          "diagnosis_type_name": "In",
+          "diagnosis_code": "Z34.9",
+          "diagnosis_name": "Encounter for supervision of normal pregnancy, unspecified",
+          "diagnosed_at": "2026-10-22T08:30:00.000+07:00",
+          "diagnosed_by": "Synthetic Midwife",
+          "title": "Doctor",
+          "patient_code": "SYNTHETIC-ANC",
+          "visit_code": "BK-visit-81528ae8d808d6cbbc0f213e",
+          "diagnosis_type": "In",
+          "encounter_code": "BK-opd-13ee0ee16b8c58e775a55815"
+        },
+        {
+          "diagnosis_type_name": "Out",
+          "diagnosis_code": "Z34.9",
+          "diagnosis_name": "Encounter for supervision of normal pregnancy, unspecified",
+          "diagnosed_at": "2026-10-22T08:55:00.000+07:00",
+          "diagnosed_by": "Synthetic Midwife",
+          "title": "Doctor",
+          "patient_code": "SYNTHETIC-ANC",
+          "visit_code": "BK-visit-81528ae8d808d6cbbc0f213e",
+          "diagnosis_type": "Out",
+          "encounter_code": "BK-opd-13ee0ee16b8c58e775a55815"
+        }
+      ],
+      "soaps": [
+        {
+          "subjective": "No complaint.",
+          "objective": "Fundal height 26 cm, FHR 140.",
+          "assessment": "Normal pregnancy 26 weeks.",
+          "plan": "Next ANC in 4 weeks.",
+          "recorded_at": "2026-10-22T08:40:00.000+07:00",
+          "recorded_by": "Synthetic Midwife",
+          "title": "Midwife",
+          "encounter_code": "BK-opd-13ee0ee16b8c58e775a55815",
+          "code": "BK-soap-1efa3e42053f12e59551b713"
+        }
+      ],
+      "prescriptions": [],
+      "consultations": [
+        "Iron and folic acid daily",
+        "Danger signs explained"
+      ],
+      "invoices": [
+        {
+          "patient_code": "SYNTHETIC-ANC",
+          "visit_code": "BK-visit-81528ae8d808d6cbbc0f213e",
+          "code": "BK-invoice-9cd7185c82a67454f0df5233",
+          "payment_type": "PATY-0000N09",
+          "invoice_date": "2026-10-22T09:00:00.000+07:00",
+          "total": 5000,
+          "cashier": "Synthetic cashier",
+          "created_at": "2026-10-22T08:00:00.000+07:00",
+          "updated_at": "2026-10-22T09:00:00.000+07:00",
+          "services": [
+            {
+              "service_name": "Consultation",
+              "service_category": "Consultation",
+              "quantity": 1,
+              "price": 5000,
+              "paid": false,
+              "invoice_code": "BK-invoice-9cd7185c82a67454f0df5233",
+              "service_code": "NPCA-SERVICE-CODE-TO-CONFIRM"
+            }
+          ],
+          "medications": []
+        }
+      ],
+      "forms": [
+        {
+          "visit_code": "BK-visit-81528ae8d808d6cbbc0f213e",
+          "encounter_code": "BK-opd-13ee0ee16b8c58e775a55815",
+          "form_code": "ENTY-000H014",
+          "form_name": "OPD ANC",
+          "form_data": {
+            "pregnancy_number_of_pregnancies": 2,
+            "pregnancy_age": 26,
+            "uterine_height_cm": 26,
+            "fetal_heart_rate": 140,
+            "pregnancy_last_menstrual_period_date": "2026-04-24"
+          }
+        }
+      ]
+    }
+  ]
+}

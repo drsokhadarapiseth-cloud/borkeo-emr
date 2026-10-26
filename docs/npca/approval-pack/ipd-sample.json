@@ -1,0 +1,395 @@
+{
+  "visits": [
+    {
+      "health_facility_code": "FACILITY-CODE-FROM-NPCA",
+      "patient_code": "SYNTHETIC-IPD",
+      "code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+      "admission_type": "ADTY-000J008",
+      "visit_type": "VITY-00J000C",
+      "admitted_at": "2026-10-18T09:00:00.000+07:00",
+      "created_at": "2026-10-18T09:00:00.000+07:00",
+      "updated_at": "2026-10-18T10:00:00.000+07:00",
+      "discharge_type": "DITY-0000E08",
+      "visit_outcome": "VIOU-000G00A",
+      "discharged_at": "2026-10-21T10:00:00.000+07:00",
+      "patient": {
+        "code": "SYNTHETIC-IPD",
+        "surname": "Synthetic",
+        "name": "Ipd",
+        "sex": "M",
+        "birthdate": "1975-02-01",
+        "phone": "097123456",
+        "nationality": "KHM",
+        "marital_status": "MAST-00M002",
+        "occupation": "Farmer",
+        "spid": "SYNTHETIC-SPID-IPD",
+        "address": {
+          "province": {
+            "code": "16",
+            "name": "ខេត្តរតនគិរី"
+          },
+          "district": {
+            "code": "1603",
+            "name": "បរកែវ"
+          },
+          "commune": {
+            "code": "160301",
+            "name": "កក់"
+          },
+          "village": {
+            "code": "16030104",
+            "name": "កក់"
+          }
+        },
+        "identifications": [
+          {
+            "card_code": "SYNTHETIC-CARD-IPD",
+            "card_type": "HEF",
+            "patient_code": "SYNTHETIC-IPD"
+          }
+        ],
+        "created_at": "2026-10-18T09:00:00.000+07:00",
+        "updated_at": "2026-10-18T10:00:00.000+07:00"
+      },
+      "outpatients": [],
+      "inpatients": [
+        {
+          "is_new": true,
+          "name": "Internal Medicine Ward",
+          "service_type": "Internal Medicine",
+          "started_at": "2026-10-18T09:30:00.000+07:00",
+          "ended_at": "2026-10-21T10:00:00.000+07:00",
+          "encountered_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "symptoms": [
+            "Cough",
+            "Fever"
+          ],
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "code": "BK-ipd-a4866d5f5320ecc5aad63647",
+          "class": "IPD",
+          "created_at": "2026-10-18T09:00:00.000+07:00",
+          "updated_at": "2026-10-18T10:00:00.000+07:00"
+        }
+      ],
+      "emergencies": [],
+      "surgeries": [],
+      "progress_notes": [
+        {
+          "started_at": "2026-10-19T08:00:00.000+07:00",
+          "ended_at": "2026-10-19T08:20:00.000+07:00",
+          "encountered_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "code": "BK-progress-e64a6e57be8a45badfe999b6",
+          "class": "IPD",
+          "created_at": "2026-10-18T09:00:00.000+07:00",
+          "updated_at": "2026-10-18T10:00:00.000+07:00",
+          "encounter_code": "BK-ipd-a4866d5f5320ecc5aad63647"
+        },
+        {
+          "started_at": "2026-10-20T08:00:00.000+07:00",
+          "ended_at": "2026-10-20T08:20:00.000+07:00",
+          "encountered_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "code": "BK-progress-9052064204c25a686b465e8f",
+          "class": "IPD",
+          "created_at": "2026-10-18T09:00:00.000+07:00",
+          "updated_at": "2026-10-18T10:00:00.000+07:00",
+          "encounter_code": "BK-ipd-a4866d5f5320ecc5aad63647"
+        }
+      ],
+      "triages": [
+        {
+          "patient_code": "SYNTHETIC-IPD",
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "code": "BK-triage-47c4e1d40d698e72594c5157",
+          "chief_complaint": "Synthetic complaint",
+          "height": 160,
+          "weight": 55,
+          "recorded_at": "2026-10-18T09:10:00.000+07:00",
+          "recorded_by": "Synthetic triage nurse",
+          "title": "Nurse"
+        }
+      ],
+      "vital_signs": [
+        {
+          "encounter_code": "BK-triage-47c4e1d40d698e72594c5157",
+          "recorded_at": "2026-10-18T09:10:00.000+07:00",
+          "recorded_by": "Synthetic triage nurse",
+          "title": "Nurse",
+          "observations": [
+            {
+              "name": "Temperature",
+              "value": 38.2
+            },
+            {
+              "name": "Heart Rate",
+              "value": 96
+            },
+            {
+              "name": "Respiratory Rate",
+              "value": 20
+            },
+            {
+              "name": "Systolic Blood Pressure",
+              "value": 118
+            },
+            {
+              "name": "Diastolic Blood Pressure",
+              "value": 76
+            },
+            {
+              "name": "Blood Oxygen",
+              "value": 97
+            }
+          ]
+        },
+        {
+          "recorded_at": "2026-10-19T08:00:00.000+07:00",
+          "recorded_by": "Synthetic ward nurse",
+          "title": "Nurse",
+          "observations": [
+            {
+              "name": "Temperature",
+              "value": 37.8
+            },
+            {
+              "name": "Heart Rate",
+              "value": 92
+            },
+            {
+              "name": "Respiratory Rate",
+              "value": 18
+            },
+            {
+              "name": "Systolic Blood Pressure",
+              "value": 120
+            },
+            {
+              "name": "Diastolic Blood Pressure",
+              "value": 78
+            },
+            {
+              "name": "Blood Oxygen",
+              "value": 97
+            }
+          ],
+          "encounter_code": "BK-progress-e64a6e57be8a45badfe999b6"
+        },
+        {
+          "recorded_at": "2026-10-20T08:00:00.000+07:00",
+          "recorded_by": "Synthetic ward nurse",
+          "title": "Nurse",
+          "observations": [
+            {
+              "name": "Temperature",
+              "value": 37
+            },
+            {
+              "name": "Heart Rate",
+              "value": 84
+            },
+            {
+              "name": "Respiratory Rate",
+              "value": 18
+            },
+            {
+              "name": "Systolic Blood Pressure",
+              "value": 120
+            },
+            {
+              "name": "Diastolic Blood Pressure",
+              "value": 78
+            },
+            {
+              "name": "Blood Oxygen",
+              "value": 97
+            }
+          ],
+          "encounter_code": "BK-progress-9052064204c25a686b465e8f"
+        }
+      ],
+      "medical_histories": [
+        {
+          "name": "History of Present Illness",
+          "value": [
+            "Synthetic history: symptoms for 3 days."
+          ],
+          "patient_code": "SYNTHETIC-IPD",
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "encounter_code": "BK-ipd-a4866d5f5320ecc5aad63647"
+        },
+        {
+          "name": "Allergies",
+          "value": [
+            "No known drug allergy"
+          ],
+          "patient_code": "SYNTHETIC-IPD",
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "encounter_code": "BK-ipd-a4866d5f5320ecc5aad63647"
+        }
+      ],
+      "physical_examinations": [
+        {
+          "name": "General Appearance",
+          "value": [
+            "Alert, mildly ill"
+          ],
+          "value_type": "array",
+          "value_unit": null,
+          "patient_code": "SYNTHETIC-IPD",
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "encounter_code": "BK-ipd-a4866d5f5320ecc5aad63647"
+        }
+      ],
+      "laboratories": [],
+      "imageries": [],
+      "diagnoses": [
+        {
+          "diagnosis_type_name": "In",
+          "diagnosis_code": "J18.9",
+          "diagnosis_name": "Pneumonia, unspecified organism",
+          "diagnosed_at": "2026-10-18T09:40:00.000+07:00",
+          "diagnosed_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "patient_code": "SYNTHETIC-IPD",
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "diagnosis_type": "In",
+          "encounter_code": "BK-ipd-a4866d5f5320ecc5aad63647"
+        },
+        {
+          "diagnosis_type_name": "Out",
+          "diagnosis_code": "J18.9",
+          "diagnosis_name": "Pneumonia, unspecified organism",
+          "diagnosed_at": "2026-10-21T09:50:00.000+07:00",
+          "diagnosed_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "patient_code": "SYNTHETIC-IPD",
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "diagnosis_type": "Out",
+          "encounter_code": "BK-ipd-a4866d5f5320ecc5aad63647"
+        }
+      ],
+      "soaps": [
+        {
+          "subjective": "Less cough.",
+          "objective": "Crackles right base.",
+          "assessment": "Pneumonia improving.",
+          "plan": "Continue antibiotic.",
+          "evaluation": "Improving",
+          "recorded_at": "2026-10-19T08:10:00.000+07:00",
+          "recorded_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "encounter_code": "BK-progress-e64a6e57be8a45badfe999b6",
+          "code": "BK-soap-d2d622740eae484e5bbcbccf"
+        },
+        {
+          "subjective": "Less cough.",
+          "objective": "Crackles right base.",
+          "assessment": "Pneumonia improving.",
+          "plan": "Continue antibiotic.",
+          "evaluation": "Improving",
+          "recorded_at": "2026-10-20T08:10:00.000+07:00",
+          "recorded_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "encounter_code": "BK-progress-9052064204c25a686b465e8f",
+          "code": "BK-soap-e53ccb93db8d9314ae0ac465"
+        }
+      ],
+      "prescriptions": [
+        {
+          "patient_code": "SYNTHETIC-IPD",
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "encounter_code": "BK-ipd-a4866d5f5320ecc5aad63647",
+          "code": "BK-rx-00edb01543b077021f32d2f3",
+          "prescribed_at": "2026-10-18T09:45:00.000+07:00",
+          "prescribed_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "medications": [
+            {
+              "code": "AA0060",
+              "medicine_code": "AA0060",
+              "medicine_name": "Amoxicillin",
+              "strength": "250 mg (as trihydrate)",
+              "form": "tablet or capsule (solid oral dosage form)",
+              "method": "Oral",
+              "unit": "Tablet",
+              "morning": 2,
+              "afternoon": 2,
+              "evening": 2,
+              "night": 0,
+              "days": 3,
+              "dispense": {
+                "quantity": 18,
+                "unit": "Tablet"
+              }
+            }
+          ]
+        },
+        {
+          "patient_code": "SYNTHETIC-IPD",
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "encounter_code": null,
+          "code": "BK-rx-1f99ca61d57b9de1e66503a1",
+          "prescribed_at": "2026-10-21T09:55:00.000+07:00",
+          "prescribed_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "medications": [
+            {
+              "code": "AA0060",
+              "medicine_code": "AA0060",
+              "medicine_name": "Amoxicillin",
+              "strength": "250 mg (as trihydrate)",
+              "form": "tablet or capsule (solid oral dosage form)",
+              "method": "Oral",
+              "unit": "Tablet",
+              "morning": null,
+              "afternoon": null,
+              "evening": null,
+              "night": null,
+              "days": 4,
+              "interval": "8h",
+              "note": "Complete the course.",
+              "dispense": {
+                "quantity": 24,
+                "unit": "Tablet"
+              }
+            }
+          ]
+        }
+      ],
+      "consultations": [
+        "Drink more water",
+        "Return if fever persists"
+      ],
+      "invoices": [
+        {
+          "patient_code": "SYNTHETIC-IPD",
+          "visit_code": "BK-visit-aba8ffe40c745f6c4ba6a15d",
+          "code": "BK-invoice-e48277eb4a054d502f33c8c2",
+          "payment_type": "PATY-0000N09",
+          "invoice_date": "2026-10-21T10:00:00.000+07:00",
+          "total": 120000,
+          "cashier": "Synthetic cashier",
+          "created_at": "2026-10-18T09:00:00.000+07:00",
+          "updated_at": "2026-10-18T10:00:00.000+07:00",
+          "services": [
+            {
+              "service_name": "Consultation",
+              "service_category": "Consultation",
+              "quantity": 1,
+              "price": 120000,
+              "paid": false,
+              "invoice_code": "BK-invoice-e48277eb4a054d502f33c8c2",
+              "service_code": "NPCA-SERVICE-CODE-TO-CONFIRM"
+            }
+          ],
+          "medications": []
+        }
+      ],
+      "forms": []
+    }
+  ]
+}
