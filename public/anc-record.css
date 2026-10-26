@@ -184,3 +184,74 @@ button.link, a.link, a.secondary-link { font: inherit; font-size: 13px; backgrou
 }
 
 @media screen {body.anc-page {padding:0;border:0;margin:0;border-radius:0;box-shadow:none}}
+
+/* v47.6 - Clean ANC screen: fixed grid, one field per cell (label on top, box
+   and unit below, boxes of a row aligned at the bottom), tick boxes lined up in
+   columns, nothing falls under its neighbour. Screen only: the official print
+   layout above keeps its flow (the new wrappers are inline spans). */
+@media screen {
+ .anc-page .anc-grid, .anc-page .anc-visit-grid.anc-grid, .anc-page .anc-identity { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px 18px; align-items:stretch; margin:8px 0; }
+ .anc-page .anc-cell { display:flex; flex-direction:column; align-items:stretch; gap:4px; min-width:0; margin:0; }
+ .anc-page .anc-cell-label { flex:1 0 auto; font-size:13px; line-height:1.5; color:#476176; overflow-wrap:anywhere; }
+ .anc-page .anc-cell-input { display:flex; align-items:center; gap:6px; min-width:0; }
+ .anc-page .anc-cell-input > .anc-field, .anc-page .anc-cell-input > select { flex:1 1 auto; width:100%; min-width:0; }
+ .anc-page .anc-cell-input output { display:flex; align-items:center; min-height:34px; font-weight:700; }
+ .anc-page .anc-unit, .anc-page .anc-cell-input small { flex:0 0 auto; font-size:13px; color:#5e7485; white-space:nowrap; }
+ .anc-page .anc-span-2 { grid-column:span 2; }
+ .anc-page .anc-cell-check .anc-cell-input { min-height:34px; }
+ .anc-page .anc-cell-check .anc-cell-input input { width:20px; height:20px; margin:0; flex:0 0 auto; }
+ .anc-rapid .anc-grid { margin:4px 0; }
+
+ /* Tick boxes: each one in its own column, the box at the top left of its text. */
+ .anc-page .anc-choice { display:flex; align-items:flex-start; gap:8px; margin:0; line-height:1.5; }
+ .anc-page .anc-choice input { flex:0 0 auto; width:16px; height:16px; margin:3px 0 0; }
+ .anc-page .anc-check-block { display:grid; gap:6px; margin:6px 0 14px; }
+ .anc-page .anc-check-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:6px 16px; }
+ .anc-page .anc-check-block > .anc-field { width:100%; }
+ .anc-page .anc-chart-level { display:grid; grid-template-columns:minmax(0,1fr); gap:4px; padding:8px 10px; }
+
+ /* Yes / no questions: question | none | yes | text, in the same columns on every row. */
+ .anc-page .anc-yesno-row { display:grid; grid-template-columns:minmax(7em,1fr) auto auto minmax(0,1.4fr); align-items:center; gap:6px 12px; margin:4px 0; }
+ .anc-page .anc-yesno-row > .anc-field { width:100%; }
+ .anc-page .anc-yesno-title > strong { grid-column:1 / -1; }
+ .anc-page .anc-yesno-title > .anc-choice:first-of-type { grid-column:2; }
+ /* Rows with a label column and their controls (gynaecology history). */
+ .anc-page .anc-form-row { display:grid; grid-template-columns:minmax(8em,11em) minmax(0,1fr); align-items:center; gap:6px 12px; margin:4px 0; }
+ .anc-page .anc-form-row > strong { grid-column:1 / -1; }
+ .anc-page .anc-row-controls { display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; min-width:0; }
+ .anc-page .anc-group { display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
+ /* Numbered surgery / allergy rows: the same columns on every row. */
+ .anc-page .anc-entry { display:grid; align-items:center; gap:6px 10px; margin:4px 0; }
+ .anc-page .anc-entry-surgery { grid-template-columns:max-content minmax(0,2fr) max-content 6em max-content minmax(0,1fr); }
+ .anc-page .anc-entry-allergy { grid-template-columns:max-content minmax(0,1fr) max-content minmax(0,2fr); }
+ .anc-page .anc-entry > .anc-field { width:100%; }
+
+ /* To-do list: cards of the same height in a row, buttons together at the bottom. */
+ .anc-tasks .anc-task-list { grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px 14px; }
+ .anc-tasks .anc-task { display:flex; flex-direction:column; gap:6px; padding:10px 12px; border:1px solid #e3ebf1; border-radius:10px; background:#fff; }
+ .anc-tasks .anc-task label { display:flex; align-items:flex-start; gap:8px; }
+ .anc-tasks .anc-task label input { flex:0 0 auto; margin:4px 0 0; }
+ .anc-tasks .anc-task-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; }
+
+ /* Tables: fixed column widths; every box fills its cell. */
+ .anc-page .anc-fixed-table { table-layout:fixed; }
+ .anc-page .anc-col-num { width:44px; }
+ .anc-page .anc-col-date { width:150px; }
+ .anc-page .anc-col-tick { width:76px; }
+ .anc-page .anc-prev-table { min-width:1300px; }
+ .anc-page .anc-us-table { min-width:1100px; }
+ .anc-page .anc-lab-table th:first-child { width:220px; }
+ .anc-page .anc-table td .anc-field, .anc-page .anc-table td select { width:100%; min-width:0; }
+ .anc-page .anc-table th { overflow-wrap:anywhere; }
+}
+@media screen and (max-width:1100px) {
+ .anc-page .anc-grid, .anc-page .anc-visit-grid.anc-grid, .anc-page .anc-identity, .anc-tasks .anc-task-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media screen and (max-width:760px) {
+ .anc-page .anc-grid, .anc-page .anc-visit-grid.anc-grid, .anc-page .anc-identity, .anc-tasks .anc-task-list { grid-template-columns:minmax(0,1fr); }
+ .anc-page .anc-span-2 { grid-column:auto; }
+ .anc-page .anc-yesno-row { grid-template-columns:auto auto minmax(0,1fr); }
+ .anc-page .anc-yesno-q, .anc-page .anc-yesno-title > strong { grid-column:1 / -1; }
+ .anc-page .anc-yesno-title > .anc-choice:first-of-type { grid-column:auto; }
+ .anc-page .anc-form-row, .anc-page .anc-entry-surgery, .anc-page .anc-entry-allergy { grid-template-columns:minmax(0,1fr); }
+}

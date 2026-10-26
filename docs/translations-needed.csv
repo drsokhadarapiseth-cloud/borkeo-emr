@@ -523,3 +523,5 @@ context.retry,Retry context session loading,Authorized master-task context recov
 "anc.unit.grams","g","ANC dropdowns and units (v47.3, owner approved)","public/anc-record.js","ក្រាម"
 "anc.unit.perMinute","/min","ANC dropdowns and units (v47.3, owner approved)","public/anc-record.js","ដង/នាទី"
 "anc.educationDone","Education given","ANC today's visit: education given at this visit (v47.5, owner approved)","public/anc-record.js","អប់រំរួច"
+"anc.bp","Blood pressure","ANC today's visit: blood pressure and pulse as two fields (v47.6, owner approved)","public/anc-record.js","សម្ពាធឈាម"
+"anc.pulse","Pulse","ANC today's visit: blood pressure and pulse as two fields (v47.6, owner approved)","public/anc-record.js","ជីពចរ"

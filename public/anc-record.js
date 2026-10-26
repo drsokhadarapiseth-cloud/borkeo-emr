@@ -58,14 +58,14 @@ function legacySection() {
 function supplementalVisit() {
   const starts = [32, 34, 37, 41, 43, 44, 45, 47, 49, 51, 52, 53, 54];
   const fields = cfg.legacyFields || [];
-  return `<section class="anc-page anc-supplemental"><h2>${esc(t('anc.extraVisit', 'Additional visit details'))}</h2><div class="anc-visit-grid">${starts.map(index => {
+  return `<section class="anc-page anc-supplemental"><h2>${esc(t('anc.extraVisit', 'Additional visit details'))}</h2><div class="anc-visit-grid anc-grid">${starts.map(index => {
     const field = fields.find(item => item.key === `scope:medical:auto:${index}`);
     if (!field) return '';
     const value = draft.legacyDetails?.[index] || '';
     const options = [37, 44].includes(index) ? null : index === 41 ? Array.from({ length: 8 }, (_, i) => String(i + 1)) : field.type === 'radio' ? fields.filter(item => item.name === field.name).map(item => item.option) : field.options;
     const control = options ? `<select data-visit="legacyDetails.${index}"${canEdit() ? '' : ' disabled'}><option value=""></option>${options.map(option => `<option value="${esc(option)}"${value === option ? ' selected' : ''}>${esc(option)}</option>`).join('')}</select>`
       : vfield(`legacyDetails.${index}`, { type: field.type === 'date' ? 'date' : field.type === 'number' ? 'number' : 'text' });
-    return `<label>${esc(field.label)} ${control}</label>`;
+    return cell(esc(field.label), control);
   }).join('')}</div></section>`;
 }
 
@@ -129,6 +129,11 @@ const pickList = (attr, path, value, list) => {
 };
 const recordPick = (path, list) => pickList('data-path', path, getPath(record, path), list);
 const visitPick = (key, list) => pickList('data-visit', key, getPath(draft, key), list);
+// v47.6 - One field = one cell: label on top, the box and its unit below (screen
+// grid in anc-record.css). Spans are inline, so the printed record keeps its flow.
+const cell = (labelHtml, control, { unit = '', span = 1, check = false, after = '' } = {}) =>
+  `<label class="anc-cell${span === 2 ? ' anc-span-2' : ''}${check ? ' anc-cell-check' : ''}"><span class="anc-cell-label">${labelHtml}</span> <span class="anc-cell-input">${control}${unit ? ` <span class="anc-unit">${esc(unit)}</span>` : ''}${after ? ` ${after}` : ''}</span></label>`;
+const perMinute = () => t('anc.unit.perMinute', '/min');
 
 // ---------------------------------------------------------------- status
 function visitsWithDraft() {
@@ -185,44 +190,45 @@ function page2() {
   return `<section class="anc-page" data-page="2">
     <h2>${esc(l.title)}</h2>
     <div class="anc-box-panel anc-identity">
-      <label>${esc(id.name)} ${field('identity.name', { size: 'wide' })}</label>
-      <label>${esc(id.dateOfBirth)} ${field('identity.dateOfBirth', { type: 'date' })}</label>
-      <label>${esc(id.age)} ${field('identity.age', { size: 'tiny' })}</label>
-      <label>${esc(id.gravida)} ${field('identity.gravida', { size: 'tiny' })}</label>
-      <label>${esc(id.births)} ${field('identity.births', { size: 'tiny' })}</label>
-      <label>${esc(id.miscarriages)} ${field('identity.miscarriages', { size: 'tiny' })}</label>
-      <label>${esc(id.abortions)} ${field('identity.abortions', { size: 'tiny' })}</label>
-      <label>${esc(id.lmp)} ${field('lmp', { type: 'date' })}</label>
-      <label>${esc(id.edd)} <output>${esc(anc.eddFromLmp(record.lmp) || '—')}</output></label>
-      <label>${esc(id.eddUltrasound)} ${field('ultrasoundEdd', { type: 'date' })} <small>${esc(t('anc.scanDate', 'scan date'))}</small> ${field('ultrasoundDate', { type: 'date' })}</label>
-      <label>${esc(id.height)} ${field('heightCm', { size: 'tiny' })} ${esc(id.heightUnit)}</label>
-      <label>${esc(id.weightBefore)} ${field('prePregnancyWeightKg', { size: 'tiny' })} kg <small>${esc(record.prePregnancyWeightSource === 'triage' ? t('anc.fromTriage', 'from Triage') : '')}</small></label>
-      <label>${esc(id.bmiBefore)} <output>${esc(bmiValue ?? '—')}</output> ${esc(id.bmiNormal)}</label>
+      ${cell(esc(id.name), field('identity.name', { size: 'wide' }), { span: 2 })}
+      ${cell(esc(id.dateOfBirth), field('identity.dateOfBirth', { type: 'date' }))}
+      ${cell(esc(id.age), field('identity.age', { size: 'tiny' }))}
+      ${cell(esc(id.gravida), field('identity.gravida', { size: 'tiny' }))}
+      ${cell(esc(id.births), field('identity.births', { size: 'tiny' }))}
+      ${cell(esc(id.miscarriages), field('identity.miscarriages', { size: 'tiny' }))}
+      ${cell(esc(id.abortions), field('identity.abortions', { size: 'tiny' }))}
+      ${cell(esc(id.lmp), field('lmp', { type: 'date' }))}
+      ${cell(esc(id.edd), `<output>${esc(anc.eddFromLmp(record.lmp) || '—')}</output>`)}
+      ${cell(esc(id.eddUltrasound), field('ultrasoundEdd', { type: 'date' }))}
+      ${cell(`<small>${esc(t('anc.scanDate', 'scan date'))}</small>`, field('ultrasoundDate', { type: 'date' }))}
+      ${cell(esc(id.height), field('heightCm', { size: 'tiny' }), { unit: id.heightUnit })}
+      ${cell(esc(id.weightBefore), field('prePregnancyWeightKg', { size: 'tiny' }), { unit: 'kg', after: `<small>${esc(record.prePregnancyWeightSource === 'triage' ? t('anc.fromTriage', 'from Triage') : '')}</small>` })}
+      ${cell(esc(id.bmiBefore), `<output>${esc(bmiValue ?? '—')}</output>`, { span: 2, after: `<small>${esc(id.bmiNormal)}</small>` })}
     </div>
     <div class="anc-two">
       <div class="anc-box-panel">
-        <p><strong>• ${esc(l.general.title)}</strong> ${Object.entries(l.general.items).map(([key, label]) => `<label class="anc-choice">${field(`history.general.${key}`, { type: 'checkbox' })} ${esc(label)}</label>`).join(' ')} ${field('history.general.other', { size: 'wide' })}</p>
+        <p class="anc-check-block"><strong>• ${esc(l.general.title)}</strong> <span class="anc-check-grid">${Object.entries(l.general.items).map(([key, label]) => `<label class="anc-choice">${field(`history.general.${key}`, { type: 'checkbox' })} ${esc(label)}</label>`).join(' ')}</span> ${field('history.general.other', { size: 'wide' })}</p>
         <p><strong>• ${esc(l.surgery.title)}</strong></p>
-        ${l.surgery.numbers.map((number, index) => `<p class="anc-indent">${esc(number)} ${esc(l.surgery.diagnosis)} ${field(`history.surgery.${index}.diagnosis`, { size: 'wide' })} ${esc(l.surgery.year)} ${field(`history.surgery.${index}.year`, { size: 'tiny' })} ${esc(l.surgery.place)} ${field(`history.surgery.${index}.place`)}</p>`).join('')}
+        ${l.surgery.numbers.map((number, index) => `<p class="anc-indent anc-entry anc-entry-surgery">${esc(number)} ${esc(l.surgery.diagnosis)} ${field(`history.surgery.${index}.diagnosis`, { size: 'wide' })} ${esc(l.surgery.year)} ${field(`history.surgery.${index}.year`, { size: 'tiny' })} ${esc(l.surgery.place)} ${field(`history.surgery.${index}.place`)}</p>`).join('')}
         <p><strong>• ${esc(l.allergy.title)}</strong></p>
-        ${l.allergy.numbers.map((number, index) => `<p class="anc-indent">${esc(number)} ${esc(l.allergy.drug)} ${field(`history.allergy.${index}.drug`)} ${esc(l.allergy.symptom)} ${field(`history.allergy.${index}.symptom`, { size: 'wide' })}</p>`).join('')}
+        ${l.allergy.numbers.map((number, index) => `<p class="anc-indent anc-entry anc-entry-allergy">${esc(number)} ${esc(l.allergy.drug)} ${field(`history.allergy.${index}.drug`)} ${esc(l.allergy.symptom)} ${field(`history.allergy.${index}.symptom`, { size: 'wide' })}</p>`).join('')}
         <p class="anc-hint">${esc(t('anc.allergyLink', 'Drug allergies are also kept in the structured allergy record (patient banner).'))} ${(data.allergies || []).map((a) => esc(a)).join(', ')}</p>
-        <p><strong>• ${esc(l.family.title)}</strong> ${Object.entries(l.family.items).map(([key, label]) => `<label class="anc-choice">${field(`history.family.${key}`, { type: 'checkbox' })} ${esc(label)}</label>`).join(' ')} ${field('history.family.otherText', { size: 'wide' })}</p>
-        <p><strong>• ${esc(l.gyn.title)}</strong> ${esc(l.gyn.menses)} ${choice('history.gyn.menses', 'regular', l.gyn.regular)} ${choice('history.gyn.menses', 'irregular', l.gyn.irregular)}
-          ${esc(l.gyn.cycle)} ${field('history.gyn.cycleDays', { size: 'tiny' })} ${esc(l.gyn.day)} ${esc(l.gyn.duration)} ${field('history.gyn.durationDays', { size: 'tiny' })}${esc(l.gyn.perMonth)}</p>
-        <p class="anc-indent">${esc(l.gyn.contraception)} ${choice('history.gyn.contraception', 'no', l.gyn.none)} (${esc(l.gyn.reason)} ${field('history.gyn.contraceptionReason')}) ${choice('history.gyn.contraception', 'yes', l.gyn.yes)} ${field('history.gyn.contraceptionText')}</p>
-        <p class="anc-indent">${esc(l.gyn.art)} ${choice('history.gyn.art', 'no', l.gyn.none)} ${choice('history.gyn.art', 'yes', l.gyn.yes)} ${esc(l.gyn.otherGyn)} ${field('history.gyn.otherGyn', { size: 'wide' })}</p>
+        <p class="anc-check-block"><strong>• ${esc(l.family.title)}</strong> <span class="anc-check-grid">${Object.entries(l.family.items).map(([key, label]) => `<label class="anc-choice">${field(`history.family.${key}`, { type: 'checkbox' })} ${esc(label)}</label>`).join(' ')}</span> ${field('history.family.otherText', { size: 'wide' })}</p>
+        <p class="anc-form-row"><strong>• ${esc(l.gyn.title)}</strong> <span class="anc-row-label">${esc(l.gyn.menses)}</span> <span class="anc-row-controls">${choice('history.gyn.menses', 'regular', l.gyn.regular)} ${choice('history.gyn.menses', 'irregular', l.gyn.irregular)}
+          <span class="anc-group">${esc(l.gyn.cycle)} ${field('history.gyn.cycleDays', { size: 'tiny' })} ${esc(l.gyn.day)}</span> <span class="anc-group">${esc(l.gyn.duration)} ${field('history.gyn.durationDays', { size: 'tiny' })}${esc(l.gyn.perMonth)}</span></span></p>
+        <p class="anc-indent anc-form-row"><span class="anc-row-label">${esc(l.gyn.contraception)}</span> <span class="anc-row-controls">${choice('history.gyn.contraception', 'no', l.gyn.none)} <span class="anc-group">(${esc(l.gyn.reason)} ${field('history.gyn.contraceptionReason')})</span> ${choice('history.gyn.contraception', 'yes', l.gyn.yes)} ${field('history.gyn.contraceptionText')}</span></p>
+        <p class="anc-indent anc-form-row"><span class="anc-row-label">${esc(l.gyn.art)}</span> <span class="anc-row-controls">${choice('history.gyn.art', 'no', l.gyn.none)} ${choice('history.gyn.art', 'yes', l.gyn.yes)}</span> <span class="anc-row-label">${esc(l.gyn.otherGyn)}</span> <span class="anc-row-controls">${field('history.gyn.otherGyn', { size: 'wide' })}</span></p>
       </div>
       <div>
         <div class="anc-box-panel">
-          <p><strong>• ${esc(l.social.title)}</strong> ${['smoking', 'alcohol', 'drugs'].map((key) => `<label class="anc-choice">${field(`history.social.${key}`, { type: 'checkbox' })} ${esc(l.social[key])}</label>`).join(' ')} ${field('history.social.other')}</p>
-          <p><strong>• ${esc(l.violence.title)}</strong> ${yesNo('history.violence')}</p>
+          <p class="anc-check-block"><strong>• ${esc(l.social.title)}</strong> <span class="anc-check-grid">${['smoking', 'alcohol', 'drugs'].map((key) => `<label class="anc-choice">${field(`history.social.${key}`, { type: 'checkbox' })} ${esc(l.social[key])}</label>`).join(' ')}</span> ${field('history.social.other')}</p>
+          <p class="anc-yesno-row anc-yesno-title"><strong>• ${esc(l.violence.title)}</strong> ${yesNo('history.violence')}</p>
         </div>
         <div class="anc-box-panel">
           <p><strong>• ${esc(l.mouth.title)}</strong></p>
-          ${['stomatitis', 'caries', 'breast'].map((key) => `<p class="anc-indent">${esc(l.mouth[key])} ${yesNo(`history.mouth.${key}`)}</p>`).join('')}
+          ${['stomatitis', 'caries', 'breast'].map((key) => `<p class="anc-indent anc-yesno-row"><span class="anc-yesno-q">${esc(l.mouth[key])}</span> ${yesNo(`history.mouth.${key}`)}</p>`).join('')}
           <p><strong>• ${esc(l.anaemia.title)}</strong></p>
-          ${['eyelid', 'nails', 'palms'].map((key) => `<p class="anc-indent">${esc(l.anaemia[key])} ${yesNo(`history.anaemia.${key}`)}</p>`).join('')}
+          ${['eyelid', 'nails', 'palms'].map((key) => `<p class="anc-indent anc-yesno-row"><span class="anc-yesno-q">${esc(l.anaemia[key])}</span> ${yesNo(`history.anaemia.${key}`)}</p>`).join('')}
         </div>
       </div>
     </div>
@@ -233,7 +239,9 @@ function page2() {
 function previousTable() {
   const p = L().previous;
   const rows = Array.from({ length: Math.max(5, (record.previous || []).length + 1) }, (_, index) => index);
-  return `<div class="anc-box-panel"><h3>${esc(p.title)}</h3><div class="anc-table-wrap"><table class="anc-table">
+  const cols = ['num', 'date', 'tick', 'tick', ...Array(9).fill('std')];
+  return `<div class="anc-box-panel"><h3>${esc(p.title)}</h3><div class="anc-table-wrap"><table class="anc-table anc-fixed-table anc-prev-table">
+    <colgroup>${cols.map((kind) => `<col class="anc-col-${kind}">`).join('')}</colgroup>
     <thead><tr><th rowspan="2">${esc(p.number)}</th><th rowspan="2">${esc(p.date)}</th><th colspan="2">${esc(p.abortionGroup)}</th><th colspan="5">${esc(p.motherGroup)}</th><th colspan="4">${esc(p.babyGroup)}</th></tr>
     <tr><th>${esc(p.under12)}</th><th>${esc(p.over12)}</th><th>${esc(p.term)}</th><th>${esc(p.deliveryType)}</th><th>${esc(p.place)}</th><th>${esc(p.complications)}</th><th>${esc(p.healthProblems)}</th>
     <th>${esc(p.babyOutcome)}</th><th>${esc(p.sex)}</th><th>${esc(p.weight)}</th><th>${esc(p.babyProblems)}</th></tr></thead>
@@ -258,7 +266,7 @@ function labTable() {
   const rows = [['hiv', l.hiv], ['syphilis', l.syphilis], ['hbsag', l.hbsag], ['hcv', l.hcv], ['hb', `${l.redCells} ${l.hb}`], ['hct', l.hct], ['plt', l.plt], ['group', l.group]];
   const freeLabels = record.labFreeLabels || [];
   const readCell = (column, key) => `<td class="anc-readonly anc-src-${esc(column.source)}">${esc(column[key] || '')}</td>`;
-  return `<div class="anc-box-panel"><h3>${esc(l.title)}</h3><div class="anc-table-wrap"><table class="anc-table anc-lab-table">
+  return `<div class="anc-box-panel"><h3>${esc(l.title)}</h3><div class="anc-table-wrap"><table class="anc-table anc-fixed-table anc-lab-table">
     <tbody>
       <tr><th>${esc(l.date)}</th>${released.map((c) => readCell(c, 'date')).join('')}${rapid.map((c) => readCell(c, 'date')).join('')}${typed.map((i) => `<td>${field(`labs.${i}.date`, { type: 'date' })}</td>`).join('')}</tr>
       ${rows.map(([key, label]) => `<tr><th>${esc(label)}</th>${released.map((c) => readCell(c, key)).join('')}${rapid.map((c) => readCell(c, key)).join('')}${typed.map((i) => `<td>${field(`labs.${i}.${key}`, { size: 'small' })}</td>`).join('')}</tr>`).join('')}
@@ -275,7 +283,8 @@ function ultrasoundTable() {
   const cell = (i, key) => (OPTION_LISTS[key] ? recordPick(`ultrasounds.${i}.${key}`, OPTION_LISTS[key]())
     : field(`ultrasounds.${i}.${key}`, { type: ['date', 'edd'].includes(key) ? 'date' : 'text', size: 'small' }));
   const shown = (key, value) => (key === 'presentation' ? codeText(PRESENTATION_TEXT, value) : key === 'placenta' ? codeText(PLACENTA_TEXT, value) : key === 'afi' ? codeText(FLUID_TEXT, value) : value);
-  return `<div class="anc-box-panel"><h3>${esc(u.title)}</h3><div class="anc-table-wrap"><table class="anc-table">
+  return `<div class="anc-box-panel"><h3>${esc(u.title)}</h3><div class="anc-table-wrap"><table class="anc-table anc-fixed-table anc-us-table">
+    <colgroup>${u.columns.map((c) => `<col class="anc-col-${['date', 'edd'].includes(c.key) ? 'date' : 'std'}">`).join('')}</colgroup>
     <thead><tr>${u.columns.map((c) => `<th>${esc(english() ? c.en : c.kh)}${units[c.key] ? `<br><small>(${esc(units[c.key])})</small>` : ''}</th>`).join('')}</tr></thead>
     <tbody>${released.map((row) => `<tr class="anc-readonly">${u.columns.map((c) => `<td>${esc(shown(c.key, row[c.key] || ''))}</td>`).join('')}</tr>`).join('')}
     ${typed.map((i) => `<tr>${u.columns.map((c) => `<td>${cell(i, c.key)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
@@ -316,29 +325,30 @@ function visitForm(status) {
     <p>${esc(cfg.legacyFields?.find(item => item.key === 'scope:medical:auto:39')?.label || t('anc.ga', 'GA'))}<span class="anc-required-mark" aria-hidden="true"> *</span> <output data-anc-ga>${esc(status.ga ? status.ga.label : '—')}</output></p>
     <p class="anc-hint">${esc(t('anc.importedHint', 'Values from Registration and from Triage of this visit; the midwife can correct them (the Triage value stays saved).'))}
       ${esc([imported.weightKg && `${imported.weightKg} kg`, imported.bp && `${imported.bp} mmHg`, imported.pulse && `${imported.pulse}/min`, imported.temperature && `${imported.temperature} °C`, imported.spo2 && `SpO2 ${imported.spo2}%`].filter(Boolean).join(' · '))}</p>
-    <div class="anc-visit-grid">
-      <label>${label('weight')} ${vfield('weight', { size: 'small' })} kg</label>
-      <label>${label('wp')} <output>${esc(weightGain(draft.weight) || '—')}</output></label>
-      <label>${label('bp')} ${vfield('bp', { size: 'small' })} - ${vfield('pulse', { size: 'tiny' })}</label>
-      <label>${esc(t('anc.temperature', 'Temperature'))} ${vfield('temperature', { size: 'tiny' })} °C</label>
-      <label>SpO2 ${vfield('spo2', { size: 'tiny' })} %</label>
-      <label>${label('uh')} ${vfield('uh', { size: 'tiny' })} ${esc(english() ? 'cm' : L().identity.heightUnit)}</label>
-      <label>${label('fp')} ${visitPick('fp', OPTION_LISTS.presentation())}</label>
-      <label>${label('fhr')} ${vfield('fhr', { size: 'tiny' })} ${esc(t('anc.unit.perMinute', '/min'))}</label>
-      <label>${label('proteinuria')} ${visitPick('proteinuria', OPTION_LISTS.proteinuria())}</label>
-      <label>${label('glucosuria')} ${visitPick('glucosuria', OPTION_LISTS.glucosuria())}</label>
-      <label>${label('varices')} ${vfield('varices', { size: 'small' })}</label>
-      <label>${label('fer')} ${vfield('fer', { size: 'tiny' })}</label>
-      <label class="anc-choice"><input type="checkbox" data-visit="educationDone"${draft.educationDone === true ? ' checked' : ''}${canEdit() ? '' : ' disabled'}> ${esc(t('anc.educationDone', 'Education given'))}</label>
+    <div class="anc-visit-grid anc-grid">
+      ${cell(label('weight'), vfield('weight', { size: 'small' }), { unit: 'kg' })}
+      ${cell(label('wp'), `<output>${esc(weightGain(draft.weight) || '—')}</output>`, { unit: 'kg' })}
+      ${cell(esc(t('anc.bp', 'Blood pressure')), vfield('bp', { size: 'small' }), { unit: 'mmHg' })}
+      ${cell(esc(t('anc.pulse', 'Pulse')), vfield('pulse', { size: 'tiny' }), { unit: perMinute() })}
+      ${cell(esc(t('anc.temperature', 'Temperature')), vfield('temperature', { size: 'tiny' }), { unit: '°C' })}
+      ${cell('SpO2', vfield('spo2', { size: 'tiny' }), { unit: '%' })}
+      ${cell(label('uh'), vfield('uh', { size: 'tiny' }), { unit: english() ? 'cm' : L().identity.heightUnit })}
+      ${cell(label('fp'), visitPick('fp', OPTION_LISTS.presentation()))}
+      ${cell(label('fhr'), vfield('fhr', { size: 'tiny' }), { unit: perMinute() })}
+      ${cell(label('proteinuria'), visitPick('proteinuria', OPTION_LISTS.proteinuria()))}
+      ${cell(label('glucosuria'), visitPick('glucosuria', OPTION_LISTS.glucosuria()))}
+      ${cell(label('varices'), vfield('varices', { size: 'small' }))}
+      ${cell(label('fer'), vfield('fer', { size: 'tiny' }))}
+      ${cell(esc(t('anc.educationDone', 'Education given')), `<input type="checkbox" data-visit="educationDone"${draft.educationDone === true ? ' checked' : ''}${canEdit() ? '' : ' disabled'}>`, { check: true })}
     </div>
     <fieldset class="anc-rapid"><legend>${esc(t('anc.rapidTests', 'Rapid tests done by the midwife'))}</legend>
-      <label>HIV ${rapidSelect('hiv')}</label><label>Syphilis ${rapidSelect('syphilis')}</label><label>Hb ${vfield('rapid.hb', { size: 'tiny' })} g/dL</label>
+      <div class="anc-grid">${cell('HIV', rapidSelect('hiv'))}${cell('Syphilis', rapidSelect('syphilis'))}${cell('Hb', vfield('rapid.hb', { size: 'tiny' }), { unit: 'g/dL' })}</div>
     </fieldset>
-    <div class="anc-visit-grid wide">
-      <label>${label('complaint')} ${vfield('complaint', { size: 'wide' })}</label>
-      <label>${label('diagnosis')} ${vfield('diagnosis', { size: 'wide' })}</label>
-      <label>${label('appointment')} ${vfield('appointment', { type: 'date' })} <small>${esc(t('anc.suggested', 'suggested'))}: ${esc(status.appointment || '—')}</small></label>
-      <label>${label('name')} <output>${esc(window.emrSession?.user?.displayName || '')}</output></label>
+    <div class="anc-visit-grid anc-grid">
+      ${cell(label('complaint'), vfield('complaint', { size: 'wide' }), { span: 2 })}
+      ${cell(label('diagnosis'), vfield('diagnosis', { size: 'wide' }), { span: 2 })}
+      ${cell(label('appointment'), vfield('appointment', { type: 'date' }), { span: 2, unit: `${t('anc.suggested', 'suggested')}: ${status.appointment || '—'}` })}
+      ${cell(label('name'), `<output>${esc(window.emrSession?.user?.displayName || '')}</output>`, { span: 2 })}
     </div>
     <fieldset class="anc-rx"><legend>${esc(t('anc.prescription', 'Prescription (maternal services medicines)'))}</legend>
       <table class="anc-table"><tbody>${prescription.map((line, index) => `<tr><td>${esc(line.name)}</td><td><input class="anc-field tiny" data-rx="${index}" data-rx-key="doseAmount" value="${esc(line.doseAmount)}"> ${esc(line.unit)}</td>
@@ -456,7 +466,9 @@ function renderMain() {
     if (!input) continue;
     input.required = true; input.setAttribute('aria-required', 'true');
     const marker = document.createElement('span'); marker.className = 'anc-required-mark'; marker.textContent = ' *'; marker.setAttribute('aria-hidden', 'true');
-    input.before(marker);
+    // v47.6: in a cell the star goes after the label text, so the boxes stay aligned.
+    const cellLabel = input.closest('.anc-cell')?.querySelector('.anc-cell-label');
+    if (cellLabel) cellLabel.append(marker); else input.before(marker);
   }
   renderNavigation();
 }

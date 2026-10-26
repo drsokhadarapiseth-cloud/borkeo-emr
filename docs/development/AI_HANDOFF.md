@@ -1,5 +1,19 @@
 # Task context for Codex, Gemini or OpenCode
 
+## ANC clean screen layout - v47.6.0, 26 October 2026
+
+Second part of the approval given for v47.5. Clean master 52fa093 (47.5.0);
+branch feature/maternity-anc-clean-layout. Pre-update code snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v47.5.0-52fa093b-067ecd0e
+
+Screen-only layout: `cell()` helper (label / box + unit), fixed 4/2/1 grid,
+BP and pulse split (anc.bp / anc.pulse), aligned tick boxes (anc-check-grid,
+anc-choice), yes/no and form rows, fixed table columns, equal task cards.
+Printing clones the screen markup of page 2/3: keep new styles inside
+`@media screen` and new wrappers inline, or the official print changes. The
+older rule `.anc-visit-grid label { align-items:center }` still exists; the
+cell rule overrides it. See ANC_LAYOUT_V476_VALIDATION.md.
+
 ## ANC to-do list ticked from the data - v47.5.0, 26 October 2026
 
 User approved ("yes code it") ticking the ANC visit tasks from Registration,
