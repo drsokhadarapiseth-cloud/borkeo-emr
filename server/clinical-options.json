@@ -258,7 +258,7 @@
     "tetanusVaccineName": "Tetanus toxoid vaccine",
     "datingUltrasoundMaxWeeks": 14,
     "datingUltrasoundMaxDifferenceDays": 7,
-    "prePregnancyWeightFromTriageMaxWeeks": 12,
+    "prePregnancyWeightFromTriageMaxWeeks": null,
     "singleWeekVisitTolerance": 1,
     "heightCheckBelowCm": 145,
     "levelOverrides": {

@@ -477,9 +477,13 @@ function startDraft() {
   const imported = data.imported || {};
   draft = saved ? { ...saved } : { weight: imported.weightKg, bp: imported.bp, pulse: imported.pulse, temperature: imported.temperature, spo2: imported.spo2, rapid: {}, imported };
   if (!draft.rapid) draft.rapid = {};
-  // Weight before pregnancy: from Triage at a first visit before 12 weeks.
+  // Weight before pregnancy: an empty field takes the Triage weight (v47.4: at any GA
+  // when the owner setting is null; with a number, only at a first visit before it).
+  // The midwife can type the real weight before pregnancy; BMI follows.
   const status = data.status;
-  if (record && !record.prePregnancyWeightKg && imported.weightKg && status?.ga && status.ga.weeks < (cfg.options.prePregnancyWeightFromTriageMaxWeeks || 12) && !(data.visits || []).length) {
+  const maxWeeks = cfg.options.prePregnancyWeightFromTriageMaxWeeks;
+  const weightAllowed = maxWeeks == null || (status?.ga && status.ga.weeks < maxWeeks && !(data.visits || []).length);
+  if (record && !record.prePregnancyWeightKg && imported.weightKg && weightAllowed) {
     record.prePregnancyWeightKg = imported.weightKg;
     record.prePregnancyWeightSource = 'triage';
   }

@@ -1,5 +1,19 @@
 # Task context for Codex, Gemini or OpenCode
 
+## ANC age and BMI correction - v47.4.0, 26 October 2026
+
+User reported a 13-year-old not ticking "<18 / >35 years" and an empty BMI,
+and approved the fix ("yes"). Clean master f24410b (47.3.0); branch
+feature/maternity-anc-age-bmi-fix. Pre-update code snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v47.3.0-f24410b4-d61951c7
+
+Registration age is text ("13 <year word>" / "13 Yrs"); ancFacts now uses
+ageYears() (date of birth first). The pre-pregnancy weight takes the Triage
+weight at any GA because maternal option prePregnancyWeightFromTriageMaxWeeks
+is now null (owner decision, BMI may be overestimated after 12 weeks; a number
+restores the old first-visit rule). See ANC_AGE_BMI_V474_VALIDATION.md and the
+v47.4 update TXT. Test fixtures must use the real Registration age format.
+
 ## ANC automatic colour code - v47.3.0, 26 October 2026
 
 User approved ("yes code it") automatic ticking of the ANC colour-code chart
