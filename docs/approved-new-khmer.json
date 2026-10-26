@@ -2300,6 +2300,36 @@
       "kh": "ជីពចរ",
       "key": "anc.pulse",
       "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Records",
+      "kh": "ឯកសារ",
+      "key": "anc.cat.records",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Laboratory",
+      "kh": "មន្ទីរពិសោធន៍",
+      "key": "anc.cat.lab",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Examination",
+      "kh": "ការពិនិត្យ",
+      "key": "anc.cat.exam",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Ultrasound",
+      "kh": "អេកូសាស្ត្រ",
+      "key": "anc.cat.ultrasound",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Care",
+      "kh": "ការថែទាំ",
+      "key": "anc.cat.care",
+      "source": "docs/translations-needed.csv"
     }
   ]
 }

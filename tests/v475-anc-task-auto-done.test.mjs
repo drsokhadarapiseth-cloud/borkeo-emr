@@ -110,7 +110,7 @@ test('page and server: education box, tick box saving, vaccines and the CBC 2 fo
   assert.match(page, /anc\.educationDone/);
   assert.match(page, /setPath\(draft, target\.dataset\.visit, target\.type === 'checkbox' \? target\.checked : target\.value\)/);
   assert.match(page, /vaccinations: data\.vaccinations \|\| \[\]/);
-  assert.match(page, /'hb-window': 'rapid\.hb'/);
+  assert.match(page, /'own:hb-window': \(\) => '\[data-visit="rapid\.hb"\]'/);
   const server = read('server/maternal.mjs');
   assert.match(server, /'legacyDetails', 'educationDone'\]/);
   assert.match(server, /vaccinations: pregnancyVaccinations\(database, pregnancy\)/);

@@ -226,13 +226,6 @@ button.link, a.link, a.secondary-link { font: inherit; font-size: 13px; backgrou
  .anc-page .anc-entry-allergy { grid-template-columns:max-content minmax(0,1fr) max-content minmax(0,2fr); }
  .anc-page .anc-entry > .anc-field { width:100%; }
 
- /* To-do list: cards of the same height in a row, buttons together at the bottom. */
- .anc-tasks .anc-task-list { grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px 14px; }
- .anc-tasks .anc-task { display:flex; flex-direction:column; gap:6px; padding:10px 12px; border:1px solid #e3ebf1; border-radius:10px; background:#fff; }
- .anc-tasks .anc-task label { display:flex; align-items:flex-start; gap:8px; }
- .anc-tasks .anc-task label input { flex:0 0 auto; margin:4px 0 0; }
- .anc-tasks .anc-task-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; }
-
  /* Tables: fixed column widths; every box fills its cell. */
  .anc-page .anc-fixed-table { table-layout:fixed; }
  .anc-page .anc-col-num { width:44px; }
@@ -245,13 +238,38 @@ button.link, a.link, a.secondary-link { font: inherit; font-size: 13px; backgrou
  .anc-page .anc-table th { overflow-wrap:anywhere; }
 }
 @media screen and (max-width:1100px) {
- .anc-page .anc-grid, .anc-page .anc-visit-grid.anc-grid, .anc-page .anc-identity, .anc-tasks .anc-task-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .anc-page .anc-grid, .anc-page .anc-visit-grid.anc-grid, .anc-page .anc-identity { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }
 @media screen and (max-width:760px) {
- .anc-page .anc-grid, .anc-page .anc-visit-grid.anc-grid, .anc-page .anc-identity, .anc-tasks .anc-task-list { grid-template-columns:minmax(0,1fr); }
+ .anc-page .anc-grid, .anc-page .anc-visit-grid.anc-grid, .anc-page .anc-identity { grid-template-columns:minmax(0,1fr); }
  .anc-page .anc-span-2 { grid-column:auto; }
  .anc-page .anc-yesno-row { grid-template-columns:auto auto minmax(0,1fr); }
  .anc-page .anc-yesno-q, .anc-page .anc-yesno-title > strong { grid-column:1 / -1; }
  .anc-page .anc-yesno-title > .anc-choice:first-of-type { grid-column:auto; }
  .anc-page .anc-form-row, .anc-page .anc-entry-surgery, .anc-page .anc-entry-allergy { grid-template-columns:minmax(0,1fr); }
 }
+
+/* v47.7 - To-do list as a clean checklist: tick box + text, grouped, aligned
+   columns, no buttons. The text opens the field to fill (briefly highlighted). */
+@media screen {
+ .anc-tasks .anc-task-groups { display:grid; gap:8px; }
+ .anc-tasks .anc-task-group h4 { margin:6px 0 2px; padding-bottom:2px; font-size:13px; color:#075a79; border-bottom:1px solid #edf1f5; }
+ .anc-tasks .anc-task-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:2px 20px; }
+ .anc-tasks .anc-task { display:flex; flex-direction:row; align-items:flex-start; gap:8px; padding:3px 0; border:0; border-radius:0; background:none; font-size:13px; }
+ .anc-tasks .anc-task > input { flex:0 0 auto; width:16px; height:16px; margin:4px 0 0; accent-color:#16a34a; }
+ .anc-tasks .anc-task > input[data-auto] { cursor:default; }
+ .anc-tasks .anc-task-body { display:flex; flex-direction:column; min-width:0; }
+ .anc-tasks .anc-task-text { all:unset; box-sizing:border-box; display:block; line-height:1.6; color:#19394c; cursor:pointer; overflow-wrap:anywhere; }
+ .anc-tasks a.anc-task-text:hover { color:#075a79; text-decoration:underline; }
+ .anc-tasks a.anc-task-text:focus-visible { outline:2px solid #0b83a4; outline-offset:2px; border-radius:3px; }
+ .anc-tasks .anc-task.is-done .anc-task-text { color:#64748b; text-decoration:none; }
+ .anc-tasks .anc-task.is-closed .anc-task-text { color:#92400e; }
+ .anc-tasks .anc-task.is-overdue:not(.is-done):not(.is-closed) .anc-task-text { color:#b91c1c; }
+ .anc-tasks .anc-task small { display:block; font-size:12px; color:#92400e; }
+ .anc-page .anc-order { margin-left:6px; font-size:12px; white-space:nowrap; }
+ .anc-page .anc-order-line { margin:4px 0; font-size:13px; }
+ .anc-flash { animation:anc-flash 1.8s ease-out; border-radius:6px; }
+ @keyframes anc-flash { 0% { background:#fef3c7; box-shadow:0 0 0 3px #fbbf24; } 100% { background:transparent; box-shadow:0 0 0 0 transparent; } }
+}
+@media screen and (max-width:1100px) { .anc-tasks .anc-task-list { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media screen and (max-width:760px) { .anc-tasks .anc-task-list { grid-template-columns:minmax(0,1fr); } }

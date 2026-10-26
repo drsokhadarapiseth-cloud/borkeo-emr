@@ -65,7 +65,8 @@ function supplementalVisit() {
     const options = [37, 44].includes(index) ? null : index === 41 ? Array.from({ length: 8 }, (_, i) => String(i + 1)) : field.type === 'radio' ? fields.filter(item => item.name === field.name).map(item => item.option) : field.options;
     const control = options ? `<select data-visit="legacyDetails.${index}"${canEdit() ? '' : ' disabled'}><option value=""></option>${options.map(option => `<option value="${esc(option)}"${value === option ? ' selected' : ''}>${esc(option)}</option>`).join('')}</select>`
       : vfield(`legacyDetails.${index}`, { type: field.type === 'date' ? 'date' : field.type === 'number' ? 'number' : 'text' });
-    return cell(esc(field.label), control);
+    const vaccine = index === 44 ? `<a class="link anc-order no-print" href="/vaccination?patient=${encodeURIComponent(patientKey)}&vaccine=tt">${esc(t('anc.giveVaccine', 'Open the vaccination'))}</a>` : '';
+    return cell(esc(field.label), control, { after: vaccine });
   }).join('')}</div></section>`;
 }
 
@@ -258,6 +259,7 @@ function previousTable() {
 }
 
 // ---------------------------------------------------------------- page 3
+const LAB_ORDERS = { hbsag: 'HBSAG', hb: 'CBC', group: 'BLOOD_GROUP' };
 function labTable() {
   const l = L().labs;
   const released = data.released?.labs || [];
@@ -269,10 +271,10 @@ function labTable() {
   return `<div class="anc-box-panel"><h3>${esc(l.title)}</h3><div class="anc-table-wrap"><table class="anc-table anc-fixed-table anc-lab-table">
     <tbody>
       <tr><th>${esc(l.date)}</th>${released.map((c) => readCell(c, 'date')).join('')}${rapid.map((c) => readCell(c, 'date')).join('')}${typed.map((i) => `<td>${field(`labs.${i}.date`, { type: 'date' })}</td>`).join('')}</tr>
-      ${rows.map(([key, label]) => `<tr><th>${esc(label)}</th>${released.map((c) => readCell(c, key)).join('')}${rapid.map((c) => readCell(c, key)).join('')}${typed.map((i) => `<td>${field(`labs.${i}.${key}`, { size: 'small' })}</td>`).join('')}</tr>`).join('')}
+      ${rows.map(([key, label]) => `<tr><th>${esc(label)}${LAB_ORDERS[key] ? ` ${orderButton(LAB_ORDERS[key])}` : ''}</th>${released.map((c) => readCell(c, key)).join('')}${rapid.map((c) => readCell(c, key)).join('')}${typed.map((i) => `<td>${field(`labs.${i}.${key}`, { size: 'small' })}</td>`).join('')}</tr>`).join('')}
       ${[0, 1, 2].map((n) => `<tr><th>${field(`labFreeLabels.${n}`, { placeholder: '…' })}</th>${released.map(() => '<td></td>').join('')}${rapid.map(() => '<td></td>').join('')}${typed.map((i) => `<td>${field(`labs.${i}.free${n}`, { size: 'small' })}</td>`).join('')}</tr>`).join('')}
     </tbody></table></div>
-    ${freeLabels.length ? '' : ''}<p class="anc-hint">${esc(t('anc.labsHint', 'Released Laboratory results and the midwife\'s rapid tests are filled in automatically.'))}</p></div>`;
+    ${canEdit() ? `<p class="anc-order-line no-print">OGTT ${orderButton('OGTT')}</p>` : ''}<p class="anc-hint">${esc(t('anc.labsHint', 'Released Laboratory results and the midwife\'s rapid tests are filled in automatically.'))}</p></div>`;
 }
 
 function ultrasoundTable() {
@@ -283,7 +285,7 @@ function ultrasoundTable() {
   const cell = (i, key) => (OPTION_LISTS[key] ? recordPick(`ultrasounds.${i}.${key}`, OPTION_LISTS[key]())
     : field(`ultrasounds.${i}.${key}`, { type: ['date', 'edd'].includes(key) ? 'date' : 'text', size: 'small' }));
   const shown = (key, value) => (key === 'presentation' ? codeText(PRESENTATION_TEXT, value) : key === 'placenta' ? codeText(PLACENTA_TEXT, value) : key === 'afi' ? codeText(FLUID_TEXT, value) : value);
-  return `<div class="anc-box-panel"><h3>${esc(u.title)}</h3><div class="anc-table-wrap"><table class="anc-table anc-fixed-table anc-us-table">
+  return `<div class="anc-box-panel"><h3>${esc(u.title)} ${orderButton('ULTRASOUND')}</h3><div class="anc-table-wrap"><table class="anc-table anc-fixed-table anc-us-table">
     <colgroup>${u.columns.map((c) => `<col class="anc-col-${['date', 'edd'].includes(c.key) ? 'date' : 'std'}">`).join('')}</colgroup>
     <thead><tr>${u.columns.map((c) => `<th>${esc(english() ? c.en : c.kh)}${units[c.key] ? `<br><small>(${esc(units[c.key])})</small>` : ''}</th>`).join('')}</tr></thead>
     <tbody>${released.map((row) => `<tr class="anc-readonly">${u.columns.map((c) => `<td>${esc(shown(c.key, row[c.key] || ''))}</td>`).join('')}</tr>`).join('')}
@@ -338,7 +340,7 @@ function visitForm(status) {
       ${cell(label('proteinuria'), visitPick('proteinuria', OPTION_LISTS.proteinuria()))}
       ${cell(label('glucosuria'), visitPick('glucosuria', OPTION_LISTS.glucosuria()))}
       ${cell(label('varices'), vfield('varices', { size: 'small' }))}
-      ${cell(label('fer'), vfield('fer', { size: 'tiny' }))}
+      ${cell(label('fer'), vfield('fer', { size: 'tiny' }), { after: canEdit() ? `<button type="button" class="link anc-order no-print" data-action="rx-iron">${esc(t('anc.addIron', 'Add to the prescription'))}</button>` : '' })}
       ${cell(esc(t('anc.educationDone', 'Education given')), `<input type="checkbox" data-visit="educationDone"${draft.educationDone === true ? ' checked' : ''}${canEdit() ? '' : ' disabled'}>`, { check: true })}
     </div>
     <fieldset class="anc-rapid"><legend>${esc(t('anc.rapidTests', 'Rapid tests done by the midwife'))}</legend>
@@ -404,40 +406,92 @@ function historySection() {
 }
 
 // ---------------------------------------------------------------- tasks
-function taskButton(task) {
-  if (!canEdit() || task.state || task.autoDone) return '';
-  const action = task.action;
-  if (action.startsWith('order:')) {
-    const code = action.slice(6);
-    const allowed = code === 'ULTRASOUND' ? cfg.options.midwifeImaging.includes('ULTRASOUND') : cfg.options.midwifeLabTests.includes(code);
-    return allowed ? `<button type="button" class="link" data-order="${esc(code)}">${esc(code === 'ULTRASOUND' ? t('anc.orderUltrasound', 'Send to Imaging (pay at the Cashier)') : t('anc.orderLab', 'Send to the Laboratory (pay at the Cashier)'))}</button>`
-      : `<button type="button" class="link" data-ask-doctor="${esc(code)}">${esc(t('anc.askDoctor', 'Ask a doctor to order'))}</button>`;
-  }
-  if (action.startsWith('own:')) return `<button type="button" class="link" data-focus="${esc(action.slice(4))}">${esc(t('anc.enterResult', 'Enter the result'))}</button>`;
-  if (action === 'rx:iron') return `<button type="button" class="link" data-action="rx-iron">${esc(t('anc.addIron', 'Add to the prescription'))}</button>`;
-  if (action === 'vaccine:tt') return `<a class="link" href="/vaccination?patient=${encodeURIComponent(patientKey)}&vaccine=tt">${esc(t('anc.giveVaccine', 'Open the vaccination'))}</a>`;
-  return '';
+// v47.7 - The to-do list is a clean checklist: a tick box and the task text.
+// Clicking the text opens the field where the task is filled in (TASK_TARGETS);
+// orders and the prescription are buttons next to those fields (orderButton).
+const firstEmpty = (selector) => {
+  const all = [...document.querySelectorAll(selector)];
+  return all.find((input) => !String(input.value || '').trim()) || all[0] || null;
+};
+const TASK_TARGETS = {
+  'data:weight': () => '[data-visit="weight"]',
+  'data:vitals': () => '[data-visit="bp"]',
+  'data:fhr': () => '[data-visit="fhr"]',
+  'data:uh': () => '[data-visit="uh"]',
+  'data:fp': () => '[data-visit="fp"]',
+  'own:urine': () => '[data-visit="proteinuria"]',
+  'rx:iron': () => '[data-visit="fer"]',
+  'data:education': () => '[data-visit="educationDone"]',
+  'vaccine:tt': () => '[data-visit="legacyDetails.44"]',
+  'own:hiv': () => '[data-visit="rapid.hiv"]',
+  'own:syphilis': () => '[data-visit="rapid.syphilis"]',
+  'own:hb': () => '[data-visit="rapid.hb"]',
+  'own:hb-window': () => '[data-visit="rapid.hb"]',
+  'data:anaemia': (task) => (task.visit === 1 ? '[data-path="history.anaemia.eyelid"]' : '[data-visit="rapid.hb"]'),
+  'data:breast': () => '[data-path="history.mouth.breast"]',
+  'data:mouth': () => '[data-path="history.mouth.stomatitis"]',
+  'data:height': () => '[data-path="heightCm"]',
+  'data:bmi': () => '[data-path="prePregnancyWeightKg"]',
+  'order:HBSAG': () => firstEmpty('[data-path^="labs."][data-path$=".hbsag"]'),
+  'order:BLOOD_GROUP': () => firstEmpty('[data-path^="labs."][data-path$=".group"]'),
+  'order:OGTT': () => '[data-ask-doctor="OGTT"], [data-order="OGTT"]',
+  'order:ULTRASOUND': () => firstEmpty('[data-path^="ultrasounds."][data-path$=".date"]'),
+};
+const TASK_GROUPS = [
+  ['records', 'anc.cat.records', 'Records'], ['lab', 'anc.cat.lab', 'Laboratory'], ['exam', 'anc.cat.exam', 'Examination'],
+  ['ultrasound', 'anc.cat.ultrasound', 'Ultrasound'], ['care', 'anc.cat.care', 'Care'],
+];
+// A task the data can complete: ticking it by hand means "not done here" (a reason is asked).
+const hasData = (task) => !['check', 'auto:record'].includes(task.action) && task.action !== 'data:education';
+function goToTask(task) {
+  const target = TASK_TARGETS[task.action]?.(task);
+  const node = typeof target === 'string' ? document.querySelector(target) : target;
+  if (!node) return false;
+  const section = node.closest('[data-anc-section]')?.dataset.ancSection;
+  if (section) selectSection(section);
+  node.scrollIntoView({ block: 'center' });
+  node.focus({ preventScroll: true });
+  const place = node.closest('.anc-cell, td, .anc-yesno-row, label') || node;
+  place.classList.remove('anc-flash'); void place.offsetWidth; place.classList.add('anc-flash');
+  setTimeout(() => place.classList.remove('anc-flash'), 1800);
+  return true;
+}
+// The order next to its field: the midwife orders it, or asks a doctor to order it.
+function orderButton(code) {
+  if (!canEdit()) return '';
+  const allowed = code === 'ULTRASOUND' ? cfg.options.midwifeImaging.includes('ULTRASOUND') : cfg.options.midwifeLabTests.includes(code);
+  return allowed ? `<button type="button" class="link anc-order no-print" data-order="${esc(code)}">${esc(code === 'ULTRASOUND' ? t('anc.orderUltrasound', 'Send to Imaging (pay at the Cashier)') : t('anc.orderLab', 'Send to the Laboratory (pay at the Cashier)'))}</button>`
+    : `<button type="button" class="link anc-order no-print" data-ask-doctor="${esc(code)}">${esc(t('anc.askDoctor', 'Ask a doctor to order'))}</button>`;
 }
 function taskItem(task, overdue = false) {
   const state = task.state;
   const done = Boolean(state?.status === 'done' || task.autoDone);
   const closed = state?.status === 'closed';
+  const text = TASK_TARGETS[task.action] ? `<a href="#" class="anc-task-text" data-task-go="${esc(task.key)}">${esc(task.text)}</a>`
+    : `<label class="anc-task-text" for="anc-task-${esc(task.key)}">${esc(task.text)}</label>`;
   return `<li class="anc-task${done ? ' is-done' : ''}${closed ? ' is-closed' : ''}${overdue ? ' is-overdue' : ''}" data-task="${esc(task.key)}">
-    <label><input type="checkbox" data-task-done="${esc(task.key)}"${done ? ' checked' : ''}${canEdit() && !task.autoDone ? '' : ' disabled'}> ${esc(task.text)}</label>
-    ${closed ? `<small>${esc(state.reason)}${state.reasonText ? ` · ${esc(state.reasonText)}` : ''}</small>` : ''}
-    <span class="anc-task-actions">${taskButton(task)}${canEdit() && !done && !closed ? `<button type="button" class="link" data-task-close="${esc(task.key)}">${esc(t('anc.closeUndone', 'Close without doing'))}</button>` : ''}
-      ${canEdit() && (closed || state?.status === 'done') ? `<button type="button" class="link" data-task-reopen="${esc(task.key)}">${esc(t('anc.reopen', 'Reopen'))}</button>` : ''}</span></li>`;
+    <input type="checkbox" id="anc-task-${esc(task.key)}" data-task-done="${esc(task.key)}" aria-label="${esc(task.text)}"${done || closed ? ' checked' : ''}${task.autoDone ? ' data-auto="1" aria-readonly="true"' : ''}${canEdit() ? '' : ' disabled'}>
+    <span class="anc-task-body">${text}${closed ? `<small>${esc(state.reason)}${state.reasonText ? ` · ${esc(state.reasonText)}` : ''}</small>` : ''}</span></li>`;
 }
+function taskGroups(tasks, overdue = false) {
+  return TASK_GROUPS.map(([category, key, en]) => {
+    const items = tasks.filter((task) => task.category === category);
+    return items.length ? `<div class="anc-task-group"><h4>${esc(t(key, en))}</h4><ul class="anc-task-list">${items.map((task) => taskItem(task, overdue)).join('')}</ul></div>` : '';
+  }).join('');
+}
+let shownTasks = new Map();
 function renderTasks(status) {
   const host = $('anc-tasks');
   if (!data.pregnancy) { host.innerHTML = ''; return; }
   const header = status.scheduled ? `${t('anc.visitOf', 'Visit')} ${status.visit.visit}/${status.visitsPlanned} · ${status.visit.label}` : t('anc.notScheduled', 'Not a scheduled visit');
   const next = status.next ? `${t('anc.nextVisit', 'Next scheduled visit')}: ${status.next.label} · ${status.appointment}` : '';
   const stateOf = (task) => ({ ...task, state: record.tasks?.[task.key] || null });
+  const current = status.tasks.map(stateOf), overdue = status.overdue.map(stateOf);
+  shownTasks = new Map([...current, ...overdue].map((task) => [task.key, task]));
   const html = `
     <p class="anc-task-visit">${esc(header)}</p>${next ? `<p class="anc-task-next">${esc(next)}</p>` : ''}
-    ${status.tasks.length ? `<ul class="anc-task-list">${status.tasks.map((task) => taskItem(stateOf(task))).join('')}</ul>` : ''}
-    ${status.overdue.length ? `<h3 class="anc-overdue-title">${esc(t('anc.overdue', 'Overdue from earlier visits'))}</h3><ul class="anc-task-list">${status.overdue.map((task) => taskItem(stateOf(task), true)).join('')}</ul>` : ''}`;
+    ${current.length ? `<div class="anc-task-groups">${taskGroups(current)}</div>` : ''}
+    ${overdue.length ? `<h3 class="anc-overdue-title">${esc(t('anc.overdue', 'Overdue from earlier visits'))}</h3><div class="anc-task-groups">${taskGroups(overdue, true)}</div>` : ''}`;
   const wasClosed = host.querySelector('details')?.open === false;
   host.innerHTML = `<details class="anc-task-disclosure"${wasClosed ? '' : ' open'}><summary id="anc-tasks-title">${esc(t('anc.todo', 'To do at this visit'))} <span class="anc-task-count">${status.tasks.filter(task => task.autoDone || record.tasks?.[task.key]?.status === 'done').length}/${status.tasks.length}</span></summary><div>${html}</div></details>`;
   // v43.1: tasks stay inline; opening a patient never launches a blocking modal.
@@ -516,10 +570,10 @@ async function load() {
 }
 
 // ---------------------------------------------------------------- events
-// Boxes ticked from the patient data cannot be unticked (not disabled, so the
-// tick keeps its colour); the data is corrected instead.
+// Boxes ticked from the patient data (colour chart, v47.7 to-do list) cannot be
+// unticked (not disabled, so the tick keeps its colour); the data is corrected instead.
 document.addEventListener('click', (event) => {
-  if (event.target.matches?.('.anc-chart input[data-auto]')) event.preventDefault();
+  if (event.target.matches?.('.anc-chart input[data-auto], #anc-tasks input[data-auto]')) event.preventDefault();
 });
 document.addEventListener('input', (event) => {
   const target = event.target;
@@ -586,11 +640,12 @@ function askCloseReason(key) {
       refreshLive();
     } catch (error) { dialog.querySelector('.anc-error').textContent = error.message; }
   });
+  dialog.addEventListener('close', () => refreshLive(), { once: true });
   dialog.showModal();
 }
 
 document.addEventListener('click', async (event) => {
-  const button = event.target.closest('button, a.link');
+  const button = event.target.closest('button, a.link, a[data-task-go]');
   if (!button) return;
   if (button.dataset.ancNav) { selectSection(button.dataset.ancNav); return; }
   if (button.hasAttribute('data-dialog-close')) { closeDialog(event); return; }
@@ -638,7 +693,8 @@ document.addEventListener('click', async (event) => {
   if (action === 'rx-iron') {
     const name = cfg.options.ironPrescriptionMedicine;
     addLine((cfg.midwifeMedicines || []).find((item) => item.name === name && /tablet/i.test(item.form)) || (cfg.midwifeMedicines || []).find((item) => item.name === name));
-    document.getElementById('anc-visit-form')?.scrollIntoView({ block: 'end' });
+    selectSection('care');
+    document.querySelector('.anc-rx')?.scrollIntoView({ block: 'center' });
     return;
   }
   if (button.dataset.rxRemove !== undefined) { prescription.splice(Number(button.dataset.rxRemove), 1); renderMain(); return; }
@@ -657,24 +713,22 @@ document.addEventListener('click', async (event) => {
     setStatus(t('anc.ordered', 'Sent. The patient pays at the Cashier.'));
   });
   if (button.dataset.askDoctor) return run(async () => { await api('/api/maternal/ask-doctor', body({ test: button.dataset.askDoctor })); });
-  if (button.dataset.focus) {
-    const map = { hiv: 'rapid.hiv', syphilis: 'rapid.syphilis', hb: 'rapid.hb', 'hb-window': 'rapid.hb', urine: 'proteinuria' };
-    const input = document.querySelector(`[data-visit="${map[button.dataset.focus]}"]`);
-    const section = input?.closest('[data-anc-section]')?.dataset.ancSection;
-    if (section) selectSection(section);
-    input?.scrollIntoView({ block: 'center' }); input?.focus();
-    $('anc-tasks-dialog').close?.();
-    return;
-  }
-  if (button.dataset.taskClose) { askCloseReason(button.dataset.taskClose); return; }
-  if (button.dataset.taskReopen) return run(async () => {
-    const result = await api(`/api/anc/record/${id}/task`, body({ key: button.dataset.taskReopen, action: 'reopen' }));
-    record.tasks = result.pregnancy.record.tasks; refreshLive();
-  });
+  if (button.dataset.taskGo) { event.preventDefault(); const task = shownTasks.get(button.dataset.taskGo); if (task) goToTask(task); return; }
 });
 document.addEventListener('change', async (event) => {
   const key = event.target.dataset.taskDone;
   if (!key) return;
+  const task = shownTasks.get(key);
+  if (event.target.checked && task && !task.state) {
+    if (task.action === 'data:education') {
+      draft.educationDone = true;
+      const box = document.querySelector('[data-visit="educationDone"]');
+      if (box) box.checked = true;
+      refreshLive();
+      return;
+    }
+    if (hasData(task)) { event.target.checked = false; askCloseReason(key); return; }
+  }
   try {
     const result = await api(`/api/anc/record/${data.pregnancy.id}/task`, body({ key, action: event.target.checked ? 'done' : 'reopen' }));
     record.tasks = result.pregnancy.record.tasks;
@@ -689,7 +743,7 @@ function printRecord() {
     <div class="anc-colour-boxes">${['green', 'yellow', 'red'].map((key) => `<span class="anc-colour-box anc-box-${key}"><span class="anc-box">${status.colour === key ? '✓' : ''}</span>${esc(colourWord(key))}</span>`).join('')}</div></header>`;
   const footer = `<footer class="anc-print-foot">${esc(L().footer)}</footer>`;
   const snapshot = $('anc-main').cloneNode(true);
-  snapshot.querySelectorAll('.anc-visit, .anc-chart, .anc-history, .anc-hint, .anc-rapid').forEach((node) => node.remove());
+  snapshot.querySelectorAll('.anc-visit, .anc-chart, .anc-history, .anc-hint, .anc-rapid, .anc-order, .anc-order-line').forEach((node) => node.remove());
   const visitHistory = snapshot.querySelector('#anc-visit-history .anc-box-panel');
   if (visitHistory) snapshot.querySelector('[data-page="3"]')?.append(visitHistory);
   snapshot.querySelectorAll('input').forEach((input) => {

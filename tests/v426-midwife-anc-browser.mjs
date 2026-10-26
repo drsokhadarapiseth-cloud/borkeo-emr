@@ -180,7 +180,7 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies, 
     await pregnancy(red, { age: '25', lmpWeeks: 20, hb: '6.5' });
     assert.equal(await ticked(), 'red', 'red pregnancy');
     // Close a task without doing it: a reason is needed.
-    await click('#anc-tasks [data-task-close]');
+    await click('#anc-tasks li.anc-task:not(.is-done):has(a.anc-task-text) input[data-task-done]:not([disabled])');
     await browser.waitFor(`document.querySelector('#anc-close-dialog')?.open===true`, 'close dialog');
     await browser.evaluate(`(()=>{const d=document.querySelector('#anc-close-dialog');d.querySelector('input[value="ផ្សេងៗ"]').checked=true;d.querySelector('form').requestSubmit();return true})()`);
     await browser.waitFor(`(document.querySelector('#anc-close-dialog .anc-error')?.textContent||'').length>0`, 'other needs a text');

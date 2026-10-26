@@ -525,3 +525,8 @@ context.retry,Retry context session loading,Authorized master-task context recov
 "anc.educationDone","Education given","ANC today's visit: education given at this visit (v47.5, owner approved)","public/anc-record.js","អប់រំរួច"
 "anc.bp","Blood pressure","ANC today's visit: blood pressure and pulse as two fields (v47.6, owner approved)","public/anc-record.js","សម្ពាធឈាម"
 "anc.pulse","Pulse","ANC today's visit: blood pressure and pulse as two fields (v47.6, owner approved)","public/anc-record.js","ជីពចរ"
+"anc.cat.records","Records","ANC to-do list group heading (v47.7, owner approved)","public/anc-record.js","ឯកសារ"
+"anc.cat.lab","Laboratory","ANC to-do list group heading (v47.7, owner approved)","public/anc-record.js","មន្ទីរពិសោធន៍"
+"anc.cat.exam","Examination","ANC to-do list group heading (v47.7, owner approved)","public/anc-record.js","ការពិនិត្យ"
+"anc.cat.ultrasound","Ultrasound","ANC to-do list group heading (v47.7, owner approved)","public/anc-record.js","អេកូសាស្ត្រ"
+"anc.cat.care","Care","ANC to-do list group heading (v47.7, owner approved)","public/anc-record.js","ការថែទាំ"
