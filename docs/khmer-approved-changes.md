@@ -175,3 +175,12 @@ triage action row. The admission form and the other print action remain intact.
 | file | line | before | after |
 |------|------|--------|-------|
 | protected/EMR.html | 7316 | បោះពុម្ភលិខិតចូល | [removed] |
+
+## v47.3 ANC urine field names (owner's order)
+
+Owner ordered the visit urine fields renamed and turned into dropdown lists.
+
+| file | line | before | after |
+|------|------|--------|-------|
+| server/catalogues/anc-record-labels.json | 138 | ជាតិប្រៃ | ជាតិសាច់ក្នុងទឹកនោម |
+| server/catalogues/anc-record-labels.json | 139 | ជាតិផ្អែម | ជាតិស្ករក្នុងទឹកនោម |

@@ -1,5 +1,24 @@
 # Task context for Codex, Gemini or OpenCode
 
+## ANC automatic colour code - v47.3.0, 26 October 2026
+
+User approved ("yes code it") automatic ticking of the ANC colour-code chart
+from patient data, dropdowns for the ultrasound table, units on today's visit,
+and the urine fields renamed ជាតិសាច់ក្នុងទឹកនោម / ជាតិស្ករក្នុងទឹកនោម with
+plus-sign dropdowns. Clean master a59ea43 (47.2.0); branch
+feature/maternity-anc-auto-colour-code. Pre-update code snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v47.2.0-a59ea43e-90c5620d
+
+Rules live in the AUTO table of public/anc-engine.mjs; evaluateColour now
+returns `applied` (every item that applies, green too) and `automatic` (locked
+ticks). The server merges released Imaging ultrasounds like Laboratory results.
+Only ANC files, version files and Khmer approval files changed. The official
+chart JSON is unchanged. Owner decisions taken: FHR < 110 / > 160 red; BP
+>= 140/90 with protein ++ red; fundal height > GA + 3 cm from 20 weeks yellow;
+fetus count column added. See ANC_AUTO_COLOUR_V473_VALIDATION.md and the v47.3
+update TXT. Running v426-midwife-anc-browser rewrites verification-v431/*.png;
+do not commit those images unless intended.
+
 ## ANC triage transfer correction - v47.2.0, 26 October 2026
 
 User explicitly requested fixing the triage ANC transfer that opened a JSON

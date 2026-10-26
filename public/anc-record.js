@@ -107,6 +107,28 @@ const field = (path, { type = 'text', size = '', placeholder = '' } = {}) => {
 };
 const choice = (path, value, label) => `<label class="anc-choice"><input type="radio" name="${esc(path)}" data-path="${esc(path)}" value="${esc(value)}"${getPath(record, path) === value ? ' checked' : ''}${canEdit() ? '' : ' disabled'}> ${esc(label)}</label>`;
 const vfield = (key, { type = 'text', size = '' } = {}) => `<input type="${type}" data-visit="${esc(key)}" value="${esc(getPath(draft, key) ?? '')}" class="anc-field ${size}"${canEdit() ? '' : ' disabled'}>`;
+// v47.3 - Dropdown lists (stored as codes). A value typed before v47.3 that is
+// not in the list stays as its own option, so nothing saved is lost.
+const PRESENTATION_TEXT = { cephalic: ['anc.pres.cephalic', 'Cephalic'], breech: ['anc.pres.breech', 'Breech'], transverse: ['anc.pres.transverse', 'Transverse'] };
+const PLACENTA_TEXT = { anterior: ['anc.placenta.anterior', 'Anterior'], posterior: ['anc.placenta.posterior', 'Posterior'], fundal: ['anc.placenta.fundal', 'Fundal'],
+  lateral: ['anc.placenta.lateral', 'Lateral'], previa: ['anc.placenta.previa', 'Placenta previa'] };
+const FLUID_TEXT = { normal: ['anc.fluid.normal', 'Normal'], low: ['anc.fluid.low', 'Low'], high: ['anc.fluid.high', 'High'] };
+const codeText = (table, value) => (table[value] ? t(...table[value]) : value);
+const OPTION_LISTS = {
+  presentation: () => anc.PRESENTATIONS.map((code) => [code, codeText(PRESENTATION_TEXT, code)]),
+  placenta: () => anc.PLACENTAS.map((code) => [code, codeText(PLACENTA_TEXT, code)]),
+  afi: () => anc.FLUIDS.map((code) => [code, codeText(FLUID_TEXT, code)]),
+  fetuses: () => anc.FETUSES.map((code) => [code, code]),
+  proteinuria: () => anc.PROTEINURIA.map((code) => [code, code]),
+  glucosuria: () => anc.GLUCOSURIA.map((code) => [code, code]),
+};
+const pickList = (attr, path, value, list) => {
+  const current = String(value ?? '');
+  const options = [['', ''], ...list, ...(current && !list.some(([code]) => code === current) ? [[current, current]] : [])];
+  return `<select ${attr}="${esc(path)}"${canEdit() ? '' : ' disabled'}>${options.map(([code, text]) => `<option value="${esc(code)}"${code === current ? ' selected' : ''}>${esc(text)}</option>`).join('')}</select>`;
+};
+const recordPick = (path, list) => pickList('data-path', path, getPath(record, path), list);
+const visitPick = (key, list) => pickList('data-visit', key, getPath(draft, key), list);
 
 // ---------------------------------------------------------------- status
 function visitsWithDraft() {
@@ -115,7 +137,8 @@ function visitsWithDraft() {
 }
 function currentStatus() {
   const labs = [...(data.released?.labs || []), ...(record.labs || [])];
-  return anc.ancStatus({ chart: cfg.chart, schedule: cfg.schedule, record: { ...record, labs }, visits: visitsWithDraft(), today: data.today, options: cfg.options });
+  const ultrasounds = [...(data.released?.ultrasounds || []), ...(record.ultrasounds || [])];
+  return anc.ancStatus({ chart: cfg.chart, schedule: cfg.schedule, record: { ...record, labs, ultrasounds }, visits: visitsWithDraft(), today: data.today, options: cfg.options });
 }
 
 // ---------------------------------------------------------------- top and summary
@@ -248,10 +271,14 @@ function ultrasoundTable() {
   const u = L().ultrasound;
   const released = data.released?.ultrasounds || [];
   const typed = Array.from({ length: Math.max(3, (record.ultrasounds || []).length + 1) }, (_, index) => index);
+  const units = { ga: t('anc.weeks', 'weeks'), bpd: 'mm', weight: t('anc.unit.grams', 'g') };
+  const cell = (i, key) => (OPTION_LISTS[key] ? recordPick(`ultrasounds.${i}.${key}`, OPTION_LISTS[key]())
+    : field(`ultrasounds.${i}.${key}`, { type: ['date', 'edd'].includes(key) ? 'date' : 'text', size: 'small' }));
+  const shown = (key, value) => (key === 'presentation' ? codeText(PRESENTATION_TEXT, value) : key === 'placenta' ? codeText(PLACENTA_TEXT, value) : key === 'afi' ? codeText(FLUID_TEXT, value) : value);
   return `<div class="anc-box-panel"><h3>${esc(u.title)}</h3><div class="anc-table-wrap"><table class="anc-table">
-    <thead><tr>${u.columns.map((c) => `<th>${esc(english() ? c.en : c.kh)}</th>`).join('')}</tr></thead>
-    <tbody>${released.map((row) => `<tr class="anc-readonly">${u.columns.map((c) => `<td>${esc(row[c.key] || '')}</td>`).join('')}</tr>`).join('')}
-    ${typed.map((i) => `<tr>${u.columns.map((c) => `<td>${field(`ultrasounds.${i}.${c.key}`, { type: ['date', 'edd'].includes(c.key) ? 'date' : 'text', size: 'small' })}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+    <thead><tr>${u.columns.map((c) => `<th>${esc(english() ? c.en : c.kh)}${units[c.key] ? `<br><small>(${esc(units[c.key])})</small>` : ''}</th>`).join('')}</tr></thead>
+    <tbody>${released.map((row) => `<tr class="anc-readonly">${u.columns.map((c) => `<td>${esc(shown(c.key, row[c.key] || ''))}</td>`).join('')}</tr>`).join('')}
+    ${typed.map((i) => `<tr>${u.columns.map((c) => `<td>${cell(i, c.key)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
 }
 
 function visitValue(visit, key, status) {
@@ -261,6 +288,7 @@ function visitValue(visit, key, status) {
   if (key === 'name') return visit.staffName || visit.createdBy || '';
   if (key === 'vaccination') return (data.vaccinations || []).filter((v) => v.givenDate === visit.date).map((v) => `TT${v.doseNumber}`).join(', ');
   if (key === 'wp') return visit.wp || weightGain(visit.weight);
+  if (key === 'fp') return codeText(PRESENTATION_TEXT, visit.fp ?? '');
   return visit[key] ?? '';
 }
 function weightGain(weight) {
@@ -294,11 +322,11 @@ function visitForm(status) {
       <label>${label('bp')} ${vfield('bp', { size: 'small' })} - ${vfield('pulse', { size: 'tiny' })}</label>
       <label>${esc(t('anc.temperature', 'Temperature'))} ${vfield('temperature', { size: 'tiny' })} °C</label>
       <label>SpO2 ${vfield('spo2', { size: 'tiny' })} %</label>
-      <label>${label('uh')} ${vfield('uh', { size: 'tiny' })}</label>
-      <label>${label('fp')} ${vfield('fp', { size: 'small' })}</label>
-      <label>${label('fhr')} ${vfield('fhr', { size: 'tiny' })}</label>
-      <label>${label('proteinuria')} ${vfield('proteinuria', { size: 'tiny' })}</label>
-      <label>${label('glucosuria')} ${vfield('glucosuria', { size: 'tiny' })}</label>
+      <label>${label('uh')} ${vfield('uh', { size: 'tiny' })} ${esc(english() ? 'cm' : L().identity.heightUnit)}</label>
+      <label>${label('fp')} ${visitPick('fp', OPTION_LISTS.presentation())}</label>
+      <label>${label('fhr')} ${vfield('fhr', { size: 'tiny' })} ${esc(t('anc.unit.perMinute', '/min'))}</label>
+      <label>${label('proteinuria')} ${visitPick('proteinuria', OPTION_LISTS.proteinuria())}</label>
+      <label>${label('glucosuria')} ${visitPick('glucosuria', OPTION_LISTS.glucosuria())}</label>
       <label>${label('varices')} ${vfield('varices', { size: 'small' })}</label>
       <label>${label('fer')} ${vfield('fer', { size: 'tiny' })}</label>
     </div>
@@ -331,14 +359,30 @@ const PER_DAY = { qd_m: 1, bid: 2, tid: 3 };
 const rxTotal = (line) => { const total = Number(line.doseAmount) * (PER_DAY[line.scheduleType] || 1) * Number(line.d); return total > 0 ? String(total) : ''; };
 
 // ---------------------------------------------------------------- colour chart and history
+// v47.3: a box is ticked when its item applies - from the patient data
+// (Registration, Triage, this record, results; locked, the data is corrected
+// instead) or ticked by the midwife.
 function chartSection(status) {
-  const applied = new Set(status.reasons.map((reason) => reason.key));
+  const applied = new Set(status.applied);
+  const automatic = new Set(status.automatic);
   return `<section class="anc-page anc-chart"><h2>${esc(cfg.chart.title)}</h2>
     <div class="anc-chart-grid">${cfg.chart.sections.map((section) => `<div class="anc-box-panel"><h3>${esc(section.kh)}</h3>
       ${['green', 'yellow', 'red'].map((level) => `<div class="anc-chart-level anc-level-${level}"><strong>${esc(cfg.chart.levels[level])}</strong>
-        ${section.items.filter((item) => item.level === level).map((item) => `<label class="anc-choice${applied.has(item.key) ? ' is-applied' : ''}">
-          <input type="checkbox" data-path="ticks.${esc(item.key)}"${record.ticks?.[item.key] ? ' checked' : ''}${canEdit() ? '' : ' disabled'}> ${esc(item.kh)}${item.auto ? ` <small class="anc-auto">${esc(t('anc.auto', 'automatic'))}</small>` : ''}</label>`).join('')}</div>`).join('')}
+        ${section.items.filter((item) => item.level === level).map((item) => `<label class="anc-choice${applied.has(item.key) ? ' is-applied' : ''}${automatic.has(item.key) ? ' is-automatic' : ''}">
+          <input type="checkbox" data-path="ticks.${esc(item.key)}"${applied.has(item.key) ? ' checked' : ''}${automatic.has(item.key) ? ' data-auto="1" aria-readonly="true"' : ''}${canEdit() ? '' : ' disabled'}> ${esc(item.kh)}</label>`).join('')}</div>`).join('')}
     </div>`).join('')}</div></section>`;
+}
+function refreshChart(status) {
+  const applied = new Set(status.applied);
+  const automatic = new Set(status.automatic);
+  document.querySelectorAll('.anc-chart input[data-path^="ticks."]').forEach((input) => {
+    const key = input.dataset.path.slice(6);
+    input.checked = applied.has(key);
+    input.disabled = !canEdit();
+    if (automatic.has(key)) { input.dataset.auto = '1'; input.setAttribute('aria-readonly', 'true'); } else { delete input.dataset.auto; input.removeAttribute('aria-readonly'); }
+    input.closest('.anc-choice')?.classList.toggle('is-applied', applied.has(key));
+    input.closest('.anc-choice')?.classList.toggle('is-automatic', automatic.has(key));
+  });
 }
 
 function historySection() {
@@ -421,6 +465,7 @@ function refreshLive() {
   renderTop(status);
   renderSummary(status);
   renderTasks(status);
+  refreshChart(status);
   document.querySelectorAll('[data-anc-ga]').forEach(node => { node.textContent = status.ga?.label || ''; });
   document.querySelectorAll('.anc-visit-name').forEach((node) => { node.textContent = status.scheduled ? `${t('anc.visitOf', 'Visit')} ${status.visit.visit}/${status.visitsPlanned} · ${status.visit.label}` : t('anc.notScheduled', 'Not a scheduled visit'); });
 }
@@ -454,6 +499,11 @@ async function load() {
 }
 
 // ---------------------------------------------------------------- events
+// Boxes ticked from the patient data cannot be unticked (not disabled, so the
+// tick keeps its colour); the data is corrected instead.
+document.addEventListener('click', (event) => {
+  if (event.target.matches?.('.anc-chart input[data-auto]')) event.preventDefault();
+});
 document.addEventListener('input', (event) => {
   const target = event.target;
   if (target.dataset.path && record) {

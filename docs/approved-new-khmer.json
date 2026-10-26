@@ -2204,6 +2204,84 @@
       "en": "Sent to the OPD doctor to select the required tests.",
       "kh": "បានបញ្ជូនទៅគ្រូពេទ្យពិគ្រោះក្រៅដើម្បីកំណត់តេស្ត",
       "note": "Owner-approved OPD plus paraclinic doctor-first routing message."
+    },
+    {
+      "en": "Cephalic",
+      "kh": "ក្បាល",
+      "key": "anc.pres.cephalic",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Breech",
+      "kh": "គូទ",
+      "key": "anc.pres.breech",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Transverse",
+      "kh": "ទទឹង",
+      "key": "anc.pres.transverse",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Anterior",
+      "kh": "ខាងមុខ",
+      "key": "anc.placenta.anterior",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Posterior",
+      "kh": "ខាងក្រោយ",
+      "key": "anc.placenta.posterior",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Fundal",
+      "kh": "បាតស្បូន",
+      "key": "anc.placenta.fundal",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Lateral",
+      "kh": "ចំហៀង",
+      "key": "anc.placenta.lateral",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Placenta previa",
+      "kh": "សុកពាំងមាត់ស្បូន",
+      "key": "anc.placenta.previa",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Normal",
+      "kh": "ធម្មតា",
+      "key": "anc.fluid.normal",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Low",
+      "kh": "តិច",
+      "key": "anc.fluid.low",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "High",
+      "kh": "ច្រើន",
+      "key": "anc.fluid.high",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "g",
+      "kh": "ក្រាម",
+      "key": "anc.unit.grams",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "/min",
+      "kh": "ដង/នាទី",
+      "key": "anc.unit.perMinute",
+      "source": "docs/translations-needed.csv"
     }
   ]
 }

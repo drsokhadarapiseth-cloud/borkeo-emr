@@ -218,11 +218,11 @@ export function pregnancyVaccinations(database, pregnancy) {
   return database.sqlite.prepare('SELECT * FROM vaccinations WHERE pregnancy_id=? ORDER BY given_date').all(pregnancy.id).map(vaccinationFromRow);
 }
 
-// Released Laboratory results count like the typed ones (colour, tasks).
+// Released Laboratory and Imaging results count like the typed ones (colour, tasks).
 export function recordWithResults(database, pregnancy) {
   const row = database.findPatient(pregnancy.patientKey);
   const released = row ? releasedResults(database, row) : { labs: [], ultrasounds: [] };
-  return { ...pregnancy.record, labs: [...released.labs, ...(pregnancy.record.labs || [])] };
+  return { ...pregnancy.record, labs: [...released.labs, ...(pregnancy.record.labs || [])], ultrasounds: [...released.ultrasounds, ...(pregnancy.record.ultrasounds || [])] };
 }
 
 export function statusFor(database, pregnancy, today = opdLocalDate()) {
