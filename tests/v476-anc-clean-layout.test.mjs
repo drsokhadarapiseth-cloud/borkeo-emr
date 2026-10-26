@@ -42,5 +42,4 @@ test('styles: 4 / 2 / 1 columns, aligned cells and tick boxes, screen only', () 
   assert.match(v476, /max-width:760px\) \{\n \.anc-page \.anc-grid[^}]*grid-template-columns:minmax\(0,1fr\)/);
   assert.match(v476, /\.anc-page \.anc-choice \{ display:flex; align-items:flex-start;/);
   assert.match(v476, /\.anc-page \.anc-fixed-table \{ table-layout:fixed; \}/);
-  assert.match(v476, /\.anc-tasks \.anc-task-actions \{ display:flex;[^}]*margin-top:auto; \}/);
 });

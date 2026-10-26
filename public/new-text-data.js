@@ -262,4 +262,9 @@ window.BORKEO_NEW_TEXT_KH = {
   "anc.educationDone": "អប់រំរួច",
   "anc.bp": "សម្ពាធឈាម",
   "anc.pulse": "ជីពចរ",
+  "anc.cat.records": "ឯកសារ",
+  "anc.cat.lab": "មន្ទីរពិសោធន៍",
+  "anc.cat.exam": "ការពិនិត្យ",
+  "anc.cat.ultrasound": "អេកូសាស្ត្រ",
+  "anc.cat.care": "ការថែទាំ",
 };

@@ -1,5 +1,19 @@
 # Task context for Codex, Gemini or OpenCode
 
+## ANC to-do list as a clean checklist - v47.7.0, 26 October 2026
+
+User approved ("yes") replacing the to-do cards and buttons by a grouped
+checklist (tick box + text); the text opens the field to fill. Clean master
+3b255d5 (47.6.0); branch feature/maternity-anc-clean-checklist. Pre-update
+code snapshot: C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v47.6.0-3b255d52-bfb4f9f6
+
+TASK_TARGETS / goToTask / orderButton / taskItem / taskGroups in
+public/anc-record.js. Ticking a data task by hand = close with a reason;
+education ticks draft.educationDone. Orders (Lab, Imaging, ask doctor, iron,
+vaccination) are next to their fields and removed from the print snapshot.
+Task text is an <a>, because shared-controls.css restyles every <button>.
+See ANC_CHECKLIST_V477_VALIDATION.md.
+
 ## ANC clean screen layout - v47.6.0, 26 October 2026
 
 Second part of the approval given for v47.5. Clean master 52fa093 (47.5.0);
