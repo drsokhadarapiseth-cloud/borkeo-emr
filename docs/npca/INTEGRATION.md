@@ -1,5 +1,18 @@
 # Borkeo EMR NPCA integration — v42.8.0
 
+## v48.0.0 changes (NPCA v1.4 PDF comparison)
+
+- Marital status, occupation and disability are read from the current Registration
+  positions (server/npca/registration-fields.mjs, checked in the browser by
+  tests/npca-registration-fields-browser.mjs). Before v48.0 the marital status was
+  read from old positions, so every real patient was blocked as "unmapped".
+- `occupation` and `disabilities` are sent when present; encounters carry `class`;
+  diagnoses carry `diagnosis_type` and `diagnosis_type_name`; prescription
+  medicines carry `code`, `medicine_code` and `form`.
+- Only single CMS codes pass the local check (OPEN-QUESTIONS.md 27).
+- The NPCA page has a date-range status check (cashier, accountant, ADMIN).
+- Approval pack for NPCA: docs/npca/approval-pack/ and NPCA-V1.4-CONFORMANCE.md.
+
 NPCA is disabled by default. No real patient data was sent during development.
 The integration was tested with synthetic patients and a loopback HTTP mock.
 Passing those tests is not NPCA certification.

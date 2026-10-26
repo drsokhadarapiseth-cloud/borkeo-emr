@@ -31,7 +31,9 @@ export function buildVisitPayload(source, config, database) {
   const patient={code:patientCode,surname:source.patient.surname,name:source.patient.name,
     sex:code('sex',source.patient.sex,'patient.sex','registration'),birthdate:source.patient.birthdate,
     phone:String(source.patient.phone||'').replace(/[\s()-]/g,''),nationality:code('nationality',source.patient.nationality,'patient.nationality','registration'),
-    marital_status:code('marital',source.patient.maritalStatus,'patient.marital_status','registration'),spid:source.link?.spid,
+    marital_status:code('marital',source.patient.maritalStatus,'patient.marital_status','registration'),
+    // Optional in the PDF: sent only when Registration has a value.
+    ...(source.patient.occupation?{occupation:source.patient.occupation}:{}),...(array(source.patient.disabilities).length?{disabilities:array(source.patient.disabilities)}:{}),spid:source.link?.spid,
     address:source.patient.address,identifications:array(source.patient.identifications).map(item=>({...item,patient_code:patientCode})),...stamp};
   const visit={health_facility_code:config.facilityCode,patient_code:patientCode,code:visitCode,
     admission_type:code('admission',source.admissionType,'admission_type','registration'),
@@ -39,10 +41,13 @@ export function buildVisitPayload(source, config, database) {
     ...(source.completed?{discharge_type:code('discharge',source.dischargeType,'discharge_type','discharge'),visit_outcome:code('outcome',source.outcome,'visit_outcome','discharge'),discharged_at:npcaTime(source.dischargedAt)}:{}),
     ...(source.followupAt?{followup_at:npcaTime(source.followupAt)}:{}),patient};
   const encounterMap=new Map();
-  for(const [key,type] of [['outpatients','opd'],['inpatients','ipd'],['emergencies','emergency'],['surgeries','surgery'],['progress_notes','progress']]){
+  // PDF 5.1: every encounter carries its class ("OPD", "IPD" or "EMERGENCY");
+  // surgery and progress notes belong to the visit's own class.
+  const visitClass=source.visitType==='ipd'?'IPD':'OPD';
+  for(const [key,type,encounterClass] of [['outpatients','opd','OPD'],['inpatients','ipd','IPD'],['emergencies','emergency','EMERGENCY'],['surgeries','surgery',visitClass],['progress_notes','progress','IPD']]){
     visit[key]=array(source[key]).map((item,index)=>{
       const id=item.id??String(index), encounterCode=stableCode(source.patient.patientKey,type,String(id));encounterMap.set(String(id),encounterCode);
-      return compact({...item,visit_code:visitCode,code:encounterCode,id:undefined,encounterId:undefined,is_new:item.is_new,started_at:npcaTime(item.started_at),ended_at:npcaTime(item.ended_at),...stamp});
+      return compact({...item,visit_code:visitCode,code:encounterCode,class:encounterClass,id:undefined,encounterId:undefined,is_new:item.is_new,started_at:npcaTime(item.started_at),ended_at:npcaTime(item.ended_at),...stamp});
     });
   }
   const encounterCode = id => id==null ? null : encounterMap.get(String(id));
@@ -58,9 +63,11 @@ export function buildVisitPayload(source, config, database) {
   for(const item of array(source.dailyVitals))visit.vital_signs.push(compact({...item,encounterId:undefined,encounter_code:encounterCode(item.encounterId),recorded_at:npcaTime(item.recorded_at),observations:array(item.observations).map(o=>({name:code('vital',o.name,'vital_signs.name','daily'),value:numeric(o.value)}))}));
   for(const [key,category] of [['medical_histories','history'],['physical_examinations','physical']])visit[key]=array(source[key]).filter(item=>item.value!==''&&item.value!=null&&(!Array.isArray(item.value)||item.value.length)).map(item=>compact({...item,...link,encounter_code:encounterCode(item.encounterId),encounterId:undefined,name:code(category,item.name,key+'.name','medical')}));
   for(const key of ['laboratories','imageries'])visit[key]=array(source[key]).filter(item=>item.released===true).map(item=>compact({...item,...link,released:undefined,encounterId:undefined,encounter_code:encounterCode(item.encounterId),requested_at:npcaTime(item.requested_at),results:array(item.results).map(result=>({...result,verified_at:npcaTime(result.verified_at),recorded_at:npcaTime(result.recorded_at),...(key==='imageries'?{images:array(result.images).filter(url=>source.reachableImageUrls?.includes(url)&&/^https:\/\//.test(url))}:{})}))}));
-  visit.diagnoses=array(source.diagnoses).map(item=>compact({...item,...link,encounterId:undefined,encounter_code:encounterCode(item.encounterId),diagnosed_at:npcaTime(item.diagnosed_at)}));
+  // The PDF names the field diagnosis_type, the Excel workbook diagnosis_type_name: both are sent.
+  visit.diagnoses=array(source.diagnoses).map(item=>compact({...item,...link,diagnosis_type:item.diagnosis_type_name,encounterId:undefined,encounter_code:encounterCode(item.encounterId),diagnosed_at:npcaTime(item.diagnosed_at)}));
   visit.soaps=array(source.soaps).map((item,index)=>compact({...item,encounterId:undefined,encounter_code:encounterCode(item.encounterId),code:stableCode(source.patient.patientKey,'soap',String(item.id??index)),id:undefined,recorded_at:npcaTime(item.recorded_at)}));
-  visit.prescriptions=array(source.prescriptions).map((item,index)=>({...link,encounter_code:item.home===true?null:encounterCode(item.encounterId),code:stableCode(source.patient.patientKey,'rx',String(item.id??index)),prescribed_at:npcaTime(item.prescribed_at),prescribed_by:item.prescribed_by,title:item.title,medications:array(item.medications).map(m=>compact({code:m.cmsCode,medicine_name:m.medicine_name,strength:m.strength,method:m.method,unit:m.unit,
+  // CMS code as code (Excel) and medicine_code (PDF); form as in the PDF example.
+  visit.prescriptions=array(source.prescriptions).map((item,index)=>({...link,encounter_code:item.home===true?null:encounterCode(item.encounterId),code:stableCode(source.patient.patientKey,'rx',String(item.id??index)),prescribed_at:npcaTime(item.prescribed_at),prescribed_by:item.prescribed_by,title:item.title,medications:array(item.medications).map(m=>compact({code:m.cmsCode,medicine_code:m.cmsCode,medicine_name:m.medicine_name,strength:m.strength,form:m.form||undefined,method:m.method,unit:m.unit,
     morning:numeric(m.morning),afternoon:numeric(m.afternoon),evening:numeric(m.evening),night:numeric(m.night),days:numeric(m.days),interval:m.interval||undefined,note:m.note||undefined,dispense:{quantity:numeric(m.dispense?.quantity),unit:m.dispense?.unit}}))}));
   visit.consultations=array(source.consultations).filter(Boolean);
   visit.invoices=array(source.invoices).map(item=>{

@@ -1,0 +1,253 @@
+{
+  "visits": [
+    {
+      "health_facility_code": "FACILITY-CODE-FROM-NPCA",
+      "patient_code": "SYNTHETIC-REFERRAL",
+      "code": "BK-visit-d271de39652ee4e0f550863c",
+      "admission_type": "ADTY-000J008",
+      "visit_type": "VITY-00L000D",
+      "admitted_at": "2026-10-20T13:00:00.000+07:00",
+      "created_at": "2026-10-20T13:00:00.000+07:00",
+      "updated_at": "2026-10-20T14:30:00.000+07:00",
+      "discharge_type": "DITY-000Y00F",
+      "visit_outcome": "VIOU-B000008",
+      "discharged_at": "2026-10-20T14:30:00.000+07:00",
+      "patient": {
+        "code": "SYNTHETIC-REFERRAL",
+        "surname": "Synthetic",
+        "name": "Referral",
+        "sex": "M",
+        "birthdate": "1960-03-03",
+        "phone": "016778899",
+        "nationality": "KHM",
+        "marital_status": "MAST-00M002",
+        "occupation": "Farmer",
+        "spid": "SYNTHETIC-SPID-REFERRAL",
+        "address": {
+          "province": {
+            "code": "16",
+            "name": "ខេត្តរតនគិរី"
+          },
+          "district": {
+            "code": "1603",
+            "name": "បរកែវ"
+          },
+          "commune": {
+            "code": "160301",
+            "name": "កក់"
+          },
+          "village": {
+            "code": "16030104",
+            "name": "កក់"
+          }
+        },
+        "identifications": [
+          {
+            "card_code": "SYNTHETIC-CARD-REFERRAL",
+            "card_type": "HEF",
+            "patient_code": "SYNTHETIC-REFERRAL"
+          }
+        ],
+        "created_at": "2026-10-20T13:00:00.000+07:00",
+        "updated_at": "2026-10-20T14:30:00.000+07:00"
+      },
+      "outpatients": [
+        {
+          "is_new": true,
+          "name": "OPD Surgery",
+          "service_type": "General Consultation",
+          "started_at": "2026-10-20T13:20:00.000+07:00",
+          "ended_at": "2026-10-20T14:30:00.000+07:00",
+          "encountered_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "symptoms": [
+            "Right lower abdominal pain"
+          ],
+          "visit_code": "BK-visit-d271de39652ee4e0f550863c",
+          "code": "BK-opd-dee2a07774ceef39836c0196",
+          "class": "OPD",
+          "created_at": "2026-10-20T13:00:00.000+07:00",
+          "updated_at": "2026-10-20T14:30:00.000+07:00"
+        }
+      ],
+      "inpatients": [],
+      "emergencies": [],
+      "surgeries": [],
+      "progress_notes": [],
+      "triages": [
+        {
+          "patient_code": "SYNTHETIC-REFERRAL",
+          "visit_code": "BK-visit-d271de39652ee4e0f550863c",
+          "code": "BK-triage-886c474c6248dbdc315e5a7d",
+          "chief_complaint": "Synthetic complaint",
+          "height": 160,
+          "weight": 55,
+          "recorded_at": "2026-10-20T13:10:00.000+07:00",
+          "recorded_by": "Synthetic triage nurse",
+          "title": "Nurse"
+        }
+      ],
+      "vital_signs": [
+        {
+          "encounter_code": "BK-triage-886c474c6248dbdc315e5a7d",
+          "recorded_at": "2026-10-20T13:10:00.000+07:00",
+          "recorded_by": "Synthetic triage nurse",
+          "title": "Nurse",
+          "observations": [
+            {
+              "name": "Temperature",
+              "value": 38.2
+            },
+            {
+              "name": "Heart Rate",
+              "value": 96
+            },
+            {
+              "name": "Respiratory Rate",
+              "value": 20
+            },
+            {
+              "name": "Systolic Blood Pressure",
+              "value": 118
+            },
+            {
+              "name": "Diastolic Blood Pressure",
+              "value": 76
+            },
+            {
+              "name": "Blood Oxygen",
+              "value": 97
+            }
+          ]
+        }
+      ],
+      "medical_histories": [
+        {
+          "name": "History of Present Illness",
+          "value": [
+            "Synthetic history: symptoms for 3 days."
+          ],
+          "patient_code": "SYNTHETIC-REFERRAL",
+          "visit_code": "BK-visit-d271de39652ee4e0f550863c",
+          "encounter_code": "BK-opd-dee2a07774ceef39836c0196"
+        },
+        {
+          "name": "Allergies",
+          "value": [
+            "No known drug allergy"
+          ],
+          "patient_code": "SYNTHETIC-REFERRAL",
+          "visit_code": "BK-visit-d271de39652ee4e0f550863c",
+          "encounter_code": "BK-opd-dee2a07774ceef39836c0196"
+        }
+      ],
+      "physical_examinations": [
+        {
+          "name": "General Appearance",
+          "value": [
+            "Alert, mildly ill"
+          ],
+          "value_type": "array",
+          "value_unit": null,
+          "patient_code": "SYNTHETIC-REFERRAL",
+          "visit_code": "BK-visit-d271de39652ee4e0f550863c",
+          "encounter_code": "BK-opd-dee2a07774ceef39836c0196"
+        }
+      ],
+      "laboratories": [],
+      "imageries": [],
+      "diagnoses": [
+        {
+          "diagnosis_type_name": "In",
+          "diagnosis_code": "K35.8",
+          "diagnosis_name": "Other and unspecified acute appendicitis",
+          "diagnosed_at": "2026-10-20T13:40:00.000+07:00",
+          "diagnosed_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "patient_code": "SYNTHETIC-REFERRAL",
+          "visit_code": "BK-visit-d271de39652ee4e0f550863c",
+          "diagnosis_type": "In",
+          "encounter_code": "BK-opd-dee2a07774ceef39836c0196"
+        },
+        {
+          "diagnosis_type_name": "Out",
+          "diagnosis_code": "K35.8",
+          "diagnosis_name": "Other and unspecified acute appendicitis",
+          "diagnosed_at": "2026-10-20T14:20:00.000+07:00",
+          "diagnosed_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "patient_code": "SYNTHETIC-REFERRAL",
+          "visit_code": "BK-visit-d271de39652ee4e0f550863c",
+          "diagnosis_type": "Out",
+          "encounter_code": "BK-opd-dee2a07774ceef39836c0196"
+        }
+      ],
+      "soaps": [
+        {
+          "subjective": "Abdominal pain 1 day.",
+          "objective": "McBurney tenderness.",
+          "assessment": "Acute appendicitis.",
+          "plan": "Refer for surgery.",
+          "recorded_at": "2026-10-20T13:45:00.000+07:00",
+          "recorded_by": "Dr. Synthetic Doctor",
+          "title": "Doctor",
+          "encounter_code": "BK-opd-dee2a07774ceef39836c0196",
+          "code": "BK-soap-89baf7bbaaa9ae996f5084fe"
+        }
+      ],
+      "prescriptions": [],
+      "consultations": [
+        "Drink more water",
+        "Return if fever persists"
+      ],
+      "invoices": [
+        {
+          "patient_code": "SYNTHETIC-REFERRAL",
+          "visit_code": "BK-visit-d271de39652ee4e0f550863c",
+          "code": "BK-invoice-b3705ddf6082bfbc846b398e",
+          "payment_type": "PATY-0000N09",
+          "invoice_date": "2026-10-20T14:30:00.000+07:00",
+          "total": 15000,
+          "cashier": "Synthetic cashier",
+          "created_at": "2026-10-20T13:00:00.000+07:00",
+          "updated_at": "2026-10-20T14:30:00.000+07:00",
+          "services": [
+            {
+              "service_name": "Consultation",
+              "service_category": "Consultation",
+              "quantity": 1,
+              "price": 15000,
+              "paid": false,
+              "invoice_code": "BK-invoice-b3705ddf6082bfbc846b398e",
+              "service_code": "NPCA-SERVICE-CODE-TO-CONFIRM"
+            }
+          ],
+          "medications": []
+        }
+      ],
+      "referral": {
+        "referred_to": {
+          "referral_number": "SYNTHETIC/REF/2026/001",
+          "transportation": "Ambulance",
+          "reason": "Acute appendicitis needing surgery",
+          "has_called": true,
+          "caretaker_name": "Synthetic caretaker",
+          "caretaker_phone": "012999888",
+          "referred_by": "Dr. Synthetic Doctor",
+          "referred_by_phone": "012111222",
+          "referred_at": "2026-10-20T14:30:00.000+07:00",
+          "medications": "IV fluid started 14:00",
+          "document_file": "https://hospital.example/referrals/SYNTHETIC-REF-2026-001.pdf",
+          "health_facility": {
+            "name": "Synthetic Referral Hospital",
+            "code": "RECEIVING-FACILITY-CODE-FROM-NPCA",
+            "label": "Referral hospital",
+            "type": "CPA3"
+          },
+          "code": "BK-referral-38560e484c1fc521a3266f5b"
+        }
+      },
+      "forms": []
+    }
+  ]
+}

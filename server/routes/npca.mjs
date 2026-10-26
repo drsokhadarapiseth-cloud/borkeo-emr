@@ -26,6 +26,11 @@ export function mountNpcaRoutes(router) {
     try{const result=ctx.npca.enqueue(String(body.patientKey||''),ctx.session.user_id);return send(ctx,result.queued?202:422,result);}
     catch(error){return failure(ctx,error);}
   },write);
+  router.post('/api/npca/check-processed',async ctx=>{
+    const body=await ctx.readJson(ctx.request,2048);
+    try{return send(ctx,200,await ctx.npca.checkProcessed({from:String(body.from||''),to:String(body.to||''),by:String(body.by||'discharged')},ctx.session.user_id));}
+    catch(error){return failure(ctx,error);}
+  },write);
   router.get('/api/npca/badge',ctx=>{
     const key=ctx.url.searchParams.get('patientKey'),patient=ctx.database.findPatient(key);
     const financial=['CLERK','ACCOUNTANT'].includes(ctx.sessionRole(ctx.session));

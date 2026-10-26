@@ -22,7 +22,14 @@ export async function startNpcaMock(){
       state.submissions.push(body);const result={visit_code:visit.code,visit_ulid:'MOCK-ULID-'+visit.code,status:visit.discharged_at?5:3};state.visits.set(visit.code,result);return send(200,{success:true,message:'Synthetic accepted',data:result});
     }
     if(url.pathname==='/api/v1/external/visits/processed'){
-      state.polls++;const stored=state.visits.get(url.searchParams.get('visit_code')||body.visit_code);
+      state.polls++;
+      // Date-range check (PDF 4.4): every stored visit, paginated, status as text when asked.
+      if(!url.searchParams.get('visit_code')&&url.searchParams.get('discharged_at_from')){
+        const perPage=Number(url.searchParams.get('per_page')||100),page=Number(url.searchParams.get('page')||1),all=[...state.visits.values()],text={1:'ready',2:'failed',3:'pending',5:'processing'};
+        const rows=all.slice((page-1)*perPage,page*perPage).map(v=>({...v,status:state.statusAsText?text[state.finalStatus]:state.finalStatus,errors:state.finalStatus===2?state.failReason:[]}));
+        return send(200,{success:true,data:{data:rows,current_page:page,last_page:Math.max(1,Math.ceil(all.length/perPage))}});
+      }
+      const stored=state.visits.get(url.searchParams.get('visit_code')||body.visit_code);
       return send(200,{success:true,data:stored?[{...stored,status:state.finalStatus,errors:state.finalStatus===2?state.failReason:[]}]:[]});
     }
     send(404,{success:false,message:'Unknown mock endpoint'});

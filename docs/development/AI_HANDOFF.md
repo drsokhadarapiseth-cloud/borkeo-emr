@@ -1,5 +1,23 @@
 # Task context for Codex, Gemini or OpenCode
 
+## NPCA v1.4 PDF alignment and approval pack - v48.0.0, 26 October 2026
+
+User asked to integrate the EMR with the NPCA API following the v1.4 PDF guide
+and to do as much as possible towards approval; after the gap review the user
+said "yes code for all". Clean master a5f9245 (47.9.0); branch
+feature/npca-v14-pdf-alignment. Pre-update code snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v47.9.0-a5f92450-1a4c4d24
+
+The v42.8 integration already covered the PDF flow. v48.0 adds: current
+Registration positions for marital status / occupation / disability (the old
+positions blocked every patient), occupation + disabilities, encounter class,
+PDF field names next to the workbook names, single-CMS-code check, the 4.4
+date-range status check (POST /api/npca/check-processed, NPCA page section),
+and the approval pack (scripts/build-npca-approval-pack.mjs,
+docs/npca/approval-pack/, docs/npca/NPCA-V1.4-CONFORMANCE.md, questions 22-27).
+Still external: NPCA credentials, test-server acceptance, service codes.
+See NPCA_PDF_ALIGNMENT_V480_VALIDATION.md.
+
 ## Hosting test patients - v47.9.0, 26 October 2026
 
 User approved ("yes code it") 30 complete synthetic patients for the GitHub

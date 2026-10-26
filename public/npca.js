@@ -32,6 +32,16 @@
     $('npca-rows').onclick=async event=>{const button=event.target.closest('button');if(!button)return;const key=button.dataset.review||button.dataset.submit;if(!key)return;button.disabled=true;
       try{if(button.dataset.review)showReview({...await api('/api/npca/review?patientKey='+encodeURIComponent(key)),patientKey:key});else{await api('/api/npca/submit',{patientKey:key});await load();}}
       catch(error){if(error.data?.errors)showReview({...error.data,patientKey:key});else $('npca-status').textContent=error.message;}finally{button.disabled=false;}};
+    // v48.0: one status check for every visit in a date range (NPCA guide 4.4).
+    if(canSubmit){const today=new Date(Date.now()+7*3600000).toISOString().slice(0,10),from=new Date(Date.now()+7*3600000-30*86400000).toISOString().slice(0,10);
+      $('npca-range').hidden=false;$('npca-range-title').textContent=t('ពិនិត្យស្ថានភាពតាមកាលបរិច្ឆេទ','Check status by date');
+      $('npca-range-by-label').textContent=t('តាម','By');$('npca-range-by').options[0].textContent=t('ថ្ងៃចេញ','Discharge date');$('npca-range-by').options[1].textContent=t('ថ្ងៃចូល','Admission date');
+      $('npca-range-from-label').textContent=t('ពីថ្ងៃ','From');$('npca-range-to-label').textContent=t('ដល់ថ្ងៃ','To');$('npca-range-check').textContent=t('ពិនិត្យស្ថានភាព','Check status');
+      $('npca-range-from').value=from;$('npca-range-to').value=today;
+      $('npca-range-check').onclick=async()=>{const button=$('npca-range-check');button.disabled=true;
+        try{const r=await api('/api/npca/check-processed',{from:$('npca-range-from').value,to:$('npca-range-to').value,by:$('npca-range-by').value});await load();
+          $('npca-status').textContent=t('ចំនួនករណីដែលបានពិនិត្យ៖ ','Visits checked: ')+r.checked+'  '+t('ចំនួនដែលបានធ្វើបច្ចុប្បន្នភាព៖ ','Updated: ')+r.updated;}
+        catch(e){$('npca-status').textContent=e.message;}finally{button.disabled=false;}};}
     $('npca-refresh').onclick=load;await load();
   }catch(e){$('npca-status').textContent=e.message;}
 })();

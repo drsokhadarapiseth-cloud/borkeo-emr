@@ -274,4 +274,11 @@ window.BORKEO_NEW_TEXT_KH = {
   "anc.sentImaging": "បានបញ្ជូនអេកូសាស្ត្រទៅផ្នែករូបភាពវេជ្ជសាស្ត្រ។",
   "anc.sentDoctor": "បានស្នើវេជ្ជបណ្ឌិតឱ្យចេញសំណើ៖",
   "anc.payCashier": "អ្នកជំងឺបង់ប្រាក់នៅបេឡា។",
+  "npca.rangeTitle": "ពិនិត្យស្ថានភាពតាមកាលបរិច្ឆេទ",
+  "npca.rangeBy": "តាម",
+  "npca.rangeFrom": "ពីថ្ងៃ",
+  "npca.rangeCheck": "ពិនិត្យស្ថានភាព",
+  "npca.rangeChecked": "ចំនួនករណីដែលបានពិនិត្យ៖",
+  "npca.rangeUpdated": "ចំនួនដែលបានធ្វើបច្ចុប្បន្នភាព៖",
+  "npca.rangeInvalid": "សូមជ្រើសកាលបរិច្ឆេទឱ្យត្រឹមត្រូវ។",
 };

@@ -2372,6 +2372,48 @@
       "kh": "អ្នកជំងឺបង់ប្រាក់នៅបេឡា។",
       "key": "anc.payCashier",
       "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Check status by date",
+      "kh": "ពិនិត្យស្ថានភាពតាមកាលបរិច្ឆេទ",
+      "key": "npca.rangeTitle",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "By",
+      "kh": "តាម",
+      "key": "npca.rangeBy",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "From",
+      "kh": "ពីថ្ងៃ",
+      "key": "npca.rangeFrom",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Check status",
+      "kh": "ពិនិត្យស្ថានភាព",
+      "key": "npca.rangeCheck",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Visits checked:",
+      "kh": "ចំនួនករណីដែលបានពិនិត្យ៖",
+      "key": "npca.rangeChecked",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Updated:",
+      "kh": "ចំនួនដែលបានធ្វើបច្ចុប្បន្នភាព៖",
+      "key": "npca.rangeUpdated",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Choose correct dates.",
+      "kh": "សូមជ្រើសកាលបរិច្ឆេទឱ្យត្រឹមត្រូវ។",
+      "key": "npca.rangeInvalid",
+      "source": "docs/translations-needed.csv"
     }
   ]
 }
