@@ -2330,6 +2330,48 @@
       "kh": "ការថែទាំ",
       "key": "anc.cat.care",
       "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Sent today",
+      "kh": "បានបញ្ជូនថ្ងៃនេះ",
+      "key": "anc.sentToday",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Waiting for the result",
+      "kh": "កំពុងរង់ចាំលទ្ធផល",
+      "key": "anc.waitingResult",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Already sent.",
+      "kh": "បានបញ្ជូនរួចហើយ។",
+      "key": "anc.alreadySent",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Sent to the Laboratory:",
+      "kh": "បានបញ្ជូនទៅមន្ទីរពិសោធន៍៖",
+      "key": "anc.sentLab",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Ultrasound sent to Imaging.",
+      "kh": "បានបញ្ជូនអេកូសាស្ត្រទៅផ្នែករូបភាពវេជ្ជសាស្ត្រ។",
+      "key": "anc.sentImaging",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "A doctor was asked to order:",
+      "kh": "បានស្នើវេជ្ជបណ្ឌិតឱ្យចេញសំណើ៖",
+      "key": "anc.sentDoctor",
+      "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "The patient pays at the Cashier.",
+      "kh": "អ្នកជំងឺបង់ប្រាក់នៅបេឡា។",
+      "key": "anc.payCashier",
+      "source": "docs/translations-needed.csv"
     }
   ]
 }

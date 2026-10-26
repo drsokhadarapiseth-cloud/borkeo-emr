@@ -4,7 +4,7 @@ import {
   ancColourChart, ancRecordLabels, ancVisitSchedule, canSignReferral, canUseMaternalPatient, closePregnancy, colourHistory,
   findPregnancy, getPregnancy, importedValues, isFreeMaternalService, listVisits, maternalOptions, maternalQueue, midwifeMedicineAllowed, openPregnancy,
   pregnancyVaccinations, recordVaccination, releasedResults, requestReferral, saveRecord, saveVisit, sendCervicalResult,
-  signReferral, statusFor, updateTask, vaccinationHistory, vaccineLines,
+  signReferral, statusFor, updateTask, vaccinationHistory, vaccineLines, ancSentOrders, ancOrderAlreadySent,
 } from '../maternal.mjs';
 import { medicineCatalogue } from '../medicine-catalogue.mjs';
 import { createSystemMessage } from '../messages.mjs';
@@ -80,7 +80,7 @@ export function mountMaternalRoutes(router) {
       patient: { patientKey: row.patient_key, fullName: row.full_name, healthId: row.health_id, caseNumber: row.case_number, sex: row.sex, age: row.age, departmentCode: row.department_code },
       imported: importedValues(row), released: releasedResults(ctx.database, row), legacyAnc: readLegacyAnc(row), pregnancy: null, visits: [], colourHistory: [], status: null, vaccinations: [],
       canEdit: canUseMaternalPatient(who.session, row, who.ward) && who.role === 'MIDWIFE' || ['ADMIN', 'VICE_DIRECTOR'].includes(who.role),
-      canSignReferral: canSignReferral(who.session, who.ward), today,
+      canSignReferral: canSignReferral(who.session, who.ward), today, sentOrders: ancSentOrders(ctx.database, row, today),
     };
     if (pregnancy) {
       body.pregnancy = pregnancy;
@@ -237,8 +237,10 @@ export function mountMaternalRoutes(router) {
   // a message asks the Obstetric ward doctors to order it.
   router.post('/api/maternal/ask-doctor', async (ctx) => pregnancyAction(ctx, ({ who, row, body }) => {
     if (who.role !== 'MIDWIFE') return fail(ctx, 403, 'Only the midwife asks for a test.');
-    const test = String(body?.test || '').replace(/[^A-Z0-9_]/gi, '').slice(0, 40);
+    const test = String(body?.test || '').replace(/[^A-Z0-9_]/gi, '').slice(0, 40).toUpperCase();
     if (!test) return fail(ctx, 400, 'Choose the test.');
+    // v47.8: once per visit (also when the test is already ordered and waiting).
+    if (ancOrderAlreadySent(ctx.database, row, [test])) return fail(ctx, 409, 'This request was already sent for this visit.', { code: 'ALREADY_SENT' });
     const message = createSystemMessage(ctx.database, { senderUserId: who.session.user_id, senderRole: who.role, senderWardCode: who.ward,
       destinationType: 'WARD', destinationCode: 'obstetric', destinationRole: 'DOCTOR',
       subject: `ANC · ${test} · ${row.full_name || row.patient_key}`, body: `ANC ${test}: ${row.full_name || ''} · ${row.health_id || row.case_number || ''} · /anc-record?patient=${encodeURIComponent(row.patient_key)}`, patientKey: row.patient_key });

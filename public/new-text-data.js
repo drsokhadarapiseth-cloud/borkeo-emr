@@ -267,4 +267,11 @@ window.BORKEO_NEW_TEXT_KH = {
   "anc.cat.exam": "ការពិនិត្យ",
   "anc.cat.ultrasound": "អេកូសាស្ត្រ",
   "anc.cat.care": "ការថែទាំ",
+  "anc.sentToday": "បានបញ្ជូនថ្ងៃនេះ",
+  "anc.waitingResult": "កំពុងរង់ចាំលទ្ធផល",
+  "anc.alreadySent": "បានបញ្ជូនរួចហើយ។",
+  "anc.sentLab": "បានបញ្ជូនទៅមន្ទីរពិសោធន៍៖",
+  "anc.sentImaging": "បានបញ្ជូនអេកូសាស្ត្រទៅផ្នែករូបភាពវេជ្ជសាស្ត្រ។",
+  "anc.sentDoctor": "បានស្នើវេជ្ជបណ្ឌិតឱ្យចេញសំណើ៖",
+  "anc.payCashier": "អ្នកជំងឺបង់ប្រាក់នៅបេឡា។",
 };

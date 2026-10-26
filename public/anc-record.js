@@ -434,7 +434,7 @@ const TASK_TARGETS = {
   'data:bmi': () => '[data-path="prePregnancyWeightKg"]',
   'order:HBSAG': () => firstEmpty('[data-path^="labs."][data-path$=".hbsag"]'),
   'order:BLOOD_GROUP': () => firstEmpty('[data-path^="labs."][data-path$=".group"]'),
-  'order:OGTT': () => '[data-ask-doctor="OGTT"], [data-order="OGTT"]',
+  'order:OGTT': () => '[data-ask-doctor="OGTT"], [data-order="OGTT"], [data-sent="OGTT"]',
   'order:ULTRASOUND': () => firstEmpty('[data-path^="ultrasounds."][data-path$=".date"]'),
 };
 const TASK_GROUPS = [
@@ -457,7 +457,12 @@ function goToTask(task) {
   return true;
 }
 // The order next to its field: the midwife orders it, or asks a doctor to order it.
+// v47.8: once per visit - after sending, the button becomes a note (server: ancSentOrders).
+const ORDER_NAMES = { HBSAG: 'Hepatitis B', CBC: 'CBC', BLOOD_GROUP: 'Blood group', OGTT: 'OGTT' };
+const sentOrder = (code) => (data?.sentOrders || []).find((item) => item.code === code);
 function orderButton(code) {
+  const sent = sentOrder(code);
+  if (sent) return `<span class="anc-order-sent no-print" data-sent="${esc(code)}">✓ ${esc(sent.date === data.today ? t('anc.sentToday', 'Sent today') : t('anc.waitingResult', 'Waiting for the result'))}</span>`;
   if (!canEdit()) return '';
   const allowed = code === 'ULTRASOUND' ? cfg.options.midwifeImaging.includes('ULTRASOUND') : cfg.options.midwifeLabTests.includes(code);
   return allowed ? `<button type="button" class="link anc-order no-print" data-order="${esc(code)}">${esc(code === 'ULTRASOUND' ? t('anc.orderUltrasound', 'Send to Imaging (pay at the Cashier)') : t('anc.orderLab', 'Send to the Laboratory (pay at the Cashier)'))}</button>`
@@ -598,13 +603,40 @@ document.addEventListener('change', (event) => {
 
 const body = (extra = {}) => ({ patientKey, ...extra });
 let busy = false;
+// v47.8 - A short notice at the bottom of the screen (an order was sent).
+function showToast(text) {
+  let toast = $('anc-toast');
+  if (!toast) { toast = document.createElement('div'); toast.id = 'anc-toast'; toast.className = 'anc-toast no-print'; toast.setAttribute('role', 'status'); document.body.append(toast); }
+  toast.textContent = text;
+  toast.classList.add('is-shown');
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove('is-shown'), 6000);
+}
+async function sendOnce(code, kind, send) {
+  try { await send(); } catch (error) {
+    if (error.status !== 409 || error.body?.code !== 'ALREADY_SENT') throw error;
+    data.sentOrders = (await api(`/api/anc/record?patientKey=${encodeURIComponent(patientKey)}`)).sentOrders || data.sentOrders;
+    renderMain(); refreshLive();
+    return t('anc.alreadySent', 'Already sent.');
+  }
+  data.sentOrders = [...(data.sentOrders || []), { code, kind, date: data.today, pending: kind !== 'doctor' }];
+  renderMain(); refreshLive();
+  const name = ORDER_NAMES[code] || code;
+  const pays = t('anc.payCashier', 'The patient pays at the Cashier.');
+  if (kind === 'imaging') return `${t('anc.sentImaging', 'Ultrasound sent to Imaging.')} ${pays}`;
+  if (kind === 'doctor') return `${t('anc.sentDoctor', 'A doctor was asked to order:')} ${name}`;
+  return `${t('anc.sentLab', 'Sent to the Laboratory:')} ${name} · ${pays}`;
+}
 async function run(action) {
   if (busy) return;
   busy = true;
   const buttons = [...document.querySelectorAll('.anc-actions button:not(:disabled)')];
   buttons.forEach(button => { button.disabled = true; });
   setStatus('…');
-  try { const result = await action(); setStatus(result === false ? '' : t('anc.saved', 'Saved.')); } catch (error) { setStatus(error.message, true); }
+  try {
+    const result = await action();
+    if (typeof result === 'string') { setStatus(result); showToast(result); } else setStatus(result === false ? '' : t('anc.saved', 'Saved.'));
+  } catch (error) { setStatus(error.message, true); }
   finally { busy = false; buttons.forEach(button => { button.disabled = false; }); }
 }
 
@@ -706,13 +738,19 @@ document.addEventListener('click', async (event) => {
     prescription = [];
     renderMain(); refreshLive();
   });
-  if (button.dataset.order) return run(async () => {
+  if (button.dataset.order) {
     const code = button.dataset.order;
-    const request = code === 'ULTRASOUND' ? { clinicalInfo: 'ANC', diagnosis: 'ANC' } : { items: [{ code }], clinicalInfo: 'ANC' };
-    await api('/api/paraclinic/orders', body({ modality: code === 'ULTRASOUND' ? 'ULTRASOUND' : 'LAB', request, chargeMode: 'PAID', handoffMode: 'DIRECT' }));
-    setStatus(t('anc.ordered', 'Sent. The patient pays at the Cashier.'));
-  });
-  if (button.dataset.askDoctor) return run(async () => { await api('/api/maternal/ask-doctor', body({ test: button.dataset.askDoctor })); });
+    button.disabled = true;
+    return run(() => sendOnce(code, code === 'ULTRASOUND' ? 'imaging' : 'lab', () => {
+      const request = code === 'ULTRASOUND' ? { clinicalInfo: 'ANC', diagnosis: 'ANC' } : { items: [{ code }], clinicalInfo: 'ANC' };
+      return api('/api/paraclinic/orders', body({ modality: code === 'ULTRASOUND' ? 'ULTRASOUND' : 'LAB', request, chargeMode: 'PAID', handoffMode: 'DIRECT' }));
+    })).finally(() => { button.disabled = false; });
+  }
+  if (button.dataset.askDoctor) {
+    const code = button.dataset.askDoctor;
+    button.disabled = true;
+    return run(() => sendOnce(code, 'doctor', () => api('/api/maternal/ask-doctor', body({ test: code })))).finally(() => { button.disabled = false; });
+  }
   if (button.dataset.taskGo) { event.preventDefault(); const task = shownTasks.get(button.dataset.taskGo); if (task) goToTask(task); return; }
 });
 document.addEventListener('change', async (event) => {
