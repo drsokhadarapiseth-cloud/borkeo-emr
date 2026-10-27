@@ -18,6 +18,7 @@
   const cashNotice = 'បានបញ្ជូនទៅបញ្ជរបង់ប្រាក់';
   const labFilterPairs = path === '/lab' ? [['បញ្ជីរសំណាកទាំងអស់','Specimen List'],['សំណាកបន្ទាន់','Urgent'],['សំណាកបានទទួល','Received'],['សំណាកមិនទទួល','Rejected'],['បញ្ជីរសំណាកបានពិនិត្យរួច','Complete Test List'],['បញ្ជីរសម្ភារៈ','Material List'],['បញ្ជីសម្ភារៈ','Material List']] : [];
   const manualPairs = [
+    ['ស្នើរសុំពិនិត្យអមគ្លីនិក', 'Request paraclinic tests'],
     ["កែប្រែ", "Edit"],
     ["ការស្នើសុំ", "Requests & Approvals"],
     ["ការស្នើរសុំ", "Requests & Approvals"],

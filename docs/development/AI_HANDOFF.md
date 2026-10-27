@@ -1,5 +1,25 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Triage paraclinic label - v48.2.0, 27 October 2026
+
+User supplied the exact Khmer checkbox wording and requested a command to push
+after the update. Publish manually for this task: prepare a local commit/master
+merge and provide `git -C "D:\EMR\Borkeo_EMR_Git" push origin master`.
+Do not claim GitHub has been updated before that command is run successfully.
+
+Clean base master/origin master 81bf338 (48.1.0), branch
+fix/triage-paraclinic-label. Pre-update code-only snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v48.1.0-81bf3389-f066c2cf
+
+The highlighted option now contains only the supplied Khmer label. Removed the
+English explanatory paragraph from that block; added its label's EN mapping and
+registered the owner's exact phrase in Khmer approval/translation metadata.
+The existing triage_paraclinic ID, no-auto-index attribute, no-print wrapper,
+storage and all triage/doctor/cashier rules are unchanged. Input positions and
+clinical keys are preserved. Package/login/server release labels are 48.2.
+No patient data is included in the update or source commit. See
+TRIAGE_PARACLINIC_LABEL_V482_VALIDATION.md and the combined update TXT.
+
 ## NPCA practice mode and 30 fresh test patients - v48.1.0, 27 October 2026
 
 User asked to remove all codespace patients, make 30 new ones without photos

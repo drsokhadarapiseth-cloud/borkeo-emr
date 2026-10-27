@@ -2420,6 +2420,12 @@
       "kh": "កំពុងហាត់សមនឹង NPCA៖ គ្មានទិន្នន័យត្រូវបានបញ្ជូនទៅ NPCA ពិតទេ។",
       "key": "npca.practiceBanner",
       "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "Request paraclinic tests",
+      "kh": "ស្នើរសុំពិនិត្យអមគ្លីនិក",
+      "key": "triage.requestParaclinic",
+      "source": "User supplied exact wording on 2026-10-27; docs/translations-needed.csv"
     }
   ]
 }
