@@ -119,18 +119,17 @@
   }
   function opdFeeChoice(context) {
     if (!needsOpdFeeChoice(context)) return '';
-    return `<fieldset class="opd-fee-choice"><legend>Paraclinic fee</legend>
-      <label><input type="radio" name="chargeMode" value="PAID" checked> Pay using the invoice at Cashier</label>
-      <label><input type="radio" name="chargeMode" value="FREE"> Free of charge</label>
-    </fieldset>
-    <fieldset class="opd-handoff-choice"><legend>Send the order</legend>
-      <small>Direct to Cashier and then Lab/Imaging is the usual route. Use the OPD nurse route when your hospital collects samples in OPD. Free tests skip Cashier.</small>
+    const english = document.documentElement.lang === 'en';
+    return `<fieldset class="opd-fee-choice"><legend>${english ? 'Paraclinic fee' : 'តម្លៃសេវាពិនិត្យអមគ្លីនិក'}</legend>
+      <label><input type="radio" name="chargeMode" value="PAID" checked> ${english ? 'Pay using the invoice at Cashier' : 'បង់ប្រាក់តាមវិក្កយបត្រនៅបេឡា'}</label>
+      <label><input type="radio" name="chargeMode" value="FREE"> ${english ? 'Free of charge' : 'ឥតគិតថ្លៃ'}</label>
     </fieldset>`;
   }
   function opdSubmitActions(context) {
+    const english = document.documentElement.lang === 'en';
     return needsOpdFeeChoice(context)
-      ? '<button class="primary" type="submit" data-route="DIRECT">Send to Cashier</button><button type="submit" data-route="NURSE">Send to Nurse</button>'
-      : '<button class="primary" type="submit">Send Order to Department</button>';
+      ? `<button class="primary" type="submit" data-route="DIRECT">${english ? 'Send to Cashier' : 'បញ្ជូនទៅបេឡា'}</button><button type="submit" data-route="NURSE">${english ? 'Send to Nurse' : 'បញ្ជូនទៅគិលានុបដ្ឋាក'}</button>`
+      : `<button class="primary" type="submit">${english ? 'Send Order to Department' : 'បញ្ជូនសំណើទៅផ្នែក'}</button>`;
   }
   function setup() {
     if (panels.length || !canUse()) return;
@@ -1055,6 +1054,14 @@
   async function openLabOrder(context, orderPatientKey) {
     const rawTests = await getCatalog();
     const tests = rawTests.filter(test => test.active !== false);
+    const english = document.documentElement.lang === 'en';
+    const otherTestName = item => String(item.name || item.code).replace(/\s*\([^)]*\)/g, '').trim();
+    const otherGroups = new Map();
+    for (const item of tests) {
+      const group = item.category || 'Other / Special';
+      if (!otherGroups.has(group)) otherGroups.set(group, []);
+      otherGroups.get(group).push(item);
+    }
     const demo = resolvePatientDemographics();
     const now = new Date();
     const dateStr = now.toLocaleDateString('en-GB');
@@ -1219,16 +1226,25 @@
           ${testRow('AMYLASE', 'Amylase')}
           ${testRow('LIPASE', 'Lipase')}
 
-          <div class="col-subhead">Other test</div>
-          <div class="other-test-picker" style="margin-top:2px;">
-            <select class="paper-select" data-other-test-select style="width:100%;padding:4px;font-size:11px;border:1px solid #94a3b8;border-radius:4px;">
-              <option value="">+ ជ្រើសរើសតេស្តបន្ថែម...</option>
-              ${tests.map(t => `<option value="${esc(t.code)}">${esc(t.name)} (${esc(t.code)})</option>`).join('')}
-            </select>
-            <div data-other-tests-container style="margin-top:4px;display:flex;flex-direction:column;gap:3px;"></div>
-          </div>
         </div>
       </div>
+
+      <section class="other-test-picker">
+        <details data-other-picker>
+          <summary>${english ? 'Choose additional tests' : 'ជ្រើសរើសតេស្តបន្ថែម'}</summary>
+          <label class="other-test-search">${english ? 'Search tests' : 'ស្វែងរកតេស្ត'}<input type="search" data-other-search autocomplete="off"></label>
+          <div class="other-test-groups">
+            ${[...otherGroups].sort(([a], [b]) => a.localeCompare(b)).map(([group, items]) => `
+              <fieldset class="other-test-group"><legend>${esc(group)}</legend>
+                ${items.sort((a, b) => otherTestName(a).localeCompare(otherTestName(b))).map(item => `
+                  <label class="other-test-option"><input type="checkbox" data-other-pick value="${esc(item.code)}" ${hasExistingLabTest(item.code) ? 'disabled' : ''}><span>${esc(otherTestName(item))}</span></label>
+                `).join('')}
+              </fieldset>`).join('')}
+          </div>
+          <div class="other-test-add"><button type="button" data-add-other>${english ? 'Add selected tests' : 'បន្ថែមតេស្តដែលបានជ្រើសរើស'}</button><output data-other-count aria-live="polite">0</output></div>
+        </details>
+        <div data-other-tests-container></div>
+      </section>
 
       <!-- Footer matching paper sheet -->
       <div class="lab-paper-footer">
@@ -1277,20 +1293,39 @@
     });
 
     const otherContainer = view.body.querySelector('[data-other-tests-container]');
-    const otherSelect = view.body.querySelector('[data-other-test-select]');
-    otherSelect?.addEventListener('change', () => {
-      const code = otherSelect.value;
-      if (!code) return;
-      if (view.body.querySelector(`[data-paper-test][value="${CSS.escape(code)}"]`)) {
-        alert('Test already in requisition form.');
-        otherSelect.value = '';
+    const otherPicks = [...view.body.querySelectorAll('[data-other-pick]')];
+    const updateOtherCount = () => {
+      const count = otherPicks.filter(input => input.checked && !input.disabled).length;
+      view.body.querySelector('[data-other-count]').value = String(count);
+      view.body.querySelector('[data-add-other]').disabled = !count;
+    };
+    otherPicks.forEach(input => input.addEventListener('change', updateOtherCount));
+    updateOtherCount();
+    view.body.querySelector('[data-other-search]').addEventListener('input', event => {
+      const term = event.target.value.trim().toLowerCase();
+      view.body.querySelectorAll('.other-test-group').forEach(group => {
+        group.querySelectorAll('.other-test-option').forEach(option => {
+          const code = option.querySelector('input').value;
+          option.hidden = !`${group.querySelector('legend').textContent} ${option.textContent} ${code}`.toLowerCase().includes(term);
+        });
+        group.hidden = ![...group.querySelectorAll('.other-test-option')].some(option => !option.hidden);
+      });
+    });
+    const addOtherTest = code => {
+      const existing = [...view.body.querySelectorAll('[data-paper-test]')].find(input => input.value === code && !input.dataset.extraTest);
+      if (existing) {
+        if (!existing.disabled) {
+          existing.checked = true;
+          existing.dispatchEvent(new Event('change', { bubbles: true }));
+        }
         return;
       }
       const testObj = tests.find(t => t.code === code);
-      const label = testObj ? `${testObj.name} (${testObj.code})` : code;
+      if (!testObj || hasExistingLabTest(code)) return;
+      const label = otherTestName(testObj);
       const rowEl = document.createElement('div');
       rowEl.className = 'test-check-row';
-      rowEl.innerHTML = `<label class="test-label"><input type="checkbox" value="${esc(code)}" data-paper-test checked><span>${esc(label)}</span></label><button type="button" class="test-star-urgent" data-star-code="${esc(code)}" title="បន្ទាន់ (Urgent)">☆</button><button type="button" data-remove-other style="border:0;background:transparent;color:#dc2626;cursor:pointer;padding:0 4px;font-size:14px;">×</button>`;
+      rowEl.innerHTML = `<label class="test-label"><input type="checkbox" value="${esc(code)}" data-paper-test checked><span>${esc(label)}</span></label><button type="button" class="test-star-urgent" data-star-code="${esc(code)}" title="បន្ទាន់">☆</button><button type="button" data-remove-other aria-label="${esc(english ? 'Remove' : 'ដកចេញ')} ${esc(label)}">×</button>`;
       rowEl.querySelector('[data-remove-other]').addEventListener('click', () => rowEl.remove());
       rowEl.querySelector('.test-star-urgent').addEventListener('click', e => {
         e.stopPropagation();
@@ -1300,7 +1335,14 @@
         btn.textContent = active ? '★' : '☆';
       });
       otherContainer.appendChild(rowEl);
-      otherSelect.value = '';
+    };
+    view.body.querySelector('[data-add-other]').addEventListener('click', () => {
+      otherPicks.filter(input => input.checked && !input.disabled).forEach(input => {
+        addOtherTest(input.value);
+        input.checked = false;
+      });
+      updateOtherCount();
+      view.body.querySelector('[data-other-picker]').open = false;
     });
 
     const getSelectedItems = () => {

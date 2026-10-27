@@ -546,3 +546,10 @@ context.retry,Retry context session loading,Authorized master-task context recov
 "npca.rangeInvalid","Choose correct dates.","NPCA status check by date range (v48.0, owner approved)","server/npca/integration.mjs","សូមជ្រើសកាលបរិច្ឆេទឱ្យត្រឹមត្រូវ។"
 "npca.practiceBanner","NPCA practice: nothing is sent to the real NPCA.","NPCA practice mode banner on the test hosting (v48.1, owner approved)","public/npca-widget.js","កំពុងហាត់សមនឹង NPCA៖ គ្មានទិន្នន័យត្រូវបានបញ្ជូនទៅ NPCA ពិតទេ។"
 triage.requestParaclinic,Request paraclinic tests,Exact checkbox wording supplied by owner on 2026-10-27,protected/EMR.html; public/emr-language.js,ស្នើរសុំពិនិត្យអមគ្លីនិក
+"opdLab.v486.0","Paraclinic fee","Owner approved OPD lab UI update 2026-10-27","public/paraclinic.js","តម្លៃសេវាពិនិត្យអមគ្លីនិក"
+"opdLab.v486.1","Pay using the invoice at Cashier","Owner approved OPD lab UI update 2026-10-27","public/paraclinic.js","បង់ប្រាក់តាមវិក្កយបត្រនៅបេឡា"
+"opdLab.v486.2","Send to Nurse","Owner approved OPD lab UI update 2026-10-27","public/paraclinic.js","បញ្ជូនទៅគិលានុបដ្ឋាក"
+"opdLab.v486.3","Choose additional tests","Owner approved OPD lab UI update 2026-10-27","public/paraclinic.js","ជ្រើសរើសតេស្តបន្ថែម"
+"opdLab.v486.4","Search tests","Owner approved OPD lab UI update 2026-10-27","public/paraclinic.js","ស្វែងរកតេស្ត"
+"opdLab.v486.5","Add selected tests","Owner approved OPD lab UI update 2026-10-27","public/paraclinic.js","បន្ថែមតេស្តដែលបានជ្រើសរើស"
+"opdLab.v486.6","Send to Cashier","Owner approved OPD lab UI update 2026-10-27","public/paraclinic.js","បញ្ជូនទៅបេឡា"

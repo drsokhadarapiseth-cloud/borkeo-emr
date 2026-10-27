@@ -1,5 +1,29 @@
 # Task context for Codex, Gemini or OpenCode
 
+## OPD lab grouped selection and Khmer actions - v48.6.0, 27 October 2026
+
+Owner approved all discussed changes with "please code all above". Base master
+364af002b2bf72fa09cafcc1999aa9d3fc29f0db (48.5.0), branch
+fix/opd-lab-grouped-selection. Clean committed code-only backup:
+D:\EMR\Borkeo_EMR_Code_Backups\v48.5.0-364af002-4ea4b227
+
+Removed the routing explanation box and localized the fee heading, paid/free
+options and cashier/nurse buttons. Internal chargeMode/data-route actions and
+server fee/handoff rules remain. The extra-test dropdown is now a full-width
+searchable panel, grouped by catalog category, with checkboxes and batch Add.
+Names omit parentheses/code suffixes; selected extra rows can be removed or
+re-added. Existing simple main-form rows are reused. Individual AST selection
+avoids activating the combined main-form AST/ALT action. Already ordered tests
+remain disabled. Existing test-code deduplication and print generation remain.
+
+New control sizes and narrow-screen wrapping are scoped to the lab form. The
+shared IPD lab selector and OPD imaging fee/action helpers also receive their
+shared changes. Patient records, photos, staff, settings and .env are preserved.
+The unrelated untracked .vscode folder is not included.
+
+See OPD_LAB_V486_VALIDATION.md and the combined update TXT for final verification.
+
+
 ## OPD imaging chooser and admission printing - v48.5.0, 27 October 2026
 
 User approved the grouped clickable-name imaging chooser and clarified that it

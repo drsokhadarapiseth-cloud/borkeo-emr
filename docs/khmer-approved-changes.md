@@ -201,3 +201,12 @@ Owner approved showing each test name once in specialty groups and removing dupl
 | public/paraclinic.js | 270 | ទាំងអស់ | [removed] |
 | public/paraclinic.js | 284 | + ស្នើសុំ | [removed] |
 | public/paraclinic.js | 290 | សេវារូបភាពកំណត់ម៉ោងណាត់ ហើយម៉ោងនឹងបង្ហាញលើទម្រង់អ្នកជំងឺ | [removed] |
+
+## v48.6 OPD laboratory grouped selection (owner's order)
+
+Owner approved replacing the extra-test dropdown with a grouped multi-select panel, removing duplicate codes/parentheses, and using Khmer buttons.
+
+| file | line | before | after |
+|------|------|--------|-------|
+| public/paraclinic.js | 1262 | + ជ្រើសរើសតេស្តបន្ថែម... | [removed] |
+| public/paraclinic.js | 1330 | បន្ទាន់ (Urgent) | [removed] |

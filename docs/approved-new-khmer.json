@@ -2426,6 +2426,34 @@
       "kh": "ស្នើរសុំពិនិត្យអមគ្លីនិក",
       "key": "triage.requestParaclinic",
       "source": "User supplied exact wording on 2026-10-27; docs/translations-needed.csv"
+    },
+    {
+      "en": "Paraclinic fee",
+      "kh": "តម្លៃសេវាពិនិត្យអមគ្លីនិក"
+    },
+    {
+      "en": "Pay using the invoice at Cashier",
+      "kh": "បង់ប្រាក់តាមវិក្កយបត្រនៅបេឡា"
+    },
+    {
+      "en": "Send to Nurse",
+      "kh": "បញ្ជូនទៅគិលានុបដ្ឋាក"
+    },
+    {
+      "en": "Choose additional tests",
+      "kh": "ជ្រើសរើសតេស្តបន្ថែម"
+    },
+    {
+      "en": "Search tests",
+      "kh": "ស្វែងរកតេស្ត"
+    },
+    {
+      "en": "Add selected tests",
+      "kh": "បន្ថែមតេស្តដែលបានជ្រើសរើស"
+    },
+    {
+      "en": "Send to Cashier",
+      "kh": "បញ្ជូនទៅបេឡា"
     }
   ]
 }
