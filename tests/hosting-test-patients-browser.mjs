@@ -17,7 +17,7 @@ const TRIAGE = ['p2_temp', 'p2_bp_sys', 'p2_bp_dia', 'p2_pulse', 'p2_resp', 'p2_
 test('hosting test patients: complete registration, triage measured and waiting', { timeout: 900000 }, async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'borkeo-hosting-browser-'));
   const seeded = await seedHostingTestPatients(path.join(dir, 'emr.sqlite'), { log: () => {} });
-  const app = createEmrServer({ databasePath: seeded.file, demoMode: false, host: '127.0.0.1', port: 0, appOrigin: 'http://127.0.0.1:0', nodeEnv: 'development', npca: { enabled: false } });
+  const app = createEmrServer({ databasePath: seeded.file, demoMode: false, host: '127.0.0.1', port: 0, appOrigin: 'http://127.0.0.1:0', nodeEnv: 'development', npcaPractice: true });
   let browser;
   try {
     await new Promise((resolve) => app.server.listen(0, '127.0.0.1', resolve));
@@ -51,7 +51,7 @@ test('hosting test patients: complete registration, triage measured and waiting'
       assert.equal(result.valid, true, `${row.health_id}: required check ${JSON.stringify(result)}`);
       assert.deepEqual(result.empty, [], `${row.health_id}: nothing left empty`);
       assert.equal(result.id, row.health_id);
-      assert.equal(result.photo, true);
+      assert.equal(result.photo, false, 'v48.1: no photo');
     }
     assert.equal(await role('TRIAGE'), 200);
     for (const row of rows.slice(0, 5)) {
@@ -64,6 +64,10 @@ test('hosting test patients: complete registration, triage measured and waiting'
     }
     const queue = await browser.evaluate("(async()=>{const r=await (await fetch('/api/triage/queue')).json();return (Array.isArray(r)?r:(r.patients||r.queue||[])).length})()");
     assert.equal(queue, 30, 'all 30 wait in the Triage list');
+    // v48.1: practice mode shows its banner (Khmer by default).
+    await browser.waitFor("document.getElementById('npca-practice-banner')", 'practice banner', 30000);
+    const banner = await browser.evaluate("document.getElementById('npca-practice-banner').textContent");
+    assert.ok([...banner].some((c) => c.codePointAt(0) >= 0x1780 && c.codePointAt(0) <= 0x17ff), banner);
     assert.deepEqual(browser.state.errors, []);
   } finally {
     browser?.close();

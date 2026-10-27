@@ -544,3 +544,4 @@ context.retry,Retry context session loading,Authorized master-task context recov
 "npca.rangeChecked","Visits checked:","NPCA status check by date range (v48.0, owner approved)","public/npca.js","ចំនួនករណីដែលបានពិនិត្យ៖"
 "npca.rangeUpdated","Updated:","NPCA status check by date range (v48.0, owner approved)","public/npca.js","ចំនួនដែលបានធ្វើបច្ចុប្បន្នភាព៖"
 "npca.rangeInvalid","Choose correct dates.","NPCA status check by date range (v48.0, owner approved)","server/npca/integration.mjs","សូមជ្រើសកាលបរិច្ឆេទឱ្យត្រឹមត្រូវ។"
+"npca.practiceBanner","NPCA practice: nothing is sent to the real NPCA.","NPCA practice mode banner on the test hosting (v48.1, owner approved)","public/npca-widget.js","កំពុងហាត់សមនឹង NPCA៖ គ្មានទិន្នន័យត្រូវបានបញ្ជូនទៅ NPCA ពិតទេ។"

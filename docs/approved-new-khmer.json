@@ -2414,6 +2414,12 @@
       "kh": "សូមជ្រើសកាលបរិច្ឆេទឱ្យត្រឹមត្រូវ។",
       "key": "npca.rangeInvalid",
       "source": "docs/translations-needed.csv"
+    },
+    {
+      "en": "NPCA practice: nothing is sent to the real NPCA.",
+      "kh": "កំពុងហាត់សមនឹង NPCA៖ គ្មានទិន្នន័យត្រូវបានបញ្ជូនទៅ NPCA ពិតទេ។",
+      "key": "npca.practiceBanner",
+      "source": "docs/translations-needed.csv"
     }
   ]
 }

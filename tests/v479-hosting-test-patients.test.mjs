@@ -19,7 +19,8 @@ test('30 patients: ID format, photo, complete registration, mixed payment, triag
   assert.deepEqual(patients.map((p) => p.summary.caseNumber), Array.from({ length: 30 }, (_, i) => `160201-20261026-${String(i + 1).padStart(3, '0')}`));
   for (const p of patients) {
     assert.equal(p.summary.healthId, p.summary.caseNumber);
-    assert.match(String(reg(p, 'web_patient_photo')), /^data:image\/jpeg;base64,/);
+    // v48.1: no photo.
+    assert.equal(reg(p, 'web_patient_photo'), undefined);
     for (const key of ['web_first_name', 'web_last_name', 'web_dob', 'web_age', 'web_phone', 'web_nat', 'web_entry_type', 'web_street_address', 'web_village', 'web_commune', 'web_district', 'web_caregiver_name', 'web_caregiver_phone', 'web_caregiver_relation']) {
       assert.ok(String(reg(p, key) ?? '').trim(), `${p.summary.caseNumber} ${key}`);
     }
@@ -27,14 +28,13 @@ test('30 patients: ID format, photo, complete registration, mixed payment, triag
     assert.equal(tri(p, 'p2_other_dept'), '', 'the service is chosen by the nurse');
     assert.equal(p.data['system:workflowStage'], 'TRIAGE_WAITING');
     assert.equal(isTestPatient(JSON.stringify(p.data)), true);
-    // A card number only when that payment applies; HEF / NSSF are not marked verified.
-    if (reg(p, 'web_equity')) assert.match(reg(p, 'web_equity'), /^\d{10}$/);
-    if (reg(p, 'web_nssf')) assert.match(reg(p, 'web_nssf'), /^\d{10}$/);
+    // A card number only when that payment applies; v48.1: the HEF / NSSF card check is saved (practice answers).
+    if (reg(p, 'web_equity')) { assert.match(reg(p, 'web_equity'), /^\d{10}$/); assert.ok(reg(p, 'web_hef_verification')); }
+    if (reg(p, 'web_nssf')) { assert.match(reg(p, 'web_nssf'), /^\d{10}$/); assert.ok(reg(p, 'web_nssf_verification')); }
     if (reg(p, 'other_id_yes')) assert.ok(reg(p, 'web_other_card_type') && reg(p, 'web_other_card_number') && reg(p, 'web_other_card_issuer'));
-    assert.equal(reg(p, 'web_hef_verification') ?? '', '');
   }
   const count = (fn) => patients.filter(fn).length;
-  assert.ok(count((p) => reg(p, 'web_equity')) >= 5 && count((p) => reg(p, 'web_nssf')) >= 5 && count((p) => reg(p, 'other_id_yes')) >= 5);
+  assert.deepEqual([count((p) => reg(p, 'web_equity')), count((p) => reg(p, 'web_nssf')), count((p) => reg(p, 'other_id_yes'))], [12, 12, 6]);
   assert.equal(new Set(patients.map((p) => reg(p, 'web_entry_type'))).size, 3, 'all entry types');
   assert.ok(count((p) => Number(tri(p, 'p2_spo2')) < 94 || Number(tri(p, 'p2_temp')) >= 39 || Number(tri(p, 'p2_bp_sys')) >= 160) >= 3, 'some abnormal values for the alerts');
 });

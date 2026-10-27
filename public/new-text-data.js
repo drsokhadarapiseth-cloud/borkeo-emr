@@ -281,4 +281,5 @@ window.BORKEO_NEW_TEXT_KH = {
   "npca.rangeChecked": "ចំនួនករណីដែលបានពិនិត្យ៖",
   "npca.rangeUpdated": "ចំនួនដែលបានធ្វើបច្ចុប្បន្នភាព៖",
   "npca.rangeInvalid": "សូមជ្រើសកាលបរិច្ឆេទឱ្យត្រឹមត្រូវ។",
+  "npca.practiceBanner": "កំពុងហាត់សមនឹង NPCA៖ គ្មានទិន្នន័យត្រូវបានបញ្ជូនទៅ NPCA ពិតទេ។",
 };

@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import { npcaSettings } from './npca/settings.mjs';
+import { npcaPracticeSettings } from './npca/practice.mjs';
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -97,10 +98,14 @@ export function loadConfig(overrides = {}) {
   // v42.4: behind a hosting proxy (Railway, Render, Fly.io) the client address
   // is read from X-Forwarded-For only when TRUST_PROXY=true.
   const trustProxy = overrides.trustProxy ?? process.env.TRUST_PROXY === 'true';
+  // v48.1: NPCA practice mode, for a test hosting only (server/npca/practice.mjs).
+  const npcaPractice = overrides.npcaPractice ?? process.env.NPCA_PRACTICE === 'true';
+  if (npcaPractice && (isProduction || demoMode)) throw new Error('NPCA practice mode is only for a test hosting, not production or the username-only demo.');
 
   const config = {
     projectRoot,
-    npca: npcaSettings(overrides.npca),
+    npca: npcaPractice ? npcaPracticeSettings(overrides.npca) : npcaSettings(overrides.npca),
+    npcaPractice,
     demoMode,
     isProduction,
     trustProxy,
