@@ -33,6 +33,7 @@
 
   // The old ANC form opens read-only (saved values stay visible).
   function oldAncReadOnly() {
+    document.querySelectorAll('.anc-old-notice').forEach(notice => notice.remove());
     const panel = document.getElementById('sub_anc');
     if (!panel || panel.dataset.readOnly === '1') return;
     panel.dataset.readOnly = '1';
@@ -40,11 +41,6 @@
     // and saved unchanged with the record (disabled controls could be skipped).
     panel.inert = true;
     panel.setAttribute('data-anc-old-readonly', '');
-    const notice = document.createElement('p');
-    notice.className = 'anc-old-notice no-print';
-    const key = patient()?.patientKey || new URLSearchParams(window.location.search).get('patient') || '';
-    notice.innerHTML = `${esc(t('anc.oldForm', 'Old ANC form (read only). Use the official ANC record.'))} ${key && canOpenAnc() ? `<a href="/anc-record?patient=${encodeURIComponent(key)}">${esc(t('anc.open', 'Open the ANC record'))}</a>` : ''}`;
-    panel.insertAdjacentElement('beforebegin', notice);
   }
 
   async function midwifeMedicines() {
