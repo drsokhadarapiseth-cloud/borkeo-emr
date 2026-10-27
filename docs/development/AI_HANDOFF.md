@@ -1,5 +1,29 @@
 # Task context for Codex, Gemini or OpenCode
 
+## OPD direct editing and old-ANC notice removal - v48.3.0, 27 October 2026
+
+User approved the agreed changes with "yes code it". Base local master 5f47771
+(48.2.0), branch fix/opd-direct-edit. Pre-update committed code snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v48.2.0-5f47771b-d756d774
+
+Removed the legacy old-ANC notice creator and remove any existing notice nodes
+when initializing the inert old form. Its saved fields and readonly behavior
+remain; no replacement notice is added to the official ANC workspace.
+
+An ordinary OPD consultation opens ready to type for authorized doctor/chief/
+management roles once server canEdit is true. Doctors also require the existing
+DOCTOR_READY/IN_CONSULTATION payment state. This includes the normal mode=view
+link. Historical recordPage reports remain readonly; other view semantics,
+wrong-ward/discharged/correction and prepayment clinical restrictions remain.
+Eligible OPD editing stays enabled after Save. No auto-save or new permission
+grant occurs. Patient data, shared fields, billing and clinical rules are intact.
+
+Validation: 1,065 tests and Khmer check passed. The browser typed and saved a
+Subjective note from OPD View with no Edit click, verified shared vitals/complaint
+updates, absence of the old notice in OPD/ANC, continued editing after Save,
+desktop/mobile, ANC print/PDF and retained maternal workflows. See
+OPD_DIRECT_EDIT_V483_VALIDATION.md and the combined update TXT.
+
 ## Triage paraclinic label - v48.2.0, 27 October 2026
 
 User supplied the exact Khmer checkbox wording and requested a command to push

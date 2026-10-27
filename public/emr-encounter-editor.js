@@ -16,9 +16,15 @@
     return access?.view || query.get('view') || (role() === 'REGISTRATION' ? 'register' : role() === 'TRIAGE' ? 'triage' : ['NURSE','MIDWIFE'].includes(role()) ? 'nursing' : window.emrSession?.user?.activeWard?.code === 'opd' ? 'opd' : 'medical');
   }
   function isDirectEditAllowed() {
-    if (explicitView || report) return false;
-    if (query.get('edit') === '1' || query.get('mode') === 'edit') return true;
+    if (report) return false;
     const v = view(), r = role();
+    // An authorized OPD consultation opens ready to write, including its View link.
+    // Wait for server access and the existing cashier gate before enabling it.
+    if (v === 'opd' && (['DOCTOR', 'WARD_HEAD', 'CHIEF_WARD'].includes(r) || manager())) {
+      return access?.canEdit === true && (manager() || ['DOCTOR_READY', 'IN_CONSULTATION'].includes(window.getLoadedEmrPatient?.()?.workflowStage));
+    }
+    if (explicitView) return false;
+    if (query.get('edit') === '1' || query.get('mode') === 'edit') return true;
     if (v === 'triage' || r === 'TRIAGE') return true;
     if (v === 'nursing' && (['NURSE', 'MIDWIFE', 'WARD_HEAD', 'CHIEF_WARD'].includes(r) || manager())) return true;
     if ((v === 'medical' || v === 'daily') && (['DOCTOR', 'WARD_HEAD', 'CHIEF_WARD'].includes(r) || manager())) return true;

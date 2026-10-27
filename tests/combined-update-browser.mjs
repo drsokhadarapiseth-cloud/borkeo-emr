@@ -77,7 +77,14 @@ test('registration actions, shared OPD fields and integrated ANC work on desktop
     await screenshot('registration-desktop.png');
 
     await use('doctor_opd');
-    await navigate('/emr?' + new URLSearchParams({ patient: opd.patientKey, view: 'opd', edit: '1' }), `window.getLoadedEmrPatient?.()?.patientKey===${JSON.stringify(opd.patientKey)} && document.getElementById('opd_temp')?.readOnly===false && document.querySelector('.opd-shared-complaint')`);
+    const opdReady = `window.getLoadedEmrPatient?.()?.patientKey===${JSON.stringify(opd.patientKey)} && document.getElementById('opd_temp')?.readOnly===false && document.querySelector('.opd-shared-complaint') && EmrEncounterEditor.canWrite()`;
+    await navigate('/emr?' + new URLSearchParams({ patient: opd.patientKey, view: 'opd' }), opdReady);
+    assert.equal(await browser.evaluate("document.querySelectorAll('.anc-old-notice').length"), 0);
+    await navigate('/emr?' + new URLSearchParams({ patient: opd.patientKey, view: 'opd', mode: 'view' }), opdReady);
+    await browser.evaluate("document.querySelector('#opd_soap_s_body textarea').focus()");
+    await browser.type('Synthetic OPD direct entry');
+    assert.equal(await browser.evaluate("document.querySelector('#opd_soap_s_body textarea').value"), 'Synthetic OPD direct entry');
+    const subjectiveKey = await browser.evaluate("document.querySelector('#opd_soap_s_body textarea').dataset.emrStorageKey");
     assert.equal(await browser.evaluate("Boolean(document.getElementById('emr-consultation-workspace'))"), false);
     assert.equal(await browser.evaluate("getComputedStyle(document.getElementById('emr-chart-tabs-wrapper')).display"), 'none');
     await browser.evaluate("(()=>{const f=document.getElementById('opd_temp');f.value='38.2';f.dispatchEvent(new Event('input',{bubbles:true}));BorkeoChiefComplaint.toggleSymptom('Synthetic added symptom',true)})()");
@@ -90,6 +97,8 @@ test('registration actions, shared OPD fields and integrated ANC work on desktop
     catch (error) { console.log(await browser.evaluate("({status:document.getElementById('emr-record-status')?.textContent,missing:[...document.querySelectorAll('[aria-invalid=true]')].map(e=>({id:e.id,key:e.dataset.emrStorageKey,label:e.closest('.input-group')?.querySelector('label')?.textContent,html:e.outerHTML.slice(0,400)}))})")); throw error; }
     assert.equal(JSON.parse(app.database.findPatient(opd.patientKey).record_json)['scope:triage:id:p2_temp'], '38.2');
     assert.equal(JSON.parse(app.database.findPatient(opd.patientKey).record_json)['scope:triage:id:pmrs_chief_complaint'], '');
+    assert.equal(JSON.parse(app.database.findPatient(opd.patientKey).record_json)[subjectiveKey], 'Synthetic OPD direct entry');
+    await browser.waitFor("EmrEncounterEditor.canWrite() && !document.querySelector('#opd_soap_s_body textarea').disabled", 'OPD stays ready after saving');
     await screenshot('opd-desktop.png');
     await browser.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
     await screenshot('opd-mobile.png');
@@ -101,6 +110,7 @@ test('registration actions, shared OPD fields and integrated ANC work on desktop
     await browser.waitFor("location.pathname==='/anc-record' && document.querySelector('[data-action=open]')", 'unified ANC entry', 60000);
     await browser.evaluate("document.querySelector('[data-action=open]').click()");
     await browser.waitFor("document.querySelector('[data-anc-nav=visit]') && document.querySelector('[data-action=save-visit]')", 'ANC record open');
+    assert.equal(await browser.evaluate("document.querySelectorAll('.anc-old-notice').length"), 0);
     const type = async (selector, value) => browser.evaluate(`(()=>{const input=document.querySelector(${JSON.stringify(selector)});input.value=${JSON.stringify(value)};input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));})()`);
     await browser.evaluate("document.querySelector('[data-action=save-visit]').click()");
     await browser.waitFor("document.querySelector('[data-anc-nav=pregnancy]').getAttribute('aria-selected')==='true'", 'missing required field reveals its section');
