@@ -31,6 +31,11 @@
   }
   async function setup(){
     try{const r=await fetch('/api/npca/availability',{credentials:'same-origin'});if(!r.ok)return;const availability=await r.json();enabled=availability.enabled;
+      // v48.1: practice mode on a test hosting - always visible, never printed.
+      if(availability.practice&&!document.getElementById('npca-practice-banner')){const banner=document.createElement('div');banner.id='npca-practice-banner';banner.setAttribute('role','note');banner.textContent=t('កំពុងហាត់សមនឹង NPCA៖ គ្មានទិន្នន័យត្រូវបានបញ្ជូនទៅ NPCA ពិតទេ។','NPCA practice: nothing is sent to the real NPCA.');
+        banner.style.cssText='position:fixed;left:12px;bottom:12px;z-index:2147483000;padding:6px 12px;border-radius:6px;background:#fff7ed;color:#9a3412;border:1px solid #fdba74;font-size:13px;font-weight:600;pointer-events:none;box-shadow:0 2px 6px rgba(0,0,0,.12)';
+        if(!document.getElementById('npca-practice-print')){const style=document.createElement('style');style.id='npca-practice-print';style.textContent='@media print{#npca-practice-banner{display:none!important}}';document.head.appendChild(style);}
+        document.body.appendChild(banner);}
       const lookup=document.getElementById('npca-lookup-button');if(lookup)lookup.disabled=!availability.enabled;
       const role=window.emrSession?.user?.activeRole;
       if(['ADMIN','DIRECTOR','ACCOUNTANT','CLERK'].includes(role)&&!document.getElementById('npca-status-link')){const a=document.createElement('a');a.id='npca-status-link';a.href=role==='ADMIN'?'/admin/npca':'/npca';a.textContent=t('ការបញ្ជូនទិន្នន័យ NPCA','NPCA submissions');(document.querySelector('[data-session-host],.session-bar,.dashboard-header')||document.body).appendChild(a);}

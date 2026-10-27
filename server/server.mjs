@@ -4,7 +4,7 @@ import {createNssfLookup,NSSF_LOOKUP_ROLES} from './nssf-lookup.mjs';
 import {ensureSymptomSchema,listSymptoms,addCustomSymptom,SYMPTOM_CREATE_ROLES} from './symptoms.mjs';
 import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFacilityDocument,facilityDocument,removeFacilityDocument } from './health-facility.mjs';
 import { createDiagnosisSearch } from './icd10.mjs';
-// Borkeo EMR v48.0 - Electronic Medical Record System
+// Borkeo EMR v48.1 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -43,6 +43,8 @@ import { mountClinicalSummaryRoutes } from './routes/clinical-summary.mjs';
 import { mountMedicationSafetyRoutes } from './routes/medication-safety.mjs';
 import { mountMaternalRoutes } from './routes/maternal.mjs';
 import { NpcaIntegration } from './npca/integration.mjs';
+import { NpcaClient } from './npca/client.mjs';
+import { assertNpcaPracticeAllowed, createPracticeFetch, practiceHefLookup, practiceNssfLookup } from './npca/practice.mjs';
 import { ensureNpcaSchema } from './npca/storage.mjs';
 import { mountNpcaRoutes } from './routes/npca.mjs';
 import { ensureMaternalSchema } from './maternal.mjs';
@@ -1910,8 +1912,9 @@ function sanitizeHospitalState(value) {
 
 export function createEmrServer(configOverrides = {}) {
   const config = loadConfig(configOverrides);
-  const hefLookup = createHefLookup({fetchImpl:configOverrides.hefFetch || fetch});
-  const nssfLookup = createNssfLookup({fetchImpl:configOverrides.nssfFetch || fetch});
+  // v48.1: in NPCA practice mode the card checks answer from the test patients.
+  const hefLookup = config.npcaPractice ? async (card) => practiceHefLookup(database, card) : createHefLookup({fetchImpl:configOverrides.hefFetch || fetch});
+  const nssfLookup = config.npcaPractice ? async (card) => practiceNssfLookup(database, card) : createNssfLookup({fetchImpl:configOverrides.nssfFetch || fetch});
   const persistence = config.autoDatabase
     ? preparePersistentDatabase({ projectRoot: config.projectRoot || path.resolve(path.dirname(currentFile), '..'), targetPath: config.databasePath })
     : { created: false, sourcePath: '', candidates: [] };
@@ -1974,7 +1977,9 @@ export function createEmrServer(configOverrides = {}) {
   if (config.autoDatabase || config.dataDirectory) createDailyBackup(database, config.databasePath, 14, config.backupDirectory);
   database.deleteExpiredSessions(Date.now());
 
-  const npca = new NpcaIntegration(config.npca, database);
+  if (config.npcaPractice) assertNpcaPracticeAllowed(database);
+  const npca = new NpcaIntegration(config.npca, database, config.npcaPractice
+    ? { client: new NpcaClient(config.npca, database, { fetchImpl: createPracticeFetch(database) }) } : {});
   const router = new Router('emr');
   mountAuthRoutes(router);
   mountAdminRoutes(router);

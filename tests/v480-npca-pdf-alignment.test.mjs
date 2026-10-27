@@ -158,5 +158,7 @@ test('approval pack: the five sample JSON pass the EMR validation with the real 
   // The committed pack is what the script builds today.
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'borkeo-v480-pack-'));
   writeApprovalPack(dir);
-  for (const s of samples) assert.equal(fs.readFileSync(path.join('docs/npca/approval-pack', s.file), 'utf8'), fs.readFileSync(path.join(dir, s.file), 'utf8'), s.file);
+  // Line endings may be CRLF in a Windows Git copy.
+  const read = (file) => fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
+  for (const s of samples) assert.equal(read(path.join('docs/npca/approval-pack', s.file)), read(path.join(dir, s.file)), s.file);
 });

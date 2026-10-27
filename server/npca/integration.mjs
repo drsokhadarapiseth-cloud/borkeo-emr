@@ -21,7 +21,11 @@ export class NpcaIntegration {
   }
   prepare(patientKey){
     const row=this.database.findPatient(patientKey);if(!row)throw Object.assign(new Error('រកមិនឃើញអ្នកជំងឺ។'),{status:404});
-    const source=this.sourceFactory(this.database,row),built=buildVisitPayload(source,this.config,this.database);
+    const source=this.sourceFactory(this.database,row);
+    // Practice mode (test hosting only): billed services get a practice NPCA service code.
+    if(this.config.practice)for(const invoice of source.invoices||[])for(const service of invoice.services||[])if(service.localCode)
+      this.database.sqlite.prepare("INSERT OR IGNORE INTO npca_codes VALUES ('service',?,?,NULL,?)").run(String(service.localCode),'PRACTICE-'+String(service.localCode).replace(/[^A-Za-z0-9._-]/g,'-').slice(0,90),this.clock());
+    const built=buildVisitPayload(source,this.config,this.database);
     const admissionClaim=!source.completed&&source.visitType==='ipd'&&source.link?.payment_type==='PATY-0000N09';
     const validation={completed:source.completed,admissionClaim,sourceIssues:[...built.issues,...(source.sourceIssues||[]).filter(i=>this.config.sendForms||!i.field.startsWith('forms.'))],
       eligible:source.link?.eligible===1,sendForms:this.config.sendForms,addressValid:validAddress,

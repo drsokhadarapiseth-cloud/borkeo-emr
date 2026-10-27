@@ -1,5 +1,23 @@
 # Task context for Codex, Gemini or OpenCode
 
+## NPCA practice mode and 30 fresh test patients - v48.1.0, 27 October 2026
+
+User asked to remove all codespace patients, make 30 new ones without photos
+(Registration complete, Triage measured, waiting only for the service), and to
+have HEF / NSSF patients that the system verifies so NPCA can be practised;
+user confirmed the plan ("yes"). Clean master 6f465b9 (48.0.0); branch
+feature/npca-practice-hosting. Pre-update code snapshot:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v48.0.0-6f465b9e-af0d6825
+
+Seed: 12 HEF / 12 NSSF (saved card check; 011 and 012 not eligible) / 6 cash,
+no photo. NPCA_PRACTICE=true (server/npca/practice.mjs): HEF, NSSF and NPCA
+card checks answer from the test patients; practice NPCA (client fetchImpl)
+gives Processing then Ready after a minute, failures with reasons; banner;
+refuses production, NPCA_ENABLED=true, and real patients before first start.
+Fake card numbers cannot be verified by the real IDPoor / NSSF / NPCA, and real
+people's cards must not be put in the cloud: that is why practice mode exists.
+See NPCA_PRACTICE_V481_VALIDATION.md.
+
 ## NPCA v1.4 PDF alignment and approval pack - v48.0.0, 26 October 2026
 
 User asked to integrate the EMR with the NPCA API following the v1.4 PDF guide

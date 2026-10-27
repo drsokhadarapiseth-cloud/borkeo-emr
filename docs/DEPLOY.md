@@ -167,9 +167,12 @@ Use it only with the synthetic test patients below, never with hospital data.
 2. In the terminal check `node -v` (24 or newer; otherwise `nvm install 24`).
 3. Put the 30 test patients in the test database (the EMR must be stopped):
    `node scripts/seed-hosting-test-patients.mjs /workspaces/borkeo-data/emr.sqlite`
-   Registration is complete for each patient, Triage is measured and waits for
-   the service. The command refuses a database that holds any real patient.
-   Run it again at any time to get the 30 fresh test patients back.
+   Registration is complete for each patient (no photos), Triage is measured and
+   waits for the service. 12 patients have an HEF card, 12 an NSSF card (the card
+   check is already saved; patients 011 and 012 have a card that is not
+   eligible) and 6 pay cash. The command refuses a database that holds any real
+   patient. To start again from nothing: Ctrl+C, `rm -rf /workspaces/borkeo-data`,
+   then this step again.
 4. Start the EMR (the same 1234 accounts as on the hospital computer):
    `HOST=0.0.0.0 PORT=3001 COOKIE_SECURE=true TRUST_PROXY=true DATA_DIR=/workspaces/borkeo-data APP_ORIGIN=https://$CODESPACE_NAME-3001.$GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN npm start`
 5. **Ports** tab → port 3001 → **Open in Browser**. To open the link without a
@@ -177,3 +180,9 @@ Use it only with the synthetic test patients below, never with hospital data.
    Anyone with the link can then log in with 1234, so share it only with
    testers and set it back to **Private** afterwards.
 6. Update: Ctrl+C, `git pull`, step 4 again.
+7. NPCA practice (v48.1): start with `NPCA_PRACTICE=true` in front of the step 4
+   command. The HEF, NSSF and NPCA card checks then answer from the test
+   patients and a practice NPCA receives the closed visits (Processing, then
+   Ready after about one minute). Nothing goes to the internet; a banner shows
+   the practice on every page. It refuses production, NPCA_ENABLED=true and a
+   database that held real patients before its first start.

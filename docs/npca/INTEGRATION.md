@@ -1,5 +1,13 @@
 # Borkeo EMR NPCA integration — v42.8.0
 
+## v48.1.0: practice mode for the test hosting
+
+`NPCA_PRACTICE=true` (test hosting only, see docs/DEPLOY.md) answers the HEF,
+NSSF and NPCA card checks from the synthetic test patients and runs a practice
+NPCA inside the EMR (Processing, then Ready after about one minute). Nothing is
+sent to the internet. It refuses production, `NPCA_ENABLED=true` and a database
+that held real patients before its first start.
+
 ## v48.0.0 changes (NPCA v1.4 PDF comparison)
 
 - Marital status, occupation and disability are read from the current Registration

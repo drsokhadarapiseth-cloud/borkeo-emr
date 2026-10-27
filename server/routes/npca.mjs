@@ -9,7 +9,7 @@ export function mountNpcaRoutes(router) {
   const read={requireSession:true,roles:['ADMIN','DIRECTOR','ACCOUNTANT','CLERK']};
   const write={requireSession:true,roles:['ADMIN','ACCOUNTANT','CLERK']};
   const failure=(ctx,error)=>send(ctx,error.status||400,{error:error.code?errorText(error):error.message});
-  router.get('/api/npca/availability',ctx=>send(ctx,200,{enabled:ctx.config.npca.enabled}),{requireSession:true});
+  router.get('/api/npca/availability',ctx=>send(ctx,200,{enabled:ctx.config.npca.enabled,practice:ctx.config.npcaPractice===true}),{requireSession:true});
   router.get('/api/npca/form-definitions',ctx=>send(ctx,200,{enabled:ctx.config.npca.enabled,sendForms:ctx.config.npca.sendForms,forms:[...formDefinitions.values()],values:referenceSheets['Form Values'].slice(1).map(row=>({set:row[0],code:row[1],en:row[2],kh:row[3]})),aliases:Object.fromEntries([...new Set([...formDefinitions.values()].flatMap(f=>f.fields.map(v=>v.valueSet)))].map(name=>[name,formValueSet(name)]))}),{requireSession:true});
   router.get('/api/npca/candidates',ctx=>send(ctx,200,{patients:ctx.database.sqlite.prepare(`SELECT p.patient_key,p.case_number,p.full_name,p.service_mode FROM patient_records p JOIN npca_patient_links l ON l.patient_key=p.patient_key WHERE l.eligible=1 ORDER BY p.updated_at DESC LIMIT 500`).all()}),read);
   router.get('/api/npca/review',ctx=>{
