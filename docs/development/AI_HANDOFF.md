@@ -1,5 +1,31 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Lab identity/code and editable order dialogs - v48.8.0, 27 October 2026
+
+Owner approved with "yes code it". Base master
+2892fdc6ae1c42695c33a127facc536f566e1596 (48.7.0), branch
+fix/paraclinic-identity-editing. Clean code-only backup:
+D:\EMR\Borkeo_EMR_Code_Backups\v48.7.0-2892fdc6-543a1154
+
+Lab form and print show the full registered Health ID, including hyphens, instead
+of stripping/truncating to ten characters. The manual Lab Code input is replaced
+with a protected output describing automatic generation on save. Existing server
+accession numbering remains; saved reprints use the order accession consistently.
+
+Separate lab/imaging order-entry modals have an explicit paraclinic/transient
+marker when created for existing canOrder roles. The encounter editor exempts
+only those marked order dialogs from its global input/click/submit guard for
+DOCTOR/ADMIN/VICE_DIRECTOR outside historical reports. The consultation stays
+locked; result dialogs and all API authorization/ward/payment checks are intact.
+No data migration, patient replacement, .env or staff-setting change.
+
+Validation: 1,065 tests, Khmer and real OPD browser/PDF checks passed. The browser
+natively typed into lab diagnosis and all 13 imaging forms while consultation
+editing was locked, submitted an imaging order, and verified the lock remained.
+Exact form/print ID and generated/stable saved accession are asserted. See
+PARACLINIC_ID_EDIT_V488_VALIDATION.md and the combined update TXT.
+
+
 ## Other laboratory tests in print - v48.7.0, 27 October 2026
 
 Owner approved the discussed preview/reprint change with "yes". Base master

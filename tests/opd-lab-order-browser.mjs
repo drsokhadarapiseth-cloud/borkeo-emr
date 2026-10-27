@@ -41,6 +41,8 @@ test('OPD laboratory grouped multi-selection preserves paid, free and nurse hand
       await browser.evaluate('document.querySelector("[data-add-other]").click()');
     };
     await openLab();
+    assert.equal(await browser.evaluate('document.querySelector(".borkeo-lab-paper-form [data-lab-patient-id]").textContent'),patient.summary.healthId,'full patient ID, including hyphens, matches registration');
+    assert.equal(await browser.evaluate('document.querySelector(".borkeo-lab-paper-form [data-lab-code]").tagName'),'OUTPUT','lab code is generated on save, not manually entered');
     const labels=await browser.evaluate("({fee:document.querySelector('.opd-fee-choice').textContent,buttons:document.querySelector('.actions-right').textContent,hasNote:!!document.querySelector('.opd-handoff-choice')})");
     assert.doesNotMatch(labels.fee+labels.buttons,/[A-Za-z]/,'fee and action labels are Khmer');assert.equal(labels.hasNote,false);
     const catalog=(await call('doctor_opd','GET','/api/lab-catalog')).tests.filter(t=>t.active!==false);
@@ -74,6 +76,7 @@ test('OPD laboratory grouped multi-selection preserves paid, free and nurse hand
     const printMarkup=async()=>{
       await browser.waitFor('document.querySelector("#borkeo-print-frame")?.contentDocument.querySelector("[data-extra-print-code=DIRECT_COOMBS]")','extra tests in print frame');
       const printed=await browser.evaluate('(()=>{const d=document.querySelector("#borkeo-print-frame").contentDocument;return {rows:[...d.querySelectorAll("[data-extra-print-code]")].map(n=>({code:n.dataset.extraPrintCode,text:n.textContent,group:n.closest(".print-other-group").querySelector("h3").textContent})),html:d.documentElement.outerHTML}})()');
+      assert.equal(await browser.evaluate('document.querySelector("#borkeo-print-frame").contentDocument.querySelector("[data-lab-patient-id]").textContent'),patient.summary.healthId,'print retains exact full ID');
       assert.equal(printed.rows.length,2,'standard tests are not duplicated in the additional section');
       const coombs=printed.rows.find(n=>n.code==='DIRECT_COOMBS'),troponin=printed.rows.find(n=>n.code==='TROP_I');
       assert.match(coombs.text,/Direct Antiglobulin Test/);assert.match(coombs.text,/★/);assert.equal(coombs.group,'Blood Bank / Transfusion');
@@ -90,6 +93,7 @@ test('OPD laboratory grouped multi-selection preserves paid, free and nurse hand
     await browser.waitFor('window.labOrders.length===2','free multi-test request submitted');
     order=await browser.evaluate('window.labOrders[1]');assert.equal(order.status,201,JSON.stringify(order.result));assert.equal(order.result.order.request.chargeMode,'FREE');assert.equal(Boolean(order.result.cashierPaymentRequired),false);assert.deepEqual(order.payload.request.items.map(i=>i.code).sort(),selected.sort());
     const printedOrderId=order.result.order.id;
+    const printedOrderCode=order.result.order.accessionNumber;assert.match(printedOrderCode,/^LAB-\d{8}-[A-Z0-9]+$/,'server generates lab accession automatically');
     await openLab();
     assert.equal(await browser.evaluate('document.querySelector("[data-other-pick][value=DIRECT_COOMBS]").disabled'),true,'already ordered tests stay disabled');
     await add(['CBC','UREA']);
@@ -126,7 +130,37 @@ test('OPD laboratory grouped multi-selection preserves paid, free and nurse hand
     const beforeReprint=app.database.findPatient(key).record_json;
     await browser.evaluate('document.querySelector('+JSON.stringify(reprintSelector)+').click()');
     const reprintMarkup=await printMarkup();
+    assert.equal(await browser.evaluate('document.querySelector("#borkeo-print-frame").contentDocument.querySelector("[data-lab-code]").textContent'),printedOrderCode,'reprint uses the same server-generated lab code');
     assert.equal(app.database.findPatient(key).record_json,beforeReprint,'printing a saved order does not save clinical data');
+    assert.equal(await browser.evaluate('window.EmrEncounterEditor.canWrite()'),false,'pending fees leave the consultation read-only');
+    assert.equal(await browser.evaluate('document.querySelector("#sub_opd textarea").dispatchEvent(new InputEvent("beforeinput",{bubbles:true,cancelable:true,inputType:"insertText",data:"blocked"}))'),false,'consultation input guard remains enforced');
+    // Actual native text entry must work in authorized order dialogs even here.
+    await openLab();
+    await browser.evaluate('document.querySelector(".borkeo-lab-paper-form [name=clinicalDiagnosis]").focus()');await browser.type('Synthetic lab diagnosis');
+    assert.equal(await browser.evaluate('document.querySelector("[name=clinicalDiagnosis]").value'),'Synthetic lab diagnosis');
+    await browser.evaluate('document.querySelector(".borkeo-lab-paper-form [data-cancel]").click()');
+    const imagingCatalog=(await call('doctor_opd','GET','/api/imaging-catalog')).modalities.filter(m=>m.active!==false);
+    for(const item of imagingCatalog){
+      await browser.evaluate('document.querySelector("#sub_opd [data-request-imaging]").click()');
+      await browser.waitFor('document.querySelector(".imaging-order-groups")','imaging chooser');
+      await browser.evaluate('document.querySelector('+JSON.stringify('.imaging-test-name[data-order="'+item.code+'"]')+').click()');
+      await browser.waitFor('document.querySelector(".paraclinic-form [name=clinicalIndication]")',item.code+' order');
+      assert.ok(await browser.evaluate('[...document.querySelectorAll("[data-paraclinic-order-entry] input,[data-paraclinic-order-entry] select,[data-paraclinic-order-entry] textarea")].every(n=>!n.disabled&&!n.readOnly)'),item.code+' order-entry fields enabled');
+      for(const name of ['clinicalIndication','history','question']){
+        await browser.evaluate('document.querySelector("[name='+name+']").focus()');await browser.type('Synthetic '+name);
+        assert.equal(await browser.evaluate('document.querySelector("[name='+name+']").value'),'Synthetic '+name,item.code+' permits native typing');
+      }
+      await browser.evaluate('document.querySelector(".paraclinic-form [data-cancel]").click()');
+    }
+    assert.equal(app.database.findPatient(key).record_json,beforeReprint,'order dialog input does not unlock or save consultation data');
+    await browser.evaluate('window.syntheticImagingResult=null;const savedFetch=window.fetch;window.fetch=async function(input,options){const response=await savedFetch.apply(this,arguments);if(String(input).includes("/api/paraclinic/orders")&&options?.method==="POST")window.syntheticImagingResult={status:response.status,body:await response.clone().json()};return response};document.querySelector("#sub_opd [data-request-imaging]").click()');
+    await browser.waitFor('document.querySelector(".imaging-order-groups")','final imaging chooser');
+    await browser.evaluate('document.querySelector(".imaging-test-name[data-order=XRAY]").click()');
+    await browser.evaluate('document.querySelector("[name=clinicalIndication]").focus()');await browser.type('Synthetic imaging indication');
+    await browser.evaluate('document.querySelector("[name=chargeMode][value=FREE]").click();document.querySelector(".paraclinic-form [data-route=DIRECT]").click()');
+    await browser.waitFor('window.syntheticImagingResult','imaging submission while consultation locked');
+    const imaging=await browser.evaluate('window.syntheticImagingResult');assert.equal(imaging.status,201,JSON.stringify(imaging.body));assert.equal(imaging.body.order.request.clinicalIndication,'Synthetic imaging indication');
+    assert.equal(await browser.evaluate('window.EmrEncounterEditor.canWrite()'),false,'submitting a separate order does not unlock the consultation');
     for(const [label,markup] of [['preview',previewMarkup],['reprint',reprintMarkup],['bulk-preview',bulkMarkup]]){
       fs.writeFileSync(path.join(evidence,label+'.snapshot.txt'),markup);
       await browser.evaluate('document.open();document.write('+JSON.stringify(markup)+');document.close()');
