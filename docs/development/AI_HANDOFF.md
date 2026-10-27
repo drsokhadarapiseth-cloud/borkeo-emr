@@ -1,5 +1,26 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Other laboratory tests in print - v48.7.0, 27 October 2026
+
+Owner approved the discussed preview/reprint change with "yes". Base master
+66be22486d5aaf02b8753171d01e20322357a8f7 (48.6.0), branch
+fix/lab-other-tests-print. Clean code-only backup:
+D:\EMR\Borkeo_EMR_Code_Backups\v48.6.0-66be2248-1e2d2929
+
+The lab print generator now puts additional test names in a full-width section
+grouped by major catalog category instead of raw codes in the narrow Other area.
+Preview and saved reprints share this generator. Urgent markers and checked states
+remain. Standard tests stay in their original positions without duplicate extra
+rows. Standalone ALT is printed when AST is not selected. Missing catalog items
+fall back to saved metadata or code instead of disappearing. Rows flow naturally
+across paper pages. No order, fee, route, clinical-storage or patient-data change.
+
+The browser regression covers preview and saved reprint after a fresh OPD load,
+standalone ALT, long-list pagination, deduplication, urgency and unchanged clinical
+record JSON, alongside the retained lab selection/routing checks. See
+LAB_OTHER_PRINT_V487_VALIDATION.md and the combined TXT for final results/evidence.
+
+
 ## OPD lab grouped selection and Khmer actions - v48.6.0, 27 October 2026
 
 Owner approved all discussed changes with "please code all above". Base master
