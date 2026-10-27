@@ -184,3 +184,20 @@ Owner ordered the visit urine fields renamed and turned into dropdown lists.
 |------|------|--------|-------|
 | server/catalogues/anc-record-labels.json | 138 | ជាតិប្រៃ | ជាតិសាច់ក្នុងទឹកនោម |
 | server/catalogues/anc-record-labels.json | 139 | ជាតិផ្អែម | ជាតិស្ករក្នុងទឹកនោម |
+
+## v48.5 grouped OPD imaging chooser (owner's order)
+
+Owner approved showing each test name once in specialty groups and removing duplicate labels, codes, category controls and add buttons. Existing order forms remain.
+
+| file | line | before | after |
+|------|------|--------|-------|
+| public/paraclinic.js | 243 | ទាំងអស់ | [removed] |
+| public/paraclinic.js | 245 | បេះដូង និងប្រសាទ | [removed] |
+| public/paraclinic.js | 246 | ឆ្លុះ និងត្រចៀក ច្រមុះ បំពង់ក | [removed] |
+| public/paraclinic.js | 252 | ស្នើសុំ Paraclinic | [removed] |
+| public/paraclinic.js | 253 | មន្ទីរពិសោធន៍ (Lab) | [removed] |
+| public/paraclinic.js | 254 | រូបភាពវេជ្ជសាស្ត្រ (Imaging) | [removed] |
+| public/paraclinic.js | 258 | ផ្នែករូបភាពវេជ្ជសាស្ត្រ | [removed] |
+| public/paraclinic.js | 270 | ទាំងអស់ | [removed] |
+| public/paraclinic.js | 284 | + ស្នើសុំ | [removed] |
+| public/paraclinic.js | 290 | សេវារូបភាពកំណត់ម៉ោងណាត់ ហើយម៉ោងនឹងបង្ហាញលើទម្រង់អ្នកជំងឺ | [removed] |

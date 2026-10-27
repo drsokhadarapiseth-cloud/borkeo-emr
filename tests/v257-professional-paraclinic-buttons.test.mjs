@@ -10,8 +10,8 @@ const read = file => fs.readFileSync(path.join(projectRoot, file), 'utf8');
 test('Paraclinic request modal retains grouped Imaging procedures with a full-width trigger', () => {
   const js = fs.readFileSync(path.join(projectRoot, 'public', 'paraclinic.js'), 'utf8');
   assert.ok(js.includes('data-request-paraclinic'));
-  assert.ok(js.includes('imaging-card-grid') || js.includes('paraclinic-modality-grid'));
-  for (const group of ['Radiology','Cardiology / Neuro','Endoscopy / ENT']) assert.ok(js.includes(group));
+  assert.ok(js.includes('imaging-order-groups'));
+  for (const group of ['RADIOLOGY','CARDIOLOGY','NEUROLOGY','GASTROENTEROLOGY','ENT','PULMONOLOGY']) assert.ok(js.includes(group));
   for (const modality of ['XRAY','CT','MRI','ULTRASOUND','ECG','EEG','ECHOCARDIOLOGY','FIBROSCOPY','BRONCHOSCOPY']) assert.ok(js.includes(modality));
   assert.ok(!js.includes("layout.className = 'paraclinic-split'"));
 });

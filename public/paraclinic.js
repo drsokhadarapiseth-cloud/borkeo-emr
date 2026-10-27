@@ -195,23 +195,9 @@
     document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
   }
 
-  const MODALITY_BADGES = {
-    ULTRASOUND: 'US', XRAY: 'X-RAY', CT: 'CT', MRI: 'MRI',
-    ECG: 'ECG', ECHOCARDIOLOGY: 'ECHO', EEG: 'EEG',
-    FIBROSCOPY: 'FIBRO', COLOSCOPY: 'COLO', OTOSCOPY: 'OTO',
-    RHINOSCOPY: 'RHINO', LARYNGOSCOPY: 'LARYNGO', BRONCHOSCOPY: 'BRONCHO'
-  };
-
   async function openRequestChooser(context, initialBranch = 'imaging') {
     if (!patient?.patientKey) { alert('សូមបើកអ្នកជំងឺជាមុន'); return; }
     try { await refresh(); } catch (error) { alert(error.message); return; }
-
-    const badges = typeof MODALITY_BADGES !== 'undefined' ? MODALITY_BADGES : {
-      ULTRASOUND: 'US', XRAY: 'X-RAY', CT: 'CT', MRI: 'MRI',
-      ECG: 'ECG', ECHOCARDIOLOGY: 'ECHO', EEG: 'EEG',
-      FIBROSCOPY: 'FIBRO', COLOSCOPY: 'COLO', OTOSCOPY: 'OTO',
-      RHINOSCOPY: 'RHINO', LARYNGOSCOPY: 'LARYNGO', BRONCHOSCOPY: 'BRONCHO'
-    };
 
     if (initialBranch === 'lab') {
       return openLabOrder(context, patient.patientKey);
@@ -239,82 +225,59 @@
       ];
     }
 
-    const specialtyGroups = [
-      { id: 'ALL', nameKh: 'ទាំងអស់', nameEn: 'All Imaging', count: imagingList.length },
-      { id: 'RADIOLOGY', nameKh: 'វិទ្យុសកម្មទូទៅ', nameEn: 'Radiology', filter: m => m.groupId === 'RADIOLOGY' },
-      { id: 'CARDIOLOGY_NEURO', nameKh: 'បេះដូង និងប្រសាទ', nameEn: 'Cardiology / Neuro', filter: m => ['CARDIOLOGY', 'NEUROLOGY'].includes(m.groupId) },
-      { id: 'ENDOSCOPY_ENT', nameKh: 'ឆ្លុះ និងត្រចៀក ច្រមុះ បំពង់ក', nameEn: 'Endoscopy / ENT / Pulm', filter: m => ['GASTROENTEROLOGY', 'ENT', 'PULMONOLOGY'].includes(m.groupId) }
-    ].map(g => {
-      const list = g.id === 'ALL' ? imagingList : imagingList.filter(g.filter);
-      return { ...g, count: list.length, items: list };
-    }).filter(g => g.count > 0 || g.id === 'ALL');
-
-    const view = modal('ស្នើសុំ Paraclinic', `<div class="paraclinic-choice-tabs" role="tablist">
-      <button type="button" role="tab" aria-selected="false" data-branch="lab" data-order="LAB">មន្ទីរពិសោធន៍ (Lab)</button>
-      <button type="button" role="tab" aria-selected="true" data-branch="imaging">រូបភាពវេជ្ជសាស្ត្រ (Imaging)</button></div>
-      <section data-branch-panel="imaging">
-        <div class="master-detail-order-layout">
-          <aside class="master-sidebar">
-            <div class="sidebar-header">ផ្នែករូបភាពវេជ្ជសាស្ត្រ</div>
-            <div class="sidebar-category-list">
-              ${specialtyGroups.map(g => `
-                <button type="button" class="sidebar-cat-btn ${g.id === 'ALL' ? 'active' : ''}" data-img-group="${esc(g.id)}">
-                  <span>${esc(g.nameKh)} (${esc(g.nameEn)})</span>
-                  <span class="cat-count-badge">${g.count}</span>
-                </button>
-              `).join('')}
-            </div>
-          </aside>
-          <section class="master-content-panel">
-            <div class="content-panel-header">
-              <span data-active-imaging-title>ទាំងអស់</span>
-              <small data-active-imaging-subtitle>${imagingList.length} services available</small>
-            </div>
-            <div class="imaging-card-grid">
-              ${imagingList.map(m => `
-                <div class="imaging-modality-card" data-group-id="${esc(m.groupId)}" data-modality-code="${esc(m.code)}">
-                  <div class="imaging-card-head">
-                    <span class="imaging-card-badge">${esc(badges[m.code] || m.code)}</span>
-                    <div class="imaging-card-titles">
-                      <strong>${esc(m.nameKh)}</strong>
-                      <small>${esc(m.nameEn)} · ${esc(m.code)}</small>
-                    </div>
-                  </div>
-                  <span class="imaging-card-group-badge">${esc(m.groupId)}</span>
-                  <button type="button" class="imaging-card-btn" data-order="${esc(m.code)}">+ ស្នើសុំ ${esc(m.code)}</button>
-                </div>
-              `).join('')}
-            </div>
-          </section>
-        </div>
-        <p style="color:#567885;font-size:12px;margin:8px 0 0;">សេវារូបភាពកំណត់ម៉ោងណាត់ ហើយម៉ោងនឹងបង្ហាញលើទម្រង់អ្នកជំងឺ</p>
-      </section>`);
-
-    view.body.querySelectorAll('[data-branch="lab"]').forEach(btn => btn.addEventListener('click', () => {
-      view.close();
-      openLabOrder(context, patient.patientKey);
-    }));
-
-    view.body.querySelectorAll('[data-img-group]').forEach(button => button.addEventListener('click', () => {
-      view.body.querySelectorAll('[data-img-group]').forEach(b => b.classList.toggle('active', b === button));
-      const groupId = button.dataset.imgGroup;
-      const titleEl = view.body.querySelector('[data-active-imaging-title]');
-      const subEl = view.body.querySelector('[data-active-imaging-subtitle]');
-      const grp = specialtyGroups.find(g => g.id === groupId);
-      if (titleEl && grp) titleEl.textContent = `${grp.nameKh} (${grp.nameEn})`;
-      if (subEl && grp) subEl.textContent = `${grp.count} services available`;
-      view.body.querySelectorAll('.imaging-modality-card').forEach(card => {
-        if (groupId === 'ALL') {
-          card.hidden = false;
-        } else if (groupId === 'RADIOLOGY') {
-          card.hidden = card.dataset.groupId !== 'RADIOLOGY';
-        } else if (groupId === 'CARDIOLOGY_NEURO') {
-          card.hidden = !['CARDIOLOGY', 'NEUROLOGY'].includes(card.dataset.groupId);
-        } else if (groupId === 'ENDOSCOPY_ENT') {
-          card.hidden = !['GASTROENTEROLOGY', 'ENT', 'PULMONOLOGY'].includes(card.dataset.groupId);
-        }
-      });
-    }));
+    // Keep the catalog's clinical groups; a single native button opens each form.
+    const groupLabels = [
+  {
+    "id": "RADIOLOGY",
+    "nameKh": "វិទ្យុសកម្មទូទៅ",
+    "nameEn": "General Radiology"
+  },
+  {
+    "id": "CARDIOLOGY",
+    "nameKh": "ឯកទេសបេះដូង",
+    "nameEn": "Cardiology"
+  },
+  {
+    "id": "NEUROLOGY",
+    "nameKh": "ឯកទេសប្រព័ន្ធប្រសាទ",
+    "nameEn": "Neurology"
+  },
+  {
+    "id": "GASTROENTEROLOGY",
+    "nameKh": "ឯកទេសក្រពះពោះវៀន",
+    "nameEn": "Gastroenterology / Endoscopy"
+  },
+  {
+    "id": "ENT",
+    "nameKh": "ឯកទេសត្រចៀក ច្រមុះ បំពង់ក",
+    "nameEn": "ENT / Otorhinolaryngology"
+  },
+  {
+    "id": "PULMONOLOGY",
+    "nameKh": "ឯកទេសផ្លូវដង្ហើម",
+    "nameEn": "Pulmonology"
+  }
+];
+    const english = document.documentElement.lang === 'en';
+    const grouped = new Map(groupLabels.map(group => [group.id, { ...group, items: [] }]));
+    for (const item of imagingList) {
+      const id = item.groupId || 'OTHER';
+      if (!grouped.has(id)) grouped.set(id, { id, nameKh: id, nameEn: id, items: [] });
+      grouped.get(id).items.push(item);
+    }
+    const label = item => english ? (item.nameEn || item.nameKh || item.code) : (item.nameKh || item.nameEn || item.code).replace(/\s*\([^)]*[A-Za-z][^)]*\)/g, '').trim();
+    const view = modal(english ? 'Imaging' : "រូបភាពវេជ្ជសាស្ត្រ", `<div class="paraclinic-choice-tabs" role="tablist">
+      <button type="button" role="tab" aria-selected="false" data-branch="lab" data-order="LAB">${english ? 'Laboratory' : "មន្ទីរពិសោធន៍"}</button>
+      <button type="button" role="tab" aria-selected="true" data-branch="imaging" disabled>${english ? 'Imaging' : "រូបភាពវេជ្ជសាស្ត្រ"}</button>
+      </div><div class="imaging-order-groups">
+      ${[...grouped.values()].filter(group => group.items.length).map(group => `
+        <section class="imaging-order-group" aria-labelledby="imaging-group-${esc(group.id)}">
+          <h3 id="imaging-group-${esc(group.id)}">${esc(english ? group.nameEn : group.nameKh)}</h3>
+          <div class="imaging-order-tests">${group.items.map(item => `
+            <button type="button" class="imaging-test-name" data-order="${esc(item.code)}">${esc(label(item))}</button>
+          `).join('')}</div>
+        </section>`).join('')}
+      </div>`);
 
     view.body.querySelectorAll('[data-order]').forEach(button => button.addEventListener('click', async () => {
       const modality = button.dataset.order;
