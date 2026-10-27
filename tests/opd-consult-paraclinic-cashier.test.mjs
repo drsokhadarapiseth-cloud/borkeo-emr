@@ -14,7 +14,7 @@ test('OPD doctor order form exposes paid/free choices and the two handoff action
   assert.match(form,/បញ្ជូនទៅបញ្ជរបង់ប្រាក់/);
   assert.match(form,/Send to Nurse/);
   assert.doesNotMatch(form,/name="handoffMode"/);
-  assert.match(form,/Direct to Cashier and then Lab\/Imaging is the usual route/);
+  assert.doesNotMatch(form,/opd-handoff-choice|Direct to Cashier and then Lab\/Imaging is the usual route/);
   assert.match(cashier,/paraclinicPaymentPending/);
 });
 
