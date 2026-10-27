@@ -62,6 +62,7 @@
     });
     copy.style.removeProperty('display'); copy.style.removeProperty('visibility');
     copy.style.setProperty('display',copy.id==='print-rx-layout'?'flex':'block','important');
+    copy.style.setProperty('content-visibility','visible','important');
     copy.removeAttribute('hidden'); copy.removeAttribute('aria-hidden');
     copy.classList.remove('emr-workflow-hidden','emr-permission-hidden');
     copy.classList.add('emr-print-section',...sectionClasses);
@@ -75,6 +76,8 @@
       const shell=parent.cloneNode(false);
       shell.removeAttribute('hidden'); shell.removeAttribute('aria-hidden');
       shell.removeAttribute('style'); shell.style.setProperty('display','block','important'); shell.classList.add('emr-print-ancestor');
+      // An inactive source page can have dimensions yet suppress all painting.
+      shell.style.setProperty('content-visibility','visible','important');
       shell.classList.remove('no-print','emr-workflow-hidden','emr-permission-hidden');
       [...shell.attributes].forEach(attr=>{if(/^on/i.test(attr.name))shell.removeAttribute(attr.name);});
       shell.appendChild(copy); copy=shell; parent=parent.parentElement;

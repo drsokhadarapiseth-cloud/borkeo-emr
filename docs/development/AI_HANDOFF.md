@@ -1,5 +1,35 @@
 # Task context for Codex, Gemini or OpenCode
 
+## OPD imaging chooser and admission printing - v48.5.0, 27 October 2026
+
+User approved the grouped clickable-name imaging chooser and clarified that it
+belongs in the OPD form. The previously requested admission-print repair remains
+included. Two minor steps from 48.3: admission repair 48.4, imaging update 48.5;
+delivered together as 48.5.0. Base master 1f32bdb8703fd7d7726a7c5851abf929b4f4a701,
+working branch fix/admission-letter-print.
+
+Pre-update clean committed code backup (no hospital data or secrets):
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v48.3.0-1f32bdb8-3c4aa64d
+
+The OPD imaging chooser shows active catalog services exactly once under the six
+existing specialties. Clicking a test name opens its unchanged order form. Removed
+separate add buttons, duplicate name/code badges and category-selection controls.
+Laboratory ordering, appointment fields, duplicate-order restrictions, permissions,
+submission, charges and clinical data are retained. Shared IPD chooser uses the
+same renderer. Khmer names are shown without duplicate English parentheticals.
+
+Admission printing was blank because inactive page1 retained content-visibility:
+hidden in the isolated print document. The selected print snapshot and its copied
+ancestor shells now explicitly use visible. Live page visibility is unchanged.
+The synthetic regression opens all 13 imaging forms, retains laboratory access,
+checks desktop/mobile emulation, prints a populated admission PDF, and verifies
+that printing/opening forms does not mutate the patient record.
+
+See OPD_IMAGING_PRINT_V485_VALIDATION.md and the combined update TXT for final
+verification and evidence. Never copy disposable databases or browser profiles
+into a hospital installation. Existing patient records and photos are preserved.
+
+
 ## OPD direct editing and old-ANC notice removal - v48.3.0, 27 October 2026
 
 User approved the agreed changes with "yes code it". Base local master 5f47771

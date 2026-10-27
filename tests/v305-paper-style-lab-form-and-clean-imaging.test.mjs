@@ -9,26 +9,15 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
 
-test('v30.5 medical imaging order uses clean professional badges and eliminates cute emojis', () => {
+test('v30.5 medical imaging order uses accessible test names without duplicate controls', () => {
   const paraclinicJs = fs.readFileSync(path.join(rootDir, 'public', 'paraclinic.js'), 'utf8');
 
-  // Verify MODALITY_BADGES is used instead of MODALITY_ICONS emojis
-  assert.match(paraclinicJs, /const MODALITY_BADGES = \{/);
-  assert.match(paraclinicJs, /ULTRASOUND:\s*'US'/);
-  assert.match(paraclinicJs, /XRAY:\s*'X-RAY'/);
-  assert.match(paraclinicJs, /CT:\s*'CT'/);
-  assert.match(paraclinicJs, /MRI:\s*'MRI'/);
-  assert.match(paraclinicJs, /ECG:\s*'ECG'/);
-  assert.match(paraclinicJs, /ECHOCARDIOLOGY:\s*'ECHO'/);
-  assert.match(paraclinicJs, /EEG:\s*'EEG'/);
+  // The approved name-only chooser replaces the old badge and add-button layout.
+  assert.match(paraclinicJs, /class="imaging-test-name" data-order=/);
+  assert.doesNotMatch(paraclinicJs, /class="imaging-card-(badge|btn|icon)"/);
   assert.doesNotMatch(paraclinicJs, /const MODALITY_ICONS/);
-
-  // Verify imaging cards use imaging-card-badge
-  assert.match(paraclinicJs, /class="imaging-card-badge"/);
-  assert.doesNotMatch(paraclinicJs, /class="imaging-card-icon"/);
-
-  const paraclinicCss = fs.readFileSync(path.join(rootDir, 'public', 'paraclinic.css'), 'utf8');
-  assert.match(paraclinicCss, /\.imaging-card-badge/);
+  const css = fs.readFileSync(path.join(rootDir, 'public', 'paraclinic.css'), 'utf8');
+  assert.match(css, /imaging-test-name:focus-visible/);
 });
 
 test('v30.5 authentic paper-style laboratory request form layout and Moul header', () => {

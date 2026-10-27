@@ -73,19 +73,18 @@ test('v30.4 lab catalog activation permission for LAB role and active filtering'
   assert.doesNotMatch(labJs, /'active'\]\.disabled = true/);
 });
 
-test('v30.4 master-detail 2-column layout in public/paraclinic.js for both lab and imaging', () => {
+test('v30.4 laboratory master-detail and grouped imaging layout', () => {
   const paraclinicJs = fs.readFileSync(path.join(rootDir, 'public', 'paraclinic.js'), 'utf8');
   
   // Laboratory order master-detail layout
-  assert.match(paraclinicJs, /master-detail-order-layout/);
   assert.match(paraclinicJs, /data-cat-select/);
   assert.match(paraclinicJs, /data-active-category-title/);
   assert.match(paraclinicJs, /rawTests\.filter\(test => test\.active !== false\)/);
 
   // Imaging request master-detail layout
-  assert.match(paraclinicJs, /data-img-group/);
-  assert.match(paraclinicJs, /data-active-imaging-title/);
-  assert.match(paraclinicJs, /imaging-modality-card/);
+  assert.match(paraclinicJs, /imaging-order-group/);
+  assert.match(paraclinicJs, /imaging-test-name/);
+  assert.match(paraclinicJs, /data-order/);
   assert.match(paraclinicJs, /\/api\/imaging-catalog/);
 });
 

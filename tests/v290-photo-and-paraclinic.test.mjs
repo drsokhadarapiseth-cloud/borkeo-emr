@@ -97,7 +97,7 @@ test('Paraclinic setup adds inline controls without wrapping or moving the medic
 
 test('request chooser renders Laboratory and all grouped Imaging procedures', async () => {
   const ctx=functions();let markup='';
-  ctx.patient={patientKey:'case:CHOOSER290'};ctx.refresh=async()=>{};ctx.alert=message=>{throw Error(message)};
+  ctx.document={documentElement:{lang:'km'}};ctx.patient={patientKey:'case:CHOOSER290'};ctx.refresh=async()=>{};ctx.alert=message=>{throw Error(message)};
   ctx.modal=(title,body)=>{markup=body;return {body:{querySelectorAll:()=>[]},close(){}}};
   const start=source.indexOf('  async function openRequestChooser('),end=source.indexOf('  function pendingOrder(',start);
   vm.runInNewContext(source.slice(start,end)+'\nthis.choose=openRequestChooser;',ctx);
