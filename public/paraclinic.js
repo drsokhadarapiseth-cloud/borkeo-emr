@@ -617,7 +617,17 @@
       'TBIL','AST','ALT','GGT','ALP','TP','ALB','CHOL','HDL','LDL','TG',
       'AMYLASE','LIPASE'
     ]);
+    // ALT has no standalone checkbox on the fixed paper form.
+    if (!checkedCodes.has('AST')) standardCodes.delete('ALT');
     const otherItems = [...checkedCodes].filter(c => !standardCodes.has(c));
+    const otherGroups = new Map();
+    for (const code of otherItems) {
+      const item = catalog?.find(test => test.code === code) || order?.request?.items?.find(test => test.code === code) || { code };
+      const group = item.category || 'Other / Special';
+      const name = String(item.name || code).replace(/\s*\([^)]*\)/g, '').trim() || code;
+      if (!otherGroups.has(group)) otherGroups.set(group, []);
+      otherGroups.get(group).push({ code, name });
+    }
     const now = new Date(order?.createdAt || Date.now());
     const dateStr = now.toLocaleDateString('en-GB');
     const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -804,6 +814,9 @@
       content: "✓";
       color: #000;
     }
+    .print-other-tests {margin:8px 0;font-size:10.5px}
+    .print-other-tests h3 {margin:6px 0 3px;padding:3px 5px;background:#f3f4f6;border-bottom:1px solid #000;font-size:11px;break-after:avoid;page-break-after:avoid}
+    .print-other-tests .print-chk-row {break-inside:avoid;page-break-inside:avoid;overflow-wrap:anywhere}
     .print-footer {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -946,10 +959,14 @@
         <div class="print-chk-row">${chk('AMYLASE')} Amylase ${star('AMYLASE')}</div>
         <div class="print-chk-row">${chk('LIPASE')} Lipase ${star('LIPASE')}</div>
 
-        <div class="print-col-subhead">Other test</div>
-        ${otherItems.length ? otherItems.map(c => `<div class="print-chk-row"><span class="print-chk checked"></span> ${esc(c)} ${star(c)}</div>`).join('') : '<div class="print-chk-row"><span class="print-chk"></span> ___________________________</div>'}
+        ${otherItems.length ? '' : '<div class="print-col-subhead">Other test</div><div class="print-chk-row"><span class="print-chk"></span> ___________________________</div>'}
       </div>
     </div>
+
+    ${otherGroups.size ? `<section class="print-other-tests">${[...otherGroups].sort(([a], [b]) => a.localeCompare(b)).map(([group, items]) => `
+      <section class="print-other-group"><h3>${esc(group)}</h3>
+        ${items.sort((a, b) => a.name.localeCompare(b.name)).map(item => `<div class="print-chk-row" data-extra-print-code="${esc(item.code)}"><span class="print-chk checked"></span><span>${esc(item.name)}</span>${star(item.code)}</div>`).join('')}
+      </section>`).join('')}</section>` : ''}
 
     <div class="print-footer">
       <div class="print-footer-cell">

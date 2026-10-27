@@ -70,6 +70,18 @@ test('OPD laboratory grouped multi-selection preserves paid, free and nurse hand
     await add(['TROP_I']);
     const selected=await browser.evaluate('[...document.querySelectorAll("[data-paper-test]:checked")].map(n=>n.value)');
     assert.deepEqual(selected.sort(),['DIRECT_COOMBS','GLU','TROP_I']);
+    await browser.evaluate('document.querySelector("[data-star-code=DIRECT_COOMBS]").click();document.querySelector("[data-preview-print]").click()');
+    const printMarkup=async()=>{
+      await browser.waitFor('document.querySelector("#borkeo-print-frame")?.contentDocument.querySelector("[data-extra-print-code=DIRECT_COOMBS]")','extra tests in print frame');
+      const printed=await browser.evaluate('(()=>{const d=document.querySelector("#borkeo-print-frame").contentDocument;return {rows:[...d.querySelectorAll("[data-extra-print-code]")].map(n=>({code:n.dataset.extraPrintCode,text:n.textContent,group:n.closest(".print-other-group").querySelector("h3").textContent})),html:d.documentElement.outerHTML}})()');
+      assert.equal(printed.rows.length,2,'standard tests are not duplicated in the additional section');
+      const coombs=printed.rows.find(n=>n.code==='DIRECT_COOMBS'),troponin=printed.rows.find(n=>n.code==='TROP_I');
+      assert.match(coombs.text,/Direct Antiglobulin Test/);assert.match(coombs.text,/★/);assert.equal(coombs.group,'Blood Bank / Transfusion');
+      assert.match(troponin.text,/Troponin I/);assert.equal(troponin.group,'Cardiac Markers');
+      assert.doesNotMatch(printed.rows.map(n=>n.text).join(' '),/[()]|DIRECT_COOMBS|TROP_I/,'print names have no duplicate codes/parentheses');
+      return printed.html;
+    };
+    const previewMarkup=await printMarkup();
     assert.equal(app.database.findPatient(key).record_json,before,'choosing tests does not save the clinical record');
     await browser.evaluate('document.querySelector(".actions-right [data-route=DIRECT]").click()');
     await browser.waitFor('window.labOrders.length===1','paid lab submitted');
@@ -77,6 +89,7 @@ test('OPD laboratory grouped multi-selection preserves paid, free and nurse hand
     await browser.evaluate('document.querySelector("[name=chargeMode][value=FREE]").click();document.querySelector(".actions-right [data-route=DIRECT]").click()');
     await browser.waitFor('window.labOrders.length===2','free multi-test request submitted');
     order=await browser.evaluate('window.labOrders[1]');assert.equal(order.status,201,JSON.stringify(order.result));assert.equal(order.result.order.request.chargeMode,'FREE');assert.equal(Boolean(order.result.cashierPaymentRequired),false);assert.deepEqual(order.payload.request.items.map(i=>i.code).sort(),selected.sort());
+    const printedOrderId=order.result.order.id;
     await openLab();
     assert.equal(await browser.evaluate('document.querySelector("[data-other-pick][value=DIRECT_COOMBS]").disabled'),true,'already ordered tests stay disabled');
     await add(['CBC','UREA']);
@@ -92,5 +105,36 @@ test('OPD laboratory grouped multi-selection preserves paid, free and nurse hand
     await browser.waitFor('window.labOrders.length===5','free individual AST submitted');
     order=await browser.evaluate('window.labOrders[4]');assert.equal(order.status,201,JSON.stringify(order.result));assert.equal(order.result.order.request.chargeMode,'FREE');assert.equal(Boolean(order.result.cashierPaymentRequired),false);assert.deepEqual(order.payload.request.items.map(i=>i.code),['AST'],'individual catalog choice does not silently include the main form transaminase pair');
     fs.writeFileSync(path.join(evidence,'workflow.json'),JSON.stringify(await browser.evaluate('window.labOrders'),null,2));
+    await openLab();await add(['ALT']);
+    await browser.evaluate('document.querySelector("[data-preview-print]").click()');
+    await browser.waitFor('document.querySelector("#borkeo-print-frame")?.contentDocument.querySelector("[data-extra-print-code=ALT]")','standalone ALT in print');
+    assert.match(await browser.evaluate('document.querySelector("#borkeo-print-frame").contentDocument.querySelector("[data-extra-print-code=ALT]").textContent'),/ALT/);
+    const bulkCodes=await browser.evaluate('[...document.querySelectorAll("[data-other-pick]:not(:disabled)")].map(n=>n.value)');
+    await add(bulkCodes);
+    const extraCodes=await browser.evaluate('[...document.querySelectorAll("[data-other-tests-container] [data-paper-test]:checked")].map(n=>n.value)');
+    assert.ok(extraCodes.length>20,'exercise a long additional-test list');
+    await browser.evaluate('document.querySelector("[data-preview-print]").click()');
+    const bulkMarkup=await browser.evaluate('document.querySelector("#borkeo-print-frame").contentDocument.documentElement.outerHTML');
+    const printedCodes=await browser.evaluate('[...document.querySelector("#borkeo-print-frame").contentDocument.querySelectorAll("[data-extra-print-code]")].map(n=>n.dataset.extraPrintCode)');
+    for(const code of extraCodes)assert.equal(printedCodes.filter(c=>c===code).length,1,'long print includes '+code+' exactly once');
+    await browser.evaluate('document.querySelector(".borkeo-lab-paper-form [data-cancel]").click()');
+    // Reprint directly from a fresh OPD page, without reopening the order form.
+    await browser.send('Page.navigate',{url:origin+'/emr?'+new URLSearchParams({patient:key,view:'opd'})});
+    await browser.waitFor('window.syntheticLoaded','fresh OPD');
+    const reprintSelector='#sub_opd [data-print-order="'+printedOrderId+'"]';
+    await browser.waitFor('document.querySelector('+JSON.stringify(reprintSelector)+')','saved order print action');
+    const beforeReprint=app.database.findPatient(key).record_json;
+    await browser.evaluate('document.querySelector('+JSON.stringify(reprintSelector)+').click()');
+    const reprintMarkup=await printMarkup();
+    assert.equal(app.database.findPatient(key).record_json,beforeReprint,'printing a saved order does not save clinical data');
+    for(const [label,markup] of [['preview',previewMarkup],['reprint',reprintMarkup],['bulk-preview',bulkMarkup]]){
+      fs.writeFileSync(path.join(evidence,label+'.snapshot.txt'),markup);
+      await browser.evaluate('document.open();document.write('+JSON.stringify(markup)+');document.close()');
+      await browser.evaluate('document.fonts.ready');await browser.send('Emulation.setEmulatedMedia',{media:'print'});
+      const metrics=await browser.send('Page.getLayoutMetrics');
+      const shot=await browser.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,clip:{x:0,y:0,width:metrics.cssContentSize.width,height:metrics.cssContentSize.height,scale:1}});fs.writeFileSync(path.join(evidence,label+'.png'),Buffer.from(shot.data,'base64'));
+      const pdf=await browser.send('Page.printToPDF',{printBackground:true,preferCSSPageSize:true});const bytes=Buffer.from(pdf.data,'base64');assert.ok(bytes.length>10000,'populated '+label+' PDF');fs.writeFileSync(path.join(evidence,label+'.pdf'),bytes);
+      if(label==='bulk-preview')assert.ok((bytes.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length>1,'long additional-test list flows across paper pages');
+    }
   }finally{browser?.close();app.server.closeAllConnections();await new Promise(resolve=>app.server.close(resolve));app.database.close()}
 });
