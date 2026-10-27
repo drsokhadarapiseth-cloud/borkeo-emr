@@ -2454,6 +2454,14 @@
     {
       "en": "Send to Cashier",
       "kh": "បញ្ជូនទៅបេឡា"
+    },
+    {
+      "en": "Generated automatically when saved",
+      "kh": "បង្កើតដោយស្វ័យប្រវត្តិពេលរក្សាទុក"
+    },
+    {
+      "en": "Patient ID:",
+      "kh": "លេខអ្នកជំងឺ:"
     }
   ]
 }

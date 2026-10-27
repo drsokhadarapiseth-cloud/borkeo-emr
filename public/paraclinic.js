@@ -381,11 +381,16 @@
     return request.promise;
   }
 
-  function modal(title, body, customCardClass = '') {
+  function modal(title, body, customCardClass = '', orderEntry = false) {
     const overlay = document.createElement('div');
     overlay.className = 'paraclinic-modal';
     overlay.dataset.languageExclude = '';
     overlay.lang = 'km';
+    if (orderEntry && canOrder()) {
+      overlay.dataset.paraclinicOrderEntry = '';
+      overlay.dataset.permissionScope = 'paraclinic';
+      overlay.dataset.emrTransient = '';
+    }
     const previousFocus = document.activeElement;
     overlay.innerHTML = `<div class="paraclinic-modal-card ${esc(customCardClass)}" role="dialog" aria-modal="true" aria-label="${esc(title)}" tabindex="-1"><div class="paraclinic-modal-head"><h2>${esc(title)}</h2><button type="button">×</button></div><div class="paraclinic-modal-body">${body}</div></div>`;
     document.body.append(overlay);
@@ -500,7 +505,7 @@
       <div class="priority-row"><strong>Priority:</strong><label><input type="radio" name="priority" value="ROUTINE" checked> Routine</label><label><input type="radio" name="priority" value="URGENT"> បន្ទាន់</label></div>
       <label>Examination<select name="examination">${lists[modality].map(item => `<option>${esc(item)}</option>`).join('')}</select></label>${extra}
       <label>ម៉ោងស្នើសុំ<input type="datetime-local" name="preferredAppointmentLocal"></label><small>សេវារូបភាពកំណត់ម៉ោងណាត់ ហើយម៉ោងនឹងបង្ហាញលើទម្រង់អ្នកជំងឺ</small><label>Clinical Indication<textarea name="clinicalIndication" required></textarea></label><label>Relevant History<textarea name="history"></textarea></label><label>Specific Question for Radiology<textarea name="question"></textarea></label>${opdFeeChoice(context)}
-      <div class="paraclinic-submit"><button type="button" data-cancel>បោះបង់</button>${opdSubmitActions(context)}</div></form>`);
+      <div class="paraclinic-submit"><button type="button" data-cancel>បោះបង់</button>${opdSubmitActions(context)}</div></form>`, '', true);
     const form = view.body.querySelector('form');
     view.body.querySelector('[data-cancel]').addEventListener('click', view.close);
     form.addEventListener('submit', async event => {
@@ -596,15 +601,13 @@
       if (order.priority === 'URGENT') priority = 'URGENT';
       clinicalDiagnosis = clinicalDiagnosis || order.request?.clinicalInfo || '';
       customDoctor = customDoctor || order.requesterName || '';
-      labCode = labCode || order.accessionNumber || '';
+      labCode = order.accessionNumber || '';
     }
     const doctorName = customDoctor || user?.displayName || user?.name || user?.username || 'គ្រូពេទ្យពិនិត្យ';
     const diagText = clinicalDiagnosis || demo.diag || '';
     const hasAnyUrgent = priority === 'URGENT' || urgentCodes.size > 0;
 
-    const rawPmrs = String(demo.pmrs || '').replace(/[^0-9A-Za-z]/g, '');
-    const digits = rawPmrs.padEnd(10, ' ').slice(0, 10).split('');
-    const pmrsBoxesHtml = digits.map(d => `<span class="print-pmrs-box">${esc(d.trim())}</span>`).join('');
+    const pmrsBoxesHtml = `<span data-lab-patient-id>${esc(demo.pmrs)}</span>`;
 
     const chk = code => checkedCodes.has(code) ? '<span class="print-chk checked"></span>' : '<span class="print-chk"></span>';
     const star = code => urgentCodes.has(code) ? '<span style="color:#dc2626;font-weight:800;font-size:11px;margin-left:4px;">★ បន្ទាន់</span>' : '';
@@ -844,8 +847,8 @@
         <div class="print-title-en">Laboratory Request Form</div>
       </div>
       <div class="print-codes-block">
-        <div>លេខកូដមន្ទីរពិសោធន៍: <strong>${esc(labCode || '___________')}</strong></div>
-        <div>PMRS CODE</div>
+        <div>លេខកូដមន្ទីរពិសោធន៍: <strong data-lab-code>${esc(labCode || 'បង្កើតដោយស្វ័យប្រវត្តិពេលរក្សាទុក')}</strong></div>
+        <div>លេខអ្នកជំងឺ</div>
         <div class="print-pmrs-boxes">${pmrsBoxesHtml}</div>
       </div>
     </div>
@@ -1086,9 +1089,7 @@
     const doctorName = user?.displayName || user?.name || user?.username || 'គ្រូពេទ្យពិនិត្យ';
     const wardName = context === 'opd' ? 'ផ្នែកពិគ្រោះជំងឺក្រៅ (OPD)' : (demo.ward || '—');
 
-    const rawPmrs = String(demo.pmrs || '').replace(/[^0-9A-Za-z]/g, '');
-    const digits = rawPmrs.padEnd(10, ' ').slice(0, 10).split('');
-    const pmrsBoxesHtml = digits.map(d => `<span class="pmrs-box">${esc(d.trim())}</span>`).join('');
+    const pmrsBoxesHtml = `<span data-lab-patient-id>${esc(demo.pmrs)}</span>`;
 
     const activeCodes = new Set(tests.map(test => test.code));
     function testRow(code, name, extraAttrs = '') {
@@ -1123,10 +1124,10 @@
         <div class="lab-paper-codes-block">
           <div class="lab-code-row">
             <span>លេខកូដមន្ទីរពិសោធន៍:</span>
-            <input type="text" name="labCode" class="paper-input-box" placeholder="Lab Code">
+            <output data-lab-code>បង្កើតដោយស្វ័យប្រវត្តិពេលរក្សាទុក</output>
           </div>
           <div class="pmrs-code-row">
-            <span>PMRS CODE:</span>
+            <span>លេខអ្នកជំងឺ:</span>
             <div class="pmrs-boxes">${pmrsBoxesHtml}</div>
           </div>
         </div>
@@ -1290,7 +1291,7 @@
       </div>
     </form>`;
 
-    const view = modal('ប័ណ្ណស្នើសុំវិភាគតេស្តមន្ទីរពិសោធន៍ (Laboratory Request Form)', formHtml, 'borkeo-lab-paper-modal');
+    const view = modal('ប័ណ្ណស្នើសុំវិភាគតេស្តមន្ទីរពិសោធន៍ (Laboratory Request Form)', formHtml, 'borkeo-lab-paper-modal', true);
     const form = view.body.querySelector('form');
     view.body.querySelector('[data-cancel]').addEventListener('click', view.close);
 

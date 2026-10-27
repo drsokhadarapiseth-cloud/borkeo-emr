@@ -553,3 +553,5 @@ triage.requestParaclinic,Request paraclinic tests,Exact checkbox wording supplie
 "opdLab.v486.4","Search tests","Owner approved OPD lab UI update 2026-10-27","public/paraclinic.js","ស្វែងរកតេស្ត"
 "opdLab.v486.5","Add selected tests","Owner approved OPD lab UI update 2026-10-27","public/paraclinic.js","បន្ថែមតេស្តដែលបានជ្រើសរើស"
 "opdLab.v486.6","Send to Cashier","Owner approved OPD lab UI update 2026-10-27","public/paraclinic.js","បញ្ជូនទៅបេឡា"
+"paraclinic.v488.0","Generated automatically when saved","Owner approved lab identity and automatic code 2026-10-27","public/paraclinic.js","បង្កើតដោយស្វ័យប្រវត្តិពេលរក្សាទុក"
+"paraclinic.v488.1","Patient ID:","Owner approved lab identity and automatic code 2026-10-27","public/paraclinic.js","លេខអ្នកជំងឺ:"

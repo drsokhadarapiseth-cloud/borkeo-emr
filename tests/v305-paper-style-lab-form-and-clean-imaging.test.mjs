@@ -34,7 +34,7 @@ test('v30.5 authentic paper-style laboratory request form layout and Moul header
   // Logo and code boxes
   assert.match(paraclinicJs, /\/public\/logo-hospital\.jpg/);
   assert.match(paraclinicJs, /លេខកូដមន្ទីរពិសោធន៍/);
-  assert.match(paraclinicJs, /PMRS CODE/);
+  assert.match(paraclinicJs, /data-lab-patient-id/);
 
   // Patient demographics fields
   assert.match(paraclinicJs, /ឈ្មោះអ្នកជំងឺ/);

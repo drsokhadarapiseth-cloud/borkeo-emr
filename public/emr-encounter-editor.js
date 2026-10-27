@@ -141,13 +141,19 @@
       key.startsWith('system:signature:')?[]:Object.hasOwn(prior,key)?[[key,prior[key]]]:[]));
   }
   window.EmrEncounterEditor={apply:schedule,isReadOnly:element=>Boolean(existing && (!editing||report) && root && (element===root||root.contains(element))),canWrite:()=>!report&&editing,filterData};
+  function isOrderEntry(target) {
+    // Order dialogs have their own server-checked workflow, including prepayment.
+    return !report && ['DOCTOR','ADMIN','VICE_DIRECTOR'].includes(role()) &&
+      Boolean(target?.closest?.('.paraclinic-modal[data-paraclinic-order-entry]'));
+  }
   window.addEventListener('click',event=>{
+    if(isOrderEntry(event.target))return;
     const action=event.target.closest?.('button,input[type="button"],[role="button"]');
     if((report||!editing)&&action&&!action.closest('.emr-encounter-toolbar')&&isAction(action)){event.preventDefault();event.stopImmediatePropagation();message('សូមចុចកែប្រែព័ត៌មានជាមុន។')}
     if((report||!editing)&&event.target.matches?.('input[type="checkbox"],input[type="radio"],select')){event.preventDefault();event.stopImmediatePropagation()}
   },true);
-  window.addEventListener('submit',event=>{if(report||!editing){event.preventDefault();event.stopImmediatePropagation()}},true);
-  window.addEventListener('beforeinput',event=>{if(report||!editing){event.preventDefault();event.stopImmediatePropagation()}},true);
+  window.addEventListener('submit',event=>{if(!isOrderEntry(event.target)&&(report||!editing)){event.preventDefault();event.stopImmediatePropagation()}},true);
+  window.addEventListener('beforeinput',event=>{if(!isOrderEntry(event.target)&&(report||!editing)){event.preventDefault();event.stopImmediatePropagation()}},true);
   document.addEventListener('emr:patient-loaded',()=>{
     access=window.getLoadedEmrPatient?.()?.recordAccess||null;
     editing=Boolean(isDirectEditAllowed() && (access?.canEdit !== false) && !report);
