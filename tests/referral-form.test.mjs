@@ -6,6 +6,8 @@ import path from 'node:path';
 import {createEmrServer} from '../server/server.mjs';
 import {buildCompleteRegistrationPatients} from '../scripts/create-complete-registration-fixture.mjs';
 import {openBrowser} from './helpers/context-browser.mjs';
+import {WARDS} from '../server/access.mjs';
+import {referralAccess,saveReferral} from '../server/referral-forms.mjs';
 test('referral API enforces permissions, signature ownership, validation and immutable revisions',{timeout:180000},async()=>{
   const app=createEmrServer({demoMode:true,databasePath:':memory:',nodeEnv:'test',host:'127.0.0.1',port:0,npca:{enabled:false},npcaPractice:false});let browser;
   try{
@@ -45,5 +47,20 @@ test('referral API enforces permissions, signature ownership, validation and imm
     app.database.sqlite.prepare("UPDATE patient_records SET service_mode='ipd',department_code='surgery',discharge_date='',record_json='{}' WHERE patient_key=?").run(key);
     const inpatient=await call('doctor_surgery','GET','/api/referral-form?patientKey='+encodeURIComponent(key));assert.equal(inpatient.canEdit,true,'assigned inpatient doctor can complete the referral');
     const wrong=await fetch(origin+'/api/referral-form?patientKey='+encodeURIComponent(key),{headers:users.doctor_opd});assert.equal(wrong.status,403,'another ward cannot read the inpatient referral');
+    // Every configured inpatient ward uses the same doctor-only referral policy.
+    const doctor=(await(await fetch(origin+'/api/auth/me',{headers:users.doctor_surgery})).json()).user;
+    let revision=1;
+    for(const ward of WARDS.filter(w=>w.code!=='opd')){
+      app.database.sqlite.prepare("UPDATE patient_records SET department_code=?,record_json='{}' WHERE patient_key=?").run(ward.code,key);
+      for(const role of ['DOCTOR','CHIEF_WARD']){
+        const actor={user_id:doctor.id,active_role:role,active_ward_code:ward.code};
+        assert.equal(referralAccess(app.database,actor,key).canEdit,true,role+' can refer from '+ward.code);
+        const form=saveReferral(app.database,actor,key,{revision,data:{reason:'Synthetic '+ward.code},signatureMode:'SAVED'});
+        assert.equal(form.signature.userId,doctor.id);assert.equal(form.revision,++revision);
+      }
+      for(const role of ['NURSE','MIDWIFE','WARD_HEAD','REGISTRATION','TRIAGE','CLERK','LAB','IMAGING','PHARMACY','ADMIN','DIRECTOR','VICE_DIRECTOR']){
+        assert.throws(()=>saveReferral(app.database,{user_id:doctor.id,active_role:role,active_ward_code:ward.code},key,{revision,data:{},signatureMode:'NONE'}),error=>error.status===403,role+' cannot sign from '+ward.code);
+      }
+    }
   }finally{app.server.closeAllConnections();await new Promise(resolve=>app.server.close(resolve));app.database.close()}
 });

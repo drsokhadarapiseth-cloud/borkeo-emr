@@ -1,5 +1,26 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Referral activation for OPD and all inpatient wards - v49.0.0
+
+Owner approved coding the referral form for the original Borkeo_EMR_Git, for
+authorized OPD and IPD doctors in every ward. Automatic approval review requires
+separate explicit approval for merging/pushing master and restarting Borkeo;
+that activation remains pending. The implementation branch is
+feature/referral-all-wards-activation, including v48.9.0 feature commit 1ba52514.
+Pre-activation master: 45bd18dc2b4fb383f27c487186370feaac5c6396.
+Code-only backup: D:\EMR\Borkeo_EMR_Code_Backups\v48.8.0-45bd18dc-735d1e6c.
+
+The form is on OPD and inpatient medical pages for DOCTOR/CHIEF_WARD, subject to
+existing access checks; ANC keeps its signed doctor workflow. Regression now
+checks both roles in every configured inpatient ward, denies other roles signing,
+and exercises the surgery doctor's actual inpatient popup in the browser.
+See REFERRAL_ALL_WARDS_V490_VALIDATION.md and the combined v49.0.0 update TXT.
+
+Cross-hospital electronic transmission remains pending: the Provincial receiving
+EMR and secure connection have not been created. Do not claim a printed referral
+was sent electronically. Receiving-role policy was asked separately. Original
+patient records, accounts, photos and private settings must be preserved.
+
 ## One-page referral popup - v48.9.0 feature, 28 October 2026
 
 Owner approved this referral form with "yes code it" before continuing the separate

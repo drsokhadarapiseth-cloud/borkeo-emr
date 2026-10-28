@@ -87,6 +87,20 @@ test('referral popup preserves clinical data, validates overflow and prints one 
     assert.equal(app.database.sqlite.prepare('SELECT COUNT(*) AS n FROM referral_form_revisions WHERE patient_key=?').get(key).n,2,'reprint does not append or modify signed history');
     await browser.send('Emulation.setDeviceMetricsOverride',{width:390,height:900,deviceScaleFactor:1,mobile:false});await screenshot('popup-narrow');
     await browser.send('Emulation.setDeviceMetricsOverride',{width:1000,height:1200,deviceScaleFactor:1,mobile:false});
+    // The same popup is available and editable from the inpatient medical page.
+    app.database.sqlite.prepare("UPDATE patient_records SET service_mode='ipd',department_code='surgery',record_json='{}' WHERE patient_key=?").run(key);
+    const [ipdCookie,ipdValue]=users.doctor_surgery.Cookie.split('=');await browser.send('Network.setCookie',{name:ipdCookie,value:ipdValue,url:origin});
+    await browser.send('Page.navigate',{url:origin+'/emr?'+new URLSearchParams({patient:key,view:'medical'})});
+    await browser.waitFor('window.syntheticLoaded && document.querySelector("#sub_ipd [data-open-referral]")','inpatient referral trigger',60000);
+    await browser.evaluate('document.querySelector("#sub_ipd [data-open-referral]").click()');
+    await browser.waitFor('document.querySelector(".ref-page")','inpatient popup');
+    assert.equal(await browser.evaluate('document.querySelector("[data-ref-field=reason]").disabled'),false,'inpatient doctor can write referral');
+    await browser.evaluate('document.querySelector("[data-ref-esign]").click();document.querySelector("[data-ref-save]").click()');
+    await browser.waitFor('!document.querySelector("[data-ref-save]").disabled','inpatient signed save');
+    const ipdForm=(await call('doctor_surgery','GET','/api/referral-form?patientKey='+encodeURIComponent(key))).form;
+    const ipdActor=(await call('doctor_surgery','GET','/api/auth/me')).user;
+    assert.equal(ipdForm.revision,3);assert.equal(ipdForm.signature.userId,ipdActor.id);
+    await screenshot('popup-ipd');
     await browser.evaluate('document.open();document.write('+JSON.stringify(markup)+');document.close()');await browser.evaluate('document.fonts.ready');await browser.send('Emulation.setEmulatedMedia',{media:'print'});
     await screenshot('referral-print');const pdf=await browser.send('Page.printToPDF',{printBackground:true,preferCSSPageSize:true});const bytes=Buffer.from(pdf.data,'base64');fs.writeFileSync(path.join(evidence,'referral.pdf'),bytes);assert.equal((bytes.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length,1,'exactly one A4 page');assert.ok(bytes.length>10000,'populated PDF');
   }finally{browser?.close();app.server.closeAllConnections();await new Promise(resolve=>app.server.close(resolve));app.database.close()}
