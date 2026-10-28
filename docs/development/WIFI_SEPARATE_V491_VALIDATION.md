@@ -3,9 +3,10 @@
 Owner approved the discussed two-address launcher update on 28 October 2026.
 Original base: 6181c53050a46405cf381e3d632bf51a4b00d7ff (49.0.0).
 Branch: fix/independent-wifi-launchers.
-Both local launchers are installed and tested. Automatic approval review blocked
-merging/pushing this new version to master under the pasted production-approval
-instruction. Publish the feature branch only until explicit master approval.
+Both local launchers are installed and tested. After automatic approval review
+requested separate master approval, the owner explicitly approved merging and
+pushing the verified v49.1.0 update to master. Publish by fast-forward; both local
+services already run the tested launcher code and need no restart for this merge.
 Code-only baseline backup:
 D:\EMR\Borkeo_EMR_Code_Backups\v49.0.0-6181c530-645d5490
 

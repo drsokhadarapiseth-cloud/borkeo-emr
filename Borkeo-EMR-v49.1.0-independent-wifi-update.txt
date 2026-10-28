@@ -11,8 +11,8 @@ Cross-hospital electronic transfer remains pending.
 
 Manifest: SHA256 of normalized UTF-8 payload
 bff8035f5b127dab874d5d96a1e5a905d3a06c1018e734c97329ee86822f9a09  Start-Borkeo-WiFi.bat
-7f19d9899eadd37b462888414f7325ea83dc7d40e4762b47a0c4e7fd8b4daa65  docs/development/AI_HANDOFF.md
-3fe5243e6d9765c5ec13ffff26182586aea4b1f526af838e97c2b3cc01f9f963  docs/development/WIFI_SEPARATE_V491_VALIDATION.md
+5d6b240a4b8168e17c50bd4fb02dcba28d6ca00b55a35001b99fdd1705fc6588  docs/development/AI_HANDOFF.md
+96aa0c456544b4085195251e6979eef07fb621056cb24b81b83780bb1d4643d6  docs/development/WIFI_SEPARATE_V491_VALIDATION.md
 e62f4e57fae5a713537d67772be3f2de6d694c9bd3aec93be811677e365e48eb  docs/development/wifi-simulation.example.json
 5f1449daef8a8ceb8c625aa3f892cf292b18caedcbbe526965253675c5b56d33  package.json
 52ff2efcc0edad8c69ffb4e43fce4fbb004b75aaa14585b77e85e94f268aa7ea  public/login.html
@@ -83,9 +83,9 @@ instance-data database/uploads/backups. No hospital data or credentials copied.
 The second folder is still a local source copy, not a completed Provincial EMR.
 
 Branch fix/independent-wifi-launchers, base 6181c53050a46405cf381e3d632bf51a4b00d7ff.
-Local setup is tested and running; automatic approval review requires separate
-explicit approval for merging/pushing v49.1.0 to master. Keep the feature branch
-checked out until that decision, since the local launcher changes are in use.
+Local setup is tested and running. The owner subsequently explicitly approved
+merging and pushing the verified v49.1.0 update to master. Publish the verified
+feature by fast-forward; no service restart or runtime-data change is needed.
 Code backup D:\EMR\Borkeo_EMR_Code_Backups\v49.0.0-6181c530-645d5490.
 Clone backup D:\EMR\Borkeo_EMR_Code_Backups\clone-before-wifi-1793160533933.
 Removed taskkill from the batch file. The Node launcher refuses occupied ports
@@ -785,9 +785,10 @@ the Khmer baseline, or run the branch-start helper on this dirty/unmerged base.
 Owner approved the discussed two-address launcher update on 28 October 2026.
 Original base: 6181c53050a46405cf381e3d632bf51a4b00d7ff (49.0.0).
 Branch: fix/independent-wifi-launchers.
-Both local launchers are installed and tested. Automatic approval review blocked
-merging/pushing this new version to master under the pasted production-approval
-instruction. Publish the feature branch only until explicit master approval.
+Both local launchers are installed and tested. After automatic approval review
+requested separate master approval, the owner explicitly approved merging and
+pushing the verified v49.1.0 update to master. Publish by fast-forward; both local
+services already run the tested launcher code and need no restart for this merge.
 Code-only baseline backup:
 D:\EMR\Borkeo_EMR_Code_Backups\v49.0.0-6181c530-645d5490
 

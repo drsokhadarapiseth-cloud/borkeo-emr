@@ -9,9 +9,9 @@ instance-data database/uploads/backups. No hospital data or credentials copied.
 The second folder is still a local source copy, not a completed Provincial EMR.
 
 Branch fix/independent-wifi-launchers, base 6181c53050a46405cf381e3d632bf51a4b00d7ff.
-Local setup is tested and running; automatic approval review requires separate
-explicit approval for merging/pushing v49.1.0 to master. Keep the feature branch
-checked out until that decision, since the local launcher changes are in use.
+Local setup is tested and running. The owner subsequently explicitly approved
+merging and pushing the verified v49.1.0 update to master. Publish the verified
+feature by fast-forward; no service restart or runtime-data change is needed.
 Code backup D:\EMR\Borkeo_EMR_Code_Backups\v49.0.0-6181c530-645d5490.
 Clone backup D:\EMR\Borkeo_EMR_Code_Backups\clone-before-wifi-1793160533933.
 Removed taskkill from the batch file. The Node launcher refuses occupied ports
