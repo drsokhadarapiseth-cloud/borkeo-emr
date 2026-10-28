@@ -34,6 +34,7 @@
   let requestedEdit = query.get('mode') === 'edit' || query.get('edit') === '1' || isDirectEditAllowed();
   let editing = isDirectEditAllowed();
   function isAction(button) {
+    if(button.hasAttribute('data-open-referral')||button.hasAttribute('data-ref-print'))return false;
     if (/^(បោះពុម្ព|មើល|print\b|preview\b)/i.test((button.innerText||'').trim())) return false;
     return /រក្សាទុក|បញ្ជូន|ផ្ញើ|អនុម័ត|បញ្ចេញ|លុប|save|submit|transfer|discharge|delete|administer/i.test([button.textContent,button.id,button.className,button.getAttribute('onclick')].join(' '));
   }
@@ -142,6 +143,7 @@
   }
   window.EmrEncounterEditor={apply:schedule,isReadOnly:element=>Boolean(existing && (!editing||report) && root && (element===root||root.contains(element))),canWrite:()=>!report&&editing,filterData};
   function isOrderEntry(target) {
+    if(!report && ['DOCTOR','CHIEF_WARD'].includes(role()) && target?.closest?.('.referral-modal[data-referral-editable]'))return true;
     // Order dialogs have their own server-checked workflow, including prepayment.
     return !report && ['DOCTOR','ADMIN','VICE_DIRECTOR'].includes(role()) &&
       Boolean(target?.closest?.('.paraclinic-modal[data-paraclinic-order-entry]'));

@@ -2462,6 +2462,118 @@
     {
       "en": "Patient ID:",
       "kh": "លេខអ្នកជំងឺ:"
+    },
+    {
+      "en": "Referral form control message 0",
+      "kh": "ស្ត្រីមានផ្ទៃពោះ ឬស្ត្រីទើបសម្រាលកូន"
+    },
+    {
+      "en": "Referral form control message 1",
+      "kh": "កុមារអាយុក្រោម ៥ ឆ្នាំ"
+    },
+    {
+      "en": "Referral form control message 2",
+      "kh": "ទារកអាយុក្រោម ៦ សប្តាហ៍"
+    },
+    {
+      "en": "Referral form control message 3",
+      "kh": "ហត្ថលេខាអ្នកបញ្ជូន"
+    },
+    {
+      "en": "Referral form control message 4",
+      "kh": "មិនអាចបើកទម្រង់បានទេ"
+    },
+    {
+      "en": "Referral form control message 5",
+      "kh": "បោះពុម្ភលិខិតបញ្ជូន"
+    },
+    {
+      "en": "Referral form control message 6",
+      "kh": "ប្រើហត្ថលេខាដែលបានរក្សាទុក"
+    },
+    {
+      "en": "Referral form control message 7",
+      "kh": "លុបហត្ថលេខា"
+    },
+    {
+      "en": "Referral form control message 8",
+      "kh": "ចុះហត្ថលេខាលើអេក្រង់"
+    },
+    {
+      "en": "Referral form control message 9",
+      "kh": "ផ្ទាំងចុះហត្ថលេខា"
+    },
+    {
+      "en": "Referral form validation message 10",
+      "kh": "មិនមានហត្ថលេខាដែលបានរក្សាទុកទេ សូមចុះហត្ថលេខាលើអេក្រង់"
+    },
+    {
+      "en": "Referral form control message 11",
+      "kh": "អត្ថបទលើសទំហំសន្លឹក សូមសង្ខេបមុនបោះពុម្ព"
+    },
+    {
+      "en": "Referral form control message 12",
+      "kh": "មិនអាចកែប្រែទម្រង់នេះបានទេ"
+    },
+    {
+      "en": "Referral form control message 13",
+      "kh": "សូមចុះហត្ថលេខាមុនបោះពុម្ព"
+    },
+    {
+      "en": "Referral form control message 14",
+      "kh": "បានរក្សាទុកទម្រង់"
+    },
+    {
+      "en": "Referral form control message 15",
+      "kh": "ទម្រង់មិនទាន់សមនឹងសន្លឹក A4 ទេ"
+    },
+    {
+      "en": "Referral form validation message 65",
+      "kh": "សូមចូលប្រើប្រព័ន្ធជាមុន"
+    },
+    {
+      "en": "Referral form validation message 66",
+      "kh": "រកមិនឃើញអ្នកជំងឺ"
+    },
+    {
+      "en": "Referral form validation message 67",
+      "kh": "អ្នកមិនមានសិទ្ធិចូលទម្រង់នេះទេ"
+    },
+    {
+      "en": "Referral form validation message 68",
+      "kh": "មិនអាចកែប្រែ ឬចុះហត្ថលេខាលើទម្រង់នេះបានទេ"
+    },
+    {
+      "en": "Referral form validation message 69",
+      "kh": "ទិន្នន័យទម្រង់មិនត្រឹមត្រូវ"
+    },
+    {
+      "en": "Referral form validation message 70",
+      "kh": "អត្ថបទវែងពេក ឬមិនត្រឹមត្រូវ"
+    },
+    {
+      "en": "Referral form validation message 71",
+      "kh": "ជម្រើសមិនត្រឹមត្រូវ"
+    },
+    {
+      "en": "Referral form validation message 72",
+      "kh": "មានទិន្នន័យក្រៅទម្រង់"
+    },
+    {
+      "en": "Referral form validation message 73",
+      "kh": "ហត្ថលេខាមិនត្រឹមត្រូវ"
+    },
+    {
+      "en": "Referral form validation message 74",
+      "kh": "សូមជ្រើសរើសវិធីចុះហត្ថលេខា"
+    },
+    {
+      "en": "Referral form validation message 75",
+      "kh": "ទម្រង់ត្រូវបានកែប្រែ សូមបើកឡើងវិញ"
+    },
+    {
+      "en": "Referral form validation message 76",
+      "kh": "សូមរក្សាទុក និងចុះហត្ថលេខាមុនបោះពុម្ព"
     }
   ]
 }

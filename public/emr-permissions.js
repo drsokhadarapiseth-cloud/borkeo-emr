@@ -37,6 +37,7 @@
       }
     });
     root.querySelectorAll('button').forEach(button => {
+      if (button.hasAttribute('data-open-referral')) return;
       if (button.closest('[data-permission-scope="paraclinic"]')) return;
       const text = `${button.id || ''} ${button.className || ''} ${button.textContent || ''}`.toLowerCase();
       const saveLike = /save|រក្សា|submit|បញ្ជូន|discharge|បញ្ចេញ|transfer|administer|given/.test(text);

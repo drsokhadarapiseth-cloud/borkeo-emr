@@ -3655,6 +3655,251 @@
       "kh": "ក្រសួងមហាផ្ទៃ",
       "key": "file:scripts/seed-hosting-test-patients.mjs",
       "source": "v47.9 synthetic test data (issuer of the national ID card), owner approved"
+    },
+    {
+      "kh": "ស្រុកប្រតិបត្តិ",
+      "key": "referral.reference.16",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "មន្ទីរពេទ្យបង្អែក ឬមណ្ឌលសុខភាព",
+      "key": "referral.reference.17",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "អត្តលេខអ្នកជំងឺ",
+      "key": "referral.reference.18",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ថ្ងៃខែឆ្នាំកំណើត ឬអាយុ",
+      "key": "referral.reference.19",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ចូលសម្រាកព្យាបាលនៅថ្ងៃទី និងម៉ោង",
+      "key": "referral.reference.20",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "លទ្ធផលពិនិត្យរាងកាយខុសប្រក្រតី",
+      "key": "referral.reference.21",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "រោគវិនិច្ឆ័យបឋម",
+      "key": "referral.reference.22",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ឱសថដែលបានផ្តល់ឱ្យ",
+      "key": "referral.reference.23",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "អន្តរាគមន៍ផ្សេងទៀត",
+      "key": "referral.reference.24",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "កំហាប់អុកស៊ីសែន",
+      "key": "referral.reference.25",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "មូលហេតុបញ្ជូន",
+      "key": "referral.reference.26",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ចំនួនដងមានផ្ទៃពោះ",
+      "key": "referral.reference.27",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ថ្ងៃសម្រាលរំពឹងទុក",
+      "key": "referral.reference.28",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ផលវិបាកផ្សេងៗ",
+      "key": "referral.reference.29",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "បែកទឹកភ្លោះនៅម៉ោង",
+      "key": "referral.reference.30",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ទម្រង់ទឹកភ្លោះ",
+      "key": "referral.reference.31",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ប្រើថ្នាំបង្កើនភាពទុំសួតទារក",
+      "key": "referral.reference.32",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ប្រើថ្នាំ Dexamethasone",
+      "key": "referral.reference.33",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ប្រើថ្នាំអង់ទីប៊ីយោទិច",
+      "key": "referral.reference.34",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ទម្ងន់បច្ចុប្បន្ន",
+      "key": "referral.reference.35",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ទម្ងន់ធៀបនឹងអាយុ",
+      "key": "referral.reference.36",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "រង្វាស់រង្វង់ដើមដៃ",
+      "key": "referral.reference.37",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ទម្ងន់ធៀបនឹងកម្ពស់",
+      "key": "referral.reference.38",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "បៅដោះម្តាយ",
+      "key": "referral.reference.39",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "បានបញ្ចូលអាហារបន្ថែម",
+      "key": "referral.reference.40",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ហើមជើងទាំងពីរ",
+      "key": "referral.reference.41",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ថ្ងៃខែឆ្នាំកំណើតទារក",
+      "key": "referral.reference.42",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "អាយុគភ៌ពេលសម្រាល",
+      "key": "referral.reference.43",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "វិធីសម្រាល",
+      "key": "referral.reference.44",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ទម្ងន់បច្ចុប្បន្នទារក",
+      "key": "referral.reference.45",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ឯកសារភ្ជាប់ផ្សេងៗ",
+      "key": "referral.reference.46",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "អ្នកផ្តល់សេវាដែលបញ្ជូន",
+      "key": "referral.reference.47",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "លេខទូរស័ព្ទអ្នកបញ្ជូន",
+      "key": "referral.reference.48",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "កាលបរិច្ឆេទ និងម៉ោងបញ្ជូន",
+      "key": "referral.reference.49",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "មូលដ្ឋានសុខាភិបាលទទួល",
+      "key": "referral.reference.50",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "អ្នកផ្តល់សេវាដែលទទួល",
+      "key": "referral.reference.51",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "លេខទូរស័ព្ទអ្នកទទួល",
+      "key": "referral.reference.52",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "កាលបរិច្ឆេទ និងម៉ោងមកដល់",
+      "key": "referral.reference.53",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ហត្ថលេខាអ្នកទទួល",
+      "key": "referral.reference.54",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "មិនបានធ្វើតេស្ត",
+      "key": "referral.reference.55",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "គ្មានឱសថ",
+      "key": "referral.reference.56",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "គ្មានអន្តរាគមន៍",
+      "key": "referral.reference.57",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "បែកទឹកភ្លោះ",
+      "key": "referral.reference.58",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "មិនបែកទឹកភ្លោះ",
+      "key": "referral.reference.59",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ប័ណ្ណកុមារ",
+      "key": "referral.reference.60",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "ប័ណ្ណអ្នកជំងឺ",
+      "key": "referral.reference.61",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "សៀវភៅសុខភាព",
+      "key": "referral.reference.62",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "មានមធ្យោបាយដឹកជញ្ជូន",
+      "key": "referral.reference.63",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
+    },
+    {
+      "kh": "លិខិតបញ្ជូន",
+      "key": "referral.reference.64",
+      "source": "Owner supplied 182_doc.pdf, white referral copy; adapted labels approved 2026-10-28"
     }
   ]
 }

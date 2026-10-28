@@ -1,0 +1,49 @@
+@font-face{font-family:ReferralKhmer;src:url('/public/fonts/Moul-Khmer.woff2') format('woff2')}
+@font-face{font-family:BorkeoInterface;src:url('/public/fonts/Battambang-Regular.ttf') format('truetype')}
+.referral-modal{position:fixed;inset:0;z-index:200000;background:#132f43a8;display:flex;flex-direction:column;align-items:center;overflow:auto;padding:16px;gap:12px;color:#111;font-family:BorkeoInterface,'Khmer OS Battambang',Arial,sans-serif}
+.ref-toolbar{width:min(100%,1000px);display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:12px;background:#fff;border-radius:12px;position:sticky;top:0;z-index:2;box-sizing:border-box}
+.ref-toolbar button{font:inherit;padding:9px 14px;border:1px solid #b8ced8;border-radius:8px;background:#eef8fb;color:#164e63;cursor:pointer}
+.ref-toolbar button:disabled{opacity:.5;cursor:default}.ref-toolbar button:focus-visible,.ref-page input:focus-visible,.ref-page textarea:focus-visible{outline:2px solid #087f9e;outline-offset:1px}
+.ref-status{width:100%;font-size:13px;color:#a1261c}.ref-workspace{max-width:100%;overflow:auto;background:#dce7ed;padding:12px;box-sizing:border-box}
+.ref-page,.ref-page *{box-sizing:border-box}
+.ref-page{background:#fff;color:#000;width:210mm;height:297mm;padding:8mm;display:grid;gap:1mm;align-content:start;grid-template-rows:34mm 21mm 6mm 10mm 10mm 12mm 9mm 8mm 16mm 8mm 8mm 9mm 68mm 8mm 38mm;font:9pt/1.45 BorkeoInterface,'Khmer OS Battambang',Arial,sans-serif}
+.ref-page header{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:4mm;align-items:start}
+.ref-page header>div{display:flex;flex-direction:column;min-height:0;gap:.5mm}.ref-page header .ref-line{height:5mm;flex:none}
+.ref-page header .ref-line>span:first-child{max-width:45%}
+.ref-page label{margin:0;font-weight:normal}.ref-line>.ref-line{flex:1;min-width:0}
+.ref-page h1{font:17pt/1.5 ReferralKhmer,serif;text-align:center;margin:5mm 0 0}
+.ref-motto{text-align:center;font:11pt/1.6 ReferralKhmer,serif;margin:0 0 3mm}
+.ref-logo{width:10mm;height:10mm;object-fit:contain;margin-right:2mm}
+.ref-page h2{font-size:9pt;margin:0 0 1mm;font-weight:bold}
+.ref-line{display:flex;gap:1mm;align-items:center;min-height:0;min-width:0;height:100%}
+.ref-line>span:first-child{flex:0 1 auto;max-width:55%;line-height:1.3}
+.ref-page input:not([type=checkbox]),.ref-page textarea,.ref-value{display:block;flex:1 1 0;width:0;min-width:0;min-height:0;height:100%;border:0;border-bottom:.2mm dotted #444;border-radius:0;background:transparent;color:#000;padding:0 1mm;font:inherit;line-height:1.45;margin:0;box-shadow:none}
+.ref-page input:not([type=checkbox]){height:5mm}.ref-page textarea{resize:none;overflow:hidden}
+.ref-page input[type=checkbox]{width:3mm!important;min-width:3mm!important;height:3mm!important;margin:0 1mm 0 0!important;padding:0!important;flex:none!important}
+.ref-check{display:inline-flex;align-items:center;font-size:8pt;white-space:normal;gap:0;margin:0}
+.ref-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1mm;min-height:0}
+.ref-four{grid-template-columns:repeat(4,minmax(0,1fr))}.ref-five{grid-template-columns:repeat(5,minmax(0,1fr))}
+.ref-identity{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:1mm}
+.ref-box{border:.25mm solid #222;padding:1.5mm;min-height:0;min-width:0}
+.ref-special{display:grid;grid-template-columns:1fr 1fr;gap:3mm;min-height:0}
+.ref-maternal{display:grid;grid-template-rows:5mm repeat(9,minmax(0,1fr));gap:.4mm}
+.ref-children{display:grid;grid-template-rows:1.5fr 1fr;gap:1mm;min-height:0}
+.ref-children>.ref-box{display:flex;flex-direction:column;gap:.4mm}.ref-children .ref-line{flex:1;min-height:0}
+.ref-special .ref-line,.ref-special input{font-size:8pt}.ref-special .ref-line>span:first-child{max-width:65%}
+.ref-special h2{font-size:8.5pt;line-height:1.2;margin:0}
+.ref-special .ref-line>span:first-child{max-width:80%;white-space:nowrap}
+.ref-special input:not([type=checkbox]){height:100%;max-height:100%;font-size:7.5pt;line-height:inherit}
+.ref-children .ref-line{height:auto;font-size:7.5pt;line-height:1.25}
+.ref-children h2{font-size:8pt;line-height:1.2;margin:0}
+.ref-children>.ref-box>.ref-grid{flex:1;min-height:0}
+.ref-sending{display:grid;grid-template-columns:1fr 1fr;gap:3mm;min-height:0}.ref-sending>.ref-box{display:grid;grid-template-rows:5mm 5mm 5mm 1fr;gap:1mm}
+.ref-signature{display:flex;flex-direction:column;align-items:center;justify-content:end;min-height:0;font-size:7pt;line-height:1.3}.ref-signature img{max-width:48mm;max-height:14mm;object-fit:contain}
+.ref-signature img{min-height:0;flex-shrink:1}.ref-signature span{flex-shrink:0}
+.ref-receiving{grid-template-rows:repeat(4,5mm) 1fr!important}
+.ref-value{width:auto;white-space:pre-wrap;overflow-wrap:anywhere;overflow:visible;border:0;border-bottom:.2mm dotted #777;font:inherit}.ref-bad{outline:1.5px solid #c02626!important;background:#fff3f3!important}
+.ref-pad{background:#fff;border-radius:10px;padding:10px;max-width:100%;box-sizing:border-box}.ref-pad canvas{display:block;width:480px;max-width:100%;height:130px;touch-action:none;border:1px solid #9fb7c4;background:#fff}
+@media print{
+ @page{size:A4 portrait;margin:0}
+ html,body{margin:0!important;padding:0!important;background:#fff!important;width:210mm!important;height:297mm!important}
+ .ref-page{margin:0!important;break-inside:avoid;page-break-inside:avoid}
+}

@@ -213,7 +213,9 @@ test('v42.6 midwife services in the browser: green, yellow and red pregnancies, 
     await click('[data-action="sign"]');
     await browser.waitFor(`Boolean(document.querySelector('[data-action="print-referral"]'))`, 'signed');
     await click('[data-action="print-referral"]');
-    assert.match(await browser.evaluate(`document.querySelector('#anc-print').innerText`), /CPA3/, 'referral letter printed');
+    await browser.waitFor(`Boolean(document.querySelector('.referral-modal .ref-page'))`, 'one-page referral popup');
+    assert.ok(await browser.evaluate(`Boolean(document.querySelector('[data-ref-field=patientId]').value)`), 'referral retains patient ID');
+    await click('[data-ref-close]');
 
     // ---------- Second visit of the green pregnancy (same Health ID) ----------
     const green2 = await visit('B426-G2', 'anc', { healthId: 'H-B426-G1', previous: green });

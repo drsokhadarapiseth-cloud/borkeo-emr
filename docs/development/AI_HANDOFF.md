@@ -1,5 +1,33 @@
 # Task context for Codex, Gemini or OpenCode
 
+## One-page referral popup - v48.9.0 feature, 28 October 2026
+
+Owner approved this referral form with "yes code it" before continuing the separate
+Provincial simulation project. Reference: first white copy of owner 182_doc.pdf.
+Base master 45bd18dc2b4fb383f27c487186370feaac5c6396, feature branch
+feature/a4-referral-popup. Baseline code-only backup:
+D:\EMR\Borkeo_EMR_Code_Backups\v48.8.0-45bd18dc-420a78b9
+
+Fixed A4 editable popup includes general, maternal, child/newborn and sending/
+receiving fields. Prefill is a copy; main patient data is not changed. Overflow
+blocks printing instead of clipping or making a second page. Signature is the
+current doctor's configured E-sign or pointer-drawn PNG, stamped by the server.
+Signed immutable revisions are stored in referral_form_revisions with concurrency
+checks and audit. Drafts may be unsigned; reprints use a signed saved revision.
+Doctor/chief, ward, payment and closed-record guards remain. Closed records can
+reprint but cannot edit/sign. ANC doctor action follows the existing signed-referral
+workflow; midwife legacy printing is unchanged. No cross-hospital send occurs.
+
+IMPORTANT: newer pasted instructions prohibit deployment/production changes
+without separate approval. Publish feature branch only; do not merge master or
+restart the existing Borkeo service in this coding step. Restore checkout master
+after publication and keep the combined TXT for review. Activation and the two-
+EMR local setup remain pending; password-copy choice remains unconfirmed.
+
+See REFERRAL_A4_V489_VALIDATION.md for final synthetic checks, PDF evidence and
+activation/rollback instructions. No live database, uploads or credentials used.
+
+
 ## Lab identity/code and editable order dialogs - v48.8.0, 27 October 2026
 
 Owner approved with "yes code it". Base master
