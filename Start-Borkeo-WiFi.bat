@@ -25,7 +25,7 @@ if not defined NODE_EXE (
   goto failed
 )
 
-rem The Node launcher selects this copy's port and refuses occupied ports.
+rem The Node launcher selects this copy's port and opens its existing EMR.
 rem Never kill another EMR or an unrelated program.
 
 "%NODE_EXE%" scripts\start-wifi.mjs
@@ -34,9 +34,6 @@ if errorlevel 1 (
   echo [ERROR] The EMR server stopped with an error ^(see the message above^).
   goto failed
 )
-echo.
-echo The EMR server has stopped.
-pause
 exit /b 0
 
 :failed

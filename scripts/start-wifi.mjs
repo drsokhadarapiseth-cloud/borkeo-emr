@@ -5,7 +5,7 @@
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {loadConfig} from '../server/config.mjs';
-import {configureWifiInstance,checkWifiPort} from './wifi-instance.mjs';
+import {configureWifiInstance,needsWifiServer,openWifiBrowser} from './wifi-instance.mjs';
 // Load this installation's .env before filling launcher defaults. No database is
 // opened here. Isolated launcher settings override inherited database paths.
 loadConfig();
@@ -22,7 +22,7 @@ if (emrMode === 'demo') {
 }
 
 process.env.HOST = '0.0.0.0';
-try { await checkWifiPort(instance.port); }
+try { if (!await needsWifiServer(instance)) process.exit(0); }
 catch (error) {
   if (error.code === 'EADDRINUSE') console.error(`Port ${instance.port} is already in use. No process was stopped. Use the existing EMR window or close that instance before restarting. Link: ${instance.origin}`);
   else console.error(error.message);
@@ -31,6 +31,8 @@ catch (error) {
 const { startServer } = await import('../server/server.mjs');
 const application = await startServer();
 const port = application.config.port;
+try { await openWifiBrowser(instance.origin); }
+catch (error) { console.error(`Could not open the browser. Open ${instance.origin} manually. ${error.message}`); }
 
 console.log('');
 console.log(`This computer: ${instance.origin}${instance.simulation ? ' (separate simulation data)' : ''}`);

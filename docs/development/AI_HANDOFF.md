@@ -1,5 +1,24 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Reopen running EMRs - v49.2.0
+
+Owner approved fixing both batch files and keeping distinct ports. Both services
+were healthy; the previous launcher treated any occupied port as an error. The
+new launcher verifies the existing EMR and opens its link successfully without
+restarting it; otherwise it starts a new server then opens the browser. An
+unrelated listener is neither opened nor terminated. Original is pinned to
+127.0.0.1:3001, second copy to localhost:3002, even with inherited port settings.
+
+Branch fix/reopen-wifi-instances; base c212c6083bec2c977f86fe22ac5abc284b282690.
+Backup D:\EMR\Borkeo_EMR_Code_Backups\v49.1.0-c212c608-a90d4db7.
+Separate-copy changed-code backup:
+D:\EMR\Borkeo_EMR_Code_Backups\clone-before-reopen-1793162573999.
+Second copy retains the same folder and instance-data, version 49.1.0; original
+source is 49.2.0. No database, private settings or credential change. No server
+restart is needed for the launcher repair. Separate explicit master publication
+approval remains required by the pasted instructions. See
+WIFI_REOPEN_V492_VALIDATION.md and the combined v49.2.0 update TXT.
+
 ## Independent Wi-Fi launchers - v49.1.0
 
 Owner approved separate addresses and storage for the two local copies. Original
