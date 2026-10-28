@@ -721,3 +721,15 @@ After that, perform the final diff/sensitive-path audit and resume Work G only
 within the original publication authorization and any new user constraints.
 Do not rerun installation, recreate the branch, restore the banner, regenerate
 the Khmer baseline, or run the branch-start helper on this dirty/unmerged base.
+
+
+## 28 October 2026 - authorized blank OPD/IPD repair
+
+The owner authorized repair of both installed EMRs after reporting blank forms.
+Current master baseline is 8ed42bb3632ec25419a4d3857bb4f915eebef1de (49.2.0);
+the historical 25 October pause above describes an older completed task state.
+See FORM_OPENING_V493_VALIDATION.md for baseline backup, independent copy versions,
+reproduced stale-Triage CSS cause, explicit installed paths and synthetic evidence.
+Full suite 1,072/1,072 and Khmer passed; desktop/mobile OPD/IPD recovery and Triage
+isolation browser regression passed. No runtime data/configuration changed.
+Publication to master is authorized by the current AGENTS.md after validation.

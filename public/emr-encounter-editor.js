@@ -46,6 +46,21 @@
     const next=document.getElementById(roots[current] || 'sub_ipd');
     if(!next)return;
     root=next;
+    // Early first-paint routing may have used a previous login's cached role.
+    // Reconcile it only after the authenticated session supplies the role.
+    const directViews=['opd','opd-paraclinic','medical','daily','nursing','discharge','triage'];
+    const html=document.documentElement;
+    directViews.forEach(name=>html.classList.remove('bed-direct-'+name));
+    html.classList.toggle('triage-restricted',role()==='TRIAGE');
+    html.classList.toggle('bed-direct-view',directViews.includes(current));
+    if(directViews.includes(current)){
+      html.classList.add('bed-direct-'+current);
+      html.dataset.directClinicalView=current;
+      document.body.dataset.clinicalView=current;
+    }else{
+      delete html.dataset.directClinicalView;
+      delete document.body.dataset.clinicalView;
+    }
     document.body.dataset.encounterView=current;
     if(report)document.body.dataset.recordPage=report;
     const page=root.closest('.page') || root;

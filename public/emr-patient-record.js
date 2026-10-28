@@ -1097,7 +1097,7 @@
   }
 
   function applyTriageWorkspaceRestrictions() {
-    const role = String(window.emrSession?.user?.activeRole || window.sessionStorage?.getItem('borkeo-active-role') || '').toUpperCase();
+    const role = String(window.emrSession?.user?.activeRole || '').toUpperCase();
     if (role !== 'TRIAGE') return;
     document.documentElement.classList.add('triage-restricted');
     document.documentElement.classList.remove('bed-direct-opd', 'bed-direct-medical', 'bed-direct-nursing', 'bed-direct-daily', 'bed-direct-discharge');

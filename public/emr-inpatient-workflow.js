@@ -1123,7 +1123,7 @@
 
   function activateRequestedPanel() {
     if (!requestedView) return;
-    const activeRole = String(window.emrSession?.user?.activeRole || window.sessionStorage?.getItem('borkeo-active-role') || '').toUpperCase();
+    const activeRole = String(window.emrSession?.user?.activeRole || '').toUpperCase();
     if (requestedView === 'triage' || activeRole === 'TRIAGE') {
       setupTriageFastEntry({ focus: false });
       return;
@@ -1171,7 +1171,7 @@
     document.querySelector('.dashboard-header')?.setAttribute('hidden', '');
     document.querySelector('.step-wrapper')?.setAttribute('hidden', '');
 
-    const activeRole = String(window.emrSession?.user?.activeRole || window.sessionStorage?.getItem('borkeo-active-role') || '').toUpperCase();
+    const activeRole = String(window.emrSession?.user?.activeRole || '').toUpperCase();
     if (requestedView === 'triage' || activeRole === 'TRIAGE') {
       showOnlyPage('page2');
       setupTriageFastEntry();

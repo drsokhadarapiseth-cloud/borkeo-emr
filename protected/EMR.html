@@ -17011,7 +17011,7 @@ aHRtbD4K
             }
             syncFields();
 
-            var activeRole = String(window.emrSession?.user?.activeRole || window.sessionStorage?.getItem('borkeo-active-role') || '').toUpperCase();
+            var activeRole = String(window.emrSession?.user?.activeRole || '').toUpperCase();
             var requestedBedView = new URLSearchParams(window.location.search).get('view') || '';
             if (activeRole === 'TRIAGE') requestedBedView = 'triage';
             var isDirectBedView = ['opd', 'medical', 'daily', 'nursing', 'discharge'].indexOf(requestedBedView) !== -1;
@@ -17357,7 +17357,7 @@ aHRtbD4K
         }
 
         function validateCaregiverInfoForForm() {
-            var activeRole = String(window.emrSession?.user?.activeRole || window.sessionStorage?.getItem('borkeo-active-role') || '').toUpperCase();
+            var activeRole = String(window.emrSession?.user?.activeRole || '').toUpperCase();
             var requestedBedView = new URLSearchParams(window.location.search).get('view') || '';
             if (['medical', 'daily', 'nursing', 'discharge', 'triage'].indexOf(requestedBedView) !== -1) {
                 return true;
@@ -17423,7 +17423,7 @@ aHRtbD4K
         }
 
         function switchPage(pageNumber) {
-            var activeRole = String(window.emrSession?.user?.activeRole || window.sessionStorage?.getItem('borkeo-active-role') || '').toUpperCase();
+            var activeRole = String(window.emrSession?.user?.activeRole || '').toUpperCase();
             if (activeRole === 'TRIAGE' && Number(pageNumber) !== 2) return false;
             if (Number(pageNumber) > 1 && document.getElementById('page1')?.classList.contains('active')) {
                 if (typeof window.validateCaregiverInfo === 'function') {
@@ -23073,8 +23073,8 @@ function updateOtherIdPreview() {
     <script src="/public/emr-icd10.js?v=3090"></script>
     <script src="/public/patient-photo.js?v=3450"></script>
     <script src="/public/cambodia-phone.js?v=3710"></script>
-    <script src="/public/emr-inpatient-workflow.js?v=3730"></script>
-    <script src="/public/emr-patient-record.js?v=4270"></script>
+    <script src="/public/emr-inpatient-workflow.js?v=4930"></script>
+    <script src="/public/emr-patient-record.js?v=4930"></script>
     <script src="/public/paraclinic.js?v=3720"></script>
     <script src="/public/emr-session.js?v=1970"></script>
     <script src="/public/emr-permissions.js?v=3710"></script>
