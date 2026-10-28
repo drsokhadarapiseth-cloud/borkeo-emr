@@ -1,6 +1,6 @@
 export const SESSION_COOKIE = 'emr_session';
 
-export function applySecurityHeaders(response, { legacy = false, secure = false } = {}) {
+export function applySecurityHeaders(response, { legacy = false, secure = false, review = false } = {}) {
   const policy = legacy
     ? [
         "default-src 'self'",
@@ -19,10 +19,10 @@ export function applySecurityHeaders(response, { legacy = false, secure = false 
         "default-src 'self'",
         "base-uri 'self'",
         "object-src 'none'",
-        "frame-ancestors 'none'",
+        review ? "frame-ancestors 'self'" : "frame-ancestors 'none'",
         "form-action 'self'",
         "script-src 'self'",
-        "style-src 'self'",
+        review ? "style-src 'self' 'unsafe-inline'" : "style-src 'self'",
         "font-src 'self'",
         "img-src 'self' data:",
         "connect-src 'self'",

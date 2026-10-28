@@ -603,3 +603,26 @@ reviewed.referral494.16,Unable to verify referral status,Owner approved provinci
 reviewed.referral494.17,Refer to the provincial referral hospital,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,បញ្ជូនទៅមន្ទីរពេទ្យបង្អែកខេត្ត
 reviewed.referral494.19,Send referral,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,បញ្ជូន
 reviewed.referral494.20,Provincial referral hospital,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,មន្ទីរពេទ្យបង្អែកខេត្ត
+reviewed.referral495.0,"Patients from other health facilities",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,អ្នកជំងឺពីមូលដ្ឋានសុខាភិបាលផ្សេង
+reviewed.referral495.1,"Payment category",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,ប្រភេទការបង់ប្រាក់
+reviewed.referral495.2,"Review patient records",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,មើលកំណត់ត្រាអ្នកជំងឺ
+reviewed.referral495.3,"Choose a visit",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,ជ្រើសរើសការមកពិនិត្យ
+reviewed.referral495.4,"Choose a document",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,ជ្រើសរើសឯកសារ
+reviewed.referral495.5,"Nursing chart",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,តារាងថែទាំ
+reviewed.referral495.6,"Medical problems",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,បញ្ហាវេជ្ជសាស្ត្រ
+reviewed.referral495.7,"Problem remains active",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,កំពុងបន្តមាន
+reviewed.referral495.8,"No referral letter for this visit",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,មិនមានលិខិតបញ្ជូនសម្រាប់ការមកពិនិត្យនេះ
+reviewed.referral495.9,"Record unavailable for this visit",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,មិនអាចផ្ទុកកំណត់ត្រាសម្រាប់ការមកពិនិត្យនេះបាន
+reviewed.referral495.10,"This form is not applicable to the selected visit",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,មិនមានទម្រង់នេះសម្រាប់ការមកពិនិត្យដែលបានជ្រើសរើស
+reviewed.referral495.11,"Loading records",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,កំពុងផ្ទុក
+reviewed.referral495.12,"Source facility unavailable. Showing delivered information.",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,មិនអាចភ្ជាប់មូលដ្ឋានសុខាភិបាលដើមបាន កំពុងបង្ហាញព័ត៌មានដែលបានបញ្ជូន
+reviewed.referral495.13,"Medication route",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,ផ្លូវប្រើប្រាស់
+reviewed.referral495.14,"Treatment duration",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,រយៈពេល
+reviewed.referral495.15,"Recorded temperature",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,កម្តៅ
+reviewed.referral495.16,"Recorded oxygen saturation",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,អុកស៊ីសែន
+reviewed.referral495.17,"Recorded clinical evolution",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs,ការវិវត្ត
+reviewed.referral495.18,"Referral already rejected",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs; server/routes/referral-link.mjs,លិខិតបញ្ជូននេះបានបដិសេធរួចហើយ
+reviewed.referral495.19,"Enter a rejection reason",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs; server/routes/referral-link.mjs,សូមបញ្ចូលមូលហេតុបដិសេធ
+reviewed.referral495.20,"Referral already accepted",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs; server/routes/referral-link.mjs,លិខិតបញ្ជូននេះបានទទួលរួចហើយ
+reviewed.referral495.21,"Reject referral",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs; server/routes/referral-link.mjs,បដិសេធការបញ្ជូន
+reviewed.referral495.22,"Referral rejection reason",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs; server/routes/referral-link.mjs,មូលហេតុបដិសេធ

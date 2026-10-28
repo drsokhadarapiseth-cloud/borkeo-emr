@@ -48,6 +48,19 @@ test('v39.8 every role sees exactly the navigation items in docs/nav-roles.md', 
   assert.deepEqual([...nav.visibleItemIds({ activeRole: '' })], [], 'no role, no menu');
 });
 
+test('incoming referrals use the receiving instance sidebar for every staff role', () => {
+  const nav=loadNavConfig();
+  for(const row of EXPECTED){
+    const user=asUser(row);
+    assert.ok(!nav.visibleItemIds(user).includes('incoming-referrals'));
+    const receiver={...user,referralReceiver:true};
+    assert.ok(nav.visibleItemIds(receiver).includes('incoming-referrals'),row.role);
+    assert.ok(!nav.visibleItemIds(receiver,{hidden:['/referrals']}).includes('incoming-referrals'));
+    const items=nav.visibleGroups(receiver).flatMap(group=>group.items);
+    assert.equal(nav.activeItemId(items,'/referrals',''),'incoming-referrals');
+  }
+});
+
 test('v39.8 navigation map is one central declarative config; empty groups disappear', () => {
   const nav = loadNavConfig();
   const ids = nav.ITEMS.map(item => item.id);
@@ -155,7 +168,8 @@ test('v39.8 sidebar shell: overlay rail, hover/focus, drawer, pin, reduced motio
   const icons = read('public/icons.svg');
 
   assert.match(server, /\['\/public\/nav-config\.js', \['nav-config\.js', 'text\/javascript; charset=utf-8'\]\]/);
-  assert.ok(server.indexOf('nav-config.js?v=3980') < server.indexOf('app-shell.js?v=3980'), 'nav map loads before the shell');
+  const navIndex=server.indexOf('nav-config.js?v='),shellIndex=server.indexOf('app-shell.js?v=');
+  assert.ok(navIndex>=0 && shellIndex>navIndex, 'nav map loads before the shell');
   assert.doesNotMatch(shell, /getRoleNavGroups/, 'old per-role menu copy removed');
   assert.match(shell, /window\.EmrNavConfig/);
   assert.doesNotMatch(shell, /\sonerror=|\sonclick=/, 'no inline handlers (strict CSP)');

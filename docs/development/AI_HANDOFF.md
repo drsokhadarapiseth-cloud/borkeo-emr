@@ -754,3 +754,27 @@ Full suite 1,074/1,074; Khmer; two desktop/mobile/print browser regressions pass
 The final queue error-display change passed the affected browser regression.
 Combined artifact: Borkeo-EMR-v49.4.0-provincial-referral-update.txt.
 Current AGENTS.md authorizes committing and pushing this verified update to master.
+
+## 28 October 2026 - referred-patient sidebar/table and visit review
+
+Owner approved coding the transferred-patient list, asked to place it in the
+sidebar, and specified dated visit selection for medical/OPD/referral/nursing
+review. Owner explicitly chose doctors and management only for rejection.
+Base master f6ecd80872a45d08b64b6e9dcb71be46b2d856a7 (49.4.0); releases primary
+49.5.0 and independent receiving copy 49.4.0. See
+REFERRED_PATIENTS_V495_VALIDATION.md for backups, source/receiver scope and evidence.
+
+The receiving sidebar contains the requested facility-patient name; its table
+supports read-only dated record choices and existing acceptance. Rejection is
+server-limited to doctor/chief doctor/hospital management, requires a reason and
+updates the sender. History is authenticated, transfer-scoped and isolated from
+other identities. Static review documents cannot execute scripts or edit records.
+Full suite 1,075/1,075 and Khmer passed. Rendered desktop/mobile record review,
+structured nursing, malicious-text isolation and decision browser checks passed.
+
+Both verified listeners were restarted. Patient/account/role, ward/imaging and
+existing referral snapshot comparisons match the consistent pre-activation
+backups; integrity is OK and no synthetic fixture entered runtime databases.
+The external pairing key, .env, .gitignore and launcher settings are preserved.
+Combined artifact: Borkeo-EMR-v49.5.0-referred-patient-list-update.txt.
+Current AGENTS.md authorizes automatic master commit/push after these checks.

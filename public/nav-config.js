@@ -38,6 +38,7 @@
     { id: 'medical-record', group: 'care', href: '/emr', icon: 'icon-clipboard', label: 'កំណត់ត្រាវេជ្ជសាស្ត្រ', labelEn: 'Medical record', access: ['DOCTOR@!opd'] },
     { id: 'departments', group: 'care', href: '/departments', icon: 'icon-bed', label: 'គ្រប់គ្រងផ្នែក និងគ្រែ', labelEn: 'Wards and beds', access: [...WARD_STAFF, ...MGMT] },
     { id: 'patient-list', group: 'care', href: '/patient-list', icon: 'icon-users', label: 'បញ្ជីអ្នកជំងឺ', labelEn: 'Patient list', access: ALL_ROLES },
+    { id: 'incoming-referrals', group: 'care', href: '/referrals', icon: 'icon-inbox', label: 'អ្នកជំងឺពីមូលដ្ឋានសុខាភិបាលផ្សេង', labelEn: 'Patients from other health facilities', access: ALL_ROLES, receiverOnly: true },
     { id: 'appointments', group: 'care', href: '/patient-list?view=appointments', icon: 'icon-calendar', label: 'បញ្ជីអ្នកជំងឺណាត់ជួប', labelEn: 'Appointments', access: ['REGISTRATION'] },
 
     // Clinical services
@@ -82,6 +83,7 @@
   // v42.1: the Superuser account gets exactly the menu of its active user
   // type, like a real account of that type.
   function itemVisible(item, user) {
+    if (item.receiverOnly && user?.referralReceiver !== true) return false;
     const role = String(user?.activeRole || '').toUpperCase();
     const ward = String(user?.activeWard?.code || '').toLowerCase();
     return Boolean(role) && item.access.some(rule => ruleMatches(rule, role, ward));

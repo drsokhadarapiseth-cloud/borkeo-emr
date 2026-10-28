@@ -29,7 +29,7 @@ export async function openReferralForm({patientKey}={}){
  const prior=document.activeElement;document.body.append(overlay);const abort=new AbortController();
  const pad=overlay.querySelector('.ref-pad'),signArea=overlay.querySelector('.ref-signature');
  signArea.tabIndex=loaded.canEdit?0:-1;signArea.setAttribute('role','button');
- const openPad=()=>{if(loaded.canEdit&&!busy&&!['PENDING','ACCEPTED'].includes(transfer?.status)){pad.hidden=false;overlay.querySelector('canvas').tabIndex=0;overlay.querySelector('canvas').focus()}};
+ const openPad=()=>{if(loaded.canEdit&&!busy&&!['PENDING','ACCEPTED','REJECTED'].includes(transfer?.status)){pad.hidden=false;overlay.querySelector('canvas').tabIndex=0;overlay.querySelector('canvas').focus()}};
  signArea.onclick=openPad;signArea.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPad()}};
  const signatureActions=document.createElement('div');signatureActions.className='ref-sign-actions';
  for(const name of ['esign','clear'])signatureActions.append(overlay.querySelector('[data-ref-'+name+']'));
@@ -55,7 +55,7 @@ export async function openReferralForm({patientKey}={}){
   const available=n.clientWidth-parseFloat(s.paddingLeft)-parseFloat(s.paddingRight);
   const bad=Boolean(n.value)&&(n.tagName==='TEXTAREA'?n.scrollHeight>n.clientHeight+1:measure.measureText(n.value).width>available+1);
   n.classList.toggle('ref-bad',bad);if(bad)good=false;
- }overlay.querySelector('[data-ref-print]').disabled=busy||!good||(!loaded.canEdit&&!stored?.signature);sendButton.disabled=busy||!loaded.canEdit||['PENDING','ACCEPTED'].includes(transfer?.status);return good}
+ }overlay.querySelector('[data-ref-print]').disabled=busy||!good||(!loaded.canEdit&&!stored?.signature);sendButton.disabled=busy||!loaded.canEdit||['PENDING','ACCEPTED','REJECTED'].includes(transfer?.status);return good}
  overlay.addEventListener('input',()=>{if(signature&&mode==='NONE'){signature=null;renderSignature('')}dirty=true;status(fits()?'':'អត្ថបទលើសទំហំសន្លឹក សូមសង្ខេបមុនបោះពុម្ព')});
  const save=async requireSignature=>{
   if(!loaded.canEdit)throw Error('មិនអាចកែប្រែទម្រង់នេះបានទេ');
@@ -65,7 +65,7 @@ export async function openReferralForm({patientKey}={}){
  };
  const run=async fn=>{if(busy)return;busy=true;const controls=[...overlay.querySelectorAll('input,textarea,button')].map(n=>[n,n.disabled]);controls.forEach(([n])=>n.disabled=true);try{await fn()}catch(error){status(error.message)}finally{busy=false;controls.forEach(([n,disabled])=>n.disabled=disabled);if(transfer)showTransfer();else fits()}};
  overlay.querySelector('[data-ref-save]').onclick=()=>run(()=>save(false));
- const showTransfer=()=>{if(transfer)status(transfer.status==='ACCEPTED'?'បានទទួលអ្នកជំងឺ':transfer.status==='PENDING'?'បានបញ្ជូន កំពុងរង់ចាំទទួល':'មិនអាចបញ្ជូនបាន សូមព្យាយាមម្ដងទៀត');if(['PENDING','ACCEPTED'].includes(transfer?.status)){fields().forEach(n=>n.disabled=true);for(const name of ['save','esign','clear'])overlay.querySelector('[data-ref-'+name+']').disabled=true;pad.hidden=true;signArea.tabIndex=-1}fits()};
+ const showTransfer=()=>{if(transfer)status(transfer.status==='REJECTED'?'បដិសេធ'+(transfer.rejectionReason?' : '+transfer.rejectionReason:''):transfer.status==='ACCEPTED'?'បានទទួលអ្នកជំងឺ':transfer.status==='PENDING'?'បានបញ្ជូន កំពុងរង់ចាំទទួល':'មិនអាចបញ្ជូនបាន សូមព្យាយាមម្ដងទៀត');if(['PENDING','ACCEPTED','REJECTED'].includes(transfer?.status)){fields().forEach(n=>n.disabled=true);for(const name of ['save','esign','clear'])overlay.querySelector('[data-ref-'+name+']').disabled=true;pad.hidden=true;signArea.tabIndex=-1}fits()};
  sendButton.onclick=()=>run(async()=>{if((dirty||!stored?.signature)&&mode==='NONE')throw Error('សូមរក្សាទុក និងចុះហត្ថលេខាជាមុន');if(dirty||!stored?.signature)await save(true);transfer=(await api('/api/referral-send',{patientKey,revision:stored.revision})).transfer;showTransfer()});
  const refreshTransfer=async()=>{try{const result=await api('/api/referral-status?patientKey='+encodeURIComponent(patientKey));if(result.transfer){transfer=result.transfer;showTransfer();if(result.unavailable)status('មិនអាចផ្ទៀងផ្ទាត់ស្ថានភាពបាន')}}catch{}};
  void refreshTransfer();const poll=setInterval(()=>{if(!busy)void refreshTransfer()},10000);abort.signal.addEventListener('abort',()=>clearInterval(poll),{once:true});
@@ -101,9 +101,3 @@ if(typeof document!=='undefined'){
   event.preventDefault();event.stopImmediatePropagation();openReferralForm({patientKey:new URLSearchParams(location.search).get('patient')}).catch(error=>alert(error.message));
  },true);
 }
-
-async function setupReceiverLink(){
- if(!window.emrSession?.user||document.querySelector('.ref-inbox-link'))return;
- try{const response=await fetch('/api/referral-capabilities',{cache:'no-store'});if(!response.ok||!(await response.json()).receiver)return;await loadStyle();if(document.querySelector('.ref-inbox-link'))return;const link=document.createElement('a');link.className='ref-inbox-link no-print';link.href='/referrals';link.textContent='បញ្ជីបញ្ជូនចូល';document.body.append(link)}catch{}
-}
-if(typeof document!=='undefined'){window.addEventListener('emr-session-ready',setupReceiverLink);void setupReceiverLink();}

@@ -2654,6 +2654,98 @@
     {
       "en": "Provincial referral hospital",
       "kh": "មន្ទីរពេទ្យបង្អែកខេត្ត"
+    },
+    {
+      "en": "Patients from other health facilities",
+      "kh": "អ្នកជំងឺពីមូលដ្ឋានសុខាភិបាលផ្សេង"
+    },
+    {
+      "en": "Payment category",
+      "kh": "ប្រភេទការបង់ប្រាក់"
+    },
+    {
+      "en": "Review patient records",
+      "kh": "មើលកំណត់ត្រាអ្នកជំងឺ"
+    },
+    {
+      "en": "Choose a visit",
+      "kh": "ជ្រើសរើសការមកពិនិត្យ"
+    },
+    {
+      "en": "Choose a document",
+      "kh": "ជ្រើសរើសឯកសារ"
+    },
+    {
+      "en": "Nursing chart",
+      "kh": "តារាងថែទាំ"
+    },
+    {
+      "en": "Medical problems",
+      "kh": "បញ្ហាវេជ្ជសាស្ត្រ"
+    },
+    {
+      "en": "Problem remains active",
+      "kh": "កំពុងបន្តមាន"
+    },
+    {
+      "en": "No referral letter for this visit",
+      "kh": "មិនមានលិខិតបញ្ជូនសម្រាប់ការមកពិនិត្យនេះ"
+    },
+    {
+      "en": "Record unavailable for this visit",
+      "kh": "មិនអាចផ្ទុកកំណត់ត្រាសម្រាប់ការមកពិនិត្យនេះបាន"
+    },
+    {
+      "en": "This form is not applicable to the selected visit",
+      "kh": "មិនមានទម្រង់នេះសម្រាប់ការមកពិនិត្យដែលបានជ្រើសរើស"
+    },
+    {
+      "en": "Loading records",
+      "kh": "កំពុងផ្ទុក"
+    },
+    {
+      "en": "Source facility unavailable. Showing delivered information.",
+      "kh": "មិនអាចភ្ជាប់មូលដ្ឋានសុខាភិបាលដើមបាន កំពុងបង្ហាញព័ត៌មានដែលបានបញ្ជូន"
+    },
+    {
+      "en": "Medication route",
+      "kh": "ផ្លូវប្រើប្រាស់"
+    },
+    {
+      "en": "Treatment duration",
+      "kh": "រយៈពេល"
+    },
+    {
+      "en": "Recorded temperature",
+      "kh": "កម្តៅ"
+    },
+    {
+      "en": "Recorded oxygen saturation",
+      "kh": "អុកស៊ីសែន"
+    },
+    {
+      "en": "Recorded clinical evolution",
+      "kh": "ការវិវត្ត"
+    },
+    {
+      "en": "Referral already rejected",
+      "kh": "លិខិតបញ្ជូននេះបានបដិសេធរួចហើយ"
+    },
+    {
+      "en": "Enter a rejection reason",
+      "kh": "សូមបញ្ចូលមូលហេតុបដិសេធ"
+    },
+    {
+      "en": "Referral already accepted",
+      "kh": "លិខិតបញ្ជូននេះបានទទួលរួចហើយ"
+    },
+    {
+      "en": "Reject referral",
+      "kh": "បដិសេធការបញ្ជូន"
+    },
+    {
+      "en": "Referral rejection reason",
+      "kh": "មូលហេតុបដិសេធ"
     }
   ]
 }
