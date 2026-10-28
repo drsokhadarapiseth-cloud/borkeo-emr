@@ -67,10 +67,10 @@ test('referral popup preserves clinical data, validates overflow and prints one 
     assert.ok(await browser.evaluate('document.querySelector(".ref-print-frame").contentDocument.body.textContent.includes('+JSON.stringify(patient.summary.healthId)+')'));
     fs.writeFileSync(path.join(evidence,'referral.snapshot.txt'),markup);
     // Draw a replacement signature with pointer input, then append a new revision.
-    await browser.evaluate('document.querySelector("[data-ref-clear]").click();document.querySelector("canvas").scrollIntoView({block:"center"})');
+    await browser.evaluate('document.querySelector(".ref-signature").click();document.querySelector("[data-ref-clear]").click();document.querySelector("canvas").scrollIntoView({block:"center"})');
     const rect=await browser.evaluate('(()=>{const r=document.querySelector(".ref-pad canvas").getBoundingClientRect();return {x:r.x,y:r.y}})()');
     await browser.send('Input.dispatchMouseEvent',{type:'mouseMoved',x:rect.x+20,y:rect.y+30});await browser.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,x:rect.x+20,y:rect.y+30});await browser.send('Input.dispatchMouseEvent',{type:'mouseMoved',button:'left',buttons:1,x:rect.x+140,y:rect.y+65});await browser.send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,x:rect.x+140,y:rect.y+65});
-    await browser.evaluate('document.querySelector("[data-ref-save]").click()');
+    await browser.evaluate('document.querySelector("[data-ref-signature-done]").click();document.querySelector("[data-ref-save]").click()');
     await browser.waitFor('!document.querySelector("[data-ref-save]").disabled','drawn save');
     let drawn;for(let i=0;i<30;i++){drawn=(await call('doctor_opd','GET','/api/referral-form?patientKey='+encodeURIComponent(key))).form;if(drawn.revision===2)break;await new Promise(r=>setTimeout(r,100))}
     assert.equal(drawn.signature.source,'drawn');assert.equal(drawn.signature.userId,me.user.id);assert.equal(app.database.sqlite.prepare('SELECT COUNT(*) AS n FROM referral_form_revisions WHERE patient_key=?').get(key).n,2,'signed history is retained');

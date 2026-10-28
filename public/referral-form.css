@@ -42,6 +42,36 @@
 .ref-receiving{grid-template-rows:repeat(4,5mm) 1fr!important}
 .ref-value{width:auto;white-space:pre-wrap;overflow-wrap:anywhere;overflow:visible;border:0;border-bottom:.2mm dotted #777;font:inherit}.ref-bad{outline:1.5px solid #c02626!important;background:#fff3f3!important}
 .ref-pad{background:#fff;border-radius:10px;padding:10px;max-width:100%;box-sizing:border-box}.ref-pad canvas{display:block;width:480px;max-width:100%;height:130px;touch-action:none;border:1px solid #9fb7c4;background:#fff}
+.ref-pad[hidden]{display:none!important}
+.ref-pad{position:fixed;z-index:3;top:50%;left:50%;transform:translate(-50%,-50%);width:min(540px,94vw);box-shadow:0 0 0 100vmax #142e43a0;padding:20px}
+.ref-sign-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.ref-sign-actions button{font:inherit;padding:10px;border:1px solid #bed4dd;border-radius:8px}
+.ref-signature[role=button]{cursor:pointer;border:1px dashed #087f9e;border-radius:8px;padding:12px;min-height:75px}
+[data-ref-send]{background:#087f9e!important;color:white!important}
+@media screen{
+ .referral-modal{padding:20px;overflow:hidden;box-sizing:border-box}
+ .referral-modal .ref-toolbar,.referral-modal .ref-workspace{width:min(1060px,100%);max-width:100%;border-radius:12px}
+ .referral-modal .ref-workspace{flex:1;min-height:0;overflow:auto;background:white;padding:24px}
+ .referral-modal .ref-page{width:100%;height:auto;display:block;padding:0;font-size:14px;line-height:1.7}
+ .referral-modal .ref-page>header{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+ .referral-modal .ref-page>header>div:nth-child(2),.referral-modal .ref-page>header h2,.referral-modal .ref-page>header img{display:none}
+ .referral-modal .ref-page header .ref-line{height:auto;flex:auto}
+ .referral-modal .ref-page header .ref-line>span:first-child{max-width:none;flex:0 0 100%;width:100%}
+ .referral-modal .ref-page>section,.referral-modal .ref-page>.ref-line,.referral-modal .ref-page>.ref-grid{margin-bottom:18px}
+ .referral-modal .ref-line{height:auto;min-height:42px;align-items:start;flex-wrap:wrap;margin-bottom:8px}
+ .referral-modal .ref-line>span:first-child{max-width:none;width:100%;font-weight:bold}
+ .referral-modal .ref-page input:not([type=checkbox]),.referral-modal .ref-page textarea{width:100%;flex:auto;height:40px;max-height:none;font:inherit;border:1px solid #bdd5df;border-radius:6px;background:#f9fcfd;padding:6px 10px}
+ .referral-modal .ref-page textarea{height:84px;overflow:auto;resize:vertical}
+ .referral-modal .ref-grid,.referral-modal .ref-special,.referral-modal .ref-sending{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+ .referral-modal .ref-four,.referral-modal .ref-five{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+ .referral-modal .ref-special{height:auto}.referral-modal .ref-box,.referral-modal .ref-children{display:block;height:auto}
+ .referral-modal .ref-box{padding:14px;border:1px solid #d3e4eb;border-radius:8px;margin-bottom:12px}
+ .referral-modal .ref-page h2{font-size:15px;line-height:1.7;margin-bottom:12px}
+ .referral-modal .ref-special .ref-line>span:first-child{white-space:normal}
+ .referral-modal .ref-check{margin:6px;display:inline-flex}
+ .referral-modal .ref-page>header~.ref-identity{padding-top:0}
+ @media(max-width:600px){.referral-modal{padding:8px}.referral-modal .ref-workspace{padding:14px}.referral-modal .ref-page>header,.referral-modal .ref-grid,.referral-modal .ref-special,.referral-modal .ref-sending{grid-template-columns:1fr}.ref-toolbar button{padding:7px 10px}}
+}
+.ref-inbox-link{position:fixed;right:16px;bottom:80px;z-index:99990;background:#087f9e;color:white;padding:12px 18px;border-radius:10px;text-decoration:none;font:14px BorkeoInterface,Arial,sans-serif;box-shadow:0 3px 12px #1235}
 @media print{
  @page{size:A4 portrait;margin:0}
  html,body{margin:0!important;padding:0!important;background:#fff!important;width:210mm!important;height:297mm!important}

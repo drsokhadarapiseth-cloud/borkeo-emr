@@ -147,5 +147,6 @@ export function loadConfig(overrides = {}) {
     value: String(overrides.superuserPassword ?? process.env.SUPERUSER_PASSWORD ?? ''),
     enumerable: false,
   });
+  Object.defineProperty(config, 'referralLink', {value:overrides.referralLink,enumerable:false,writable:true});
   return config;
 }

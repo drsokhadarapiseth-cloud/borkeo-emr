@@ -733,3 +733,24 @@ reproduced stale-Triage CSS cause, explicit installed paths and synthetic eviden
 Full suite 1,072/1,072 and Khmer passed; desktop/mobile OPD/IPD recovery and Triage
 isolation browser regression passed. No runtime data/configuration changed.
 Publication to master is authorized by the current AGENTS.md after validation.
+
+## 28 October 2026 - approved local provincial referral workflow
+
+Owner confirmed localhost:3002 as the new receiving EMR and authorized coding
+with "yes". See PROVINCIAL_REFERRAL_V494_VALIDATION.md for exact scope, code and
+database backup paths, installation, pairing safeguards and test evidence.
+Primary baseline e6142a63bc9c300960691ca8bf092d31c14eaa8b (49.3.0); releases
+are primary 49.4.0 and separate receiving copy 49.3.0. The two verified Wi-Fi
+listeners were restarted and both are healthy. Patient rows and staff identity/
+role hashes match before/after; database integrity is OK. No test patient was
+sent to either runtime database. The shared pairing key stays outside the repos.
+
+OPD's visible transfer control opens a responsive referral popup. Signature
+entry opens on tap; Send delivers an immutable signed referral to the second
+EMR's authenticated incoming queue. Staff acceptance is audited and reflected
+in the sender. Existing internal ward/admission keys, encounters and financial
+rules remain intact. Receipt does not automatically create an admission/bill.
+Full suite 1,074/1,074; Khmer; two desktop/mobile/print browser regressions passed.
+The final queue error-display change passed the affected browser regression.
+Combined artifact: Borkeo-EMR-v49.4.0-provincial-referral-update.txt.
+Current AGENTS.md authorizes committing and pushing this verified update to master.

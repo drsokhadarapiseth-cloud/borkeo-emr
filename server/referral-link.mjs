@@ -1,0 +1,59 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import crypto from 'node:crypto';
+
+export const linkFile=path.join(os.homedir(),'Borkeo_EMR_Referral_Link','link.json');
+const fail=(status,message)=>{throw Object.assign(new Error(message),{status})};
+export function linkSettings(config){
+  const link=config.referralLink ?? (!config.demoMode && fs.existsSync(linkFile)?JSON.parse(fs.readFileSync(linkFile,'utf8')).instances?.[String(config.port)]:null);
+  if(!link)return null;
+  if(!/^[a-f0-9]{64}$/.test(link.secret||'')||!['sender','receiver'].includes(link.role))fail(503,'ការតភ្ជាប់មិនទាន់រួចរាល់');
+  const url=new URL(link.peer);
+  if(url.protocol!=='http:'||!['127.0.0.1','localhost'].includes(url.hostname)||url.username||url.password||url.pathname!=='/'||url.search||url.hash)fail(503,'ការតភ្ជាប់មិនទាន់រួចរាល់');
+  return {...link,peer:url.origin};
+}
+export function ensureReferralLinkSchema(db){db.sqlite.exec(`
+ CREATE TABLE IF NOT EXISTS referral_outbox(id TEXT PRIMARY KEY,patient_key TEXT NOT NULL,revision INTEGER NOT NULL,payload TEXT NOT NULL,status TEXT NOT NULL,accepted_at INTEGER,created_at INTEGER NOT NULL,UNIQUE(patient_key,revision)) STRICT;
+ CREATE TABLE IF NOT EXISTS referral_inbox(id TEXT PRIMARY KEY,payload TEXT NOT NULL,digest TEXT NOT NULL,status TEXT NOT NULL,received_at INTEGER NOT NULL,accepted_at INTEGER,accepted_by TEXT) STRICT;
+ CREATE TABLE IF NOT EXISTS referral_link_nonces(nonce TEXT PRIMARY KEY,created_at INTEGER NOT NULL) STRICT;
+`)}
+export const digest=value=>crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
+export const mac=(secret,value)=>crypto.createHmac('sha256',secret).update(value).digest('hex');
+const equal=(a,b)=>typeof a==='string'&&typeof b==='string'&&a.length===b.length&&crypto.timingSafeEqual(Buffer.from(a),Buffer.from(b));
+export function checkEnvelope(db,link,envelope){
+ if(!link||link.role!=='receiver')fail(503,'ការតភ្ជាប់មិនទាន់រួចរាល់');
+ const {timestamp,nonce,body,signature}=envelope||{};
+ if(!Number.isSafeInteger(timestamp)||Math.abs(Date.now()-timestamp)>60000||!/^[-a-f0-9]{36}$/.test(nonce||'')||!/^[a-f0-9]{64}$/.test(signature||'')||!equal(signature,mac(link.secret,JSON.stringify({timestamp,nonce,body}))))fail(403,'មិនមានសិទ្ធិ');
+ db.sqlite.prepare('DELETE FROM referral_link_nonces WHERE created_at<?').run(Date.now()-120000);
+ if(db.sqlite.prepare('SELECT 1 FROM referral_link_nonces WHERE nonce=?').get(nonce))fail(409,'សំណើដដែល');
+ db.sqlite.prepare('INSERT INTO referral_link_nonces VALUES(?,?)').run(nonce,Date.now());
+ return body;
+}
+export async function peerCall(link,body){
+ if(!link||link.role!=='sender')fail(503,'ការតភ្ជាប់មិនទាន់រួចរាល់');
+ const request={timestamp:Date.now(),nonce:crypto.randomUUID(),body};
+ request.signature=mac(link.secret,JSON.stringify(request));
+ try{
+  const response=await fetch(link.peer+'/api/referral-link',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(request),redirect:'error',signal:AbortSignal.timeout(8000)});
+  const raw=await response.text();
+  if(raw.length>20000||!response.ok)throw Error('peer');
+  const result=JSON.parse(raw);
+  if(!equal(result.signature,mac(link.secret,request.nonce+JSON.stringify(result.body))))throw Error('signature');
+  return result.body;
+ }catch{fail(503,'មិនអាចបញ្ជូនបាន សូមព្យាយាមម្ដងទៀត')}
+}
+export function receiveReferral(db,body){
+ const id=body?.id;
+ if(!/^[-a-f0-9]{36}$/.test(id||''))fail(400,'ទិន្នន័យមិនត្រឹមត្រូវ');
+ if(body.operation==='deliver'){
+  const p=body.payload;
+  if(!p||p.id!==id||typeof p.patient?.fullName!=='string'||!p.form?.signature||!Number.isSafeInteger(p.form.revision)||JSON.stringify(p).length>300000)fail(400,'ទិន្នន័យមិនត្រឹមត្រូវ');
+  const prior=db.sqlite.prepare('SELECT * FROM referral_inbox WHERE id=?').get(id);
+  if(prior&&prior.digest!==digest(p))fail(409,'ទិន្នន័យមិនត្រឹមត្រូវ');
+  if(!prior)db.sqlite.prepare("INSERT INTO referral_inbox(id,payload,digest,status,received_at) VALUES(?,?,?,'PENDING',?)").run(id,JSON.stringify(p),digest(p),Date.now());
+ }else if(body.operation!=='status')fail(400,'ទិន្នន័យមិនត្រឹមត្រូវ');
+ const row=db.sqlite.prepare('SELECT id,digest,status,accepted_at FROM referral_inbox WHERE id=?').get(id);
+ if(!row)fail(404,'រកមិនឃើញ');
+ return {id:row.id,digest:row.digest,status:row.status,acceptedAt:row.accepted_at};
+}

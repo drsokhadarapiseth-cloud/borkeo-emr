@@ -2574,6 +2574,86 @@
     {
       "en": "Referral form validation message 76",
       "kh": "សូមរក្សាទុក និងចុះហត្ថលេខាមុនបោះពុម្ព"
+    },
+    {
+      "en": "Incoming referrals",
+      "kh": "បញ្ជីបញ្ជូនចូល"
+    },
+    {
+      "en": "Patient referral accepted",
+      "kh": "បានទទួលអ្នកជំងឺ"
+    },
+    {
+      "en": "Awaiting acceptance",
+      "kh": "កំពុងរង់ចាំទទួល"
+    },
+    {
+      "en": "View referral letter",
+      "kh": "មើលលិខិតបញ្ជូន"
+    },
+    {
+      "en": "Accept patient referral",
+      "kh": "ទទួលអ្នកជំងឺ"
+    },
+    {
+      "en": "No incoming referrals",
+      "kh": "មិនមានលិខិតបញ្ជូនចូលទេ"
+    },
+    {
+      "en": "Unable to load referral information",
+      "kh": "មិនអាចផ្ទុកទិន្នន័យបាន"
+    },
+    {
+      "en": "Referral connection is not configured",
+      "kh": "ការតភ្ជាប់មិនទាន់រួចរាល់"
+    },
+    {
+      "en": "Referral access denied",
+      "kh": "មិនមានសិទ្ធិ"
+    },
+    {
+      "en": "Duplicate request",
+      "kh": "សំណើដដែល"
+    },
+    {
+      "en": "Unable to send referral. Please try again.",
+      "kh": "មិនអាចបញ្ជូនបាន សូមព្យាយាមម្ដងទៀត"
+    },
+    {
+      "en": "Invalid referral information",
+      "kh": "ទិន្នន័យមិនត្រឹមត្រូវ"
+    },
+    {
+      "en": "Referral not found",
+      "kh": "រកមិនឃើញ"
+    },
+    {
+      "en": "Save and sign before sending",
+      "kh": "សូមរក្សាទុក និងចុះហត្ថលេខាជាមុន"
+    },
+    {
+      "en": "Referral already sent",
+      "kh": "បានបញ្ជូនរួចហើយ"
+    },
+    {
+      "en": "Sent and awaiting acceptance",
+      "kh": "បានបញ្ជូន កំពុងរង់ចាំទទួល"
+    },
+    {
+      "en": "Unable to verify referral status",
+      "kh": "មិនអាចផ្ទៀងផ្ទាត់ស្ថានភាពបាន"
+    },
+    {
+      "en": "Refer to the provincial referral hospital",
+      "kh": "បញ្ជូនទៅមន្ទីរពេទ្យបង្អែកខេត្ត"
+    },
+    {
+      "en": "Send referral",
+      "kh": "បញ្ជូន"
+    },
+    {
+      "en": "Provincial referral hospital",
+      "kh": "មន្ទីរពេទ្យបង្អែកខេត្ត"
     }
   ]
 }

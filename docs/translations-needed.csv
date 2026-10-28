@@ -583,3 +583,23 @@ triage.requestParaclinic,Request paraclinic tests,Exact checkbox wording supplie
 "referral.v489.74","Referral form validation message 74","Owner approved one-page referral popup 2026-10-28","server/referral-forms.mjs","សូមជ្រើសរើសវិធីចុះហត្ថលេខា"
 "referral.v489.75","Referral form validation message 75","Owner approved one-page referral popup 2026-10-28","server/referral-forms.mjs","ទម្រង់ត្រូវបានកែប្រែ សូមបើកឡើងវិញ"
 "referral.v489.76","Referral form validation message 76","Owner approved one-page referral popup 2026-10-28","server/routes/referral-forms.mjs","សូមរក្សាទុក និងចុះហត្ថលេខាមុនបោះពុម្ព"
+reviewed.referral494.0,Incoming referrals,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,បញ្ជីបញ្ជូនចូល
+reviewed.referral494.1,Patient referral accepted,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,បានទទួលអ្នកជំងឺ
+reviewed.referral494.2,Awaiting acceptance,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,កំពុងរង់ចាំទទួល
+reviewed.referral494.3,View referral letter,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,មើលលិខិតបញ្ជូន
+reviewed.referral494.4,Accept patient referral,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,ទទួលអ្នកជំងឺ
+reviewed.referral494.5,No incoming referrals,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,មិនមានលិខិតបញ្ជូនចូលទេ
+reviewed.referral494.6,Unable to load referral information,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,មិនអាចផ្ទុកទិន្នន័យបាន
+reviewed.referral494.7,Referral connection is not configured,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,ការតភ្ជាប់មិនទាន់រួចរាល់
+reviewed.referral494.8,Referral access denied,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,មិនមានសិទ្ធិ
+reviewed.referral494.9,Duplicate request,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,សំណើដដែល
+reviewed.referral494.10,Unable to send referral. Please try again.,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,មិនអាចបញ្ជូនបាន សូមព្យាយាមម្ដងទៀត
+reviewed.referral494.11,Invalid referral information,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,ទិន្នន័យមិនត្រឹមត្រូវ
+reviewed.referral494.12,Referral not found,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,រកមិនឃើញ
+reviewed.referral494.13,Save and sign before sending,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,សូមរក្សាទុក និងចុះហត្ថលេខាជាមុន
+reviewed.referral494.14,Referral already sent,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,បានបញ្ជូនរួចហើយ
+reviewed.referral494.15,Sent and awaiting acceptance,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,បានបញ្ជូន កំពុងរង់ចាំទទួល
+reviewed.referral494.16,Unable to verify referral status,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,មិនអាចផ្ទៀងផ្ទាត់ស្ថានភាពបាន
+reviewed.referral494.17,Refer to the provincial referral hospital,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,បញ្ជូនទៅមន្ទីរពេទ្យបង្អែកខេត្ត
+reviewed.referral494.19,Send referral,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,បញ្ជូន
+reviewed.referral494.20,Provincial referral hospital,Owner approved provincial referral workflow,public/referral-form.mjs; public/referral-inbox.mjs; server/referral-link.mjs,មន្ទីរពេទ្យបង្អែកខេត្ត
