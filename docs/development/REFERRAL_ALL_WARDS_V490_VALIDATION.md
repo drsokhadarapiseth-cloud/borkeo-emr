@@ -3,8 +3,9 @@
 The owner approved coding the referral form for Borkeo_EMR_Git, including OPD
 doctors and IPD doctors in every ward, on 28 October 2026. Automatic approval
 review rejected merging/pushing master because it requires a separate explicit
-production activation approval under the pasted instructions. The feature is
-ready; master merge and service restart remain pending that approval.
+production activation approval under the pasted instructions. The owner then
+explicitly approved merging/pushing master and restarting the local Borkeo EMR.
+Activation completed; master includes 0067c09e10574dd464528db96f424c7437435356.
 
 Base master: 45bd18dc2b4fb383f27c487186370feaac5c6396 (48.8.0).
 Includes the verified A4 referral feature 1ba52514a7caa2a89b7e69178f3c943eee437c2e.
@@ -28,8 +29,10 @@ bounds before printing exactly one A4 portrait page. Referral editing does not
 change the original clinical record. See REFERRAL_A4_V489_VALIDATION.md for details.
 
 No cross-hospital electronic transfer is implemented or claimed in this release.
-The Provincial receiving EMR, secure connection and receiving-role policy remain
-separate pending work. Printing a referral is not confirmation of transmission.
+The Provincial receiving EMR and secure connection remain separate pending work.
+All authenticated Provincial staff may accept incoming referrals per the owner's
+latest answer; permission to reject is not specified. Printing a referral is not
+confirmation of transmission.
 No patient database, staff credentials, uploads or private settings are copied.
 
 ## Verification
@@ -54,6 +57,17 @@ browser workflow passed. Logs are tests.log and browser.log in the disposable
 copy. The populated PDF has one A4 page. No hospital data was used for testing.
 
 ## Activation and rollback
+
+Completed on 28 October 2026. A consistent SQLite backup was verified before
+restart at C:\Users\Local-admin\Borkeo_EMR_Data\backups\before-v49-referral-2026-10-28T03-56-55-465Z.sqlite.
+Only the verified Wi-Fi process on port 3001 was restarted from Borkeo_EMR_Git.
+Health, served referral module and v49.0 login checks passed. The referral table
+exists and database integrity is OK. All 22 patient records and 30 accounts remain;
+patient rows, role/ward assignments and settings were compared against the backup.
+Existing startup updates role timestamps and re-salts the unchanged Superuser
+password; all other user rows and the actual Superuser password were verified
+unchanged. Evidence: activation-baseline.json and activation-result.json in the
+disposable validation folder (hashes/counts, no patient values or password hashes).
 
 After all required checks pass, commit/push the feature. After explicit activation
 approval, fast-forward master.

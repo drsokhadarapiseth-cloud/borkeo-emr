@@ -3,9 +3,10 @@
 ## Referral activation for OPD and all inpatient wards - v49.0.0
 
 Owner approved coding the referral form for the original Borkeo_EMR_Git, for
-authorized OPD and IPD doctors in every ward. Automatic approval review requires
-separate explicit approval for merging/pushing master and restarting Borkeo;
-that activation remains pending. The implementation branch is
+authorized OPD and IPD doctors in every ward, then explicitly approved merging,
+pushing master and restarting Borkeo. Activation completed on 28 October 2026:
+master includes 0067c09e10574dd464528db96f424c7437435356 and serves v49.0.0.
+The implementation branch is
 feature/referral-all-wards-activation, including v48.9.0 feature commit 1ba52514.
 Pre-activation master: 45bd18dc2b4fb383f27c487186370feaac5c6396.
 Code-only backup: D:\EMR\Borkeo_EMR_Code_Backups\v48.8.0-45bd18dc-735d1e6c.
@@ -16,9 +17,18 @@ checks both roles in every configured inpatient ward, denies other roles signing
 and exercises the surgery doctor's actual inpatient popup in the browser.
 See REFERRAL_ALL_WARDS_V490_VALIDATION.md and the combined v49.0.0 update TXT.
 
+Database backup before activation:
+C:\Users\Local-admin\Borkeo_EMR_Data\backups\before-v49-referral-2026-10-28T03-56-55-465Z.sqlite.
+Health, served referral module and login version checks passed. All 22 patient
+records remain byte-for-byte equivalent as SQL rows. All 30 users, actual
+passwords, ward/role assignments and settings are preserved. Existing startup
+refreshes role timestamps and re-salts the same Superuser password; those expected
+metadata differences were verified against the backup. Database integrity is OK.
+
 Cross-hospital electronic transmission remains pending: the Provincial receiving
 EMR and secure connection have not been created. Do not claim a printed referral
-was sent electronically. Receiving-role policy was asked separately. Original
+was sent electronically. Owner approved all authenticated Provincial staff to
+accept incoming referrals; reject permission is not yet specified. Original
 patient records, accounts, photos and private settings must be preserved.
 
 ## One-page referral popup - v48.9.0 feature, 28 October 2026
