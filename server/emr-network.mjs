@@ -1,10 +1,12 @@
 import crypto from 'node:crypto';
 import {linkSettings,peerCall} from './referral-link.mjs';
 import {networkPublicKey} from './network-signatures.mjs';
+import {ensureConnectionRequestSchema} from './network-requests.mjs';
 const fail=(status,message)=>{throw Object.assign(new Error(message),{status})};
 export const DOCTORS=['DOCTOR','CHIEF_WARD'];
 export const REVIEW_ROLES=['ADMIN','DIRECTOR','VICE_DIRECTOR','DOCTOR','CHIEF_WARD','NURSE','MIDWIFE','REGISTRATION','TRIAGE'];
 export function ensureNetworkSchema(db,config){
+ ensureConnectionRequestSchema(db);
  db.sqlite.exec(`CREATE TABLE IF NOT EXISTS emr_network_local(id TEXT PRIMARY KEY,secret TEXT NOT NULL,name TEXT NOT NULL,enabled INTEGER NOT NULL DEFAULT 0,managed INTEGER NOT NULL DEFAULT 0,version INTEGER NOT NULL DEFAULT 1) STRICT;
  CREATE TABLE IF NOT EXISTS emr_network_peers(id TEXT PRIMARY KEY,instance_id TEXT NOT NULL UNIQUE,name TEXT NOT NULL,origin TEXT NOT NULL,secret TEXT NOT NULL,enabled INTEGER NOT NULL,incoming INTEGER NOT NULL,outgoing INTEGER NOT NULL,search INTEGER NOT NULL,messages INTEGER NOT NULL,version INTEGER NOT NULL DEFAULT 1) STRICT;
  CREATE TABLE IF NOT EXISTS emr_network_messages(id TEXT PRIMARY KEY,peer_id TEXT NOT NULL,direction TEXT NOT NULL,sender_id TEXT NOT NULL,sender_name TEXT NOT NULL,recipient_id TEXT NOT NULL,recipient_name TEXT NOT NULL,subject TEXT NOT NULL,body TEXT NOT NULL,state TEXT NOT NULL,created_at INTEGER NOT NULL) STRICT;`);
@@ -39,15 +41,18 @@ export function pairLink(local,peer){
 export function incomingPairKey(local,peer){return crypto.createHash('sha256').update('emr-network:'+peer.instance_id+':'+local.id+':'+peer.secret+':'+networkPublicKey(local.signing_seed)).digest('hex')}
 export async function networkCall(ctx,peerId,body,{probe=false}={}){
  const local=networkLocal(ctx.database),peer=ctx.database.sqlite.prepare('SELECT * FROM emr_network_peers WHERE id=?').get(String(peerId||''));
- if(!local.enabled||!peer?.enabled||(!probe&&!peer.outgoing))fail(403,'មិនមានសិទ្ធិ');
+ const control=['connection-request','connection-request-status'].includes(body.operation);
+ if(!local.managed||!local.enabled||!peer?.enabled||(!probe&&!control&&!peer.outgoing))fail(403,'មិនមានសិទ្ធិ');
  if(!probe&&['search','records'].includes(body.operation)&&!peer.search)fail(403,'មិនមានសិទ្ធិ');
  if(!probe&&['doctors','message'].includes(body.operation)&&!peer.messages)fail(403,'មិនមានសិទ្ធិ');
  const link=pairLink(local,peer);
  // Verify the actual remote EMR before sending any query, clinical data or text.
  const ping=await peerCall(link,{operation:'ping'});
  if(ping.instanceId!==peer.instance_id||ping.protocol!==1)fail(403,'មិនមានសិទ្ធិ');
+ const latestLocal=networkLocal(ctx.database),latestPeer=ctx.database.sqlite.prepare('SELECT * FROM emr_network_peers WHERE id=?').get(peer.id);
+ if(!latestLocal.managed||!latestLocal.enabled||latestLocal.signing_seed!==local.signing_seed||!latestPeer?.enabled||latestPeer.version!==peer.version)fail(403,'មិនមានសិទ្ធិ');
  if(probe||body.operation==='ping')return ping;
- if(!ping.incoming||(['search','records'].includes(body.operation)&&!ping.search)||(['doctors','message'].includes(body.operation)&&!ping.messages))fail(403,'មិនមានសិទ្ធិ');
+ if((!control&&!ping.incoming)||(['search','records'].includes(body.operation)&&!ping.search)||(['doctors','message'].includes(body.operation)&&!ping.messages))fail(403,'មិនមានសិទ្ធិ');
  return peerCall(link,body);
 }
 export function referralNetworkLink(ctx,peerId){

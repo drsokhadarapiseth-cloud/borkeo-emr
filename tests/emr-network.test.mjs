@@ -35,10 +35,13 @@ test('three independent EMRs: reciprocal approval, isolation, rotation, messages
   for(const origin of ['https://example.com','http://192.168.1.10:3002','http://localhost:3002/path','http://user:pass@localhost:3002',a.config.appOrigin])assert.throws(()=>savePeer(a.database,a.config,{name:'Bad',origin,apiKey:apiToken(networkLocal(c.database))}),e=>e.status===400);
   const patient=buildCompleteRegistrationPatients()[0],key=patient.patientKey;
   for(const app of apps){app.database.upsertPatient({id:crypto.randomUUID(),patientKey:key,summary:{...patient.summary,serviceMode:'opd',departmentCode:'opd'},data:{'scope:medical:id:ipd_history_present_illness':'Clinical sentinel'},userId:doctorIds[apps.indexOf(app)],savedAt:Date.now()});seedReferralHistory(app,patient,doctorIds[apps.indexOf(app)])}
+  b.database.upsertPatient({id:crypto.randomUUID(),patientKey:'case:SOURCE-ONLY-498',summary:{...patient.summary,healthId:'SOURCE-ONLY-498',caseNumber:'SOURCE-ONLY-498'},data:{},userId:doctorIds[1],savedAt:Date.now()});
   const before=apps.map(app=>app.database.sqlite.prepare('SELECT patient_key,record_json FROM patient_records ORDER BY patient_key').all());
   const search='/api/emr-network/search?'+new URLSearchParams({peerId:ab.id,q:patient.summary.healthId});
   const found=await req(a,'doctor_opd',search);assert.equal(found.status,200,JSON.stringify(found.data));assert.ok(found.data.patients.some(p=>p.patientKey===key));assert.ok(!JSON.stringify(found.data).includes('Clinical sentinel'));
   assert.equal((await req(a,'clerk',search)).status,403);
+  assert.equal(found.data.patients.find(p=>p.patientKey===key).localCaseType,'old','case type uses receiving hospital history');
+  const firstLocalVisit=await req(a,'doctor_opd','/api/emr-network/search?'+new URLSearchParams({peerId:ab.id,q:'SOURCE-ONLY-498'}));assert.equal(firstLocalVisit.data.patients[0].localCaseType,'new','a source-hospital visit is not a receiving-hospital visit');
   assert.equal((await req(a,'nurse_opd',search)).status,200);
   assert.equal((await req(a,'doctor_opd','/api/emr-network/search?'+new URLSearchParams({peerId:ab.id,q:'%_%'}))).data.patients.length,0);
   const records=await req(a,'doctor_opd','/api/emr-network/records?'+new URLSearchParams({peerId:ab.id,patientKey:key}));assert.equal(records.status,200);assert.equal(records.data.readOnly,true);assert.ok(JSON.stringify(records.data).includes('Clinical sentinel'));assert.ok(!JSON.stringify(records.data).includes('Private unrelated sentinel'));

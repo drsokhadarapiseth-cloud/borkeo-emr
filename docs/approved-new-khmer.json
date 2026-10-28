@@ -2922,6 +2922,62 @@
     {
       "en": "Key valid but incoming requests are not approved",
       "kh": "សោត្រឹមត្រូវ ប៉ុន្តែមូលដ្ឋានផ្សេងមិនអនុញ្ញាតសំណើចូល"
+    },
+    {
+      "en": "API connection table",
+      "kh": "តារាងការតភ្ជាប់ API"
+    },
+    {
+      "en": "Awaiting approval",
+      "kh": "កំពុងរង់ចាំការអនុម័ត"
+    },
+    {
+      "en": "Expired request",
+      "kh": "សំណើផុតសុពលភាព"
+    },
+    {
+      "en": "Check connection status again",
+      "kh": "ពិនិត្យស្ថានភាពឡើងវិញ"
+    },
+    {
+      "en": "API key",
+      "kh": "សោ API"
+    },
+    {
+      "en": "API connection request",
+      "kh": "សំណើតភ្ជាប់ API"
+    },
+    {
+      "en": "Checking connection",
+      "kh": "កំពុងពិនិត្យ"
+    },
+    {
+      "en": "Request connection",
+      "kh": "ស្នើសុំតភ្ជាប់"
+    },
+    {
+      "en": "No connections",
+      "kh": "មិនមានការតភ្ជាប់"
+    },
+    {
+      "en": "Incoming connection requests",
+      "kh": "សំណើតភ្ជាប់ចូល"
+    },
+    {
+      "en": "Connected",
+      "kh": "បានតភ្ជាប់"
+    },
+    {
+      "en": "Disconnected",
+      "kh": "មិនបានតភ្ជាប់"
+    },
+    {
+      "en": "Connection request sent",
+      "kh": "បានផ្ញើសំណើតភ្ជាប់"
+    },
+    {
+      "en": "Case type at this hospital",
+      "kh": "ប្រភេទករណីនៅមន្ទីរពេទ្យនេះ"
     }
   ]
 }

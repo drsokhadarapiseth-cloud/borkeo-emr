@@ -838,3 +838,56 @@ Served login versions and all new assets were verified on both listeners;
 unauthenticated settings requests return 401. Delivery artifact:
 Borkeo-EMR-v49.7.0-multi-emr-network-update.txt. Current AGENTS.md authorizes
 automatic master commit and push after these passed checks.
+
+## Connection table and request approval - v49.8.0
+
+Owner approved updating both EMRs after confirming the five-column connection
+table and ADMIN accept/reject flow. Later clarification takes precedence over
+the earlier Old Case assumption: only this hospital's own prior visits determine
+case type. A source-only patient is New Case here; a matching existing local
+Patient ID is Old Case here. Remote search displays this receiving-hospital hint.
+Original source records stay read-only; normal local registration/admission
+creates its own encounter and retains all existing clinical/financial rules.
+
+Baseline master 3b94d8eaed6fdf9b6936718fbef74845712f319f (49.7.0). Clean backup:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v49.7.0-3b94d8ea-8300fb6d.
+Receiver baseline 49.6.0 archive:
+D:\EMR\Borkeo_EMR_Code_Backups\clone-before-connections-20261029.
+Primary target 49.8.0; independent receiver target 49.7.0. Validation guide:
+CONNECTION_TABLE_V498_VALIDATION.md. Combined delivery:
+Borkeo-EMR-v49.8.0-connection-table-update.txt.
+
+Synthetic validation root is borkeo-restored-code-d4qND7 under local Temp. Full
+suite has 1,079 tests and Khmer validation; desktop/mobile browser checks cover
+connected/disconnected five-column tables, masked keys, request approval and
+rejection, immediate peer-selector refresh and restricted staff controls. The
+existing read-only history/search/private-message workflow is also exercised.
+Focused security checks cover stale/revoked approvals, two-sided consent,
+unchanged service scopes, CSRF/roles, peer isolation, and an in-flight disable.
+Requests share no patient payloads; no live synthetic records are created.
+
+Existing runtime keys/grants and the old link file are preserved; this update
+does not rerun the pairing bootstrap or automatically import/admit patients.
+Source .env, databases, uploads, backups, .gitignore and unrelated .vscode work
+are excluded from staging. Activation verification is recorded below.
+
+Activation finished: primary 49.8.0 PID 24944 and receiver 49.7.0 PID 25184,
+using their original startup commands and separate hostname/port configuration.
+Signed bidirectional identity and incoming/outgoing checks pass. Existing API
+identities, private signing seeds and grants match their pre-activation backups;
+no live requests or test patients were added. Full 1,079/1,079 tests, Khmer and
+both browser workflows passed in the disposable copy. Screenshots were reviewed.
+
+Patient/account/role hashes match (primary 22 patients, receiver 0 local records)
+and both databases report integrity OK. The final comparison covers all 95
+pre-existing non-audit/non-nonce tables, including clinical, financial, referral
+and network tables. Only existing startup Superuser salt/metadata timestamps and
+session last-seen times are normalized. Evidence:
+activation-preservation-and-connection.json, primary-before/after.json and
+receiver-before/after.json in the disposable validation folder. New request
+tables are empty in both real installations. No database/key bootstrap was run.
+
+The user's latest New Case/Old Case rule is reflected in remote search only;
+viewing/accepting a referral still does not automatically admit or import a
+patient. The existing local registration/admission flow must be completed for
+the local encounter and remains subject to the normal clinical access checks.
