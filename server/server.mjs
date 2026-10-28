@@ -8,7 +8,7 @@ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFaci
 import { createDiagnosisSearch } from './icd10.mjs';
 import {ensureReferralFormSchema} from './referral-forms.mjs';
 import {mountReferralFormRoutes} from './routes/referral-forms.mjs';
-// Borkeo EMR v49.5 - Electronic Medical Record System
+// Borkeo EMR v49.6 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -175,6 +175,7 @@ const publicFiles = new Map([
   ['/public/anc-required-fields.mjs', ['anc-required-fields.mjs', 'text/javascript; charset=utf-8']],
   ['/public/anc-referral-letter.mjs', ['anc-referral-letter.mjs', 'text/javascript; charset=utf-8']],
   ['/public/referral-inbox.css', ['referral-inbox.css', 'text/css; charset=utf-8']],
+  ['/public/medication-review.mjs', ['medication-review.mjs', 'text/javascript; charset=utf-8']],
   ['/public/referral-record-viewer.mjs', ['referral-record-viewer.mjs', 'text/javascript; charset=utf-8']],
   ['/public/referral-inbox.mjs', ['referral-inbox.mjs', 'text/javascript; charset=utf-8']],
   ['/public/referral-form.mjs', ['referral-form.mjs', 'text/javascript; charset=utf-8']],

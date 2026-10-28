@@ -2746,6 +2746,46 @@
     {
       "en": "Referral rejection reason",
       "kh": "មូលហេតុបដិសេធ"
+    },
+    {
+      "en": "Not recorded in prescription",
+      "kh": "មិនបានកត់ត្រា"
+    },
+    {
+      "en": "Protocol dose sequence",
+      "kh": "កម្រិតថ្នាំតាមលំដាប់:"
+    },
+    {
+      "en": "Protocol repeat interval",
+      "kh": "បន្តរៀងរាល់:"
+    },
+    {
+      "en": "Total administrations",
+      "kh": "ចំនួនលើកសរុប:"
+    },
+    {
+      "en": "Recorded stop time",
+      "kh": "បញ្ឈប់នៅ:"
+    },
+    {
+      "en": "Recorded start time",
+      "kh": "ចាប់ផ្តើម:"
+    },
+    {
+      "en": "Prescription information unavailable",
+      "kh": "ព័ត៌មានវេជ្ជបញ្ជាមិនអាចបង្ហាញបាន"
+    },
+    {
+      "en": "Medicine and strength",
+      "kh": "ឈ្មោះថ្នាំ និងកម្លាំង"
+    },
+    {
+      "en": "Administration schedule",
+      "kh": "ពេលប្រើប្រាស់"
+    },
+    {
+      "en": "Duration in days",
+      "kh": "រយៈពេល (ថ្ងៃ)"
     }
   ]
 }

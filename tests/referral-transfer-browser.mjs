@@ -58,6 +58,8 @@ test('referral popup signs on demand and delivers to receiving inbox',{timeout:1
   assert.equal(await browser.evaluate('document.querySelector(".referred-record-frame").getAttribute("sandbox")'),'allow-same-origin');
   assert.equal(await browser.evaluate('document.querySelector(".referred-record-frame").srcdoc.includes("<script")'),false);
   assert.equal(await browser.evaluate('window.referralXss===undefined'),true,'transferred clinical text cannot execute scripts');
+  const treatment=await browser.evaluate('(()=>{const d=document.querySelector(".referred-record-frame").contentDocument,t=d.querySelector(".medication-review");t.scrollIntoView();return {rows:t.querySelectorAll("tbody tr").length,text:t.textContent,script:!!t.querySelector("script")}})()');
+  assert.equal(treatment.rows,1);assert.ok(treatment.text.includes('AA0050-Amoxicillin'));assert.ok(!treatment.text.includes('regularRow'));assert.equal(treatment.script,false);await shot('clean-ipd-treatment');
   await browser.evaluate('(()=>{const k=document.querySelector("[data-review-kind]");k.value="nursing";k.dispatchEvent(new Event("change"))})()');
   await browser.waitFor('document.querySelector(".referred-record-frame")?.srcdoc.includes("Historical nursing sentinel")','selected historical nursing chart');await browser.waitFor('document.querySelector(".referred-record-frame")?.contentDocument?.body?.textContent.includes("Historical nursing sentinel") && document.querySelector(".referred-record-frame")?.contentDocument?.body?.textContent.includes("Structured nursing sentinel")','rendered historical nursing chart');await shot('historical-nursing');
   await browser.evaluate('document.querySelector("[data-incoming-close]").click()');

@@ -1,5 +1,5 @@
 import {referralPageHtml} from './referral-form.mjs';
-import {recordDocument} from './referral-record-viewer.mjs';
+import {recordDocument} from './referral-record-viewer.mjs?v=4960';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const status=document.querySelector('[data-inbox-status]'),list=document.querySelector('[data-inbox-list]'),search=document.querySelector('[data-inbox-search]');let rows=[],busy=false,templatePromise,canReject=false;
 const date=v=>v?String(v).slice(0,10):'—';

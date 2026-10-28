@@ -778,3 +778,13 @@ backups; integrity is OK and no synthetic fixture entered runtime databases.
 The external pairing key, .env, .gitignore and launcher settings are preserved.
 Combined artifact: Borkeo-EMR-v49.5.0-referred-patient-list-update.txt.
 Current AGENTS.md authorizes automatic master commit/push after these checks.
+
+## Approved staged update - clean treatment v49.6.0
+
+Owner selected "Both, implemented in stages": complete the treatment presentation
+correction, then the approved multi-peer API/messaging/search scope. Stage 1 is
+complete: see TREATMENT_VIEW_V496_VALIDATION.md for baseline commit/backup and
+synthetic checks. Primary 49.6.0, independent receiver 49.5.0. All 1,077 tests,
+Khmer and rendered treatment/browser workflow passed. Both listeners activated;
+patient/account/role/integrity checks preserved runtime data. No prescribing,
+clinical or financial behavior changed. The larger API stage remains authorized.

@@ -626,3 +626,13 @@ reviewed.referral495.19,"Enter a rejection reason",Approved referred patient vis
 reviewed.referral495.20,"Referral already accepted",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs; server/routes/referral-link.mjs,លិខិតបញ្ជូននេះបានទទួលរួចហើយ
 reviewed.referral495.21,"Reject referral",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs; server/routes/referral-link.mjs,បដិសេធការបញ្ជូន
 reviewed.referral495.22,"Referral rejection reason",Approved referred patient visit review,public/referral-inbox.mjs; public/referral-record-viewer.mjs; server/routes/referral-link.mjs,មូលហេតុបដិសេធ
+reviewed.medication496.0,Not recorded in prescription,Approved treatment display cleanup,public/medication-review.mjs,មិនបានកត់ត្រា
+reviewed.medication496.1,Protocol dose sequence,Approved treatment display cleanup,public/medication-review.mjs,កម្រិតថ្នាំតាមលំដាប់:
+reviewed.medication496.2,Protocol repeat interval,Approved treatment display cleanup,public/medication-review.mjs,បន្តរៀងរាល់:
+reviewed.medication496.3,Total administrations,Approved treatment display cleanup,public/medication-review.mjs,ចំនួនលើកសរុប:
+reviewed.medication496.4,Recorded stop time,Approved treatment display cleanup,public/medication-review.mjs,បញ្ឈប់នៅ:
+reviewed.medication496.5,Recorded start time,Approved treatment display cleanup,public/medication-review.mjs,ចាប់ផ្តើម:
+reviewed.medication496.6,Prescription information unavailable,Approved treatment display cleanup,public/medication-review.mjs,ព័ត៌មានវេជ្ជបញ្ជាមិនអាចបង្ហាញបាន
+reviewed.medication496.7,Medicine and strength,Approved treatment display cleanup,public/medication-review.mjs,ឈ្មោះថ្នាំ និងកម្លាំង
+reviewed.medication496.8,Administration schedule,Approved treatment display cleanup,public/medication-review.mjs,ពេលប្រើប្រាស់
+reviewed.medication496.9,Duration in days,Approved treatment display cleanup,public/medication-review.mjs,រយៈពេល (ថ្ងៃ)
