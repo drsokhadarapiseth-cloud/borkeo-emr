@@ -4,6 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {latestReferral} from './referral-forms.mjs';
 import {clinicalSummary} from './clinical-summary.mjs';
+import {networkSign,networkVerify,networkRequestText,networkResponseText} from './network-signatures.mjs';
 
 export const REFERRAL_MAX_BYTES=8*1024*1024;
 export function referralVisits(ctx,row){
@@ -22,6 +23,7 @@ export function referralVisits(ctx,row){
 export const linkFile=path.join(os.homedir(),'Borkeo_EMR_Referral_Link','link.json');
 const fail=(status,message)=>{throw Object.assign(new Error(message),{status})};
 export function linkSettings(config){
+  if(config.referralNetworkManaged?.())return null;
   const link=config.referralLink ?? (!config.demoMode && fs.existsSync(linkFile)?JSON.parse(fs.readFileSync(linkFile,'utf8')).instances?.[String(config.port)]:null);
   if(!link)return null;
   if(!/^[a-f0-9]{64}$/.test(link.secret||'')||!['sender','receiver'].includes(link.role))fail(503,'ការតភ្ជាប់មិនទាន់រួចរាល់');
@@ -52,14 +54,18 @@ export function checkEnvelope(db,link,envelope){
  return body;
 }
 export async function peerCall(link,body){
+ if(typeof link?.invoke==='function')return link.invoke(body);
  if(!link||(link.role!=='sender'&&!(link.role==='receiver'&&body.operation==='history')))fail(503,'ការតភ្ជាប់មិនទាន់រួចរាល់');
  const request={timestamp:Date.now(),nonce:crypto.randomUUID(),body};
  request.signature=mac(link.secret,JSON.stringify(request));
+ if(link.networkFrom){request.from=link.networkFrom;request.to=link.networkTo;request.auth=networkSign(link.signingSeed,networkRequestText(request))}
  try{
-  const response=await fetch(link.peer+'/api/referral-link',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(request),redirect:'error',signal:AbortSignal.timeout(8000)});
-  const raw=await response.text();
-  if(Buffer.byteLength(raw)>(body.operation==='history'?REFERRAL_MAX_BYTES+200000:20000)||!response.ok)throw Error('peer');
+  const response=await fetch(link.peer+(link.networkFrom?'/api/emr-network/rpc':'/api/referral-link'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(request),redirect:'error',signal:AbortSignal.timeout(8000)});
+  if(!response.ok)throw Error('peer');
+  const maximum=['history','records'].includes(body.operation)?REFERRAL_MAX_BYTES+200000:['search','doctors'].includes(body.operation)?200000:20000;
+  const chunks=[];let size=0;for await(const chunk of response.body){size+=chunk.byteLength;if(size>maximum)throw Error('peer');chunks.push(Buffer.from(chunk))}const raw=Buffer.concat(chunks).toString('utf8');
   const result=JSON.parse(raw);
+  if(link.networkFrom&&!networkVerify(link.peerVerifyKey,networkResponseText(request.nonce,result.body),result.auth))throw Error('signature');
   if(!equal(result.signature,mac(link.secret,request.nonce+JSON.stringify(result.body))))throw Error('signature');
   return result.body;
  }catch{fail(503,'មិនអាចបញ្ជូនបាន សូមព្យាយាមម្ដងទៀត')}

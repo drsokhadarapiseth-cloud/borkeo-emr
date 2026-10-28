@@ -2786,6 +2786,142 @@
     {
       "en": "Duration in days",
       "kh": "រយៈពេល (ថ្ងៃ)"
+    },
+    {
+      "en": "Connected health facilities",
+      "kh": "មូលដ្ឋានសុខាភិបាលដែលបានតភ្ជាប់"
+    },
+    {
+      "en": "Choose a health facility",
+      "kh": "ជ្រើសរើសមូលដ្ឋានសុខាភិបាល"
+    },
+    {
+      "en": "Search patients at another facility",
+      "kh": "ស្វែងរកអ្នកជំងឺពីមូលដ្ឋានផ្សេង"
+    },
+    {
+      "en": "Name identifier or telephone",
+      "kh": "ឈ្មោះ លេខសម្គាល់ ឬទូរស័ព្ទ"
+    },
+    {
+      "en": "Doctor to doctor messages",
+      "kh": "សាររវាងវេជ្ជបណ្ឌិត"
+    },
+    {
+      "en": "Subject",
+      "kh": "ប្រធានបទ"
+    },
+    {
+      "en": "Message body",
+      "kh": "អត្ថបទសារ"
+    },
+    {
+      "en": "Send message",
+      "kh": "បញ្ជូនសារ"
+    },
+    {
+      "en": "My messages",
+      "kh": "សាររបស់ខ្ញុំ"
+    },
+    {
+      "en": "API connections between health facilities",
+      "kh": "ការតភ្ជាប់ API រវាងមូលដ្ឋានសុខាភិបាល"
+    },
+    {
+      "en": "Local facility API key",
+      "kh": "សោ API របស់មូលដ្ឋាន"
+    },
+    {
+      "en": "Health facility name",
+      "kh": "ឈ្មោះមូលដ្ឋានសុខាភិបាល"
+    },
+    {
+      "en": "Enable API",
+      "kh": "បើក API"
+    },
+    {
+      "en": "Copy key",
+      "kh": "ចម្លងសោ"
+    },
+    {
+      "en": "Generate new key",
+      "kh": "បង្កើតសោថ្មី"
+    },
+    {
+      "en": "Approved health facilities",
+      "kh": "មូលដ្ឋានសុខាភិបាលដែលបានអនុញ្ញាត"
+    },
+    {
+      "en": "Add or edit connection",
+      "kh": "បន្ថែម ឬកែការតភ្ជាប់"
+    },
+    {
+      "en": "EMR address",
+      "kh": "អាសយដ្ឋាន EMR"
+    },
+    {
+      "en": "API key from other facility",
+      "kh": "សោ API ពីមូលដ្ឋានផ្សេង"
+    },
+    {
+      "en": "Enable connection",
+      "kh": "បើកការតភ្ជាប់"
+    },
+    {
+      "en": "Allow incoming requests",
+      "kh": "អនុញ្ញាតសំណើចូល"
+    },
+    {
+      "en": "Allow outgoing requests",
+      "kh": "អនុញ្ញាតសំណើចេញ"
+    },
+    {
+      "en": "Allow patient search",
+      "kh": "អនុញ្ញាតស្វែងរកអ្នកជំងឺ"
+    },
+    {
+      "en": "Allow doctor messages",
+      "kh": "អនុញ្ញាតសារវេជ្ជបណ្ឌិត"
+    },
+    {
+      "en": "Add new",
+      "kh": "បន្ថែមថ្មី"
+    },
+    {
+      "en": "Sent",
+      "kh": "បានបញ្ជូន"
+    },
+    {
+      "en": "Waiting to send",
+      "kh": "កំពុងរង់ចាំបញ្ជូន"
+    },
+    {
+      "en": "Read only",
+      "kh": "មើលបានតែប៉ុណ្ណោះ"
+    },
+    {
+      "en": "Enabled",
+      "kh": "បានបើក"
+    },
+    {
+      "en": "Key copied",
+      "kh": "បានចម្លងសោ"
+    },
+    {
+      "en": "Generating a new key disconnects peers until they update it",
+      "kh": "ការបង្កើតសោថ្មីនឹងផ្តាច់ការតភ្ជាប់ រហូតដល់មូលដ្ឋានផ្សេងធ្វើបច្ចុប្បន្នភាពសោ។"
+    },
+    {
+      "en": "New key generated",
+      "kh": "បានបង្កើតសោថ្មី"
+    },
+    {
+      "en": "Connection verified",
+      "kh": "ការតភ្ជាប់បានផ្ទៀងផ្ទាត់"
+    },
+    {
+      "en": "Key valid but incoming requests are not approved",
+      "kh": "សោត្រឹមត្រូវ ប៉ុន្តែមូលដ្ឋានផ្សេងមិនអនុញ្ញាតសំណើចូល"
     }
   ]
 }

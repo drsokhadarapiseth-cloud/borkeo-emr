@@ -26,6 +26,7 @@
   ];
 
   const ITEMS = [
+    { id: 'connected-emrs', group: 'care', href: '/connected-emrs', icon: 'icon-building', label: 'មូលដ្ឋានសុខាភិបាលដែលបានតភ្ជាប់', labelEn: 'Connected health facilities', access: ['ADMIN','DIRECTOR','VICE_DIRECTOR','DOCTOR','CHIEF_WARD','NURSE','MIDWIFE','REGISTRATION','TRIAGE'], networkOnly: true },
     // Patient care
     { id: 'home', group: 'care', href: '/home', icon: 'icon-home', label: 'ទំព័រដើម និងរបាយការណ៍', labelEn: 'Home and reports', access: [...MGMT, 'DOCTOR@!opd'] },
     { id: 'register', group: 'care', href: '/emr?view=register', icon: 'icon-user-plus', label: 'ចុះឈ្មោះអ្នកជំងឺ', labelEn: 'Register patient', access: ['REGISTRATION'] },
@@ -73,6 +74,8 @@
     { id: 'styleguide', group: 'admin', href: '/styleguide', icon: 'icon-sliders', label: 'មគ្គុទ្ទេសក៍រចនាប័ទ្ម', labelEn: 'Styleguide', access: MGMT },
   ];
 
+  ITEMS.push({ id:'admin-emr-connections',group:'admin',href:'/admin/emr-connections',icon:'icon-lock',label:'ការតភ្ជាប់ API រវាងមូលដ្ឋានសុខាភិបាល',labelEn:'EMR API connections',access:['ADMIN'] });
+
   function ruleMatches(rule, role, ward) {
     const [ruleRole, wardRule] = String(rule).split('@');
     if (ruleRole !== role) return false;
@@ -83,6 +86,7 @@
   // v42.1: the Superuser account gets exactly the menu of its active user
   // type, like a real account of that type.
   function itemVisible(item, user) {
+    if(item.networkOnly && user?.referralNetwork!==true)return false;
     if (item.receiverOnly && user?.referralReceiver !== true) return false;
     const role = String(user?.activeRole || '').toUpperCase();
     const ward = String(user?.activeWard?.code || '').toLowerCase();

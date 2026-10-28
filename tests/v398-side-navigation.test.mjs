@@ -33,7 +33,7 @@ const EXPECTED = [
   { role: 'PHARMACY', ward: '', user: 'pharmacy', items: ['patient-list', 'pharmacy-opd', 'ward-medicines', 'pharmacy-medicines', 'pharmacy-display'] },
   { role: 'CLERK', ward: '', user: 'clerk', items: ['patient-list', 'billing'] },
   { role: 'ACCOUNTANT', ward: '', user: 'accountant', items: ['patient-list', 'billing', 'expenses'] },
-  { role: 'ADMIN', ward: '', user: 'admin', items: MGMT_ITEMS },
+  { role: 'ADMIN', ward: '', user: 'admin', items: [...MGMT_ITEMS, 'admin-emr-connections'] },
   { role: 'DIRECTOR', ward: '', user: 'director', items: MGMT_ITEMS },
   { role: 'VICE_DIRECTOR', ward: '', user: 'vice_director', items: MGMT_ITEMS },
 ];

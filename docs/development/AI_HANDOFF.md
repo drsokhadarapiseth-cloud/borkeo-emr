@@ -788,3 +788,53 @@ synthetic checks. Primary 49.6.0, independent receiver 49.5.0. All 1,077 tests,
 Khmer and rendered treatment/browser workflow passed. Both listeners activated;
 patient/account/role/integrity checks preserved runtime data. No prescribing,
 clinical or financial behavior changed. The larger API stage remains authorized.
+
+## Approved staged update - multi-EMR API v49.7.0
+
+Stage 2 completes the approved multiple-peer settings, reciprocal API approval,
+bidirectional referrals, read-only patient search and doctor messaging scope.
+See EMR_NETWORK_V497_VALIDATION.md for use, safeguards and limits. Baseline
+caa15cf6b7b69412536b7d054378b326328a2350; clean code backup
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v49.6.0-caa15cf6-ba188c24.
+Receiver baseline code archive:
+D:\EMR\Borkeo_EMR_Code_Backups\clone-before-network-20261028.
+
+Disposable synthetic validation: borkeo-restored-code-p8ELKC under the local
+Temp folder. Full suite 1,078/1,078 and Khmer passed. Desktop/mobile admin/search/
+message browser checks passed, as did multi-recipient signed referral selection,
+dated OPD/IPD/nursing/letter review and accept/reject controls. Identity checks
+prevent clinical data going to an unverified target; disabled permissions, key
+rotation, peer isolation and message idempotency are covered. No universal
+security certification or Internet federation is claimed.
+
+Primary 49.7.0 and independent receiver 49.6.0 activated at their existing
+origins. Final verified listeners are primary PID 29568 and receiver 32832.
+Each has an independent runtime API key and reciprocal approved peer. Signed
+ping succeeded both ways; validated old referral rows were bound to that peer.
+The private old link file remains intact, but managed mode disables its endpoint.
+No keys, .env, uploads, databases, backups or unrelated .vscode files are staged.
+
+Final hardening adds unshared Ed25519 private signing seeds. Copied API tokens
+carry only the public verification identity; even another connected peer that
+knows both public tokens cannot impersonate the source. Explicit forgery and
+replay tests cover this. Fresh signing seeds replace the intermediate shared
+bootstrap material for request authentication; existing payloads remain intact.
+
+Online backups and before/after patient/account/role hashes match: primary 22
+patients, receiver 0 local patient records, integrity OK. Across 93 pre-existing
+tables, clinical, financial and referral payload/state data are unchanged;
+new peer bindings and tables are intentional. The existing startup bootstrap
+updates its Superuser password salt and metadata timestamps; full staff access,
+ward/imaging assignments and signature content remain equivalent. Sessions only
+changed last-seen times and expired nonces were pruned. Detailed comparisons:
+activation-table-preservation.json, activation-account-columns.json and
+activation-semantic-preservation.json in the disposable evidence folder.
+The final private-signature activation comparison is
+activation-final-preservation.json: all 92 existing non-audit/non-nonce tables
+match semantically on both installations, with only the documented startup
+metadata, Superuser salt and explicit referral peer bindings excluded.
+
+Served login versions and all new assets were verified on both listeners;
+unauthenticated settings requests return 401. Delivery artifact:
+Borkeo-EMR-v49.7.0-multi-emr-network-update.txt. Current AGENTS.md authorizes
+automatic master commit and push after these passed checks.

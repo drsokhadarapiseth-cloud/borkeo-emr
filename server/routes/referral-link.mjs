@@ -1,3 +1,4 @@
+import {networkLocal,networkCapabilities,referralNetworkLink} from '../emr-network.mjs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -5,13 +6,13 @@ import {referralAccess,latestReferral} from '../referral-forms.mjs';
 import {linkSettings,checkEnvelope,mac,peerCall,receiveReferral,digest,referralVisits,REFERRAL_MAX_BYTES} from '../referral-link.mjs';
 
 const fail=(status,message)=>{throw Object.assign(new Error(message),{status})};
-const statusOf=row=>row?{id:row.id,revision:row.revision,status:row.status,acceptedAt:row.accepted_at,rejectedAt:row.rejected_at,rejectionReason:row.rejection_reason}:null;
+const statusOf=row=>row?{id:row.id,revision:row.revision,status:row.status,acceptedAt:row.accepted_at,peerId:row.peer_id,rejectedAt:row.rejected_at,rejectionReason:row.rejection_reason}:null;
 const canReject=ctx=>['DOCTOR','CHIEF_WARD','ADMIN','DIRECTOR','VICE_DIRECTOR'].includes(ctx.sessionRole(ctx.session));
 export function mountReferralLinkRoutes(router){
  const send=(ctx,body)=>ctx.sendJson(ctx.response,200,body,{secure:ctx.config.cookieSecure});
- const receiver=ctx=>{const link=linkSettings(ctx.config);if(link?.role!=='receiver')fail(403,'មិនមានសិទ្ធិ');return link};
+ const receiver=ctx=>{if(networkLocal(ctx.database).managed)return {role:'receiver',network:true};const link=linkSettings(ctx.config);if(link?.role!=='receiver')fail(403,'មិនមានសិទ្ធិ');return link};
  const session=ctx=>{if(!ctx.session||!ctx.sessionRole(ctx.session))fail(401,'សូមចូលប្រើប្រព័ន្ធជាមុន')};
- router.get('/api/referral-capabilities',ctx=>{session(ctx);return send(ctx,{receiver:linkSettings(ctx.config)?.role==='receiver',sender:linkSettings(ctx.config)?.role==='sender'})},{requireSession:true});
+ router.get('/api/referral-capabilities',ctx=>{session(ctx);return send(ctx,networkLocal(ctx.database).managed?networkCapabilities(ctx):{receiver:linkSettings(ctx.config)?.role==='receiver',sender:linkSettings(ctx.config)?.role==='sender'})},{requireSession:true});
  router.post('/api/referral-link',async ctx=>{
   const envelope=await ctx.readJson(ctx.request,REFERRAL_MAX_BYTES+200000),link=linkSettings(ctx.config);
   const body=checkEnvelope(ctx.database,link,envelope);let result;
@@ -30,19 +31,21 @@ export function mountReferralLinkRoutes(router){
   const body=await ctx.readJson(ctx.request,2000),key=String(body.patientKey||'');
   const {row,canEdit}=referralAccess(ctx.database,ctx.session,key,ctx.opdConsultationPaymentConfirmed);
   if(!canEdit)fail(403,'មិនមានសិទ្ធិ');
-  const link=linkSettings(ctx.config),form=latestReferral(ctx.database,key);
+  const link=referralNetworkLink(ctx,body.peerId),form=latestReferral(ctx.database,key);
   if(!form?.signature||form.revision!==body.revision)fail(409,'សូមរក្សាទុក និងចុះហត្ថលេខាជាមុន');
   if(link?.role!=='sender')fail(503,'ការតភ្ជាប់មិនទាន់រួចរាល់');
   let transfer=ctx.database.sqlite.prepare('SELECT * FROM referral_outbox WHERE patient_key=? AND revision=?').get(key,form.revision);
+  if(transfer&&(transfer.peer_id||'')!==(link.peerId||''))fail(409,'ទិន្នន័យមិនត្រឹមត្រូវ');
   if(!transfer){
    const previous=ctx.database.sqlite.prepare('SELECT * FROM referral_outbox WHERE patient_key=? LIMIT 1').get(key);
    if(previous)fail(409,'បានបញ្ជូនរួចហើយ');
    const id=crypto.randomUUID(),patient={};
    const summary=ctx.patientRecordResponse(row,false);
    for(const key of ['patientKey','fullName','healthId','sex','dateOfBirth','age','phone','equityCard','paymentType','departmentCode','departmentNameKh','serviceMode','entryDate','dischargeDate'])patient[key]=summary[key]||'';
-   const payload={id,source:'បរកែវ',patient,form,visits:referralVisits(ctx,row),sentAt:Date.now()};
+   const payload={id,sourceInstanceId:networkLocal(ctx.database).managed?networkLocal(ctx.database).id:undefined,source:'បរកែវ',patient,form,visits:referralVisits(ctx,row),sentAt:Date.now()};
+   if(link.peerId)payload.source=networkLocal(ctx.database).name;
    if(Buffer.byteLength(JSON.stringify(payload))>REFERRAL_MAX_BYTES)fail(413,'ទិន្នន័យមិនត្រឹមត្រូវ');
-   ctx.database.sqlite.prepare("INSERT INTO referral_outbox(id,patient_key,revision,payload,status,created_at) VALUES(?,?,?,?,'SENDING',?)").run(id,key,form.revision,JSON.stringify(payload),Date.now());
+   ctx.database.sqlite.prepare("INSERT INTO referral_outbox(id,patient_key,revision,payload,status,created_at,peer_id) VALUES(?,?,?,?,'SENDING',?,?)").run(id,key,form.revision,JSON.stringify(payload),Date.now(),link.peerId||'');
    transfer=ctx.database.sqlite.prepare('SELECT * FROM referral_outbox WHERE id=?').get(id);
   }
   const payload=JSON.parse(transfer.payload);
@@ -59,7 +62,8 @@ export function mountReferralLinkRoutes(router){
   let row=ctx.database.sqlite.prepare('SELECT * FROM referral_outbox WHERE patient_key=? ORDER BY created_at DESC LIMIT 1').get(key);
   let unavailable=false;
   if(row&&!['ACCEPTED','REJECTED'].includes(row.status))try{
-   const result=await peerCall(linkSettings(ctx.config),{operation:'status',id:row.id});
+   if(networkLocal(ctx.database).managed&&!row.peer_id)throw Error('unbound legacy transfer');
+   const result=await peerCall(referralNetworkLink(ctx,row.peer_id),{operation:'status',id:row.id});
    if(result.id!==row.id||result.digest!==digest(JSON.parse(row.payload))||!['PENDING','ACCEPTED','REJECTED'].includes(result.status))throw Error('invalid');
    ctx.database.sqlite.prepare('UPDATE referral_outbox SET status=?,accepted_at=?,rejected_at=?,rejection_reason=? WHERE id=?').run(result.status,result.acceptedAt||null,result.rejectedAt||null,result.rejectionReason||'',row.id);
    row=ctx.database.sqlite.prepare('SELECT * FROM referral_outbox WHERE id=?').get(row.id);
@@ -72,7 +76,7 @@ export function mountReferralLinkRoutes(router){
   session(ctx);const link=receiver(ctx),id=String(ctx.url.searchParams.get('id')||'');
   const row=ctx.database.sqlite.prepare('SELECT * FROM referral_inbox WHERE id=?').get(id);if(!row)fail(404,'រកមិនឃើញ');
   const payload=JSON.parse(row.payload);let visits=payload.visits||[],unavailable=false,patientKey=payload.patient.patientKey;
-  try{const current=await peerCall(link,{operation:'history',id});if(current.id!==id||!Array.isArray(current.visits))throw Error('invalid');visits=current.visits;patientKey=current.patientKey}catch{unavailable=true}
+  try{if(link.network&&!row.peer_id)throw Error('unbound legacy transfer');const current=await peerCall(link.network?referralNetworkLink(ctx,row.peer_id):link,{operation:'history',id});if(current.id!==id||!Array.isArray(current.visits))throw Error('invalid');visits=current.visits;patientKey=current.patientKey}catch{unavailable=true}
   // The delivered referral remains immutable even when newer source visits exist.
   for(const visit of visits)if(visit.patient.patientKey===patientKey||visit.form?.id===payload.form.id)visit.form=payload.form;
   if(!visits.length)visits=[{patient:payload.patient,form:payload.form,unavailable:true}];

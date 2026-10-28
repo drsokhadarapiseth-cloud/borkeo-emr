@@ -1,9 +1,10 @@
+import {networkLocal} from '../emr-network.mjs';
 import {referralAccess,latestReferral,referralDefaults,saveReferral} from '../referral-forms.mjs';
 import {getESignature} from '../esign.mjs';
 export function mountReferralFormRoutes(router){
  router.get('/api/referral-form',async ctx=>{
   const key=String(ctx.url.searchParams.get('patientKey')||''),{row,canEdit}=referralAccess(ctx.database,ctx.session,key,ctx.opdConsultationPaymentConfirmed);
-  const defaults=referralDefaults(row);
+  const defaults=referralDefaults(row);if(networkLocal(ctx.database).managed)defaults.facility=networkLocal(ctx.database).name;
   if(row.department_code==='anc'){
    const visit=ctx.database.sqlite.prepare("SELECT * FROM anc_visits WHERE patient_key=? AND json_extract(referral_json,'$.signed.userId') IS NOT NULL ORDER BY created_at DESC LIMIT 1").get(key);
    if(visit){const referral=JSON.parse(visit.referral_json),data=JSON.parse(visit.data_json);Object.assign(defaults,{reason:(referral.reasons||[]).join(' · '),treatment:referral.treatment||'',gestation:String(visit.ga_weeks||''),bp:data.bp||defaults.bp,pulse:data.pulse||defaults.pulse,temperature:data.temperature||defaults.temperature,spo2:data.spo2||defaults.spo2});}

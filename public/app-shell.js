@@ -159,8 +159,9 @@
   }
 
   let referralReceiver = false;
+  let referralNetwork = false;
   function navGroupsFor(user, settings) {
-    return NAV ? NAV.visibleGroups({ ...user, referralReceiver }, settings?.[user.activeRole]) : [];
+    return NAV ? NAV.visibleGroups({ ...user, referralReceiver, referralNetwork }, settings?.[user.activeRole]) : [];
   }
 
   function navHtml(groups) {
@@ -323,7 +324,7 @@
     // Instance capability is independent of the active staff role/ward.
     try {
       const res = await fetch('/api/referral-capabilities', { credentials: 'same-origin', cache: 'no-store', signal: AbortSignal.timeout(3000) });
-      if (res.ok) referralReceiver = (await res.json()).receiver === true;
+      if (res.ok){const capabilities=await res.json();referralReceiver=capabilities.receiver===true;referralNetwork=capabilities.network===true;}
     } catch {}
 
     // Admin "Interface -> navigation" hide/order settings (never adds items).

@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import {seedReferralHistory} from './helpers/referral-history.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import {createEmrServer} from '../server/server.mjs';import {buildCompleteRegistrationPatients} from '../scripts/create-complete-registration-fixture.mjs';
 import {checkEnvelope,mac} from '../server/referral-link.mjs';
+import {networkLocal,apiToken,savePeer} from '../server/emr-network.mjs';
 test('referral popup signs on demand and delivers to receiving inbox',{timeout:180000},async()=>{
  const options={demoMode:true,databasePath:':memory:',nodeEnv:'test',host:'127.0.0.1',port:0,npca:{enabled:false},npcaPractice:false};
  const app=createEmrServer(options),receiver=createEmrServer(options);let browser;
@@ -10,6 +11,8 @@ test('referral popup signs on demand and delivers to receiving inbox',{timeout:1
   for(const x of [app,receiver]){await new Promise(r=>x.server.listen(0,'0.0.0.0',r));x.config.appOrigin='http://127.0.0.1:'+x.server.address().port;}
   receiver.config.appOrigin='http://localhost:'+receiver.server.address().port;const origin=app.config.appOrigin,other=receiver.config.appOrigin,secret='a'.repeat(64);
   app.config.referralLink={role:'sender',peer:other,secret};receiver.config.referralLink={role:'receiver',peer:origin,secret};
+  const modern=process.env.EMR_NETWORK_BROWSER==='1';
+  if(modern){for(const [from,to] of [[app,receiver],[receiver,app]]){from.database.sqlite.prepare('UPDATE emr_network_local SET managed=1,enabled=1').run();savePeer(from.database,from.config,{name:'Synthetic partner',origin:to.config.appOrigin,apiKey:apiToken(networkLocal(to.database)),enabled:true,incoming:true,outgoing:true,search:true,messages:true})}savePeer(app.database,app.config,{name:'Another synthetic facility',origin:'http://127.0.0.1:1',apiKey:'EMR1:'+crypto.randomUUID()+':'+'c'.repeat(64),enabled:true,incoming:false,outgoing:true,search:false,messages:false})}
   const users={};for(const username of ['registration','triage','clerk','doctor_opd','nurse_opd']){
    const r=await fetch(origin+'/api/auth/login',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({username})});const Cookie=r.headers.get('set-cookie').split(';')[0];const me=await(await fetch(origin+'/api/auth/me',{headers:{Cookie}})).json();users[username]={Cookie,Origin:origin,'Content-Type':'application/json','X-CSRF-Token':me.csrfToken};}
   const call=async(user,method,route,body)=>{const r=await fetch(origin+route,{method,headers:users[user],body:body===undefined?undefined:JSON.stringify(body)});const data=await r.json();assert.ok(r.ok,JSON.stringify(data));return data};
@@ -28,6 +31,7 @@ test('referral popup signs on demand and delivers to receiving inbox',{timeout:1
   await browser.waitFor('window.syntheticLoaded && document.querySelector("[data-open-referral]")','OPD loaded',60000);
   await browser.evaluate('document.querySelector("#sub_opd [data-open-referral]").click()');
   await browser.waitFor('document.querySelector(".referral-modal")','popup');
+  if(modern){const peer=app.database.sqlite.prepare('SELECT id FROM emr_network_peers WHERE instance_id=?').get(networkLocal(receiver.database).id);assert.equal(await browser.evaluate('document.querySelector("[data-ref-peer]").options.length'),3);await browser.evaluate('(()=>{const p=document.querySelector("[data-ref-peer]");p.value='+JSON.stringify(peer.id)+';p.dispatchEvent(new Event("change"))})()')}
   assert.equal(await browser.evaluate('document.querySelector(".ref-pad").checkVisibility()'),false);
   const evidence=path.resolve('.validation-referral-transfer');fs.mkdirSync(evidence,{recursive:true});
   const shot=async label=>{const p=await browser.send('Page.captureScreenshot',{format:'png'});fs.writeFileSync(path.join(evidence,label+'.png'),Buffer.from(p.data,'base64'))};
@@ -40,7 +44,7 @@ test('referral popup signs on demand and delivers to receiving inbox',{timeout:1
   await browser.waitFor('fetch("/api/referral-status?patientKey="+encodeURIComponent('+JSON.stringify(key)+')).then(r=>r.json()).then(r=>r.transfer?.status==="PENDING")','delivered',20000);
   const id=app.database.sqlite.prepare('SELECT id FROM referral_outbox').get().id;
   const login=await fetch(other+'/api/auth/login',{method:'POST',headers:{Origin:other,'Content-Type':'application/json'},body:JSON.stringify({username:'nurse_opd'})});const [nc,nv]=login.headers.get('set-cookie').split(';')[0].split('=');await browser.send('Network.setCookie',{name:nc,value:nv,url:other});
-  assert.equal(await browser.evaluate('!!document.querySelector("#emr-sidebar-nav a[data-nav-id=incoming-referrals]")'),false,'sender has no incoming menu');
+  assert.equal(await browser.evaluate('!!document.querySelector("#emr-sidebar-nav a[data-nav-id=incoming-referrals]")'),modern,'incoming menu follows instance capabilities');
   await browser.send('Emulation.setDeviceMetricsOverride',{width:1440,height:900,deviceScaleFactor:1,mobile:false});
   await browser.send('Page.navigate',{url:other+'/home'});
   await browser.waitFor('document.querySelector("#emr-sidebar-nav a[data-nav-id=incoming-referrals]")','receiving sidebar entry',60000);
