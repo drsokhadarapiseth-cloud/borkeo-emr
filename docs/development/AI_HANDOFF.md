@@ -1,5 +1,30 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Independent Wi-Fi launchers - v49.1.0
+
+Owner approved separate addresses and storage for the two local copies. Original
+Borkeo_EMR_Git: http://127.0.0.1:3001, v49.1.0, existing hospital database. Second
+copy D:\EMR\Borkeo_EMR_v48.9.0_Referral: http://localhost:3002, v49.0.0, isolated
+instance-data database/uploads/backups. No hospital data or credentials copied.
+The second folder is still a local source copy, not a completed Provincial EMR.
+
+Branch fix/independent-wifi-launchers, base 6181c53050a46405cf381e3d632bf51a4b00d7ff.
+Local setup is tested and running; automatic approval review requires separate
+explicit approval for merging/pushing v49.1.0 to master. Keep the feature branch
+checked out until that decision, since the local launcher changes are in use.
+Code backup D:\EMR\Borkeo_EMR_Code_Backups\v49.0.0-6181c530-645d5490.
+Clone backup D:\EMR\Borkeo_EMR_Code_Backups\clone-before-wifi-1793160533933.
+Removed taskkill from the batch file. The Node launcher refuses occupied ports
+before opening a database. Per-copy nonsecret wifi-instance.local.json selects
+the isolated simulation; a template lives under docs/development.
+
+All 1,069 tests and Khmer passed, plus synthetic browser session-isolation checks.
+Both actual batch files were tested running simultaneously and on duplicate start;
+duplicates stopped neither service. Original patients: 22; second copy: 0.
+See WIFI_SEPARATE_V491_VALIDATION.md and the combined v49.1.0 update TXT.
+Use different hostnames (127.0.0.1 versus localhost), not just different ports, to
+keep browser logins separate. Cross-hospital referral transmission remains pending.
+
 ## Referral activation for OPD and all inpatient wards - v49.0.0
 
 Owner approved coding the referral form for the original Borkeo_EMR_Git, for

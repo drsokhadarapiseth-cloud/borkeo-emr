@@ -25,19 +25,8 @@ if not defined NODE_EXE (
   goto failed
 )
 
-if not defined PORT set "PORT=3001"
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr /r /c:":%PORT% .*LISTENING"') do (
-  echo [INFO] Port %PORT% is occupied by PID %%a. Cleaning up...
-  taskkill /F /PID %%a >nul 2>&1
-)
-netstat -ano | findstr /r /c:":%PORT% .*LISTENING" >nul
-if not errorlevel 1 (
-  echo.
-  echo [ERROR] Port %PORT% is already in use. The EMR is probably already running
-  echo         in another window. Use that window, or close it and try again.
-  echo         To find it: Task Manager - Details - node.exe
-  goto failed
-)
+rem The Node launcher selects this copy's port and refuses occupied ports.
+rem Never kill another EMR or an unrelated program.
 
 "%NODE_EXE%" scripts\start-wifi.mjs
 if errorlevel 1 (
