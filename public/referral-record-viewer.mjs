@@ -1,5 +1,5 @@
-import {populateSoapCards} from './ipd-soap.mjs?v=5071';
-import {ensureIpdRecordFields,applyPregnancyHistoryVisibility} from './ipd-record-fields.mjs?v=5071';
+import {populateSoapCards} from './ipd-soap.mjs?v=5080';
+import {ensureIpdRecordFields,applyPregnancyHistoryVisibility} from './ipd-record-fields.mjs?v=5080';
 import {medicationTable} from './medication-review.mjs';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function clinicalValues(value){

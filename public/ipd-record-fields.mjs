@@ -1,5 +1,5 @@
 import {labels as L} from './ipd-record-labels.mjs?v=5050';
-import {organizeIpdExam,expandIpdTextFields,mountSoapCards} from './ipd-soap.mjs?v=5071';
+import {organizeIpdExam,expandIpdTextFields,mountSoapCards} from './ipd-soap.mjs?v=5080';
 const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const key=id=>'scope:medical:id:'+id;
 // Visibility changes presentation only; stored history is never cleared.

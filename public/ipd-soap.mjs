@@ -66,55 +66,59 @@ export function summarizeExam(data,{systemLabels={},fieldLabels={},statusLabels=
 }
 
 // Move existing controls rather than recreating clinical fields. Frozen storage
-// indexes and migration keys remain on their original nodes.
+// indexes and migration keys remain on their original nodes. Each caption stays
+// the previous sibling of its control because the SOAP summary reads it there.
 export function organizeIpdExam(doc){
   const root=doc.getElementById('sub_ipd');if(!root||doc.getElementById('ipd_head_to_toe'))return;
-  const title=key=>root.querySelector('[data-key="'+key+'"]');
-  const general=title('ipd_gen_app')?.parentElement,heent=title('ipd_heent')?.parentElement;
-  const neuro=title('ipd_neuro')?.parentElement,gcs=title('ipd_gcs')?.parentElement;
-  const pain=doc.getElementById('ipd_exam_pain')?.parentElement,neuroOther=doc.getElementById('ipd_exam_neuro_other')?.parentElement;
-  const ids=['ipd_exam_gu','ipd_exam_extremities','ipd_exam_crt','ipd_exam_msk','ipd_exam_other'];
-  if(!general||!heent||!neuro||!gcs||!pain||!neuroOther||ids.some(id=>!doc.getElementById(id)))return;
-  const originalControls=[...root.querySelectorAll('input,select,textarea')],source=general.parentElement;
-  const layout=doc.createElement('div');layout.id='ipd_head_to_toe';layout.className='ipd-head-to-toe';source.before(layout);
-  const normalButton=name=>[...root.querySelectorAll('button[onclick]')].find(n=>n.getAttribute('onclick')==="fillClinicalExamNormal('"+name+"')");
-  const singleRow=id=>{const row=doc.createElement('div');row.className='ipd-exam-field-row';row.append(doc.getElementById(id));return row};
-  const limb=singleRow('ipd_exam_extremities'),crt=doc.createElement('label');crt.className='ipd-exam-crt';crt.append('CRT: ',doc.getElementById('ipd_exam_crt'));limb.append(crt);
-  const gu=singleRow('ipd_exam_gu'),msk=singleRow('ipd_exam_msk'),other=singleRow('ipd_exam_other');
-  const measurements=doc.createElement('div');measurements.className='ipd-exam-measurements';
-  for(const suffix of ['eye','verbal','motor','total']){const input=doc.getElementById('ipd_exam_gcs_'+suffix);if(!input)continue;const caption=input.previousElementSibling;const label=doc.createElement('label');if(caption?.tagName==='SPAN')label.append(caption);label.append(input);measurements.append(label)}
-  gcs.append(measurements);
+  const get=id=>doc.getElementById(id),title=key=>root.querySelector('[data-key="'+key+'"]');
+  const general=title('ipd_gen_app')?.parentElement,source=general?.parentElement;
+  const keys=['ipd_gen_app','ipd_heent','ipd_resp','ipd_cvs','ipd_abd','ipd_gu','ipd_ext','ipd_msk','ipd_neuro','ipd_gcs','ipd_other_sys'];
+  const ids=[...Object.values(NORMAL_EXAM).flatMap(system=>Object.keys(system.fields)),...['good','fair','severe','very_severe'].map(s=>'ipd_exam_general_'+s),...['conscious','delirium','coma','seizure'].map(s=>'ipd_exam_neuro_'+s)];
+  if(!source||keys.some(key=>!title(key))||ids.some(id=>!get(id)))return;
+  const originalControls=[...root.querySelectorAll('input,select,textarea')];
+  const el=(tag,className,...children)=>{const n=doc.createElement(tag);if(className)n.className=className;n.append(...children.filter(Boolean));return n};
+  const mark=(node,className)=>{node.classList.add(className);return node};
+  const row=(label,...content)=>el('div','ipd-exam-row'+(label?'':' ipd-exam-row-full'),label&&mark(label,'ipd-exam-label'),...content);
+  const field=id=>row(get(id).previousElementSibling,get(id));
+  const alone=id=>row(null,get(id));
+  const choices=inputs=>row(null,el('div','ipd-exam-choices',...inputs.map(n=>mark(n.closest('label'),'ipd-exam-choice'))));
+  const side=id=>[mark(get(id).previousElementSibling,'ipd-exam-side'),get(id)];
+  const pair=(key,left,right)=>row(get(left).parentElement.querySelector('[data-key="'+key+'"]'),el('div','ipd-exam-pair',...side(left),...side(right)));
+  const short=id=>mark(get(id),'ipd-exam-short');
+  const gcs=row(title('ipd_gcs'),el('div','ipd-exam-numbers',...['eye','verbal','motor','total'].map(s=>el('label','ipd-exam-number-field',...side('ipd_exam_gcs_'+s)))));
+  const radios=(prefix,names)=>names.map(s=>get(prefix+s));
   const specs=[
-    ['general','ipd_gen_app',[general,pain],null],
-    ['heent','ipd_heent',[heent],'heent'],
-    ['respiratory','ipd_resp',[title('ipd_resp')?.parentElement],'respiratory'],
-    ['cardiovascular','ipd_cvs',[title('ipd_cvs')?.parentElement],'cardiovascular'],
-    ['abdomen','ipd_abd',[title('ipd_abd')?.parentElement],'abdomen'],
-    ['genitourinary','ipd_gu',[gu],'genitourinary'],
-    ['extremities','ipd_ext',[limb],'extremities'],
-    ['musculoskeletal','ipd_msk',[msk],'musculoskeletal'],
-    ['neurological','ipd_neuro',[neuro,gcs,neuroOther],'neurological'],
-    ['other','ipd_other_sys',[other],'other']
+    ['general','ipd_gen_app',[choices(radios('ipd_exam_general_',['good','fair','severe','very_severe'])),choices([...general.querySelectorAll('input[type=checkbox]')]),row(get('ipd_exam_pain').previousElementSibling,short('ipd_exam_pain'))],null],
+    ['heent','ipd_heent',[field('ipd_exam_head'),pair('ipd_eyes','ipd_exam_eye_left','ipd_exam_eye_right'),field('ipd_exam_fundus'),pair('ipd_ears','ipd_exam_ear_left','ipd_exam_ear_right'),field('ipd_exam_nose'),field('ipd_exam_throat'),field('ipd_exam_neck'),field('ipd_exam_lymph')],'heent'],
+    ...[['respiratory','ipd_resp','resp'],['cardiovascular','ipd_cvs','cvs'],['abdomen','ipd_abd','abd']].map(([name,key,prefix])=>[name,key,['inspection','auscultation','palpation','percussion'].map(s=>field('ipd_exam_'+prefix+'_'+s)),name]),
+    ['genitourinary','ipd_gu',[alone('ipd_exam_gu')],'genitourinary'],
+    ['extremities','ipd_ext',[alone('ipd_exam_extremities'),row(el('span','','CRT'),el('div','',short('ipd_exam_crt')))],'extremities'],
+    ['musculoskeletal','ipd_msk',[alone('ipd_exam_msk')],'musculoskeletal'],
+    ['neurological','ipd_neuro',[choices(radios('ipd_exam_neuro_',['conscious','delirium','coma','seizure'])),gcs,field('ipd_exam_neuro_other')],'neurological'],
+    ['other','ipd_other_sys',[alone('ipd_exam_other')],'other']
   ];
-  specs.forEach(([name,key,blocks,normal],index)=>{
-    const heading=title(key);if(!heading)return;
-    const section=doc.createElement('section');section.className='ipd-exam-card';section.dataset.ipdExamSection=name;
-    const header=doc.createElement('header'),number=doc.createElement('span');number.className='ipd-exam-number';number.textContent=String(index+1).padStart(2,'0');number.setAttribute('aria-hidden','true');
-    const h4=doc.createElement('h4');heading.classList.add('ipd-exam-title');h4.append(heading);header.append(number,h4);
+  const layout=el('div','ipd-head-to-toe');layout.id='ipd_head_to_toe';source.before(layout);
+  const normalButton=name=>[...root.querySelectorAll('button[onclick]')].find(n=>n.getAttribute('onclick')==="fillClinicalExamNormal('"+name+"')");
+  specs.forEach(([name,key,rows,normal],index)=>{
+    const number=el('span','ipd-exam-number',String(index+1).padStart(2,'0'));number.setAttribute('aria-hidden','true');
+    const header=el('header','',number,el('h4','',mark(title(key),'ipd-exam-title')));
     const button=normal&&normalButton(normal);if(button){button.classList.add('ipd-exam-normal');header.append(button)}
-    const body=doc.createElement('div');body.className='ipd-exam-body';blocks.filter(Boolean).forEach(block=>{block.classList.add('ipd-exam-source');body.append(block)});
-    section.append(header,body);layout.append(section);
+    const section=el('section','ipd-exam-card',header,el('div','ipd-exam-body',...rows));section.dataset.ipdExamSection=name;layout.append(section);
   });
-  const tools=doc.getElementById('ipd_exam_normal_language')?.parentElement;tools?.classList.add('ipd-exam-tools');
-  if(!source.querySelector('input,select,textarea,button')&&!source.textContent.replace(/[\s\u00a0]/g,'').replace('CRT:',''))source.remove();
+  get('ipd_exam_normal_language')?.parentElement?.classList.add('ipd-exam-tools');
+  if(!source.querySelector('input,select,textarea,button'))source.remove();
   if(originalControls.some(n=>!root.contains(n))||root.querySelectorAll('input,select,textarea').length!==originalControls.length)throw Error('Examination controls must be preserved');
   updateExamLabels(doc);
+  // Language switching rewrites captions with list markers and colons; tidy them again.
+  const Observer=doc.defaultView?.MutationObserver;
+  if(Observer)new Observer(()=>updateExamLabels(doc)).observe(layout,{subtree:true,childList:true,characterData:true});
 }
 
 export function updateExamLabels(doc){
-  doc.querySelectorAll('#ipd_head_to_toe .ipd-exam-title').forEach(n=>n.textContent=n.textContent.replace(/^[·•\s]+|[:：\s]+$/g,''));
+  const set=(n,text)=>{if(n.textContent!==text)n.textContent=text};
+  doc.querySelectorAll('#ipd_head_to_toe :is(.ipd-exam-title,.ipd-exam-label,.ipd-exam-side)').forEach(n=>set(n,n.textContent.replace(/^[·•\-–\s\u00a0]+|[:\uff1a\u17c8\s\u00a0]+$/g,'')));
   const normal=doc.querySelector('#sub_ipd [data-key="ipd_diet_normal"]')?.textContent.trim()||'ធម្មតា';
-  doc.querySelectorAll('#ipd_head_to_toe .ipd-exam-normal').forEach(n=>n.textContent=normal);
+  doc.querySelectorAll('#ipd_head_to_toe .ipd-exam-normal').forEach(n=>set(n,normal));
 }
 
 export function expandIpdTextFields(doc){

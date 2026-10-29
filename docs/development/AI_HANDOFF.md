@@ -1322,3 +1322,21 @@ module/styles at cache 5071 and unauthenticated vital-write denial (401) pass.
 Final preservation verification passes across 98 tables with the audited user
 saves/context switch retained as described above. No source, patient or
 connection rollback was performed.
+
+## Clean IPD physical examination form - v50.8.0
+
+Owner asked for a clean, professional physical examination filling form and
+confirmed the proposed layout with "yes" (GCS total remains manual). The ten
+numbered sections now use a label column with boxed fields, left/right eye and
+ear on one row, compact pain/CRT/GCS boxes and pill choices, without list dots
+or trailing colons. Controls are moved with their IDs, storage keys, frozen
+indexes and migration keys; captions remain the previous sibling of each control
+so SOAP Objective wording is unchanged. Presentation only: no data migration,
+new Khmer text, or clinical/pharmacy/laboratory/financial logic change.
+
+Baseline master 5a041e889f07f9cc32551ff70afada4efab269fa, package 50.7.0.
+Clean code backup C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v50.7.0-5a041e88-058fedfb.
+Shared cache 5080. Validation: 1,092/1,092 tests and Khmer check pass; IPD
+browser workflows pass. Details: IPD_EXAM_FORM_V508_VALIDATION.md.
+Delivery: Borkeo-EMR-v50.8.0-ipd-exam-form-update.txt. Running servers were not
+restarted by this update.
