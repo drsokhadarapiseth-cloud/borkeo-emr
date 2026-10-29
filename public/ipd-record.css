@@ -3,3 +3,18 @@
 .emr-readonly-record [data-soap-mode]{display:none}
 
 #sub_ipd .action-bar button{white-space:nowrap;flex:none}
+
+/* Compact presentation; medication safety evaluation and saved diagnoses remain intact. */
+#page3 [data-allergy-verification],
+[onclick^="addProtocolRowStub("],
+#sub_ipd .diag-main-badge,
+#sub_ipd .diag-secondary-heading,
+#sub_ipd .diag-set-main,
+#ipd_pregnancy_history[data-pregnancy-visible="false"]{display:none!important}
+#sub_ipd .diag-tag-box{display:block;padding:10px;border:1px solid #bbcfdf;border-radius:8px;background:#fff}
+#sub_ipd .diag-tags-list{width:100%;gap:8px}
+#sub_ipd [data-diagnosis-editor="ipd"] .diag-tag{display:grid!important;grid-template-columns:max-content minmax(0,1fr) max-content;gap:12px;padding:10px 12px;border:1px solid #d3e2e9;border-radius:6px;background:#fff!important;color:#174964!important;box-shadow:none;font-weight:normal;align-items:start}
+#sub_ipd .diag-tag-code{white-space:nowrap;color:#096481}
+#sub_ipd .diag-tag-desc{min-width:0;overflow-wrap:anywhere;line-height:1.6}
+#sub_ipd .diag-tag-remove{color:#64748b;padding:0 5px;cursor:pointer}
+#sub_ipd .diag-search-input{display:block;width:100%;box-sizing:border-box;margin-top:8px}

@@ -1205,3 +1205,39 @@ referral handler and permissions remain; small screens scroll horizontally.
 Synthetic mobile checks confirm row direction, no wrapping, the referral control
 in that row, disabled view mode and no record writes. Pregnancy and SOAP desktop/
 mobile screenshots and the actual IPD print snapshot/PDF were reviewed.
+
+## IPD display cleanup - v50.6.0
+
+Owner approved hiding the medicine inline notice, special/protocol-add controls
+and IPD Set as main control; simplify ICD-10 rows; pregnancy history only for
+known females older than 13 completed years. Saved data, primary flags, actual
+allergy/interaction/overdose alerts and existing treatment remain intact.
+The same visibility rule applies to script-free review and print; hiding never
+clears history. Unknown/null loading state is hidden safely.
+
+Baseline master 640fc1bf41dde8e3da281297d29efec6e04b19e5, 50.5.0. Backup:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v50.5.0-640fc1bf-cff45fc1.
+Receiver 50.4.0 code backup: D:\EMR\Borkeo_EMR_Code_Backups\clone-before-ipd506-20261029.
+See IPD_CLEANUP_V506_VALIDATION.md for online database backups and details.
+Disposable synthetic root: borkeo-restored-code-omzjZa.
+
+Final validation: 1,088/1,088 automated tests and Khmer check pass. The
+synthetic browser workflow passes female age 13/14, male and unknown visibility,
+retained hidden history, preserved primary diagnosis, hidden notice/protocol
+controls, desktop/mobile rows, print-media hiding, script-free remote rendering
+and active real allergy evaluation. Patient record JSON remains unchanged.
+The new null loading-state boundary is covered by automated tests.
+
+Delivery: Borkeo-EMR-v50.6.0-ipd-cleanup-update.txt. Preserve .vscode, .gitignore,
+all hospital data, uploads, passwords, API keys/grants and private settings.
+
+Installed primary 50.6.0 PID 26692 at http://127.0.0.1:3001 and receiver
+50.5.0 PID 31804 at http://localhost:3002 with the original hidden launchers.
+Health, visible versions and final assets pass on both. All 98 pre-existing
+non-audit/non-nonce tables compare equivalent to the online backups, with
+known startup metadata/session normalization only; no new snapshot provenance
+change. Exact patient rows, clinical content, attachments and API keys/grants
+are preserved. Patients remain 22 and 0; integrity OK. No automatic connection,
+patient import or schema migration. Desktop/mobile diagnosis screenshots were
+reviewed after dismissing the verified actual allergy warning in the synthetic
+fixture; allergy evaluation and alerts remain active.
