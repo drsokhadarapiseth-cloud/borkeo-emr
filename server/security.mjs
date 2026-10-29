@@ -1,6 +1,6 @@
 export const SESSION_COOKIE = 'emr_session';
 
-export function applySecurityHeaders(response, { legacy = false, secure = false, review = false } = {}) {
+export function applySecurityHeaders(response, { legacy = false, secure = false, review = false, camera = false } = {}) {
   const policy = legacy
     ? [
         "default-src 'self'",
@@ -27,12 +27,12 @@ export function applySecurityHeaders(response, { legacy = false, secure = false,
         "img-src 'self' data:",
         "connect-src 'self'",
       ].join('; ');
-  response.setHeader('Content-Security-Policy', policy);
+  response.setHeader('Content-Security-Policy', policy+(camera?"; media-src 'self' blob:":''));
   response.setHeader('Referrer-Policy', 'no-referrer');
   response.setHeader('X-Content-Type-Options', 'nosniff');
   response.setHeader('X-Frame-Options', legacy ? 'SAMEORIGIN' : 'DENY');
   response.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-  response.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+  response.setHeader('Permissions-Policy', (camera?'camera=(self)':'camera=()')+', microphone=(), geolocation=(), payment=(), usb=()');
   if (secure) response.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 }
 

@@ -324,5 +324,8 @@
       <line x1="2" y1="12" x2="22" y2="12"></line>
       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
     </symbol>
+    <symbol id="icon-qr-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><path d="M15 15h3v3h3m-6 3h3m3-6v-3M3 12h6m3-9v6m0 6v6"/></symbol>
+    <symbol id="icon-fingerprint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8a8 8 0 0 1 15 4c0 4-1 7-3 10M3 13v-1m4 10c3-4 4-7 4-10a1 1 0 0 1 2 0c0 4-1 7-3 10M5 18c2-3 2-5 2-6a5 5 0 0 1 10 0c0 3-1 6-2 8"/></symbol>
+    <symbol id="icon-card-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="15" rx="3"/><path d="M2 9h20M6 13h4m-4 3h3"/><circle cx="16" cy="15" r="3"/><path d="m18 17 4 4"/></symbol>
   </defs>
 </svg>

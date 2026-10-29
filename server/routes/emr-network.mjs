@@ -40,6 +40,8 @@ export function mountEmrNetworkRoutes(router){
   const known=ctx.database.sqlite.prepare('SELECT 1 FROM patient_records WHERE emr_lookup_id(health_id)=? LIMIT 1');
   result.patients=result.patients.map(patient=>({...patient,localCaseType:typeof patient.healthId==='string'&&patient.healthId.trim()&&known.get(lookupId(patient.healthId))?'old':'new'}));
   audit(ctx,'EMR_NETWORK_PATIENT_SEARCH',{peerId});return send(ctx,result)},opts);
+ router.post('/api/emr-network/local-search',async ctx=>{ctx.requireContext(ctx.session);const body=await ctx.readJson(ctx.request,2000),rows=searchPatients(ctx.database,text(body.q,120),searchMode(body.mode||'id'),0,'exact');audit(ctx,'EMR_LOCAL_PATIENT_SEARCH');return send(ctx,{patients:rows.map(row=>({...summary(ctx.patientRecordResponse(row,false)),canOpenRecord:ctx.canAccessPatient(ctx.database,ctx.session,row),recordAccess:encounterAccess(ctx.database,ctx.session,row)}))})},opts);
+ router.post('/api/emr-network/search',async ctx=>{role(ctx,REVIEW_ROLES);const body=await ctx.readJson(ctx.request,2000),peerId=text(body.peerId,36),q=text(body.q,120),mode=searchMode(body.mode||'id');if(mode==='all')fail(400,'\u1791\u17b7\u1793\u17d2\u1793\u1793\u17d0\u1799\u1798\u17b7\u1793\u178f\u17d2\u179a\u17b9\u1798\u178f\u17d2\u179a\u17bc\u179c');const result=await networkCall(ctx,peerId,{operation:'search',q,mode,match:'exact'}),known=ctx.database.sqlite.prepare('SELECT 1 FROM patient_records WHERE emr_lookup_id(health_id)=? LIMIT 1');result.patients=result.patients.map(patient=>({...patient,localCaseType:patient.healthId&&known.get(lookupId(patient.healthId))?'old':'new'}));audit(ctx,'EMR_NETWORK_PATIENT_SEARCH',{peerId});return send(ctx,result)},opts);
  router.get('/api/emr-network/records',async ctx=>{role(ctx,REVIEW_ROLES);const peerId=String(ctx.url.searchParams.get('peerId')||''),patientKey=text(ctx.url.searchParams.get('patientKey'),180),result=await networkCall(ctx,peerId,{operation:'records',patientKey});audit(ctx,'EMR_NETWORK_RECORD_VIEWED',{peerId,patientKey});return send(ctx,{...result,readOnly:true})},opts);
  router.get('/api/emr-network/doctors',async ctx=>{role(ctx,REVIEW_ROLES);return send(ctx,await networkCall(ctx,String(ctx.url.searchParams.get('peerId')||''),{operation:'doctors'}))},opts);
  router.get('/api/emr-network/messages',ctx=>{role(ctx,CHAT_ROLES);return send(ctx,{messages:ctx.database.sqlite.prepare('SELECT m.id,m.peer_id,m.direction,m.sender_name,m.recipient_name,m.subject,m.body,m.state,m.created_at,p.name AS facility FROM emr_network_messages m JOIN emr_network_peers p ON p.id=m.peer_id WHERE (direction=\'IN\' AND recipient_id=?) OR (direction=\'OUT\' AND sender_id=?) ORDER BY created_at DESC LIMIT 100').all(ctx.session.user_id,ctx.session.user_id).map(m=>({...m,attachments:attachmentMetadata(ctx.database,m.id)}))})},opts);
@@ -68,7 +70,7 @@ export function mountEmrNetworkRoutes(router){
   const key=incomingPairKey(local,peer),body=checkEnvelope(ctx.database,{role:'receiver',secret:key},envelope);
   const limit=rate.get(peer.id);if(!limit||Date.now()-limit.start>60000)rate.set(peer.id,{start:Date.now(),count:1});else if(++limit.count>600)fail(429,'មិនអាចផ្ទុកទិន្នន័យបាន');
   let result;
-  if(body?.operation==='ping')result={protocol:1,instanceId:local.id,name:local.name,incoming:!!peer.incoming,outgoing:!!peer.outgoing,search:!!peer.search,messages:!!peer.messages,typedSearch:true,staffChat:true,attachments:true};
+  if(body?.operation==='ping')result={protocol:1,instanceId:local.id,name:local.name,incoming:!!peer.incoming,outgoing:!!peer.outgoing,search:!!peer.search,messages:!!peer.messages,typedSearch:true,exactSearch:true,staffChat:true,attachments:true};
   else if(['connection-request','connection-request-status'].includes(body?.operation))result=receiveConnectionControl(ctx,peer,body);
   else{
    if(!peer.incoming)fail(403,'មិនមានសិទ្ធិ');
@@ -81,7 +83,7 @@ export function mountEmrNetworkRoutes(router){
    }else if(body?.operation==='history'){
     const sent=ctx.database.sqlite.prepare('SELECT * FROM referral_outbox WHERE id=? AND peer_id=?').get(String(body.id||''),peer.id);if(!sent)fail(404,'រកមិនឃើញ');const patient=ctx.database.findPatient(sent.patient_key);if(!patient)fail(404,'រកមិនឃើញ');result={id:sent.id,patientKey:sent.patient_key,visits:referralVisits(ctx,patient)};
    }else if(body?.operation==='search'){
-    const rows=searchPatients(ctx.database,text(body.q,120),body.mode||'all',body.offset??0);
+    const rows=searchPatients(ctx.database,text(body.q,120),body.mode||'all',body.offset??0,body.match||'partial');
     result={patients:rows.map(r=>summary(ctx.patientRecordResponse(r,false))),nextOffset:rows.length===25?offset+25:null};audit(ctx,'EMR_NETWORK_SEARCH_RECEIVED',{peerId:peer.id});
    }else if(body?.operation==='records'){
     const row=ctx.database.findPatient(text(body.patientKey,180));if(!row)fail(404,'រកមិនឃើញ');result={visits:referralVisits(ctx,row),patientKey:row.patient_key,readOnly:true};audit(ctx,'EMR_NETWORK_RECORD_SHARED',{peerId:peer.id,patientKey:row.patient_key});

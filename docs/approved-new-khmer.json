@@ -3082,6 +3082,46 @@
     {
       "en": "Search by",
       "kh": "ស្វែងរកតាម"
+    },
+    {
+      "en": "Patient search results",
+      "kh": "លទ្ធផលស្វែងរកអ្នកជំងឺ"
+    },
+    {
+      "en": "Advanced search",
+      "kh": "ស្វែងរកលម្អិត"
+    },
+    {
+      "en": "Scan QR code",
+      "kh": "ស្កេនកូដ QR"
+    },
+    {
+      "en": "Search details",
+      "kh": "ព័ត៌មានស្វែងរក"
+    },
+    {
+      "en": "Admit to inpatient care",
+      "kh": "ទទួលចូលសម្រាកព្យាបាល"
+    },
+    {
+      "en": "Enter complete search information",
+      "kh": "សូមបញ្ចូលព័ត៌មានស្វែងរកឱ្យបានពេញលេញ"
+    },
+    {
+      "en": "QR code is not a valid patient identifier",
+      "kh": "កូដ QR មិនមែនជាលេខសម្គាល់អ្នកជំងឺដែលត្រឹមត្រូវ"
+    },
+    {
+      "en": "Allow the camera and place the QR code inside the frame",
+      "kh": "សូមអនុញ្ញាតកាមេរ៉ា ហើយដាក់កូដ QR ក្នុងស៊ុម"
+    },
+    {
+      "en": "Cannot open camera; check camera permission and HTTPS connection",
+      "kh": "មិនអាចបើកកាមេរ៉ាបាន សូមពិនិត្យសិទ្ធិកាមេរ៉ា និងការតភ្ជាប់ HTTPS"
+    },
+    {
+      "en": "Checking permitted health facilities",
+      "kh": "កំពុងពិនិត្យមូលដ្ឋានសុខាភិបាលដែលបានអនុញ្ញាត"
     }
   ]
 }

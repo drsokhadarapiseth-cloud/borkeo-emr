@@ -55,7 +55,7 @@ export async function networkCall(ctx,peerId,body,{probe=false}={}){
  const latestLocal=networkLocal(ctx.database),latestPeer=ctx.database.sqlite.prepare('SELECT * FROM emr_network_peers WHERE id=?').get(peer.id);
  if(!latestLocal.managed||!latestLocal.enabled||latestLocal.signing_seed!==local.signing_seed||!latestPeer?.enabled||latestPeer.version!==peer.version)fail(403,'មិនមានសិទ្ធិ');
  if(probe||body.operation==='ping')return ping;
- if(body.operation==='search'&&body.mode&&body.mode!=='all'&&!ping.typedSearch)fail(503,'\u1798\u17b7\u1793\u17a2\u17b6\u1785\u1795\u17d2\u1791\u17bb\u1780\u1791\u17b7\u1793\u17d2\u1793\u1793\u17d0\u1799\u1794\u17b6\u1793');
+ if(body.operation==='search'&&((body.mode&&body.mode!=='all'&&!ping.typedSearch)||(body.match==='exact'&&!ping.exactSearch)))fail(503,'\u1798\u17b7\u1793\u17a2\u17b6\u1785\u1795\u17d2\u1791\u17bb\u1780\u1791\u17b7\u1793\u17d2\u1793\u1793\u17d0\u1799\u1794\u17b6\u1793');
  if(body.operation==='message'&&body.attachments?.length&&!ping.attachments)fail(503,'\u1798\u17b7\u1793\u17a2\u17b6\u1785\u1795\u17d2\u1791\u17bb\u1780\u1791\u17b7\u1793\u17d2\u1793\u1793\u17d0\u1799\u1794\u17b6\u1793');
  if((!control&&!ping.incoming)||(['search','records'].includes(body.operation)&&!ping.search)||(['doctors','message'].includes(body.operation)&&!ping.messages))fail(403,'មិនមានសិទ្ធិ');
  return peerCall(link,body);

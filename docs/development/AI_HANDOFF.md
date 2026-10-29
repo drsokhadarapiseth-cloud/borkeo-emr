@@ -1104,3 +1104,54 @@ tables empty. No pairing, real message/patient fixture or data import performed.
 Delivery: Borkeo-EMR-v50.3.0-network-search-chat-update.txt, verified UTF-8/LF JSON
 payloads and hashes. Preserve .vscode and all live data/secrets. Broader NPCA
 proposals remain separate; this release does not claim NPCA certification.
+
+## Submitted search, separate results and QR camera - v50.4.0
+
+Owner approved main Patient ID search on Enter/Search, QR/fingerprint/advanced
+icons, and a separate results popup with View and authorized Admit actions.
+Typing/focus no longer issues patient queries. Advanced mode opens its own native
+dialog for name/phone/ID/other ID. Local/all permitted peer results append as they
+arrive; close aborts browser requests and invalidates late replies. Mobile header
+uses a second row so input/icons remain visible. Admission retains the normal
+local New/Old registration/admission workflow; source clinical records stay read-only.
+
+New submitted searches use CSRF-protected POST bodies and normalized exact
+identifier/phone/other-ID matching; names use prefix matching. Signed exactSearch
+capability prevents older peers from silently broadening searches. Legacy GET
+partial lookup stays compatible. No million-patient indexing or remote-HTTPS
+deployment is included; a custom-function index experiment was rejected by the
+maintenance-script checks and never installed on a live database.
+
+The QR decoder is pinned jsQR 1.4.0, Apache-2.0, locally bundled after registry
+SHA-512 verification; provenance/license and LF-canonical SHA-256 are included.
+Frames stay in-browser. Plain patient-card QR automatically submits and opens
+results, never admission. Camera stops on detection, close, page hide/navigation;
+invalid codes and camera errors have Khmer feedback. Protected HTML permits
+self-only camera/media; login/API/print-preview stay camera-disabled, microphone/
+USB/geolocation remain disabled. Existing script/style CSP rules are unchanged.
+Phone camera needs HTTPS and permission; S22 hardware acceptance remains pending
+an approved HTTPS setup. Fingerprint enrollment/matching still needs hardware/SDK.
+
+Clean baseline 50.3.0 commit 4337ce770697f4205a1f17b02221b99f3fa0ccb5;
+backup C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v50.3.0-4337ce77-4538c0d4.
+Receiver 50.2.0 archive:
+D:\EMR\Borkeo_EMR_Code_Backups\clone-before-search-popup-20261029.
+See SEARCH_POPUP_QR_V504_VALIDATION.md for online SQLite backups and evidence.
+
+All 1,085 tests and Khmer validation pass in borkeo-restored-code-fjeWy3.
+Three Edge workflows verify native results/advanced dialogs, no typing requests,
+actual generated QR pixels through a synthetic video stream, automatic results,
+no auto-admission, invalid links, stopped tracks, denied camera, mobile icons,
+New/Old registration/save/card, read-only histories and private nurse attachments.
+Screenshots reviewed. An existing startup lock race was fixed by moving the same
+5000 ms busy_timeout before journal_mode; a real child-process lock test passes.
+Ten reviewed Khmer strings have approval/provenance; baseline/.gitignore unchanged.
+
+Installed primary 50.4.0 PID 17632, receiver 50.3.0 PID 16060, original hidden
+launchers. All 98 pre-existing non-audit/non-nonce tables compare equivalent after
+known startup metadata normalization/append-only access events. Patient rows,
+workflow snapshots, attachments and API keys/grants exact; patients 22 and 0,
+integrity OK. No rejected indexes, pairing, real patient fixture or data import.
+Delivery: Borkeo-EMR-v50.4.0-search-popup-qr-update.txt. UTF-8/LF JSON payloads
+include verified hashes and third-party license/provenance. Preserve .vscode,
+live databases, uploads, backups, passwords, .env and other secrets.

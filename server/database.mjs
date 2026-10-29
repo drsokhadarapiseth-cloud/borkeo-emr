@@ -20,7 +20,7 @@ export const CLINICAL_FORM_TYPES = Object.freeze([
 export function openDatabase(databasePath) {
   if (databasePath !== ':memory:') fs.mkdirSync(path.dirname(databasePath), { recursive: true });
   const sqlite = new DatabaseSync(databasePath);
-  sqlite.exec('PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000; PRAGMA synchronous = NORMAL; PRAGMA cache_size = -32000; PRAGMA temp_store = MEMORY;');
+  sqlite.exec('PRAGMA busy_timeout = 5000; PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL; PRAGMA cache_size = -32000; PRAGMA temp_store = MEMORY;');
   sqlite.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,

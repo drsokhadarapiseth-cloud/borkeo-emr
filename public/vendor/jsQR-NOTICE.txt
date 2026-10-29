@@ -1,0 +1,7 @@
+jsQR 1.4.0, upstream browser distribution; only line endings normalized to LF.
+Source: https://github.com/cozmo/jsQR
+Package: https://registry.npmjs.org/jsqr/-/jsqr-1.4.0.tgz
+License: Apache-2.0; see jsQR-LICENSE.txt.
+Registry SHA-512: sha512-dxLob7q65Xg2DvstYkRpkYtmKm2sPJ9oFhrhmudT1dZvNFFTlroai3AWSpLey/w5vMcLBXRgOJsbXpdN9HzU/A==
+SHA-256 (LF-normalized jsQR-1.4.0.js): bc40c8a15196236b2314db0856f72ca0b49980cd5413b8c852a7349f5fee0859
+Frames are decoded locally. No external runtime/CDN calls or frame uploads.
