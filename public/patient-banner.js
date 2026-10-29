@@ -51,6 +51,7 @@
 
   function setupChartTabs(patient) {
     if (window.location.pathname !== '/emr') return;
+    if(patient?.serviceMode==='ipd'){document.getElementById('emr-chart-tabs-wrapper')?.remove();return;}
 
     const currentRole = String(window.emrSession?.user?.activeRole || window.userRole || '').toUpperCase();
     const allowed = getAllowedTabsForRole(currentRole);

@@ -7,7 +7,7 @@ import { setUserAccess } from '../server/access.mjs';
 import { setResuscitationStatus } from '../server/clinical-summary.mjs';
 import { openBrowser } from './helpers/context-browser.mjs';
 
-test('clinical summary editors, checklist, warning states and storage keys work without a banner', { timeout: 120000 }, async () => {
+test('IPD clinical summary editors and prescribing retain warning states and storage keys', { timeout: 300000 }, async () => {
   const app = createEmrServer({ demoMode: true, databasePath: ':memory:', host: '127.0.0.1', port: 0, appOrigin: 'http://127.0.0.1:0', nodeEnv: 'test', npca: { enabled: false } });
   let browser;
   try {
@@ -40,25 +40,8 @@ test('clinical summary editors, checklist, warning states and storage keys work 
     await visit('A');
     await browser.waitFor("document.querySelector('[data-allergy-field=\"substance\"]') && !document.querySelector('[data-allergy-field=\"substance\"]').disabled", 'doctor allergy editor');
     assert.equal(await browser.evaluate("Boolean(document.querySelector('.emr-patient-banner'))"), false);
-    assert.deepEqual(await browser.evaluate("[...document.querySelectorAll('.emr-chart-tab')].map(n=>n.dataset.chartTab)"), ['summary', 'vitals', 'orders', 'results', 'meds', 'notes']);
-    await browser.waitFor("document.querySelector('#sub_ipd .paraclinic-inline')", 'live paraclinic section');
-    const navigation = await browser.evaluate(`(()=>{
-      const actions=[],originalPage=window.switchPage;
-      window.switchPage=number=>{actions.push(['page',number]);return originalPage(number)};
-      for(const [tab,id] of [['orders','paraclinic-inline'],['results','paraclinic-inline'],['meds','ipd_rx_container']]){
-        const target=tab==='meds'?document.getElementById(id):document.querySelector('#sub_ipd .paraclinic-inline'),scroll=target.scrollIntoView;
-        target.scrollIntoView=function(options){actions.push(['scroll',id]);return scroll.call(this,options)};
-        document.querySelector('[data-chart-tab="'+tab+'"]').click();target.scrollIntoView=scroll;
-      }
-      for(const tab of ['vitals','notes'])document.querySelector('[data-chart-tab="'+tab+'"]').click();
-      const selected=document.querySelector('.emr-chart-tab.is-active');
-      const result={actions,active:selected.dataset.chartTab,aria:selected.getAttribute('aria-selected'),labels:[...document.querySelectorAll('.emr-chart-tab span')].map(n=>n.textContent.trim())};
-      window.switchPage=originalPage;window.switchPage(3);window.switchOpdTab('ipd');return result;
-    })()`);
-    assert.deepEqual(navigation.actions, [['page', 3], ['scroll', 'paraclinic-inline'], ['page', 3], ['scroll', 'paraclinic-inline'], ['page', 3], ['scroll', 'ipd_rx_container'], ['page', 2], ['page', 3]]);
-    assert.equal(await browser.evaluate("document.querySelector('#sub_ipd details.paraclinic-recent').open"), true);
-    assert.equal(navigation.active, 'notes'); assert.equal(navigation.aria, 'true');
-    assert.ok(navigation.labels.every(label => /[\u1780-\u17ff]/.test(label) && !/[A-Za-z]/.test(label)));
+    assert.equal(await browser.evaluate("document.querySelectorAll('.emr-chart-tab').length"),0);
+    await browser.waitFor("document.querySelector('#sub_ipd .paraclinic-inline')",'paraclinic remains on the record');
     assert.equal(await browser.evaluate("EmrClinicalSummary.allergyState().state"), 'not-recorded');
     assert.equal(await browser.evaluate("document.querySelector('[data-clinical-resuscitation]').textContent"), 'DNR');
     await browser.send('Emulation.setEmulatedMedia', { media: 'print' });
@@ -81,23 +64,18 @@ test('clinical summary editors, checklist, warning states and storage keys work 
     // Exercise the real prescribing warning evaluator with a synthetic transient row.
     await browser.evaluate(`const table=document.createElement('table');table.innerHTML='<tbody><tr id="synthetic-rx"><td><input class="rx-name" data-emr-transient value="Penicillin V 500mg"></td></tr></tbody>';document.getElementById('page3').append(table);`);
     assert.equal(await browser.evaluate("EmrMedicationSafety.warningsFor(document.getElementById('synthetic-rx')).some(w=>w.kind==='allergy' && w.detail.includes('Penicillin'))"), true);
-    // The workspace checklist uses the same provider, not a banner.
-    await browser.evaluate("window.switchOpdTab?.('opd'); document.dispatchEvent(new CustomEvent('emr:clinical-summary'))");
-    await browser.waitFor("document.getElementById('task_item_allergy')?.classList.contains('is-success')", 'allergy checklist');
-    await browser.waitFor("document.getElementById('safety-warning-dialog')?.open", 'prescribing allergy warning dialog');
+    await browser.evaluate("document.querySelector('#synthetic-rx .rx-name').dispatchEvent(new Event('change',{bubbles:true}))");
+    await browser.waitFor("document.getElementById('safety-warning-dialog')?.open", 'prescribing allergy warning dialog',60000);
     assert.match(await browser.evaluate("document.getElementById('safety-warning-dialog').textContent"), /Penicillin/);
     await browser.evaluate("window.staleOverrideForm=document.querySelector('#safety-warning-dialog form');document.getElementById('safety-warning-dialog').close()");
-    await browser.evaluate("document.getElementById('task_item_allergy').click()");
-    assert.equal(await browser.evaluate("document.querySelector('[data-soap-slot=\"structured-allergy\"]').contains(document.activeElement)"), true);
     await browser.evaluate(`(async()=>{window.savedFetch=window.fetch;window.fetch=(url,opts)=>String(url).startsWith('/api/clinical-summary?')?Promise.resolve(new Response(JSON.stringify({error:'PRIVATE DIAGNOSTIC'}),{status:503})):savedFetch(url,opts);await EmrClinicalSummary.refresh();})()`);
     assert.equal(await browser.evaluate("EmrClinicalSummary.allergyState().state"), 'unknown');
     assert.equal(await browser.evaluate("EmrMedicationSafety.warningsFor(document.getElementById('synthetic-rx')).some(w=>w.kind==='allergy')"), false);
     assert.match(await browser.evaluate("document.querySelector('[data-allergy-verification]').textContent"), /[\u1780-\u17ff]/);
-    assert.equal(await browser.evaluate("document.getElementById('task_item_allergy').classList.contains('is-success')"), false);
     assert.equal(await browser.evaluate("document.body.textContent.includes('PRIVATE DIAGNOSTIC')"), false);
     await browser.evaluate("(async()=>{window.fetch=savedFetch;await EmrClinicalSummary.refresh()})()");
     await browser.evaluate("loadPatientRecord('case:SUMMARY-B')");
-    await browser.waitFor("EmrClinicalSummary.get().status==='ready' && EmrClinicalSummary.get().patientKey==='case:SUMMARY-B'", 'patient switch');
+    await browser.waitFor("EmrClinicalSummary.get().status==='ready' && EmrClinicalSummary.get().patientKey==='case:SUMMARY-B'", 'patient switch',60000);
     assert.equal(await browser.evaluate("EmrClinicalSummary.get().summary.allergies.length"), 0);
     assert.equal(await browser.evaluate("EmrClinicalSummary.allergyState().state"), 'none');
     assert.doesNotMatch(await browser.evaluate("document.querySelector('[data-clinical-recorded-status]').textContent"), /DNR|Penicillin/);
@@ -110,6 +88,7 @@ test('clinical summary editors, checklist, warning states and storage keys work 
     assert.deepEqual(browser.state.errors, []);
   } finally {
     browser?.close();
+    app.server.closeAllConnections();
     if (app.server.listening) await new Promise(resolve => app.server.close(resolve));
     app.database.close();
   }

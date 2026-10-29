@@ -54,8 +54,10 @@ saved value is always shown.
 | Obstetric ward codes | `obstetricWardCodes` | `obstetric`, `gyneco-obstetric` | |
 
 "Pregnant" means: the patient is in an obstetric ward, or an EDD is written in
-the ob/gyn history. The record has no other pregnancy field. Tell us if a
-pregnancy tick box is wanted.
+the ob/gyn history. In v50.5, separate structured past-pregnancy, current-visit
+pregnancy and breastfeeding fields were added. Past pregnancy does not imply
+current pregnancy. These new documentation fields do not alter the existing
+display-rule thresholds or medication tables; Medscape remains a manual reference.
 
 Tetanus vaccine status options (in `protected/EMR.html`): TT1, TT2, TT3, TT4,
 TT5, No dose, Unknown, plus the last dose date. Please confirm the list.

@@ -1,3 +1,4 @@
+import {validateIpdMedicalFields} from '../ipd-record.mjs';
 import crypto from 'node:crypto';
 import {validateNetworkRegistration,consumeNetworkRegistration} from '../network-registration.mjs';
 import { selectionFor, beneficiaryPayment, saveBeneficiaryLink } from '../npca/beneficiaries.mjs';
@@ -393,6 +394,7 @@ export function mountPatientsRoutes(router) {
     const effectiveRoleForMerge = registrationSave ? 'REGISTRATION' : (activeRoleBeforeSave === 'TRIAGE' || triageSave || editorScope === 'triage' ? 'TRIAGE' : RECORD_MANAGEMENT.includes(activeRoleBeforeSave) ? (body.editorScope === 'nursing' ? 'NURSE' : 'DOCTOR') : maternalMidwife ? 'DOCTOR' : activeRoleBeforeSave);
     summary = mergePatientSummaryForRole(existingPatient, submittedSummary, effectiveRoleForMerge);
     let data = mergeRecordDataForRole(existingData, submittedData, effectiveRoleForMerge, Boolean(existingPatient));
+    if(existingPatient?.service_mode==='ipd')validateIpdMedicalFields(data,existingData);
     if (body.registrationOnly === true) data = { ...existingData, ...Object.fromEntries(Object.entries(submittedData).filter(([key]) => key.startsWith('scope:registration:'))) };
     if (body.sharedTriage !== undefined) {
       if (!existingPatient || existingPatient.service_mode !== 'opd' || !['DOCTOR', ...RECORD_MANAGEMENT].includes(activeClinicalRole) || body.editorScope !== 'medical' || body.clinicalSubTab !== 'opd') {

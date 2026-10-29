@@ -3122,6 +3122,98 @@
     {
       "en": "Checking permitted health facilities",
       "kh": "កំពុងពិនិត្យមូលដ្ឋានសុខាភិបាលដែលបានអនុញ្ញាត"
+    },
+    {
+      "en": "SOAP record summary",
+      "kh": "សង្ខេបកំណត់ត្រា SOAP"
+    },
+    {
+      "en": "Automatic draft: review before saving or signing",
+      "kh": "សេចក្ដីព្រាងស្វ័យប្រវត្តិ ត្រូវពិនិត្យមុនរក្សាទុក ឬចុះហត្ថលេខា"
+    },
+    {
+      "en": "Regenerate SOAP summary",
+      "kh": "បង្កើតសង្ខេប SOAP ឡើងវិញ"
+    },
+    {
+      "en": "Manual edits preserved",
+      "kh": "រក្សាការកែប្រែដោយដៃ"
+    },
+    {
+      "en": "Regeneration replaces your edited draft. Continue?",
+      "kh": "ការបង្កើតឡើងវិញនឹងជំនួសសេចក្ដីព្រាងដែលអ្នកបានកែប្រែ។ តើបន្តឬ?"
+    },
+    {
+      "en": "View drug information on Medscape",
+      "kh": "មើលព័ត៌មានឱសថនៅ Medscape"
+    },
+    {
+      "en": "Reference for manual review; not an automated medication check",
+      "kh": "ឯកសារយោងសម្រាប់ពិនិត្យដោយដៃ មិនមែនជាការត្រួតពិនិត្យឱសថស្វ័យប្រវត្តិ"
+    },
+    {
+      "en": "Pregnancy history and current status",
+      "kh": "ប្រវត្តិផ្ទៃពោះ និងស្ថានភាពបច្ចុប្បន្ន"
+    },
+    {
+      "en": "Previously pregnant",
+      "kh": "ធ្លាប់មានផ្ទៃពោះពីមុន"
+    },
+    {
+      "en": "Pregnancy status for this visit",
+      "kh": "ស្ថានភាពផ្ទៃពោះក្នុងការមកពិនិត្យនេះ"
+    },
+    {
+      "en": "Currently pregnant",
+      "kh": "កំពុងមានផ្ទៃពោះ"
+    },
+    {
+      "en": "Not pregnant",
+      "kh": "មិនមានផ្ទៃពោះ"
+    },
+    {
+      "en": "Possibly pregnant",
+      "kh": "អាចមានផ្ទៃពោះ"
+    },
+    {
+      "en": "Gestational age in weeks",
+      "kh": "អាយុផ្ទៃពោះជាសប្ដាហ៍"
+    },
+    {
+      "en": "Currently breastfeeding",
+      "kh": "កំពុងបំបៅដោះកូន"
+    },
+    {
+      "en": "Status confirmation date",
+      "kh": "កាលបរិច្ឆេទបញ្ជាក់ស្ថានភាព"
+    },
+    {
+      "en": "Previous ectopic pregnancies",
+      "kh": "ចំនួនផ្ទៃពោះក្រៅស្បូនពីមុន"
+    },
+    {
+      "en": "Pregnancy, delivery, miscarriage and complication history",
+      "kh": "ប្រវត្តិផ្ទៃពោះ ការសម្រាល ការរលូត និងផលវិបាក"
+    },
+    {
+      "en": "IPD record vital signs",
+      "kh": "សញ្ញាជីវិតក្នុងកំណត់ត្រា IPD"
+    },
+    {
+      "en": "Initially copied from triage; changes here do not change the original triage record",
+      "kh": "ចម្លងដំបូងពីទ្រីយ៉ា ការកែប្រែនៅទីនេះមិនប្ដូរទិន្នន័យទ្រីយ៉ាដើមទេ"
+    },
+    {
+      "en": "Save IPD vital signs",
+      "kh": "រក្សាទុកសញ្ញាជីវិត IPD"
+    },
+    {
+      "en": "Not saved yet",
+      "kh": "មិនទាន់រក្សាទុក"
+    },
+    {
+      "en": "Record changed; reopen the latest record",
+      "kh": "ទិន្នន័យត្រូវបានកែប្រែ សូមបើកកំណត់ត្រាថ្មីម្តងទៀត"
     }
   ]
 }

@@ -109,7 +109,7 @@ test('clinical-summary assets load on the medical record page only', async () =>
     const emr = await page('/emr');
     assert.match(emr, /\/public\/clinical-summary\.js\?v=4100/);
     assert.match(emr, /\/public\/clinical-summary\.css\?v=4100/);
-    assert.match(emr, /\/public\/patient-banner\.js\?v=4170/);
+    assert.match(emr, /\/public\/patient-banner\.js\?v=5050/);
     assert.doesNotMatch(await page('/departments'), /clinical-summary\.js/);
     for (const asset of ['clinical-summary.js', 'clinical-summary.css']) {
       const response = await fetch(`${origin}/public/${asset}`, { headers: { Cookie: cookie } });

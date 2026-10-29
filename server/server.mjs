@@ -1,3 +1,4 @@
+import {mountIpdRecordRoutes} from './ipd-record.mjs';
 import {ensureNetworkSchema,networkLocal} from './emr-network.mjs';
 import {mountEmrNetworkRoutes} from './routes/emr-network.mjs';
 import {ensureReferralLinkSchema} from './referral-link.mjs';
@@ -10,7 +11,7 @@ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFaci
 import { createDiagnosisSearch } from './icd10.mjs';
 import {ensureReferralFormSchema} from './referral-forms.mjs';
 import {mountReferralFormRoutes} from './routes/referral-forms.mjs';
-// Borkeo EMR v50.4 - Electronic Medical Record System
+// Borkeo EMR v50.5 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -195,6 +196,10 @@ const publicFiles = new Map([
   ['/public/patient-search.css', ['patient-search.css', 'text/css; charset=utf-8']],
   ['/public/qr-patient-scanner.mjs', ['qr-patient-scanner.mjs', 'text/javascript; charset=utf-8']],
   ['/public/vendor/jsQR-1.4.0.js', ['vendor/jsQR-1.4.0.js', 'text/javascript; charset=utf-8']],
+  ['/public/ipd-record.mjs', ['ipd-record.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/ipd-record-fields.mjs', ['ipd-record-fields.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/ipd-record-labels.mjs', ['ipd-record-labels.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/ipd-record.css', ['ipd-record.css', 'text/css; charset=utf-8']],
   ['/public/network-labels.mjs', ['network-labels.mjs', 'text/javascript; charset=utf-8']],
   ['/public/connected-emrs.mjs', ['connected-emrs.mjs', 'text/javascript; charset=utf-8']],
   ['/public/emr-network.css', ['emr-network.css', 'text/css; charset=utf-8']],
@@ -561,7 +566,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   html = html.replace(/(<span\b[^>]*\bdata-app-version\b[^>]*>)[^<]*(<\/span>)/g, (_, open, close) => `${open}v${APP_VERSION}${close}`);
   html = html.replace(/Borkeo EMR v\d+\.\d+/g, `Borkeo EMR v${APP_VERSION}`);
   html = html.replace(/<head\b[^>]*>/i, head => head + '<style>.emr-language-switch, [data-emr-language], #langBtn, .lang-btn, body #emr-site-banner .portal-account-actions .emr-language-switch, #emr-session-control .portal-account-actions .emr-language-switch, .portal-account-actions .emr-language-switch { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; max-width: 0 !important; max-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; position: absolute !important; left: -9999px !important; clip: rect(0,0,0,0) !important; }</style><script src="/public/emr-language-lock.js?v=3760"></script><link rel="stylesheet" href="/public/emr-required-fields.css?v=3770"><script src="/public/emr-required-fields.js?v=3770"></script>');
-  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=5040"><link rel="stylesheet" href="/public/patient-banner.css?v=4100"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><link rel="stylesheet" href="/public/npca.css?v=4280"><link rel="stylesheet" href="/public/khmer-fonts.css?v=5010"><link rel="stylesheet" href="/public/patient-search.css?v=5040"><script src="/public/npca-widget.js?v=4280" defer></script><script src="/public/npca-forms.js?v=4280" defer></script><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=5030" defer></script><script src="/public/app-shell.js?v=5040" defer></script><script src="/public/patient-banner.js?v=4170" defer></script><script type="module" src="/public/referral-form.mjs?v=4970"></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
+  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=5040"><link rel="stylesheet" href="/public/patient-banner.css?v=4100"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><link rel="stylesheet" href="/public/npca.css?v=4280"><link rel="stylesheet" href="/public/khmer-fonts.css?v=5010"><link rel="stylesheet" href="/public/patient-search.css?v=5040"><script src="/public/npca-widget.js?v=4280" defer></script><script src="/public/npca-forms.js?v=4280" defer></script><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=5030" defer></script><script src="/public/app-shell.js?v=5040" defer></script><script src="/public/patient-banner.js?v=5050" defer></script><script type="module" src="/public/referral-form.mjs?v=4970"></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
   // v42.3: one medication unit table for every page (old Khmer unit labels shown as mg, mL, mcg, g, IU).
   html = html.replace('</head>', '<script src="/public/record-access.js?v=4570" defer></script></head>');
@@ -570,6 +575,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   html = html.replace('</head>', '<script src="/public/medication-routes.js?v=4250"></script></head>');
   // v42.3: medicine name search in the prescription forms (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/medicine-autocomplete.css?v=4250"><script src="/public/medicine-autocomplete.js?v=4250" defer></script><script src="/public/medicine-dose-check.js?v=4250" defer></script><link rel="stylesheet" href="/public/maternal.css?v=4260"><script src="/public/maternal-emr.js?v=4260" defer></script></head>');
+  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/ipd-record.css?v=5050"><script type="module" src="/public/ipd-record.mjs?v=5050"></script></head>');
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=4930" defer></script></head>');
   // v41.0: structured allergy record, problem list and nursing demographics (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/clinical-summary.css?v=4100"><script src="/public/clinical-summary.js?v=4100" defer></script><link rel="stylesheet" href="/public/display-rules.css?v=4110"><script src="/public/display-rules.js?v=4110" defer></script><link rel="stylesheet" href="/public/medication-safety.css?v=4120"><script src="/public/medication-safety.js?v=4120" defer></script><link rel="stylesheet" href="/public/periop-forms.css?v=4160"><script src="/public/periop-forms.js?v=4160" defer></script><script src="/public/fluid-balance.js?v=4160" defer></script><script src="/public/early-warning.js?v=4160" defer></script><link rel="stylesheet" href="/public/patient-documents.css?v=4170"><script src="/public/patient-documents.js?v=4170" defer></script></head>');
@@ -2030,6 +2036,7 @@ export function createEmrServer(configOverrides = {}) {
   mountReferralFormRoutes(router);
   mountReferralLinkRoutes(router);
   mountEmrNetworkRoutes(router);
+  mountIpdRecordRoutes(router);
   mountClinicalSummaryRoutes(router);
   mountMedicationSafetyRoutes(router);
   mountMaternalRoutes(router);

@@ -1155,3 +1155,53 @@ integrity OK. No rejected indexes, pairing, real patient fixture or data import.
 Delivery: Borkeo-EMR-v50.4.0-search-popup-qr-update.txt. UTF-8/LF JSON payloads
 include verified hashes and third-party license/provenance. Preserve .vscode,
 live databases, uploads, backups, passwords, .env and other secrets.
+
+## IPD SOAP and pregnancy history - v50.5.0
+
+Owner explicitly approved coding the IPD cleanup, pregnancy history and manual
+Medscape reference after confirming that no licensed API was available. No
+automatic Medscape CDS, credential storage or external clinical-data request.
+Drug catalogue, stock, pricing, dose and interaction tables remain unchanged.
+
+IPD chart tabs, visual SOAP grouping, preliminary diagnosis, EWS panel, active
+problem panel and extra ICD detail are hidden; historical values remain. ICD
+choices use separate rows, actions scroll horizontally. The editable local SOAP
+draft uses documented current-visit sources; manual text remains protected until
+explicit regeneration. Past/current pregnancy are separate, unknown by default.
+Eight IPD vital fields copy triage initially and can be updated by authorized
+doctors/nurses without changing triage. Ward/version/CSRF/discharge/correction
+checks and audit/editor history apply. Remote history retains its styled,
+script-free read-only view including saved SOAP and pregnancy fields.
+
+Baseline master 50.4.0, 8272cbb65387da67fdbdb805bfb78fde85d12f44. Clean backup:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v50.4.0-8272cbb6-24c525ee.
+Receiver 50.3.0 baseline code archive/manifest:
+D:\EMR\Borkeo_EMR_Code_Backups\clone-before-ipd505-20261029.
+Online DB backup paths and details: IPD_SOAP_HISTORY_V505_VALIDATION.md.
+
+Disposable borkeo-restored-code-8Ha2fM: final 1,087/1,087 npm tests and Khmer
+check pass. Three relevant browser workflows pass, including normal physician
+Save/reopen of pregnancy/manual SOAP, nurse vital-only save, original triage
+preservation, stale/wrong-ward/discharged/CSRF failures, remote styled history
+and actual IPD print snapshot/PDF. Screenshots and PDF are synthetic only.
+Physical-printer acceptance and licensed Medscape integration are not claimed.
+Combined delivery: Borkeo-EMR-v50.5.0-ipd-soap-history-update.txt.
+
+Installed primary 50.5.0 PID 32020 at http://127.0.0.1:3001 and receiver
+50.4.0 PID 31840 at http://localhost:3002 using the original hidden launchers.
+Health, visible versions and all four new assets pass on both; unauthenticated
+IPD vital writes return 401. All 98 pre-existing non-audit/non-nonce tables
+compare equivalent to online backups. Patient rows, attachments, clinical
+content, API keys/grants and existing approval decisions are preserved.
+Patients remain 22 and 0, integrity OK. One pending primary workflow snapshot
+was refreshed by existing startup logic: only missing created_by/updated_by
+metadata was added, verified against its unchanged patient row. The preservation
+check allows those two additions and known startup metadata/session normalization,
+not changed clinical content. No automatic pairing or patient import occurred.
+
+Final mobile review corrected the inherited column direction and moved the
+existing referral control into the IPD print/Save/PMRS action row. The same
+referral handler and permissions remain; small screens scroll horizontally.
+Synthetic mobile checks confirm row direction, no wrapping, the referral control
+in that row, disabled view mode and no record writes. Pregnancy and SOAP desktop/
+mobile screenshots and the actual IPD print snapshot/PDF were reviewed.

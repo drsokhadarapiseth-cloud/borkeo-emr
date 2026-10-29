@@ -1,3 +1,4 @@
+import {ensureIpdRecordFields} from './ipd-record-fields.mjs?v=5050';
 import {medicationTable} from './medication-review.mjs';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function clinicalValues(value){
@@ -15,6 +16,7 @@ function clinicalValues(value){
 // or turn a referred visit into a writable receiving-hospital encounter.
 export function recordDocument(template,visit,kind){
  const doc=new DOMParser().parseFromString(template,'text/html'),data=visit.patient.data||{};
+ ensureIpdRecordFields(doc);
  doc.querySelectorAll('script,iframe,object,embed').forEach(n=>n.remove());
  doc.querySelectorAll('#sub_nursing .vital-tbl').forEach(table=>{
   [...(table.tBodies[0]?.rows||[])].forEach((row,index)=>{

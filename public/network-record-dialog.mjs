@@ -1,5 +1,5 @@
 import {api,esc,safeError} from './network-ui.mjs';
-import {recordDocument} from './referral-record-viewer.mjs?v=5010';
+import {recordDocument} from './referral-record-viewer.mjs?v=5050';
 import {referralPageHtml} from './referral-form.mjs?v=4970';
 let templatePromise;
 export async function openNetworkRecord({patient,peerId,trigger,facility='',onClose}={}){

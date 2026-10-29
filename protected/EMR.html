@@ -7850,26 +7850,26 @@
                     <div
                         style="margin-left: 20px; line-height: 2; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                         <div><span data-key="ipd_bp">សម្ពាធឈាម:</span> <input type="text" id="ipd_bp_sys"
-                                class="fill-blank" style="width:40px; color:#0284c7; font-weight:bold;" readonly>/<input
+                                class="fill-blank" style="width:40px; color:#0284c7; font-weight:bold;">/<input
                                 type="text" id="ipd_bp_dia" class="fill-blank"
-                                style="width:40px; color:#0284c7; font-weight:bold;" readonly> mmHg</div>
+                                style="width:40px; color:#0284c7; font-weight:bold;"> mmHg</div>
                         <div><span data-key="ipd_p">ជីពចរ:</span> <input type="text" id="ipd_pulse" class="fill-blank"
-                                style="width:50px; color:#0284c7; font-weight:bold;" readonly> /mn</div>
+                                style="width:50px; color:#0284c7; font-weight:bold;"> /mn</div>
                         <div><span data-key="ipd_rr">ចង្វាក់ដង្ហើម:</span> <input type="text" id="ipd_resp"
-                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;" readonly> /mn
+                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;"> /mn
                         </div>
                         <div><span data-key="ipd_t">សីតុណ្ហភាព:</span> <input type="text" id="ipd_temp"
-                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;" readonly> °C
+                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;"> °C
                         </div>
                         <div style="grid-column: span 2;"><span data-key="ipd_spo2">អុកស៊ីសែនក្នុងឈាម:</span> <input
                                 type="text" id="ipd_spo2" class="fill-blank"
-                                style="width:50px; color:#0284c7; font-weight:bold;" readonly> %</div>
+                                style="width:50px; color:#0284c7; font-weight:bold;"> %</div>
                         <div><span data-key="ipd_height">កម្ពស់:</span> <input type="text" id="ipd_height"
-                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;" readonly> cm
+                                class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;"> cm
                         </div>
                         <div style="grid-column: span 2;"><span data-key="ipd_weight">ទម្ងន់:</span> <input type="text"
                                 id="ipd_weight" class="fill-blank" style="width:50px; color:#0284c7; font-weight:bold;"
-                                readonly> kg</div>
+                               > kg</div>
                     </div>
                 </div>
 
@@ -8072,7 +8072,7 @@
                     <div class="emr-soap-body" id="ipd_soap_a_body">
                 <!-- Diagnoses -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="ipd_prob_diag">រោគវិនិច្ឆ័យបឋម:</div>
+                    <div class="opd-section-title" data-ipd-retired data-key="ipd_prob_diag">រោគវិនិច្ឆ័យបឋម:</div>
                     <textarea data-emr-key-index="140" data-emr-legacy-index="307" class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5;"></textarea>
                 </div>
                 <div class="opd-section">
@@ -8084,7 +8084,7 @@
                     <input type="hidden" id="emr_pmrs_ipd_icd10" data-emr-no-auto-index>
                     <input type="hidden" id="emr_ipd_diagnoses" data-emr-no-auto-index value="[]">
                     <div class="emr-diagnosis-list" data-diagnosis-editor="ipd"></div>
-                    <textarea data-emr-key-index="144" data-emr-legacy-index="311" id="emr_pmrs_ipd_diagnosis" data-emr-migrate-auto-key class="fill-blank" style="width: 100%; min-height: 40px; line-height:1.5; margin-top: 6px;" placeholder="កំណត់សម្គាល់បន្ថែម ឬរោគវិនិច្ឆ័យពិស្ដារ..."></textarea>
+                    <textarea data-emr-key-index="144" data-emr-legacy-index="311" id="emr_pmrs_ipd_diagnosis" data-emr-migrate-auto-key class="fill-blank ipd-diagnosis-detail" style="width: 100%; min-height: 40px; line-height:1.5; margin-top: 6px;" placeholder="កំណត់សម្គាល់បន្ថែម ឬរោគវិនិច្ឆ័យពិស្ដារ..."></textarea>
                 </div>
 
                 <div class="opd-section">
@@ -8159,7 +8159,7 @@
 
                 <!-- NEW v40.7: Plan notes -->
                 <div class="opd-section">
-                    <div class="opd-section-title" data-key="ipd_plan_notes">កំណត់ចំណាំផែនការព្យាបាល</div>
+                    <div class="opd-section-title" data-ipd-retired data-key="ipd_plan_notes">កំណត់ចំណាំផែនការព្យាបាល</div>
                     <textarea id="ipd_plan_notes" data-emr-no-auto-index class="fill-blank ipd-plan-notes"></textarea>
                 </div>
                     </div>
@@ -20848,21 +20848,21 @@ aHRtbD4K
             if (opdHeight) opdHeight.value = height;
 
             var ipdTemp = document.getElementById('ipd_temp');
-            if (ipdTemp) ipdTemp.value = temp;
+            if (ipdTemp && !ipdTemp.dataset.ipdVitalOwned) ipdTemp.value = temp;
             var ipdBpSys = document.getElementById('ipd_bp_sys');
-            if (ipdBpSys) ipdBpSys.value = bp_sys;
+            if (ipdBpSys && !ipdBpSys.dataset.ipdVitalOwned) ipdBpSys.value = bp_sys;
             var ipdBpDia = document.getElementById('ipd_bp_dia');
-            if (ipdBpDia) ipdBpDia.value = bp_dia;
+            if (ipdBpDia && !ipdBpDia.dataset.ipdVitalOwned) ipdBpDia.value = bp_dia;
             var ipdPulse = document.getElementById('ipd_pulse');
-            if (ipdPulse) ipdPulse.value = pulse;
+            if (ipdPulse && !ipdPulse.dataset.ipdVitalOwned) ipdPulse.value = pulse;
             var ipdResp = document.getElementById('ipd_resp');
-            if (ipdResp) ipdResp.value = resp;
+            if (ipdResp && !ipdResp.dataset.ipdVitalOwned) ipdResp.value = resp;
             var ipdWeight = document.getElementById('ipd_weight');
-            if (ipdWeight) ipdWeight.value = weight;
+            if (ipdWeight && !ipdWeight.dataset.ipdVitalOwned) ipdWeight.value = weight;
             var ipdHeight = document.getElementById('ipd_height');
-            if (ipdHeight) ipdHeight.value = height;
+            if (ipdHeight && !ipdHeight.dataset.ipdVitalOwned) ipdHeight.value = height;
             var ipdSpo2 = document.getElementById('ipd_spo2');
-            if (ipdSpo2) ipdSpo2.value = spo2;
+            if (ipdSpo2 && !ipdSpo2.dataset.ipdVitalOwned) ipdSpo2.value = spo2;
 
             var weightNum = parseFloat(weight);
             var heightNum = parseFloat(height);
