@@ -891,3 +891,44 @@ The user's latest New Case/Old Case rule is reflected in remote search only;
 viewing/accepting a referral still does not automatically admit or import a
 patient. The existing local registration/admission flow must be completed for
 the local encounter and remains subject to the normal clinical access checks.
+
+## Owner manual disconnection and API copy icon - v49.9.0
+
+Owner explicitly requested both hospitals be disconnected so they can perform
+the copy/paste/request/approval themselves. Both exact peer entries now have
+incoming/outgoing off, revisions incremented and pending approvals stale.
+Keys and patient records are preserved. Do not run pair-local-emrs.mjs or
+re-enable the pair unless the owner explicitly asks. The API/peer service remains
+enabled so a new owner-initiated signed request can be received; sharing is off.
+
+Owner then requested a copy icon and asked whether messaging transfers the full
+key. The ADMIN local API display now has the existing copy SVG beside its masked
+hint. Copy still fetches the complete 106-character public connection identity
+from the existing protected endpoint. It never copies the private signing seed.
+See API_COPY_V499_VALIDATION.md for the manual workflow and backup paths. The
+existing two identities remain configured; unknown hospitals still require
+mutual ADMIN identity configuration, not unauthenticated self-enrolment.
+
+Baseline master 8d4df4e4cfb68bdd4ab314f1d4f27ab615cfecb6 (49.8.0), clean code
+backup C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v49.8.0-8d4df4e4-4942e03c.
+Receiver baseline 49.7.0 archive:
+D:\EMR\Borkeo_EMR_Code_Backups\clone-before-api-copy-20261029.
+Primary 49.9.0 PID 31148 and receiver 49.8.0 PID 12008 are installed using their
+original hidden startup commands and existing environment/data configuration.
+Both remain disconnected with zero pending approvals after restart.
+
+Disposable validation: borkeo-restored-code-R0fC5w under local Temp. All 1,079
+tests and Khmer checks pass. Browser verifies the icon, full 106-character
+clipboard value, excluded private seed, desktop/mobile layout and the existing
+search/read-only history/message workflow. A synthetic clipboard avoids writing
+to the user's desktop clipboard. Screenshots were reviewed.
+
+Final activation-disconnected-preservation.json verifies all 96 pre-existing
+non-audit/non-nonce tables match the post-disconnection backup, including keys,
+grants and requests. Only existing Superuser startup salt, metadata timestamps
+and session last-seen values are normalized. Patient counts remain 22 and 0;
+integrity OK. No synthetic patient, key rotation or automatic pairing was used.
+Served login versions and copy CSS were checked on both listeners.
+
+Delivery: Borkeo-EMR-v49.9.0-api-copy-update.txt. Unrelated .vscode work,
+databases, backups, uploads, .env, keys and .gitignore are not staged.
