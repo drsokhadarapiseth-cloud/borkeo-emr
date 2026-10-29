@@ -1,0 +1,40 @@
+Original KhmerOS font binaries, unmodified. Copyright 2007 Danh Hong and Open Forum of Cambodia.
+Source: https://github.com/KhmerSoftwareInitiative/khmer-unicode-fonts/tree/740d47dd65360e2e614a57a8ca10e2ec31cf6f61/fonts/v5.0
+The embedded font notices license these fonts under LGPL 2.1 or later. LGPL 2.1 and the repository licence are included alongside them.
+CSS family aliases do not modify the original font files.
+
+KhmerOS_siemreap.ttf
+Family: Khmer OS Siemreap
+SHA256: 07f9ee9f596b7e297221cb134b20ec4e9f1e961a1a0f573ce418f0039cf5fdc6
+KhmerOS - font for the Khmer language of Cambodia
+Copyright 2007 Danh Hong
+
+This font is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.? See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this font; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA or visit http://www.gnu.org/licenses/lgpl.html
+
+KhmerOS_muol.ttf
+Family: Khmer OS Muol
+SHA256: 546ee4ae0bfbcc57ad692ffad27cd4e2202d87e9d515a7a31ec5cf83923cc37b
+KhmerOS - font for the Khmer language of Cambodia
+Copyright 2007 Danh Hong
+
+This font is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.? See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this font; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA or visit http://www.gnu.org/licenses/lgpl.html
+
+KhmerOS_muollight.ttf
+Family: Khmer OS Muol Light
+SHA256: 27eb88f844f7829c3a8b4b8b03ac3087e8e31833c747a22da084bde859864f50
+KhmerOS - font for the Khmer language of Cambodia
+Copyright 2007 Danh Hong
+
+This font is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.? See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this font; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA or visit http://www.gnu.org/licenses/lgpl.html

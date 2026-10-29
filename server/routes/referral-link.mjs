@@ -1,4 +1,5 @@
 import {networkLocal,networkCapabilities,referralNetworkLink} from '../emr-network.mjs';
+import {reviewTemplate} from '../review-template.mjs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -83,7 +84,7 @@ export function mountReferralLinkRoutes(router){
   ctx.audit(ctx.database,ctx.request,'REFERRAL_HISTORY_VIEWED',{userId:ctx.session.user_id,details:{transferId:id}});
   return send(ctx,{visits,unavailable});
  },{requireSession:true});
- router.get('/api/referral-record-template',ctx=>{session(ctx);receiver(ctx);return send(ctx,{html:fs.readFileSync(path.join(ctx.config.protectedDirectory,'EMR.html'),'utf8')})},{requireSession:true});
+ router.get('/api/referral-record-template',ctx=>{session(ctx);receiver(ctx);return send(ctx,{html:reviewTemplate(ctx.config)})},{requireSession:true});
  router.post('/api/referral-accept',async ctx=>{
   session(ctx);receiver(ctx);const body=await ctx.readJson(ctx.request,2000);
   const row=ctx.database.sqlite.prepare('SELECT * FROM referral_inbox WHERE id=?').get(String(body.id||''));if(!row)fail(404,'រកមិនឃើញ');

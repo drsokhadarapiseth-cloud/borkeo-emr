@@ -993,3 +993,41 @@ success popup, professional table borders, and one NPCA/other-hospital page) was
 discussed but is not represented as implemented by this focused search fix.
 No live NPCA connectivity/certification or new unauthenticated hospital enrolment
 endpoint is claimed.
+
+## Topbar remote search and styled read-only review - v50.1.0
+
+Approved update moves connected-hospital patient lookup into the global top bar
+and removes the separate search panels. Results show source facility, View and
+role-restricted local registration. Existing user-bound single-use registration
+drafts still use normal local admission and this hospital's New/Old Case rules.
+No source medical notes/orders are imported or editable remotely.
+
+Protected /connected-record reconstructs dated source OPD/IPD/nursing records
+with original template classes and application-owned shared CSS/source theme.
+Scripts and event handlers are removed; controls remain disabled in a sandboxed
+iframe. Other page CSPs remain unchanged. Original KhmerOS Siemreap, Muol and
+Muol Light fonts are bundled locally with notices/licenses and hashes.
+
+Clean baseline 50.0.0 commit 1603850a9fdbf9a404a79fe2661ddd7f910c0cdd;
+code backup C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v50.0.0-1603850a-55f33805.
+Receiver 49.9.0 backup:
+D:\EMR\Borkeo_EMR_Code_Backups\clone-before-topbar-fonts-20261029.
+See TOPBAR_RECORD_FONTS_V501_VALIDATION.md for online SQLite backups and evidence.
+
+All 1,080 tests and Khmer check pass in disposable borkeo-restored-code-Wm3FA4.
+Edge verifies New/Old registration, normal save/card preview, source preservation,
+dated read-only review, no enabled controls/scripts, font loading and messaging.
+Firefox loads all three font faces. Desktop/mobile screenshots were reviewed;
+mobile dropdown clipping was corrected. Safari is not claimed tested.
+
+Installed primary 50.1.0 PID 25460, receiver 50.0.0 PID 19708 with their original
+hidden launch commands. All 97 pre-existing non-audit/non-nonce tables compare
+equivalent: patient rows, workflow snapshots, API keys and grants remain exact,
+with existing metadata/Superuser startup rehash/session timestamp normalization
+and append-only access-log events. Patients remain 22 and 0; integrity OK.
+No automatic pairing, key reset, synthetic real registration or data import.
+
+Delivery: Borkeo-EMR-v50.1.0-topbar-record-fonts-update.txt. Font payloads use
+base64 with decoded-byte SHA-256 values; text is UTF-8/LF. Preserve .vscode,
+.gitignore, live databases, secrets, backups and uploads. Broader NPCA/API-page
+proposals remain separate work; this update does not claim those completed.

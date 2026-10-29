@@ -42,20 +42,23 @@ export function recordDocument(template,visit,kind){
  }
  const root=doc.getElementById(kind==='nursing'?'sub_nursing':kind==='opd'?'sub_opd':'sub_ipd');
  if(!root)return '';
- for(const prefix of ['opd','ipd']){const name=doc.getElementById(prefix+'_banner_patient_name');if(name)name.textContent=visit.patient.fullName||'';const meta=doc.getElementById(prefix+'_banner_patient_meta');if(meta)meta.textContent=[visit.patient.healthId,visit.patient.sex,visit.patient.age].filter(Boolean).join(' · ')}
+ for(const prefix of ['opd','ipd']){const name=doc.getElementById(prefix+'_banner_patient_name');if(name)name.textContent=visit.patient.fullName||'';for(const [suffix,value] of Object.entries({adm_no:visit.patient.caseNumber,health_id:visit.patient.healthId,ward:visit.patient.departmentNameKh||visit.patient.departmentCode})){const n=doc.getElementById(prefix+'_banner_'+suffix);if(n)n.textContent=value||''}const meta=doc.getElementById(prefix+'_banner_patient_meta');if(meta)meta.textContent=[visit.patient.healthId,visit.patient.sex,visit.patient.age].filter(Boolean).join(' · ')}
  if(kind==='nursing'){
   const maternity=visit.patient.departmentCode==='obstetric';
   root.querySelector('#'+(maternity?'nursing_general':'nursing_maternity'))?.remove();
  }
  root.querySelectorAll('input,select,textarea').forEach(n=>{
   if(['hidden','file','button','submit','reset','password'].includes(n.type)){n.remove();return}
-  const span=doc.createElement('span');span.className='referred-value';span.dataset.reviewKey=n.dataset.reviewKey||'';
-  span.textContent=n.matches('[type=checkbox],[type=radio]')?(n.checked?'☑':'☐'):n.tagName==='SELECT'?[...n.selectedOptions].map(o=>o.textContent).join(', '):n.value;n.replaceWith(span);
+  if(n.tagName==='TEXTAREA'){const text=doc.createElement('div');text.className=n.className+' referred-value';text.id=n.id;text.dataset.reviewKey=n.dataset.reviewKey||'';text.style.cssText=n.style.cssText;text.style.height='auto';text.style.whiteSpace='pre-wrap';text.textContent=n.value;n.replaceWith(text);return}
+  n.disabled=true;n.setAttribute('disabled','');n.removeAttribute('name');
+  if(n.matches('[type=checkbox],[type=radio]'))n.toggleAttribute('checked',n.checked);
+  else if(n.tagName==='SELECT'){for(const option of n.options)option.toggleAttribute('selected',option.selected)}
+  else n.setAttribute('value',n.value);
  });
  root.querySelectorAll('button,script,iframe,object,embed,form .action-bar,.action-bar,.emr-save-bar,.emr-save-button,.opd-module-toolbar,.nursing-section-tabs').forEach(n=>n.remove());
  for(const n of [root,...root.querySelectorAll('*')]){
-  for(const a of [...n.attributes])if(a.name.startsWith('on')||['contenteditable','srcdoc','href','target','formaction'].includes(a.name))n.removeAttribute(a.name);
-  if(n.tagName==='IMG'&&!/^data:image\/(?:png|jpeg);base64,/.test(n.getAttribute('src')||''))n.removeAttribute('src');
+  for(const a of [...n.attributes])if(a.name.startsWith('on')||['contenteditable','srcdoc','href','target','formaction','action','srcset'].includes(a.name))n.removeAttribute(a.name);
+  if(n.tagName==='IMG'&&!/^data:image\/(?:png|jpeg);base64,/.test(n.getAttribute('src')||'')&&n.getAttribute('src')!=='/public/logo-hospital.jpg')n.removeAttribute('src');
   if(n.hasAttribute('hidden'))n.removeAttribute('hidden');
  }
  root.style.display='block';root.classList.add('active');
@@ -65,5 +68,7 @@ export function recordDocument(template,visit,kind){
  }
  if(kind==='nursing')for(const [key,value] of Object.entries(data))if(/^system:(?:nurs|midwife)/.test(key)&&value&&value!=='[]')supplements.push('<section><h2>តារាងថែទាំ</h2>'+clinicalValues(value)+'</section>');
  const styles=[...doc.querySelectorAll('head style')].map(n=>n.outerHTML).join('');
- return `<!doctype html><html lang="km"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; form-action 'none'; base-uri 'none'"><meta name="viewport" content="width=device-width,initial-scale=1">${styles}<style>.medication-review-scroll{overflow:auto;margin:16px 0}.medication-review{width:100%;border-collapse:collapse;font:14px/1.6 sans-serif}.medication-review th,.medication-review td{padding:10px;border:1px solid #d4e2e9;text-align:left;vertical-align:top;min-width:70px;white-space:normal}.medication-review th{background:#edf6fa}.medication-review td:nth-child(2){min-width:220px;font-weight:600}@media print{.medication-review-scroll{overflow:visible}.medication-review{font-size:10px}.medication-review td{min-width:0!important;overflow-wrap:anywhere}.medication-review tr{break-inside:avoid}}body{margin:0;padding:16px;background:white;color:#102f42;font:14px/1.7 sans-serif}.page,.sub-tab,.nursing-form-pane{display:block!important}.referred-value{display:inline-block;min-width:20px;white-space:pre-wrap;color:#102f42;padding:3px 6px}pre{white-space:pre-wrap;overflow-wrap:anywhere}.action-bar,.no-print button{display:none!important}img:not([src]){display:none}button,a,input,textarea,select{pointer-events:none}</style></head><body><h1>${esc(visit.patient.fullName)}</h1><p>${esc(visit.patient.entryDate)} — ${esc(visit.patient.dischargeDate||'—')}</p>${root.outerHTML}${supplements.join('')}</body></html>`;
+ const theme=visit.presentation?.theme||{},preset=/^(?:0[1-9]|10)$/.test(theme.preset)?theme.preset:'06';
+ const themeVars=['primary','background','surface','text'].filter(key=>/^#[0-9a-f]{6}$/i.test(theme[key]||'')).map(key=>'--emr-'+key+':'+theme[key]).join(';');
+ return `<!doctype html><html lang="km" data-emr-preset="${preset}" data-emr-style="preset" style="${themeVars}"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; font-src 'self'; img-src 'self' data:; form-action 'none'; base-uri 'none'"><meta name="viewport" content="width=device-width,initial-scale=1">${styles}<style>.medication-review-scroll{overflow:auto;margin:16px 0}.medication-review{width:100%;border-collapse:collapse;font:14px/1.6 sans-serif}.medication-review th,.medication-review td{padding:10px;border:1px solid #d4e2e9;text-align:left;vertical-align:top;min-width:70px;white-space:normal}.medication-review th{background:#edf6fa}.medication-review td:nth-child(2){min-width:220px;font-weight:600}@media print{.medication-review-scroll{overflow:visible}.medication-review{font-size:10px}.medication-review td{min-width:0!important;overflow-wrap:anywhere}.medication-review tr{break-inside:avoid}}body{margin:0;padding:16px;background:white;color:var(--emr-text,#102f42);font:14px/1.7 BorkeoInterface,sans-serif}input:disabled,select:disabled{opacity:1;-webkit-text-fill-color:currentColor}.page,.sub-tab,.nursing-form-pane{display:block!important}.referred-value{display:inline-block;min-width:20px;white-space:pre-wrap;color:#102f42;padding:3px 6px}pre{white-space:pre-wrap;overflow-wrap:anywhere}.action-bar,.no-print button{display:none!important}img:not([src]){display:none}button,a,input,textarea,select{pointer-events:none}</style></head><body class="emr-readonly-record"><p>${esc(visit.patient.entryDate)} — ${esc(visit.patient.dischargeDate||'—')}</p><main id="page3" class="page active">${root.outerHTML}${supplements.join('')}</main></body></html>`;
 }

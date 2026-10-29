@@ -272,10 +272,12 @@
 
   // Live Patient Search Cache
   let cachedPatients = null;
+  let patientCacheAt = 0, patientCacheContext = '';
   let isFetchingPatients = false;
 
   async function fetchPatientsList() {
-    if (cachedPatients) return cachedPatients;
+    const contextKey=JSON.stringify([window.emrSession?.user?.activeRole,window.emrSession?.user?.activeWard?.code]);
+    if (cachedPatients && patientCacheContext===contextKey && Date.now()-patientCacheAt<15000) return cachedPatients;
     if (isFetchingPatients) return [];
     isFetchingPatients = true;
     try {
@@ -283,6 +285,7 @@
       if (response.ok) {
         const data = await response.json();
         cachedPatients = data.patients || [];
+        patientCacheAt=Date.now();patientCacheContext=contextKey;
         return cachedPatients;
       }
     } catch {
@@ -1063,124 +1066,12 @@
     window.addEventListener('offline', updateOnlineStatus);
     updateOnlineStatus();
 
-    // Topbar Inline Search & Instant Dropdown Logic
+    // One shared search surface for local and permitted connected hospitals.
     const searchInput = document.getElementById('emr-global-search-input');
-    const searchDropdown = document.getElementById('emr-topbar-search-dropdown');
-    const searchList = document.getElementById('emr-search-dropdown-list');
-    const searchCount = document.getElementById('emr-search-dropdown-count');
-    let inlineSelectedIndex = 0;
-    let inlineFiltered = [];
-    let inlineDebounceTimer = null;
-
-    function renderInlineResults(patients) {
-      inlineFiltered = patients;
-      inlineSelectedIndex = 0;
-      if (!patients.length) {
-        searchList.innerHTML = '<div class="emr-search-dropdown-empty">មិនមានអ្នកជំងឺដែលត្រូវគ្នានឹងការស្វែងរកទេ។</div>';
-        if (searchCount) searchCount.textContent = '០ លទ្ធផល';
-        searchDropdown.hidden = false;
-        return;
-      }
-      if (searchCount) searchCount.textContent = `${patients.length} លទ្ធផល`;
-      searchList.innerHTML = patients.slice(0, 15).map((p, idx) => {
-        const idText = p.healthId || p.caseNumber || p.patientKey || '';
-        const dept = WARD_LABELS[p.departmentCode] || p.departmentNameKh || p.departmentCode || '';
-        const statusClass = p.serviceMode === 'ipd' ? 'status-ipd' : 'status-opd';
-        const statusText = p.serviceMode === 'ipd' ? 'សម្រាកពេទ្យ' : 'ពិគ្រោះក្រៅ';
-        return `
-          <a href="/emr?patientKey=${encodeURIComponent(p.patientKey)}" class="emr-search-dropdown-item ${idx === 0 ? 'is-selected' : ''}" data-idx="${idx}">
-            <div class="patient-main">
-              <span class="patient-name">${escapeHtml(p.fullName || p.name || 'គ្មានឈ្មោះ')}</span>
-              <span class="patient-meta">
-                <span>លេខ: <strong>${escapeHtml(idText)}</strong></span>
-                ${p.age ? `<span>អាយុ: ${escapeHtml(p.age)}</span>` : ''}
-                ${p.sex ? `<span>ភេទ: ${escapeHtml(p.sex)}</span>` : ''}
-                ${dept ? `<span>ផ្នែក: ${escapeHtml(dept)}</span>` : ''}
-              </span>
-            </div>
-            <div>
-              <span class="emr-badge ${statusClass}">${escapeHtml(statusText)}</span>
-            </div>
-          </a>
-        `;
-      }).join('');
-      searchDropdown.hidden = false;
-    }
-
-    const closeInlineSearch = () => {
-      if (searchDropdown) searchDropdown.hidden = true;
-    };
-
-    if (searchInput) {
-      searchInput.addEventListener('focus', async () => {
-        await fetchPatientsList();
-        const q = (searchInput.value || '').trim().toLowerCase();
-        if (q) {
-          const all = await fetchPatientsList();
-          const matches = all.filter(p => {
-            const name = String(p.fullName || p.name || '').toLowerCase();
-            const healthId = String(p.healthId || '').toLowerCase();
-            const caseNo = String(p.caseNumber || '').toLowerCase();
-            const phone = String(p.phone || '').toLowerCase();
-            return name.includes(q) || healthId.includes(q) || caseNo.includes(q) || phone.includes(q);
-          });
-          renderInlineResults(matches);
-        }
-      });
-
-      searchInput.addEventListener('input', () => {
-        clearTimeout(inlineDebounceTimer);
-        inlineDebounceTimer = setTimeout(async () => {
-          const q = (searchInput.value || '').trim().toLowerCase();
-          if (!q) {
-            closeInlineSearch();
-            return;
-          }
-          const all = await fetchPatientsList();
-          const matches = all.filter(p => {
-            const name = String(p.fullName || p.name || '').toLowerCase();
-            const healthId = String(p.healthId || '').toLowerCase();
-            const caseNo = String(p.caseNumber || '').toLowerCase();
-            const phone = String(p.phone || '').toLowerCase();
-            return name.includes(q) || healthId.includes(q) || caseNo.includes(q) || phone.includes(q);
-          });
-          renderInlineResults(matches);
-        }, 120);
-      });
-
-      searchInput.addEventListener('keydown', (e) => {
-        if (searchDropdown.hidden) return;
-        const items = searchList.querySelectorAll('.emr-search-dropdown-item');
-        if (!items.length) return;
-        if (e.key === 'ArrowDown') {
-          e.preventDefault();
-          items[inlineSelectedIndex]?.classList.remove('is-selected');
-          inlineSelectedIndex = (inlineSelectedIndex + 1) % items.length;
-          items[inlineSelectedIndex]?.classList.add('is-selected');
-          items[inlineSelectedIndex]?.scrollIntoView({ block: 'nearest' });
-        } else if (e.key === 'ArrowUp') {
-          e.preventDefault();
-          items[inlineSelectedIndex]?.classList.remove('is-selected');
-          inlineSelectedIndex = (inlineSelectedIndex - 1 + items.length) % items.length;
-          items[inlineSelectedIndex]?.classList.add('is-selected');
-          items[inlineSelectedIndex]?.scrollIntoView({ block: 'nearest' });
-        } else if (e.key === 'Enter') {
-          e.preventDefault();
-          const selected = searchList.querySelector('.emr-search-dropdown-item.is-selected');
-          if (selected) window.location.href = selected.href;
-        } else if (e.key === 'Escape') {
-          e.preventDefault();
-          closeInlineSearch();
-          searchInput.blur();
-        }
-      });
-    }
-
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#emr-topbar-search-wrap')) {
-        closeInlineSearch();
-      }
-    });
+    try {
+      const { mountTopbarPatientSearch } = await import('/public/topbar-patient-search.mjs?v=5010');
+      mountTopbarPatientSearch({ fetchLocalPatients: fetchPatientsList });
+    } catch { /* Local command palette remains available if the module fails. */ }
 
     // Command Palette fallback
     const openPalette = async () => {

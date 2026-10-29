@@ -17,7 +17,7 @@ export function mountEmrNetworkRoutes(router){
  const send=(ctx,body)=>ctx.sendJson(ctx.response,200,body,{secure:ctx.config.cookieSecure});
  const audit=(ctx,action,details={})=>ctx.audit(ctx.database,ctx.request,action,{userId:ctx.session?.user_id,details});
  const opts={requireSession:true};
- for(const [url,file,roles] of [['/admin/emr-connections','emr-connections.html',['ADMIN']],['/connected-emrs','connected-emrs.html',REVIEW_ROLES]])router.get(url,ctx=>{role(ctx,roles);return ctx.sendFile(ctx.response,path.join(ctx.config.protectedDirectory,file),'text/html; charset=utf-8',{secure:ctx.config.cookieSecure,request:ctx.request,requestPath:url,review:url==='/connected-emrs'})},opts);
+ for(const [url,file,roles] of [['/admin/emr-connections','emr-connections.html',['ADMIN']],['/connected-emrs','connected-emrs.html',REVIEW_ROLES],['/connected-record','connected-record.html',REVIEW_ROLES]])router.get(url,ctx=>{role(ctx,roles);return ctx.sendFile(ctx.response,path.join(ctx.config.protectedDirectory,file),'text/html; charset=utf-8',{secure:ctx.config.cookieSecure,request:ctx.request,requestPath:url,review:url!=='/admin/emr-connections'})},opts);
  router.get('/api/emr-network/settings',ctx=>{role(ctx,['ADMIN']);const local=networkLocal(ctx.database);return send(ctx,{local:{id:local.id,name:local.name,enabled:!!local.enabled,managed:!!local.managed,version:local.version,keyHint:'••••'+networkPublicKey(local.signing_seed).slice(-4)},peers:networkPeers(ctx.database).map(publicPeer)})},opts);
  router.post('/api/emr-network/local',async ctx=>{
   role(ctx,['ADMIN']);const body=await ctx.readJson(ctx.request,3000),local=networkLocal(ctx.database),name=text(body.name,160);

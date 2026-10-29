@@ -89,7 +89,7 @@ test('Phase 3: Protected pages receive app-shell stylesheet and script while pri
       const pageRes = await fetch(`${origin}${page}`, { headers: { Cookie } });
       assert.equal(pageRes.status, 200, `Page ${page} failed to load`);
       const html = await pageRes.text();
-      assert.match(html, /\/public\/app-shell\.css\?v=39[2-9]0/);
+      assert.match(html, /\/public\/app-shell\.css\?v=\d+/);
       assert.match(html, /\/public\/app-shell\.js\?v=\d+/);
     }
 

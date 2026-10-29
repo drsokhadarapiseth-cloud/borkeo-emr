@@ -3014,6 +3014,30 @@
     {
       "en": "Verify patient identifier before registration",
       "kh": "សូមផ្ទៀងផ្ទាត់លេខសម្គាល់អ្នកជំងឺមុនចុះឈ្មោះ"
+    },
+    {
+      "en": "Read only with facility separator",
+      "kh": "· មើលបានតែប៉ុណ្ណោះ"
+    },
+    {
+      "en": "Search within",
+      "kh": "ស្វែងរកក្នុង"
+    },
+    {
+      "en": "This hospital and approved facilities",
+      "kh": "មន្ទីរពេទ្យនេះ និងមូលដ្ឋានដែលបានអនុញ្ញាត"
+    },
+    {
+      "en": "This hospital",
+      "kh": "មន្ទីរពេទ្យនេះ"
+    },
+    {
+      "en": "Selected facility unavailable",
+      "kh": "មិនអាចភ្ជាប់មូលដ្ឋានដែលបានជ្រើសរើស"
+    },
+    {
+      "en": "Some facilities unavailable",
+      "kh": "មូលដ្ឋានខ្លះមិនអាចភ្ជាប់បាន"
     }
   ]
 }

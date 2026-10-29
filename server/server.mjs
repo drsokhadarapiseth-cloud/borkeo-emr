@@ -10,7 +10,7 @@ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFaci
 import { createDiagnosisSearch } from './icd10.mjs';
 import {ensureReferralFormSchema} from './referral-forms.mjs';
 import {mountReferralFormRoutes} from './routes/referral-forms.mjs';
-// Borkeo EMR v50.0 - Electronic Medical Record System
+// Borkeo EMR v50.1 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -183,6 +183,13 @@ const publicFiles = new Map([
   ['/public/network-table.mjs', ['network-table.mjs', 'text/javascript; charset=utf-8']],
   ['/public/network-registration.mjs', ['network-registration.mjs', 'text/javascript; charset=utf-8']],
   ['/public/network-patient-search.mjs', ['network-patient-search.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/topbar-patient-search.mjs', ['topbar-patient-search.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/network-record-dialog.mjs', ['network-record-dialog.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/connected-record.mjs', ['connected-record.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/khmer-fonts.css', ['khmer-fonts.css', 'text/css; charset=utf-8']],
+  ['/public/fonts/KhmerOS_siemreap.ttf', ['fonts/KhmerOS_siemreap.ttf', 'font/ttf']],
+  ['/public/fonts/KhmerOS_muol.ttf', ['fonts/KhmerOS_muol.ttf', 'font/ttf']],
+  ['/public/fonts/KhmerOS_muollight.ttf', ['fonts/KhmerOS_muollight.ttf', 'font/ttf']],
   ['/public/emr-connections.mjs', ['emr-connections.mjs', 'text/javascript; charset=utf-8']],
   ['/public/connected-emrs.mjs', ['connected-emrs.mjs', 'text/javascript; charset=utf-8']],
   ['/public/emr-network.css', ['emr-network.css', 'text/css; charset=utf-8']],
@@ -549,7 +556,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   html = html.replace(/(<span\b[^>]*\bdata-app-version\b[^>]*>)[^<]*(<\/span>)/g, (_, open, close) => `${open}v${APP_VERSION}${close}`);
   html = html.replace(/Borkeo EMR v\d+\.\d+/g, `Borkeo EMR v${APP_VERSION}`);
   html = html.replace(/<head\b[^>]*>/i, head => head + '<style>.emr-language-switch, [data-emr-language], #langBtn, .lang-btn, body #emr-site-banner .portal-account-actions .emr-language-switch, #emr-session-control .portal-account-actions .emr-language-switch, .portal-account-actions .emr-language-switch { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; max-width: 0 !important; max-height: 0 !important; margin: 0 !important; padding: 0 !important; border: 0 !important; position: absolute !important; left: -9999px !important; clip: rect(0,0,0,0) !important; }</style><script src="/public/emr-language-lock.js?v=3760"></script><link rel="stylesheet" href="/public/emr-required-fields.css?v=3770"><script src="/public/emr-required-fields.js?v=3770"></script>');
-  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=3980"><link rel="stylesheet" href="/public/patient-banner.css?v=4100"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><link rel="stylesheet" href="/public/npca.css?v=4280"><script src="/public/npca-widget.js?v=4280" defer></script><script src="/public/npca-forms.js?v=4280" defer></script><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=4970" defer></script><script src="/public/app-shell.js?v=4970" defer></script><script src="/public/patient-banner.js?v=4170" defer></script><script type="module" src="/public/referral-form.mjs?v=4970"></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
+  html = html.replace('</head>', '<link rel="stylesheet" href="/public/design-system.css?v=3970"><link rel="stylesheet" href="/public/components.css?v=3970"><link rel="stylesheet" href="/public/app-shell.css?v=5010"><link rel="stylesheet" href="/public/patient-banner.css?v=4100"><link rel="stylesheet" href="/public/soap-note.css?v=3970"><link rel="stylesheet" href="/public/clinical-data.css?v=3970"><link rel="stylesheet" href="/public/worklists-feedback.css?v=3970"><link rel="stylesheet" href="/public/interface-theme.css?v=1970"><link rel="stylesheet" href="/public/npca.css?v=4280"><link rel="stylesheet" href="/public/khmer-fonts.css?v=5010"><script src="/public/npca-widget.js?v=4280" defer></script><script src="/public/npca-forms.js?v=4280" defer></script><script src="/public/components.js?v=3970" defer></script><script src="/public/nav-config.js?v=4970" defer></script><script src="/public/app-shell.js?v=5010" defer></script><script src="/public/patient-banner.js?v=4170" defer></script><script type="module" src="/public/referral-form.mjs?v=4970"></script><script src="/public/soap-note.js?v=3970" defer></script><script src="/public/clinical-data.js?v=3970" defer></script><script src="/public/worklists-feedback.js?v=3970" defer></script><script src="/public/interface-theme.js?v=1970" defer></script></head>');
   html = html.replace('</head>', '<link rel="stylesheet" href="/public/shared-controls.css?v=1970"><script src="/public/request-badges.js?v=1970" defer></script></head>');
   // v42.3: one medication unit table for every page (old Khmer unit labels shown as mg, mL, mcg, g, IU).
   html = html.replace('</head>', '<script src="/public/record-access.js?v=4570" defer></script></head>');

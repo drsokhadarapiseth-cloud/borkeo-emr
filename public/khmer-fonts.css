@@ -1,0 +1,18 @@
+/* Unmodified KhmerOS fonts: see /public/fonts/KhmerOS-NOTICE.txt in the source package. */
+@font-face{font-family:'Khmer OS Siemreap';src:url('/public/fonts/KhmerOS_siemreap.ttf') format('truetype');font-style:normal;font-weight:400 700;font-display:swap}
+@font-face{font-family:'Khmer OS Muol';src:url('/public/fonts/KhmerOS_muol.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:'Khmer OS Moul';src:url('/public/fonts/KhmerOS_muol.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:'Khmer OS Moul Light';src:url('/public/fonts/KhmerOS_muollight.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:'Moul';src:url('/public/fonts/KhmerOS_muol.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:BorkeoInterface;src:url('/public/fonts/KhmerOS_siemreap.ttf') format('truetype');font-style:normal;font-weight:400 700;font-display:swap}
+@font-face{font-family:BorkeoBannerTitle;src:url('/public/fonts/KhmerOS_muol.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+:root{--font-family-sans:'Khmer OS Siemreap',sans-serif;--font-family-title:'Khmer OS Muol',serif}
+body,input,textarea,select,button,table,.referred-value{font-family:'Khmer OS Siemreap',sans-serif!important}
+h1,h2,h3,.hospital-name-kh,.ref-motto,.emr-soap-title{font-family:'Khmer OS Muol',serif!important}
+.emr-global-search-scope{padding:8px 12px;border-bottom:1px solid #d7e4ef;background:#f4f8fc}
+.emr-global-search-scope label{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.emr-global-search-scope select{max-width:100%;padding:5px;border:1px solid #c1d3e2;border-radius:6px;font:inherit}
+.emr-global-search-scope [role=status]{display:block;font-size:12px;margin-top:5px;color:#596e7d}
+.emr-global-patient-main{min-width:0;flex:1}.emr-global-patient-main .patient-meta{overflow-wrap:anywhere}.emr-global-result-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.emr-global-result-actions button{font:inherit;border:1px solid #b9cfdf;border-radius:6px;background:#f4f9fc;color:#164563;padding:6px 9px;cursor:pointer}
+.emr-search-dropdown-list .emr-search-dropdown-item{gap:12px}.network-record-frame{width:100%;height:72vh;border:1px solid #bdd3df;background:white}
+@media(max-width:600px){.emr-search-dropdown-list .emr-search-dropdown-item{align-items:flex-start;flex-direction:column}.emr-global-result-actions{justify-content:flex-start}.emr-topbar-search-dropdown{position:fixed;top:60px;left:8px;right:8px;width:auto;min-width:0;max-width:none}.emr-global-search-scope select{min-width:0;width:100%}.emr-global-search-scope label{min-width:0;max-width:100%}}

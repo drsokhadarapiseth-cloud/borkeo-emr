@@ -4,6 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import {latestReferral} from './referral-forms.mjs';
 import {clinicalSummary} from './clinical-summary.mjs';
+import {getInterfaceTheme} from './interface-theme.mjs';
 import {networkSign,networkVerify,networkRequestText,networkResponseText} from './network-signatures.mjs';
 
 export const REFERRAL_MAX_BYTES=8*1024*1024;
@@ -16,7 +17,7 @@ export function referralVisits(ctx,row){
   for(const [key,value] of Object.entries(patient.data||{}))if((/^(?:scope:(?:registration|triage|medical|nursing|common):|id:|auto:)/.test(key)&&!/(?:photo|password|csrf)/i.test(key))||/^system:(?:nurs|midwife|initialIpdMedications|opdMedications|dailyMonitoringRecords|doctorDailyMedicineOrders|signature:|discharge|medicalRecordCompleted)/.test(key))data[key]=value;
   patient.data=data;delete patient.photo;
   const {problems,allergies,resuscitation}=clinicalSummary(ctx.database,visit);
-  return {patient,clinical:{problems,allergies,resuscitation},form:latestReferral(ctx.database,visit.patient_key)};
+  return {patient,presentation:{theme:getInterfaceTheme(ctx.database)},clinical:{problems,allergies,resuscitation},form:latestReferral(ctx.database,visit.patient_key)};
  });
 }
 
