@@ -44,6 +44,7 @@ test('only a successful new registration opens the card, before the transfer red
       patientLoading: false,
       window, URL, CustomEvent: class {}, loadedPatient: scenario === 'existing' ? patient : null,
       registrationVisitSourceKey: scenario === 'returning' ? 'old-visit' : '',
+      networkRegistrationToken: '',
       activeEditorScope: () => scenario === 'triage' ? 'triage' : 'registration',
       document: { getElementById: () => element, querySelector: () => null, body: { classList: element.classList, dataset: {} }, dispatchEvent() {} },
       ensureFirstExamDateTime() {}, patientContext: () => ({ key: patient.patientKey, summary: {} }), validatePatient: () => '', setStatus() {}, t: x => x,

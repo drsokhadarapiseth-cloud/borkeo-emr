@@ -8,13 +8,14 @@ const read = file => fs.readFileSync(file, 'utf8');
 
 test('Phase 3: Version consistency across package.json, server.mjs, and login.html', () => {
   const pkg = JSON.parse(read('package.json'));
-  assert.match(pkg.version, /^(?:39\.[2-9]|4[0-9]\.[0-9])\.0$/);
+  assert.match(pkg.version, /^\d+\.\d\.0$/);
+  const [major,minor]=pkg.version.split('.').map(Number);assert.ok(major>39||(major===39&&minor>=2));
 
   const serverSrc = read('server/server.mjs');
-  assert.match(serverSrc, /Borkeo EMR v(?:39\.[2-9]|4[0-9]\.[0-9])/);
+  assert.ok(serverSrc.includes('Borkeo EMR v'+pkg.version.replace(/\.0$/,'')));
 
   const loginHtml = read('public/login.html');
-  assert.match(loginHtml, /data-app-version[^>]*>v(?:39\.[2-9]|4[0-9]\.[0-9])<\/span>/);
+  assert.ok(loginHtml.includes('data-language-exclude>v'+pkg.version.replace(/\.0$/,'')+'</span>'));
 });
 
 test('Phase 3: App shell assets and icons are served statically with correct content types', async () => {

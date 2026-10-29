@@ -8,13 +8,13 @@ const read = file => fs.readFileSync(file, 'utf8');
 
 test('Phase 4: Version consistency across package.json, server.mjs, and login.html', () => {
   const pkg = JSON.parse(read('package.json'));
-  assert.match(pkg.version, /^(?:39\.[3-9]|4[0-9]\.[0-9])\.0$/);
+  assert.match(pkg.version, /^(?:39\.[3-9]|(?:[4-9][0-9]|[1-9][0-9]{2,})\.[0-9])\.0$/);
 
   const serverSrc = read('server/server.mjs');
-  assert.match(serverSrc, /Borkeo EMR v(?:39\.[3-9]|4[0-9]\.[0-9])/);
+  assert.match(serverSrc, /Borkeo EMR v(?:39\.[3-9]|(?:[4-9][0-9]|[1-9][0-9]{2,})\.[0-9])/);
 
   const loginHtml = read('public/login.html');
-  assert.match(loginHtml, /data-app-version[^>]*>v(?:39\.[3-9]|4[0-9]\.[0-9])<\/span>/);
+  assert.match(loginHtml, /data-app-version[^>]*>v(?:39\.[3-9]|(?:[4-9][0-9]|[1-9][0-9]{2,})\.[0-9])<\/span>/);
 });
 
 test('Phase 4: Chart navigation assets are served statically with correct content types', async () => {

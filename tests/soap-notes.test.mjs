@@ -20,8 +20,8 @@ test('Phase 5: SOAP note static assets exist and are registered in server.mjs', 
   const pkg = JSON.parse(read('package.json'));
 
   // Version consistency
-  assert.match(pkg.version, /^(?:39\.[4-9]|4[0-9]\.[0-9])\.0$/, 'package.json version must be 39.4.0 or above');
-  assert.match(serverCode, /Borkeo EMR v(?:39\.[4-9]|4[0-9]\.[0-9])/, 'server.mjs must declare v39.4 or above');
+  assert.match(pkg.version, /^(?:39\.[4-9]|(?:[4-9][0-9]|[1-9][0-9]{2,})\.[0-9])\.0$/, 'package.json version must be 39.4.0 or above');
+  assert.match(serverCode, /Borkeo EMR v(?:39\.[4-9]|(?:[4-9][0-9]|[1-9][0-9]{2,})\.[0-9])/, 'server.mjs must declare v39.4 or above');
   assert.match(serverCode, /'\/public\/soap-note\.css'/, 'server.mjs must register soap-note.css');
   assert.match(serverCode, /'\/public\/soap-note\.js'/, 'server.mjs must register soap-note.js');
   assert.match(serverCode, /soap-note\.css\?v=\d+/, 'server.mjs must inject soap-note.css');

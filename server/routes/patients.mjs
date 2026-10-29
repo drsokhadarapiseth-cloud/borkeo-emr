@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import {validateNetworkRegistration,consumeNetworkRegistration} from '../network-registration.mjs';
 import { selectionFor, beneficiaryPayment, saveBeneficiaryLink } from '../npca/beneficiaries.mjs';
 import { mapCode } from '../npca/codes.mjs';
 import { roleCanPage, patientWorkWard, sessionRole } from '../access.mjs';
@@ -309,6 +310,7 @@ export function mountPatientsRoutes(router) {
 
     const existingPatient = database.findPatient(patientKey);
     const activeRoleBeforeSave = sessionRole(session) === 'CHIEF_WARD' ? 'DOCTOR' : sessionRole(session);
+    const networkDraft=validateNetworkRegistration(ctx,body,patientKey,existingPatient,submittedSummary,submittedData);
     const visitSourceKey = body.newVisitFrom ? clinicalPatientKey(body.newVisitFrom) : '';
     if (visitSourceKey) {
       if (!['REGISTRATION', 'ADMIN', 'VICE_DIRECTOR', 'DIRECTOR'].includes(activeRoleBeforeSave)) {
@@ -573,8 +575,12 @@ export function mountPatientsRoutes(router) {
       catch (error) { return sendJson(response, 400, { error: error.message }, { secure: config.cookieSecure }); }
     }
     let patient, pharmacySubmission = null, wardMedicineNotification = null, opdReferral = null;
+    delete data['system:externalRegistration'];
+    if(existingData['system:externalRegistration'])data['system:externalRegistration']=existingData['system:externalRegistration'];
+    if(networkDraft)data['system:externalRegistration']={peerId:networkDraft.peer_id,sourcePatientKey:networkDraft.source_patient_key,registeredAt:savedAt};
     database.sqlite.exec('BEGIN IMMEDIATE');
     try {
+      consumeNetworkRegistration(database,networkDraft,patientKey);
       patient = database.upsertPatient({
         id: crypto.randomUUID(), patientKey, summary, data,
         userId: session.user_id, savedAt,

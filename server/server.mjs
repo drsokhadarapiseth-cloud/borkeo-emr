@@ -10,7 +10,7 @@ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFaci
 import { createDiagnosisSearch } from './icd10.mjs';
 import {ensureReferralFormSchema} from './referral-forms.mjs';
 import {mountReferralFormRoutes} from './routes/referral-forms.mjs';
-// Borkeo EMR v49.9 - Electronic Medical Record System
+// Borkeo EMR v50.0 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -181,6 +181,8 @@ const publicFiles = new Map([
   ['/public/referral-record-viewer.mjs', ['referral-record-viewer.mjs', 'text/javascript; charset=utf-8']],
   ['/public/network-ui.mjs', ['network-ui.mjs', 'text/javascript; charset=utf-8']],
   ['/public/network-table.mjs', ['network-table.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/network-registration.mjs', ['network-registration.mjs', 'text/javascript; charset=utf-8']],
+  ['/public/network-patient-search.mjs', ['network-patient-search.mjs', 'text/javascript; charset=utf-8']],
   ['/public/emr-connections.mjs', ['emr-connections.mjs', 'text/javascript; charset=utf-8']],
   ['/public/connected-emrs.mjs', ['connected-emrs.mjs', 'text/javascript; charset=utf-8']],
   ['/public/emr-network.css', ['emr-network.css', 'text/css; charset=utf-8']],

@@ -684,3 +684,12 @@ reviewed.medication496.9,Duration in days,Approved treatment display cleanup,pub
 "reviewed.connections498.11","Disconnected","Approved connection table and requests","public/network-table.mjs","មិនបានតភ្ជាប់"
 "reviewed.connections498.12","Connection request sent","Approved connection table and requests","public/network-table.mjs","បានផ្ញើសំណើតភ្ជាប់"
 reviewed.connections498.localcase,Case type at this hospital,Owner clarified local visit classification,public/connected-emrs.mjs,ប្រភេទករណីនៅមន្ទីរពេទ្យនេះ
+"reviewed.network-registration500.0","Register at this hospital","Owner approved cross hospital search and local registration","public/connected-emrs.mjs","ចុះឈ្មោះនៅមន្ទីរពេទ្យនេះ"
+"reviewed.network-registration500.1","Search through API","Owner approved cross hospital search and local registration","public/network-patient-search.mjs","ស្វែងរកតាម API"
+"reviewed.network-registration500.2","Other facility records are read only","Owner approved cross hospital search and local registration","public/network-patient-search.mjs","កំណត់ត្រាមូលដ្ឋានផ្សេងមើលបានតែប៉ុណ្ណោះ"
+"reviewed.network-registration500.3","No patient found at selected facility","Owner approved cross hospital search and local registration","public/network-patient-search.mjs","រកមិនឃើញអ្នកជំងឺនៅមូលដ្ឋានដែលបានជ្រើសរើស"
+"reviewed.network-registration500.4","Enter at least three characters of ID or name","Owner approved cross hospital search and local registration","public/network-patient-search.mjs","សូមបញ្ចូលលេខសម្គាល់ ឬឈ្មោះយ៉ាងតិចបីតួអក្សរ"
+"reviewed.network-registration500.5","Registration request expired search again","Owner approved cross hospital search and local registration","server/network-registration.mjs","សំណើចុះឈ្មោះផុតសុពលភាព សូមស្វែងរកអ្នកជំងឺម្តងទៀត"
+"reviewed.network-registration500.6","Patient information changed search again","Owner approved cross hospital search and local registration","server/network-registration.mjs","ព័ត៌មានអ្នកជំងឺបានផ្លាស់ប្តូរ សូមស្វែងរកម្តងទៀត"
+"reviewed.network-registration500.7","Case type must follow this hospital history","Owner approved cross hospital search and local registration","server/network-registration.mjs","ប្រភេទករណីត្រូវផ្អែកលើប្រវត្តិរបស់មន្ទីរពេទ្យនេះ"
+"reviewed.network-registration500.8","Verify patient identifier before registration","Owner approved cross hospital search and local registration","server/network-registration.mjs","សូមផ្ទៀងផ្ទាត់លេខសម្គាល់អ្នកជំងឺមុនចុះឈ្មោះ"

@@ -20,13 +20,13 @@ test('Phase 7: Worklists, forms and feedback assets exist and are registered in 
   const loginHtml = read('public/login.html');
 
   // Version consistency
-  assert.match(pkg.version, /^(?:39\.[6-9]|4[0-9]\.[0-9])\.0$/, 'package.json version must be 39.6.0 or above');
-  assert.match(serverCode, /Borkeo EMR v(?:39\.[6-9]|4[0-9]\.[0-9])/, 'server.mjs must declare v39.6 or above');
+  assert.match(pkg.version, /^\d+\.\d\.0$/);const [major,minor]=pkg.version.split('.').map(Number);assert.ok(major>39||(major===39&&minor>=6));
+  assert.ok(serverCode.includes('Borkeo EMR v'+pkg.version.replace(/\.0$/,'')), 'server must declare the package version');
   assert.match(serverCode, /'\/public\/worklists-feedback\.css'/, 'server.mjs must register worklists-feedback.css');
   assert.match(serverCode, /'\/public\/worklists-feedback\.js'/, 'server.mjs must register worklists-feedback.js');
   assert.match(serverCode, /worklists-feedback\.css\?v=\d+/, 'server.mjs must inject worklists-feedback.css');
   assert.match(serverCode, /worklists-feedback\.js\?v=\d+/, 'server.mjs must inject worklists-feedback.js');
-  assert.match(loginHtml, /data-app-version[^>]*>v(?:39\.[6-9]|4[0-9]\.[0-9])<\/span>/, 'login.html must display v39.6 or above');
+  assert.match(loginHtml, /data-app-version[^>]*>v(?:39\.[6-9]|(?:[4-9][0-9]|[1-9][0-9]{2,})\.[0-9])<\/span>/, 'login.html must display v39.6 or above');
 
   // CSS contains sticky headers, status chips, autosave badges, and modals
   assert.match(css, /position:\s*sticky/i, 'worklists-feedback.css must define sticky headers');

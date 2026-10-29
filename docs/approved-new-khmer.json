@@ -2978,6 +2978,42 @@
     {
       "en": "Case type at this hospital",
       "kh": "ប្រភេទករណីនៅមន្ទីរពេទ្យនេះ"
+    },
+    {
+      "en": "Register at this hospital",
+      "kh": "ចុះឈ្មោះនៅមន្ទីរពេទ្យនេះ"
+    },
+    {
+      "en": "Search through API",
+      "kh": "ស្វែងរកតាម API"
+    },
+    {
+      "en": "Other facility records are read only",
+      "kh": "កំណត់ត្រាមូលដ្ឋានផ្សេងមើលបានតែប៉ុណ្ណោះ"
+    },
+    {
+      "en": "No patient found at selected facility",
+      "kh": "រកមិនឃើញអ្នកជំងឺនៅមូលដ្ឋានដែលបានជ្រើសរើស"
+    },
+    {
+      "en": "Enter at least three characters of ID or name",
+      "kh": "សូមបញ្ចូលលេខសម្គាល់ ឬឈ្មោះយ៉ាងតិចបីតួអក្សរ"
+    },
+    {
+      "en": "Registration request expired search again",
+      "kh": "សំណើចុះឈ្មោះផុតសុពលភាព សូមស្វែងរកអ្នកជំងឺម្តងទៀត"
+    },
+    {
+      "en": "Patient information changed search again",
+      "kh": "ព័ត៌មានអ្នកជំងឺបានផ្លាស់ប្តូរ សូមស្វែងរកម្តងទៀត"
+    },
+    {
+      "en": "Case type must follow this hospital history",
+      "kh": "ប្រភេទករណីត្រូវផ្អែកលើប្រវត្តិរបស់មន្ទីរពេទ្យនេះ"
+    },
+    {
+      "en": "Verify patient identifier before registration",
+      "kh": "សូមផ្ទៀងផ្ទាត់លេខសម្គាល់អ្នកជំងឺមុនចុះឈ្មោះ"
     }
   ]
 }

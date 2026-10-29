@@ -932,3 +932,64 @@ Served login versions and copy CSS were checked on both listeners.
 
 Delivery: Borkeo-EMR-v49.9.0-api-copy-update.txt. Unrelated .vscode work,
 databases, backups, uploads, .env, keys and .gitignore are not staged.
+
+## Normal-list remote search and local registration - v50.0.0
+
+Owner reported API-connected Patient ID search returned no patient and identified
+the exact page as http://localhost:3002/patient-list. Read-only diagnostics found
+both connections/search permissions enabled, Borkeo 22 local records and receiver
+0. The local patient list did not search connected hospitals, and remote lookup
+omitted case/visit numbers. The owner requested registration/admission using a
+patient already registered at the other hospital.
+
+This release adds an explicit facility-selected API search panel to the normal
+patient list, improves Health ID/case/phone matching (including Khmer digits and
+dash/space variations), and adds a role-restricted local-registration handoff to
+both remote-search UIs. A user-bound 30-minute draft prefills identity only; the
+normal editable Registration view creates a distinct local visit with its own
+case number. New/Old Case uses only local visit history. Staff complete required
+local questions and use normal triage/payment/admission before clinical work.
+Source notes, prescriptions, signatures, eligibility, discharge and beds are not
+imported. Source and previous local records remain unchanged. Token consumption
+is atomic with patient creation and rejects reuse, expiry, role/user changes,
+identifier tampering and revoked peers. Server-owned provenance is retained.
+
+Baseline 26ca41891aa0c17629ea79d4d8778eefcef1de5d (49.9.0); clean backup:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v49.9.0-26ca4189-3a61d45e.
+Receiver baseline 49.8.0 archive:
+D:\EMR\Borkeo_EMR_Code_Backups\clone-before-network-registration-20261029.
+See NETWORK_REGISTRATION_V500_VALIDATION.md for pre-install SQLite backups and
+workflow details. Version advances across the owner's minor-step boundary to
+50.0.0; old tests that capped releases at 49.x were corrected, and saved-card
+test context includes the new draft state.
+
+All 1,080 tests and Khmer validation pass in disposable
+borkeo-restored-code-jBgRZS. The real patient-list/API/register/save/card-preview
+browser workflow passes for New Case and a later Old Case; desktop/mobile
+screenshots reviewed. Existing connections, copy key, read-only medical/nursing
+history and doctor messaging browser checks pass. No synthetic patient or draft
+was added to the real installations.
+
+Installed primary 50.0.0 PID 35476 and independent receiver 49.9.0 PID 37084 using
+their original hidden launch commands and environment/data paths. The owner's
+manually approved API keys and permissions are preserved; no pairing/bootstrap
+or disconnection was performed. Served versions/assets and unauthenticated draft
+denial were verified. A real read-only provincial-to-Borkeo lookup succeeds by
+Patient ID and a different visit ID; only success flags were printed, with no
+patient contents displayed or local import performed.
+
+Final activation-preservation.json verifies 96 pre-existing non-audit/non-nonce
+tables remain equivalent (except existing bootstrap metadata/Superuser salt and
+session last-seen normalization). One pending Borkeo request snapshot gained
+created_by/updated_by fields during the existing startup refresh; those values
+were checked against the unchanged patient row, and every prior snapshot value
+and request decision/state remains equivalent. Patients remain 22 and 0, signing keys/grants
+match, new draft tables are empty, integrity OK. Keep live databases, keys,
+uploads, .env, .gitignore and unrelated .vscode work out of Git.
+Delivery: Borkeo-EMR-v50.0.0-patient-search-registration-update.txt.
+
+The separate API-page proposal (remote verified facility labels, connection
+success popup, professional table borders, and one NPCA/other-hospital page) was
+discussed but is not represented as implemented by this focused search fix.
+No live NPCA connectivity/certification or new unauthenticated hospital enrolment
+endpoint is claimed.
