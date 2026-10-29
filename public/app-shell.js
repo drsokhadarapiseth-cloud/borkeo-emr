@@ -1069,7 +1069,7 @@
     // One shared search surface for local and permitted connected hospitals.
     const searchInput = document.getElementById('emr-global-search-input');
     try {
-      const { mountTopbarPatientSearch } = await import('/public/topbar-patient-search.mjs?v=5010');
+      const { mountTopbarPatientSearch } = await import('/public/topbar-patient-search.mjs?v=5020');
       mountTopbarPatientSearch({ fetchLocalPatients: fetchPatientsList });
     } catch { /* Local command palette remains available if the module fails. */ }
 

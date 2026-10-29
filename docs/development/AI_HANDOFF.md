@@ -1031,3 +1031,28 @@ Delivery: Borkeo-EMR-v50.1.0-topbar-record-fonts-update.txt. Font payloads use
 base64 with decoded-byte SHA-256 values; text is UTF-8/LF. Preserve .vscode,
 .gitignore, live databases, secrets, backups and uploads. Broader NPCA/API-page
 proposals remain separate work; this update does not claim those completed.
+
+## Search helper cleanup - v50.2.0
+
+Owner explicitly approved removing the gray helper message below the global
+search facility selector. Selector and loading/error status remain. Existing
+View and Register at this hospital buttons are retained for authorized staff;
+normal local new/old registration and source-record read-only rules are unchanged.
+Browser verification now explicitly asserts successful search leaves no helper
+text and still completes new and returning local registrations.
+
+Clean baseline 50.1.0 commit 048a516b0a5fcdb212ef5b8c897fed0de8f8fc5e;
+backup C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v50.1.0-048a516b-ef8675af.
+Receiver baseline 50.0.0 backup:
+D:\EMR\Borkeo_EMR_Code_Backups\clone-before-search-cleanup-20261029.
+See SEARCH_CLEANUP_V502_VALIDATION.md for online SQLite backups and evidence.
+All 1,080 tests, Khmer check and synthetic browser registration pass in
+borkeo-restored-code-MTwIaZ; desktop/mobile screenshots reviewed.
+
+Installed primary 50.2.0 PID 17992 and receiver 50.1.0 PID 34776 using original
+hidden launch commands. All 97 pre-existing non-audit/non-nonce tables compare
+equivalent with known startup metadata normalization/append-only access events.
+Patient records, snapshots, API keys/grants remain exact; patients 22 and 0,
+integrity OK. No automatic pairing, real registration or clinical import.
+Delivery: Borkeo-EMR-v50.2.0-search-cleanup-update.txt, JSON UTF-8 payloads with
+byte counts and hashes. Preserve unrelated .vscode and all live data/secrets.
