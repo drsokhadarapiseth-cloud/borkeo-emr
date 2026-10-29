@@ -1,4 +1,5 @@
-import {ensureIpdRecordFields,applyPregnancyHistoryVisibility} from './ipd-record-fields.mjs?v=5060';
+import {populateSoapCards} from './ipd-soap.mjs?v=5071';
+import {ensureIpdRecordFields,applyPregnancyHistoryVisibility} from './ipd-record-fields.mjs?v=5071';
 import {medicationTable} from './medication-review.mjs';
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function clinicalValues(value){
@@ -42,6 +43,7 @@ export function recordDocument(template,visit,kind){
   }
   if(newControl)added++;
  }
+ populateSoapCards(doc,doc.getElementById('ipd_soap_summary')?.value||'');
  const root=doc.getElementById(kind==='nursing'?'sub_nursing':kind==='opd'?'sub_opd':'sub_ipd');
  if(!root)return '';
  for(const prefix of ['opd','ipd']){const name=doc.getElementById(prefix+'_banner_patient_name');if(name)name.textContent=visit.patient.fullName||'';for(const [suffix,value] of Object.entries({adm_no:visit.patient.caseNumber,health_id:visit.patient.healthId,ward:visit.patient.departmentNameKh||visit.patient.departmentCode})){const n=doc.getElementById(prefix+'_banner_'+suffix);if(n)n.textContent=value||''}const meta=doc.getElementById(prefix+'_banner_patient_meta');if(meta)meta.textContent=[visit.patient.healthId,visit.patient.sex,visit.patient.age].filter(Boolean).join(' · ')}

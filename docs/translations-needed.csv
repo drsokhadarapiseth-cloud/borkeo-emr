@@ -743,3 +743,7 @@ reviewed.connections498.localcase,Case type at this hospital,Owner clarified loc
 "reviewed.ipd505.20","Save IPD vital signs","Owner approved IPD cleanup SOAP pregnancy and manual Medscape link","public/ipd-record-labels.mjs;server/ipd-record.mjs","រក្សាទុកសញ្ញាជីវិត IPD"
 "reviewed.ipd505.21","Not saved yet","Owner approved IPD cleanup SOAP pregnancy and manual Medscape link","public/ipd-record-labels.mjs;server/ipd-record.mjs","មិនទាន់រក្សាទុក"
 "reviewed.ipd505.22","Record changed; reopen the latest record","Owner approved IPD cleanup SOAP pregnancy and manual Medscape link","public/ipd-record-labels.mjs;server/ipd-record.mjs","ទិន្នន័យត្រូវបានកែប្រែ សូមបើកកំណត់ត្រាថ្មីម្តងទៀត"
+"reviewed.ipd507.S","Subjective","Owner approved colored concise SOAP sections","public/ipd-soap.mjs","ព័ត៌មានពីអ្នកជំងឺ"
+"reviewed.ipd507.O","Objective","Owner approved colored concise SOAP sections","public/ipd-soap.mjs","លទ្ធផលពិនិត្យ"
+"reviewed.ipd507.A","Assessment","Owner approved colored concise SOAP sections","public/ipd-soap.mjs","ការវាយតម្លៃ"
+"reviewed.ipd507.P","Plan","Owner approved colored concise SOAP sections","public/ipd-soap.mjs","ផែនការព្យាបាល"

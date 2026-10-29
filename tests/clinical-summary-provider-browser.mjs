@@ -45,7 +45,7 @@ test('IPD clinical summary editors and prescribing retain warning states and sto
     assert.equal(await browser.evaluate("EmrClinicalSummary.allergyState().state"), 'not-recorded');
     assert.equal(await browser.evaluate("document.querySelector('[data-clinical-resuscitation]').textContent"), 'DNR');
     await browser.send('Emulation.setEmulatedMedia', { media: 'print' });
-    assert.equal(await browser.evaluate("document.querySelector('[data-clinical-resuscitation]').getClientRects().length>0"), true);
+    assert.equal(await browser.evaluate("document.querySelector('[data-clinical-resuscitation]').getClientRects().length>0"), false);
     await browser.send('Emulation.setEmulatedMedia', { media: '' });
     await browser.evaluate(`window.originalKeys=JSON.stringify([...document.querySelectorAll('[data-emr-storage-key]')].map(n=>[n.id,n.dataset.emrStorageKey]));
       document.querySelector('[data-allergy-field="substance"]').value='Penicillin';

@@ -18,3 +18,45 @@
 #sub_ipd .diag-tag-desc{min-width:0;overflow-wrap:anywhere;line-height:1.6}
 #sub_ipd .diag-tag-remove{color:#64748b;padding:0 5px;cursor:pointer}
 #sub_ipd .diag-search-input{display:block;width:100%;box-sizing:border-box;margin-top:8px}
+
+#sub_ipd [data-clinical-recorded-status],#sub_ipd .ipd-soap-canonical{display:none!important}
+#sub_ipd #ipd_soap_summary_panel{min-width:0}
+#sub_ipd .ipd-soap-cards{display:grid;gap:10px}
+#sub_ipd .ipd-soap-card{display:grid;grid-template-columns:175px minmax(0,1fr);border:1px solid #e2e8f0;border-left:4px solid var(--soap-color);border-radius:8px;background:white;overflow:hidden;min-width:0}
+#sub_ipd .ipd-soap-s{--soap-color:#3b82f6;--soap-tint:#eff6ff}
+#sub_ipd .ipd-soap-o{--soap-color:#10b981;--soap-tint:#ecfdf5}
+#sub_ipd .ipd-soap-a{--soap-color:#f59e0b;--soap-tint:#fffbeb}
+#sub_ipd .ipd-soap-p{--soap-color:#ef4444;--soap-tint:#fef2f2}
+#sub_ipd .ipd-soap-card>label{display:flex;gap:10px;align-items:flex-start;padding:14px;background:var(--soap-tint);border-right:1px solid #e2e8f0;line-height:1.7}
+#sub_ipd .ipd-soap-letter{border-radius:50%;background:white;color:var(--soap-color);font-weight:bold;padding:1px 8px;flex:none}
+#sub_ipd .ipd-soap-entry{display:block;box-sizing:border-box;min-width:0;width:100%;min-height:100px!important;margin:0;padding:14px;border:0;border-radius:0;overflow:hidden;white-space:pre-wrap!important;overflow-wrap:anywhere;line-height:1.8;resize:vertical;font:inherit;color:inherit;background:white}
+#sub_ipd .ipd-expanding-text{display:inline-block;min-width:0;max-width:100%!important;min-height:36px;box-sizing:border-box;vertical-align:top;font:inherit;line-height:1.8;white-space:pre-wrap!important;overflow-wrap:anywhere;overflow-x:hidden;overflow-y:hidden;resize:vertical}
+#sub_ipd textarea:not(.ipd-soap-canonical){white-space:pre-wrap!important;overflow-wrap:anywhere;max-width:100%;box-sizing:border-box}
+#sub_ipd .ipd-expanding-text:disabled,#sub_ipd .ipd-soap-entry:disabled{opacity:1;-webkit-text-fill-color:currentColor;color:inherit}
+#sub_ipd .ipd-expanding-field{min-width:0}
+#sub_ipd .ipd-expanding-text{display:block!important;width:100%!important}
+@media(max-width:700px){#sub_ipd .ipd-expanding-grid{grid-template-columns:minmax(0,1fr)!important}#sub_ipd .ipd-expanding-grid>.ipd-expanding-field{grid-column:auto!important}}
+@media(max-width:700px){#sub_ipd .ipd-soap-card{grid-template-columns:minmax(0,1fr)}#sub_ipd .ipd-soap-card>label{border-right:0;border-bottom:1px solid #e2e8f0;padding:9px 12px}#sub_ipd .ipd-soap-entry{padding:12px}}
+@media print{#sub_ipd .ipd-soap-card{break-inside:avoid;print-color-adjust:exact;-webkit-print-color-adjust:exact}#sub_ipd .ipd-soap-entry,#sub_ipd .ipd-expanding-text{height:auto!important;max-height:none!important;overflow:visible!important;white-space:pre-wrap!important}#sub_ipd .ipd-soap-card>label{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+
+#ipd_head_to_toe{display:grid;gap:14px;margin:14px 0;min-width:0}
+#ipd_head_to_toe .ipd-exam-card{border:1px solid #cbdfe8;border-radius:10px;background:white;min-width:0;overflow:hidden}
+#ipd_head_to_toe .ipd-exam-card>header{display:flex;align-items:center;gap:12px;background:#f0f8fb;padding:12px 16px;border-bottom:1px solid #dce9ef}
+#ipd_head_to_toe h4{flex:1;min-width:0;margin:0;font:inherit;font-weight:bold;line-height:1.8}
+#ipd_head_to_toe .ipd-exam-number{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#dceff5;color:#075d76;font:700 13px Arial,sans-serif;flex:none}
+#ipd_head_to_toe .ipd-exam-normal{font:inherit;flex:none;width:auto!important;white-space:nowrap;border:1px solid #b8d4df;border-radius:7px;background:white;color:#17516a;padding:6px 12px}
+#ipd_head_to_toe .ipd-exam-body{padding:14px 16px;min-width:0;line-height:1.8}
+#ipd_head_to_toe .ipd-exam-source{margin:0!important;min-width:0}
+#ipd_head_to_toe .ipd-exam-source>br:first-of-type{display:none}
+#ipd_head_to_toe .ipd-exam-source>.ipd-expanding-grid,#ipd_head_to_toe .ipd-exam-source>.ipd-expanding-field{padding-left:0!important}
+#ipd_head_to_toe .ipd-exam-field-row{display:grid;gap:10px}
+#ipd_head_to_toe .ipd-exam-measurements{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:10px 0 14px}
+#ipd_head_to_toe .ipd-exam-measurements label{display:flex;flex-direction:column;gap:6px;min-width:0}
+#ipd_head_to_toe .ipd-exam-measurements input{width:100%!important;box-sizing:border-box}
+#ipd_head_to_toe .ipd-exam-body label:has(input[type=radio]),#ipd_head_to_toe .ipd-exam-body label:has(input[type=checkbox]){display:inline-flex;align-items:center;gap:6px;white-space:normal;margin:3px 8px 5px 0}
+#ipd_head_to_toe #ipd_exam_pain{width:120px!important;max-width:100%}
+#ipd_head_to_toe .ipd-exam-crt{display:flex;align-items:center;gap:8px}
+#sub_ipd .ipd-exam-tools{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px;border:1px solid #d7e8ee;border-radius:8px;background:#f7fbfd;font-size:13px!important}
+#sub_ipd .ipd-exam-tools [data-key=ipd_normal_hint]{flex-basis:100%;margin-left:0!important;line-height:1.8}
+@media(max-width:700px){#ipd_head_to_toe .ipd-exam-card>header,#ipd_head_to_toe .ipd-exam-body{padding:10px 12px}#ipd_head_to_toe .ipd-exam-measurements{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media print{#ipd_head_to_toe{gap:7px}#ipd_head_to_toe .ipd-exam-card{break-inside:auto}#ipd_head_to_toe .ipd-exam-card>header{break-after:avoid;print-color-adjust:exact;-webkit-print-color-adjust:exact;padding:6px 8px}#ipd_head_to_toe .ipd-exam-body{padding:8px}#ipd_head_to_toe .ipd-exam-number{width:24px;height:24px}}

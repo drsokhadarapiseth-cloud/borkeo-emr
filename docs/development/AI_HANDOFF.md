@@ -1241,3 +1241,84 @@ are preserved. Patients remain 22 and 0; integrity OK. No automatic connection,
 patient import or schema migration. Desktop/mobile diagnosis screenshots were
 reviewed after dismissing the verified actual allergy warning in the synthetic
 fixture; allergy evaluation and alerts remain active.
+
+## Colored IPD SOAP and fully readable examination text - v50.7.0
+
+Owner explicitly approved all pending changes with "yes code it" and "code all
+the thing we have talked": hide the IPD resuscitation-status box, wrap/expand
+long examination text and use four colored concise SOAP editors. No clinical
+source data, status/API, permissions, drug catalogue or PMRS2 logic is removed.
+
+Blue S, green O, amber A and red P use transient editors backed by the existing
+canonical SOAP text/manual flag. Manual notes remain protected; saved historical
+notes are not regenerated in read-only view. Only fully documented known-normal
+systems become normal. Mixed systems retain non-template findings; partial and
+unassessed systems are never asserted normal. Unrecognized free text is kept
+verbatim for clinical review. Numeric GCS facts remain with abnormal status.
+Narrative examination fields retain IDs/scopes/frozen indexes/migration keys,
+wrap at full available width and stack on mobile. Read-only remote/print views
+use the same cards and full text, with script-free escaped clinical content.
+
+Baseline master 0bf6c03cd620125177f9351cfedb87a55157730a, primary 50.6.0.
+Clean code backup C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v50.6.0-0bf6c03c-2269c53d.
+Receiver 50.5.0 archive: D:\EMR\Borkeo_EMR_Code_Backups\clone-before-ipd507-20261029.
+Online DB backups and details: IPD_COLORED_SOAP_V507_VALIDATION.md.
+Disposable synthetic root: borkeo-restored-code-6Qqwol.
+
+Final validation: all 1,091 automated tests and Khmer check pass. All three
+final Chromium workflows pass: new SOAP/wrapping/save/reopen/remote/print-PDF,
+doctor/nurse vital editing with original triage preservation and manual SOAP
+protection, and structured clinical summary/prescribing safety with stale-override
+rejection. Read-only saved SOAP is verified against accidental regeneration.
+New narrative textareas restore legacy auto keys and save full values under
+their original medical IDs. Clinical-summary data remain present while the
+requested IPD status box is hidden. Synthetic desktop/mobile screenshots were
+reviewed; two browser workflows generated actual IPD print snapshots and PDFs.
+Evidence remains in .validation-ipd507, .validation-ipd505 and test logs in the
+disposable root. No physical-printer acceptance is claimed.
+
+Delivery: Borkeo-EMR-v50.7.0-ipd-colored-soap-update.txt. Preserve .vscode,
+.gitignore, all hospital data, uploads, passwords, API keys/grants and settings.
+
+## Head-to-toe examination follow-up
+
+The owner additionally requested a clean professional head-to-toe layout and
+explicitly asked to continue. This remains part of the same uncommitted 50.7.0
+update. Existing controls are moved into ten numbered sections: general condition
+with pain, head/neck, respiratory, cardiovascular, abdomen, genitourinary, limbs
+with CRT, musculoskeletal, neurological with GCS, and other findings. Per-system
+normal-fill actions are retained and disabled in read-only contexts. No new
+clinical findings, mandatory fields, assessment thresholds or data migration.
+The shared formatter follows the same anatomical order; source values, IDs,
+scopes, frozen indexes and migration keys are preserved. Desktop/mobile browser
+checks confirm section order, normal-fill actions, storage restoration, full text,
+SOAP editing, Save/reopen, historical view, script-free remote review and print.
+Final shared asset cache is 5071; package versions remain 50.7.0 and 50.6.0.
+
+Final combined results after the head-to-toe follow-up: 1,092/1,092 automated
+tests and Khmer check pass. The expanded head-to-toe browser workflow passes
+section order, retained normal actions and original controls, legacy storage-key
+restoration, multiline full text, manual SOAP protection, Save/reopen, read-only
+records, script-free remote rendering and actual print/PDF. Desktop and mobile
+numbered-section screenshots were reviewed. Earlier three role/safety workflows
+remain documented above; all source changes are included in this one release.
+
+Live preservation checks identified two authenticated DOCTOR browser saves on
+one existing primary encounter while the update was running, one resulting
+staff-task completion and a pending admission snapshot refresh through existing
+logic. These legitimate edits and their editor history were retained. The
+receiver also had one audited browser work-context switch. Across all 98
+pre-existing non-audit/non-nonce tables, all unrelated clinical data, identities,
+attachments, approval decisions and API keys/grants remain equivalent to the
+online backups, allowing known startup metadata/session timestamp normalization
+only. Patients remain 22 and 0; database integrity is OK. No rollback, data import
+or automatic connection was performed. Verification uses read transactions
+and checks the corresponding audit records rather than discarding user edits.
+
+Final activation: primary 50.7.0 PID 33632 at http://127.0.0.1:3001 and
+receiver 50.6.0 PID 22588 at http://localhost:3002, using original hidden
+start-wifi launchers. Both health endpoints, visible versions, head-to-toe
+module/styles at cache 5071 and unauthenticated vital-write denial (401) pass.
+Final preservation verification passes across 98 tables with the audited user
+saves/context switch retained as described above. No source, patient or
+connection rollback was performed.
