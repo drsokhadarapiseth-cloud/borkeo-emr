@@ -3038,6 +3038,50 @@
     {
       "en": "Some facilities unavailable",
       "kh": "មូលដ្ឋានខ្លះមិនអាចភ្ជាប់បាន"
+    },
+    {
+      "en": "Fingerprint scanner is not configured",
+      "kh": "មិនទាន់មានឧបករណ៍ស្នាមម្រាមដៃដែលបានកំណត់រចនាសម្ព័ន្ធ"
+    },
+    {
+      "en": "Enroll fingerprint",
+      "kh": "បញ្ចូលស្នាមម្រាមដៃ"
+    },
+    {
+      "en": "Health facility network",
+      "kh": "បណ្ដាញមូលដ្ឋានសុខាភិបាល"
+    },
+    {
+      "en": "Users by health facility",
+      "kh": "អ្នកប្រើប្រាស់តាមមូលដ្ឋានសុខាភិបាល"
+    },
+    {
+      "en": "Private messages between healthcare staff",
+      "kh": "សារឯកជនរវាងបុគ្គលិកសុខាភិបាល"
+    },
+    {
+      "en": "Images or PDF documents: up to 3 files, 512 KB each and 1 MB total",
+      "kh": "ឯកសាររូបភាព ឬឯកសារបោះពុម្ព៖ អតិបរមា ៣ ឯកសារ មួយឯកសារ ៥១២ គីឡូបៃ និងសរុប ១ មេកាបៃ"
+    },
+    {
+      "en": "Send private message",
+      "kh": "ផ្ញើសារឯកជន"
+    },
+    {
+      "en": "Attachments exceed the allowed size",
+      "kh": "ឯកសារភ្ជាប់លើសទំហំដែលអនុញ្ញាត"
+    },
+    {
+      "en": "Patient ID",
+      "kh": "លេខសម្គាល់អ្នកជំងឺ"
+    },
+    {
+      "en": "Other identity document number",
+      "kh": "លេខអត្តសញ្ញាណផ្សេងទៀត"
+    },
+    {
+      "en": "Search by",
+      "kh": "ស្វែងរកតាម"
     }
   ]
 }

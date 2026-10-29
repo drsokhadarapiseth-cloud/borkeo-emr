@@ -54,12 +54,12 @@ test('three independent EMRs: reciprocal approval, isolation, rotation, messages
   // A wrong destination receives only a nonce ping, never the patient query.
   const fetchOriginal=globalThis.fetch,attempts=[];globalThis.fetch=async(url,options)=>{attempts.push(JSON.parse(options.body).body);return new Response('{}',{status:403})};
   try{await assert.rejects(call(a,ab,{operation:'records',patientKey:'PRIVATE-SENTINEL'}),e=>e.status===503);assert.deepEqual(attempts,[{operation:'ping'}])}finally{globalThis.fetch=fetchOriginal}
-  const doctors=await req(a,'doctor_opd','/api/emr-network/doctors?peerId='+ab.id);assert.equal(doctors.status,200);assert.ok(doctors.data.doctors.some(d=>d.id===doctorIds[1]));assert.equal((await req(a,'nurse_opd','/api/emr-network/doctors?peerId='+ab.id)).status,403);
+  const doctors=await req(a,'doctor_opd','/api/emr-network/doctors?peerId='+ab.id);assert.equal(doctors.status,200);assert.ok(doctors.data.doctors.some(d=>d.id===doctorIds[1]));assert.equal((await req(a,'nurse_opd','/api/emr-network/doctors?peerId='+ab.id)).status,200);
   const message={id:crypto.randomUUID(),peerId:ab.id,recipientId:doctorIds[1],subject:'Synthetic consultation',body:'Escaped text <script>alert(1)</script>'};
   for(let i=0;i<2;i++)assert.equal((await req(a,'doctor_opd','/api/emr-network/messages',message)).status,200);
   assert.equal(b.database.sqlite.prepare('SELECT count(*) n FROM emr_network_messages').get().n,1);
   assert.equal((await req(a,'doctor_surgery','/api/emr-network/messages',message)).status,409);
-  assert.equal((await req(a,'nurse_opd','/api/emr-network/messages',message)).status,403);
+  assert.equal((await req(a,'nurse_opd','/api/emr-network/messages',message)).status,409);
   assert.equal((await req(b,'doctor_opd','/api/emr-network/messages')).data.messages.length,1);assert.equal((await req(b,'doctor_surgery','/api/emr-network/messages')).data.messages.length,0);
   b.database.sqlite.prepare('UPDATE emr_network_peers SET messages=0 WHERE id=?').run(ba.id);assert.equal((await req(a,'doctor_opd','/api/emr-network/messages',{...message,id:crypto.randomUUID()})).status,403);b.database.sqlite.prepare('UPDATE emr_network_peers SET messages=1 WHERE id=?').run(ba.id);
   // Fixture signed letters avoid unrelated clinical admission/payment workflows.

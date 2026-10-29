@@ -1056,3 +1056,51 @@ Patient records, snapshots, API keys/grants remain exact; patients 22 and 0,
 integrity OK. No automatic pairing, real registration or clinical import.
 Delivery: Borkeo-EMR-v50.2.0-search-cleanup-update.txt, JSON UTF-8 payloads with
 byte counts and hashes. Preserve unrelated .vscode and all live data/secrets.
+
+## Typed automatic API search and private staff network - v50.3.0
+
+Owner approved removing the topbar facility selector and searching all permitted
+peers automatically, default Patient ID with separate name, phone, other ID and
+fingerprint choices. Implemented typed local/API lookup with existing identity
+access, field isolation, normalized matching, bounded peer concurrency and source
+labels. Register still uses the normal user-bound local registration/admission;
+remote history remains read-only. Typed API calls require a signed capability so
+older peers cannot silently fall back to unrestricted all-field matching.
+
+Renamed network sidebar/page to the owner's Khmer label. Two sections show API
+connections/status and hospital-selected active chat-eligible staff with roles
+and wards. Doctors/ward chiefs/nurses/midwives can privately send and receive PDF,
+PNG or JPEG attachments: max 3 files, 512 KiB each, 1 MiB total. A new indexed
+attachment BLOB table stores files atomically with messages; signed transport,
+exact retries, file validation, participant-only downloads and revoked grant
+checks apply. No public file path, raw attachment in list responses, or new
+clinical editing permission. Existing doctor-only assertions were updated only
+for the explicitly approved nurse messaging access; new isolation tests added.
+
+No scanner/SDK/model was supplied: search and registration explain unavailable
+fingerprint hardware, enrollment is disabled and no biometric data is collected.
+Actual enrollment, cross-ward capture and API matching remain pending compatible
+hardware/SDK. Do not claim working fingerprint matching.
+
+Clean baseline 50.2.0 commit 04c09a43b6ffdaa65e93f267c2c4c4dfee5d9ae4;
+backup C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v50.2.0-04c09a43-da8f11d3.
+Receiver baseline 50.1.0 archive:
+D:\EMR\Borkeo_EMR_Code_Backups\clone-before-network-search-chat-20261029.
+See NETWORK_SEARCH_CHAT_V503_VALIDATION.md for online database backups/details.
+
+All 1,082 tests and Khmer check pass in borkeo-restored-code-ChkFe1. Synthetic
+Edge workflows verify typed remote name/phone/other-ID lookup, default ID/no
+facility selector, pending fingerprint UI, New/Old registration, saved-card
+preview, read-only styled histories, staff/ward directory and doctor-to-nurse
+attachment delivery/download on desktop/mobile. API tests verify private nurse
+messages/files, invalid formats/size/path, exact retries and revocation. Eleven
+reviewed Khmer strings have approval/provenance; baseline/.gitignore unchanged.
+
+Installed primary 50.3.0 PID 3860, receiver 50.2.0 PID 29752 using original hidden
+launchers. All 97 existing non-audit/non-nonce tables compare equivalent with
+known startup metadata normalization/append-only access events. Patient rows,
+snapshots, keys/grants exact, patient counts 22 and 0, integrity OK. New attachment
+tables empty. No pairing, real message/patient fixture or data import performed.
+Delivery: Borkeo-EMR-v50.3.0-network-search-chat-update.txt, verified UTF-8/LF JSON
+payloads and hashes. Preserve .vscode and all live data/secrets. Broader NPCA
+proposals remain separate; this release does not claim NPCA certification.

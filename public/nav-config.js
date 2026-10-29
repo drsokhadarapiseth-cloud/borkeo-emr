@@ -26,7 +26,7 @@
   ];
 
   const ITEMS = [
-    { id: 'connected-emrs', group: 'care', href: '/connected-emrs', icon: 'icon-building', label: 'មូលដ្ឋានសុខាភិបាលដែលបានតភ្ជាប់', labelEn: 'Connected health facilities', access: ['ADMIN','DIRECTOR','VICE_DIRECTOR','DOCTOR','CHIEF_WARD','NURSE','MIDWIFE','REGISTRATION','TRIAGE'], networkOnly: true },
+    { id: 'connected-emrs', group: 'care', href: '/connected-emrs', icon: 'icon-building', label: 'បណ្ដាញមូលដ្ឋានសុខាភិបាល', labelEn: 'Health facility network', access: ['ADMIN','DIRECTOR','VICE_DIRECTOR','DOCTOR','CHIEF_WARD','NURSE','MIDWIFE','REGISTRATION','TRIAGE'], networkOnly: true },
     // Patient care
     { id: 'home', group: 'care', href: '/home', icon: 'icon-home', label: 'ទំព័រដើម និងរបាយការណ៍', labelEn: 'Home and reports', access: [...MGMT, 'DOCTOR@!opd'] },
     { id: 'register', group: 'care', href: '/emr?view=register', icon: 'icon-user-plus', label: 'ចុះឈ្មោះអ្នកជំងឺ', labelEn: 'Register patient', access: ['REGISTRATION'] },

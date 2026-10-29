@@ -1,4 +1,4 @@
-import crypto from 'node:crypto';
+import crypto from 'node:crypto';import {ensureChatSchema} from './network-chat.mjs';
 import {linkSettings,peerCall} from './referral-link.mjs';
 import {networkPublicKey} from './network-signatures.mjs';
 import {ensureConnectionRequestSchema} from './network-requests.mjs';
@@ -12,6 +12,7 @@ export function ensureNetworkSchema(db,config){
  db.sqlite.exec(`CREATE TABLE IF NOT EXISTS emr_network_local(id TEXT PRIMARY KEY,secret TEXT NOT NULL,name TEXT NOT NULL,enabled INTEGER NOT NULL DEFAULT 0,managed INTEGER NOT NULL DEFAULT 0,version INTEGER NOT NULL DEFAULT 1) STRICT;
  CREATE TABLE IF NOT EXISTS emr_network_peers(id TEXT PRIMARY KEY,instance_id TEXT NOT NULL UNIQUE,name TEXT NOT NULL,origin TEXT NOT NULL,secret TEXT NOT NULL,enabled INTEGER NOT NULL,incoming INTEGER NOT NULL,outgoing INTEGER NOT NULL,search INTEGER NOT NULL,messages INTEGER NOT NULL,version INTEGER NOT NULL DEFAULT 1) STRICT;
  CREATE TABLE IF NOT EXISTS emr_network_messages(id TEXT PRIMARY KEY,peer_id TEXT NOT NULL,direction TEXT NOT NULL,sender_id TEXT NOT NULL,sender_name TEXT NOT NULL,recipient_id TEXT NOT NULL,recipient_name TEXT NOT NULL,subject TEXT NOT NULL,body TEXT NOT NULL,state TEXT NOT NULL,created_at INTEGER NOT NULL) STRICT;`);
+ ensureChatSchema(db);
  if(!db.sqlite.prepare('SELECT 1 FROM emr_network_local').get())db.sqlite.prepare('INSERT INTO emr_network_local(id,secret,name) VALUES(?,?,?)').run(crypto.randomUUID(),crypto.randomBytes(32).toString('hex'),'EMR '+config.port);
  if(!db.sqlite.prepare('PRAGMA table_info(emr_network_local)').all().some(c=>c.name==='signing_seed'))db.sqlite.exec("ALTER TABLE emr_network_local ADD COLUMN signing_seed TEXT NOT NULL DEFAULT ''");
  db.sqlite.prepare("UPDATE emr_network_local SET signing_seed=? WHERE signing_seed=''").run(crypto.randomBytes(32).toString('hex'));
@@ -54,6 +55,8 @@ export async function networkCall(ctx,peerId,body,{probe=false}={}){
  const latestLocal=networkLocal(ctx.database),latestPeer=ctx.database.sqlite.prepare('SELECT * FROM emr_network_peers WHERE id=?').get(peer.id);
  if(!latestLocal.managed||!latestLocal.enabled||latestLocal.signing_seed!==local.signing_seed||!latestPeer?.enabled||latestPeer.version!==peer.version)fail(403,'មិនមានសិទ្ធិ');
  if(probe||body.operation==='ping')return ping;
+ if(body.operation==='search'&&body.mode&&body.mode!=='all'&&!ping.typedSearch)fail(503,'\u1798\u17b7\u1793\u17a2\u17b6\u1785\u1795\u17d2\u1791\u17bb\u1780\u1791\u17b7\u1793\u17d2\u1793\u1793\u17d0\u1799\u1794\u17b6\u1793');
+ if(body.operation==='message'&&body.attachments?.length&&!ping.attachments)fail(503,'\u1798\u17b7\u1793\u17a2\u17b6\u1785\u1795\u17d2\u1791\u17bb\u1780\u1791\u17b7\u1793\u17d2\u1793\u1793\u17d0\u1799\u1794\u17b6\u1793');
  if((!control&&!ping.incoming)||(['search','records'].includes(body.operation)&&!ping.search)||(['doctors','message'].includes(body.operation)&&!ping.messages))fail(403,'មិនមានសិទ្ធិ');
  return peerCall(link,body);
 }
