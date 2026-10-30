@@ -15,7 +15,10 @@ export const approvedNewPath = path.join(projectRoot, 'docs', 'approved-new-khme
 const KHMER = /[ក-៿᧠-᧿]/;
 const EXTENSIONS = new Set(['.html', '.js', '.mjs', '.css', '.json']);
 // borkeo-update-files: the owner's input files for an update (not served; copied into server/).
-const SKIP_DIRS = new Set(['node_modules', 'data', 'docs', 'backups', '.git', 'borkeo-update-files']);
+// pmrs2-helper is a separate browser-extension tool. Its Khmer is its own small
+// UI plus copies of PMRS2's external page captions used only for matching, so it
+// is not part of the EMR's translatable Khmer-UI baseline.
+const SKIP_DIRS = new Set(['node_modules', 'data', 'docs', 'backups', '.git', 'borkeo-update-files', 'pmrs2-helper']);
 const SKIP_DIR_PATTERN = /^(\.validation-|_backup_)/;
 // Splits a line at quotes, tag brackets and ${ } template placeholders.
 const DELIMITERS = /["'`<>]|\$\{|\}/;

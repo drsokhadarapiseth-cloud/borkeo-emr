@@ -1,6 +1,6 @@
-import {ensureIpdRecordFields,applyPregnancyHistoryVisibility} from './ipd-record-fields.mjs?v=5080';
+import {ensureIpdRecordFields,applyPregnancyHistoryVisibility} from './ipd-record-fields.mjs?v=5090';
 import {labels as L} from './ipd-record-labels.mjs?v=5050';import {api,safeError,esc} from './network-ui.mjs?v=5040';
-import {buildSoap,EXAM_GROUPS,summarizeExam,populateSoapCards,fitIpdText,updateSoapTitles,updateExamLabels} from './ipd-soap.mjs?v=5080';
+import {buildSoap,EXAM_GROUPS,summarizeExam,populateSoapCards,fitIpdText,updateSoapTitles,updateExamLabels} from './ipd-soap.mjs?v=5090';
 export {buildSoap};
 const vitals={ipd_temp:['p2_temp',L.temperature,'°C'],ipd_bp_sys:['p2_bp_sys',L.systolic,'mmHg'],ipd_bp_dia:['p2_bp_dia',L.diastolic,'mmHg'],ipd_pulse:['p2_pulse',L.pulse,'/min'],ipd_resp:['p2_resp',L.resp,'/min'],ipd_spo2:['p2_spo2',L.spo2,'%'],ipd_weight:['p2_weight',L.weight,'kg'],ipd_height:['p2_height',L.height,'cm']};
 const field=(id)=>document.getElementById(id),patient=()=>window.getLoadedEmrPatient?.(),value=id=>String(field(id)?.value||'').trim();

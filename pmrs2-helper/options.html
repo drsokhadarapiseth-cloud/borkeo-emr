@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Borkeo PMRS2 Helper</title>
+  <style>
+    body { font: 14px sans-serif; margin: 18px; width: 320px; color: #0f3f55; }
+    h1 { font-size: 16px; margin: 0 0 12px; }
+    label { display: block; margin: 12px 0 6px; font-weight: 600; }
+    input { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cfdbe3; border-radius: 6px; font: inherit; }
+    button { margin-top: 14px; background: #0b7895; color: #fff; border: 0; border-radius: 6px; padding: 9px 16px; font: 600 14px sans-serif; cursor: pointer; }
+    p.note { color: #475569; font-size: 12px; line-height: 1.6; margin-top: 14px; }
+    #saved { color: #0b7895; margin-left: 10px; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>Borkeo PMRS2 Helper</h1>
+  <label for="borkeoBaseUrl">Borkeo EMR address</label>
+  <input id="borkeoBaseUrl" type="text" placeholder="http://127.0.0.1:3001">
+  <div><button id="save" type="button">Save</button><span id="saved" hidden>✓</span></div>
+  <p class="note">
+    Staff sign in to PMRS2 themselves (password + authenticator). This helper only
+    copies patient identity from the open PMRS2 patient page into Borkeo
+    registration. It never signs in to PMRS2, never saves, and stores no password.
+  </p>
+  <script src="options.js"></script>
+</body>
+</html>

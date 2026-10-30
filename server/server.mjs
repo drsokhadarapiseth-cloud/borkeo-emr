@@ -11,7 +11,7 @@ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFaci
 import { createDiagnosisSearch } from './icd10.mjs';
 import {ensureReferralFormSchema} from './referral-forms.mjs';
 import {mountReferralFormRoutes} from './routes/referral-forms.mjs';
-// Borkeo EMR v50.8 - Electronic Medical Record System
+// Borkeo EMR v50.9 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -201,6 +201,7 @@ const publicFiles = new Map([
   ['/public/ipd-record-fields.mjs', ['ipd-record-fields.mjs', 'text/javascript; charset=utf-8']],
   ['/public/ipd-record-labels.mjs', ['ipd-record-labels.mjs', 'text/javascript; charset=utf-8']],
   ['/public/ipd-record.css', ['ipd-record.css', 'text/css; charset=utf-8']],
+  ['/public/pmrs2-import.mjs', ['pmrs2-import.mjs', 'text/javascript; charset=utf-8']],
   ['/public/network-labels.mjs', ['network-labels.mjs', 'text/javascript; charset=utf-8']],
   ['/public/connected-emrs.mjs', ['connected-emrs.mjs', 'text/javascript; charset=utf-8']],
   ['/public/emr-network.css', ['emr-network.css', 'text/css; charset=utf-8']],
@@ -576,7 +577,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   html = html.replace('</head>', '<script src="/public/medication-routes.js?v=4250"></script></head>');
   // v42.3: medicine name search in the prescription forms (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/medicine-autocomplete.css?v=4250"><script src="/public/medicine-autocomplete.js?v=4250" defer></script><script src="/public/medicine-dose-check.js?v=4250" defer></script><link rel="stylesheet" href="/public/maternal.css?v=4260"><script src="/public/maternal-emr.js?v=4260" defer></script></head>');
-  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/ipd-record.css?v=5080"><script type="module" src="/public/ipd-record.mjs?v=5080"></script></head>');
+  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/ipd-record.css?v=5090"><script type="module" src="/public/ipd-record.mjs?v=5090"></script><script type="module" src="/public/pmrs2-import.mjs?v=5090"></script></head>');
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=4930" defer></script></head>');
   // v41.0: structured allergy record, problem list and nursing demographics (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/clinical-summary.css?v=4100"><script src="/public/clinical-summary.js?v=4100" defer></script><link rel="stylesheet" href="/public/display-rules.css?v=4110"><script src="/public/display-rules.js?v=4110" defer></script><link rel="stylesheet" href="/public/medication-safety.css?v=4120"><script src="/public/medication-safety.js?v=4120" defer></script><link rel="stylesheet" href="/public/periop-forms.css?v=4160"><script src="/public/periop-forms.js?v=4160" defer></script><script src="/public/fluid-balance.js?v=4160" defer></script><script src="/public/early-warning.js?v=4160" defer></script><link rel="stylesheet" href="/public/patient-documents.css?v=4170"><script src="/public/patient-documents.js?v=4170" defer></script></head>');

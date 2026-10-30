@@ -1340,3 +1340,36 @@ Shared cache 5080. Validation: 1,092/1,092 tests and Khmer check pass; IPD
 browser workflows pass. Details: IPD_EXAM_FORM_V508_VALIDATION.md.
 Delivery: Borkeo-EMR-v50.8.0-ipd-exam-form-update.txt. Running servers were not
 restarted by this update.
+
+## PMRS2 -> Borkeo registration import (Stage 1) - v50.9.0
+
+Owner approved ("yes code it") integrating the PMRS2 site (pmrs.digitalsp.gov.kh)
+with Borkeo. PMRS2 gives the owner no API, so the agreed design is a browser
+helper with staff logging in to PMRS2 themselves. The owner asked to auto-fill the
+Google Authenticator code to auto-login; declined (defeats 2FA on a government
+system, likely breaks its rules) - login stays manual. Both directions agreed,
+built one stage at a time; this is Stage 1 (PMRS2 identity/address -> Borkeo
+registration). Stage 2 (Borkeo OPD -> PMRS2 OPD/triage/prescription/discharge) is
+next and NOT in this version.
+
+Built: public/pmrs2-import.mjs exposes window.applyPmrs2Registration(payload) -
+fills the registration form, resolves Khmer province/district/commune/village to
+the gazetteer via window.restorePatientAddress, and flags duplicates via
+/api/emr-network/local-search (health-card, then phone, then name). Never saves.
+pmrs2-helper/ is an MV3 browser extension: a button on PMRS2 scrapes identity by
+Khmer captions and opens Borkeo registration (/emr?view=register&pmrs2Import=1)
+pre-filled; it stores no PMRS2 credentials. The helper's Khmer is excluded from
+the EMR Khmer baseline (khmer-lib.mjs SKIP_DIRS) as it is not EMR UI text.
+
+Baseline master 142ca91c21302f73859304e755fd90dbe43bed43, package 50.8.0. Clean
+code backup C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v50.8.0-142ca91c-c8d6afb5\code.zip
+(the ZIP the owner asked to reserve for rollback). Shared cache 5090.
+
+Validation: 1,098/1,098 tests and Khmer check pass; new unit test
+(tests/pmrs2-import.test.mjs) and Chromium test (tests/pmrs2-import-browser.mjs)
+pass - registration fill, province code 08 + hierarchy resolution, duplicate
+flag, extension event hand-off, and scraper against a caption-built form. Filled
+registration screenshot reviewed. The extension was NOT run against the live
+PMRS2 site; its captions live in pmrs2-helper/pmrs2-fields.js for tuning.
+Delivery: Borkeo-EMR-v50.9.0-pmrs2-import-update.txt. Running servers were not
+restarted by this update.

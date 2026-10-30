@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Borkeo PMRS2 Helper",
+  "version": "50.9.0",
+  "description": "Copy patient identity from a PMRS2 patient page into Borkeo EMR registration. Staff log in to PMRS2 themselves; this helper never signs in or saves, and stores no PMRS2 password.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://pmrs.digitalsp.gov.kh/*",
+    "http://127.0.0.1/*",
+    "http://localhost/*"
+  ],
+  "options_page": "options.html",
+  "action": { "default_title": "Borkeo PMRS2 Helper", "default_popup": "options.html" },
+  "web_accessible_resources": [
+    {
+      "resources": ["page-fill.js"],
+      "matches": ["http://127.0.0.1/*", "http://localhost/*"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://pmrs.digitalsp.gov.kh/*"],
+      "js": ["pmrs2-fields.js", "scrape.js", "pmrs2-content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["http://127.0.0.1/*", "http://localhost/*"],
+      "js": ["borkeo-content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
