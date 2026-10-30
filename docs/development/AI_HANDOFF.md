@@ -1410,3 +1410,46 @@ test covers both form-control and plain-text scraping. Baseline 685eaeab, clean
 backup C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v51.0.0-685eaeab-c97cf480\code.zip.
 Delivery: Borkeo-EMR-v51.1.0-pmrs2-text-scrape-update.txt. Staff must RELOAD the
 extension. Running servers not restarted.
+
+
+## PMRS2 import reader and acknowledged handoff - v51.2.0
+
+Approved after diagnosis on 2026-10-30. Baseline master commit:
+207e5540e12212993f3d6080debef6503105aef6 (v51.1.0).
+Code-only backup: C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v51.1.0-207e5540-c9163605.
+Restore with npm run restore:code -- <backup-directory>; restoration creates a
+NEW folder and never overwrites live patient data or secrets.
+
+Confirmed failures: inline alternate captions used the primary caption when
+extracting values; caption-plus-value elements longer than 48 characters were
+ignored; Khmer colon U+17D6 was not recognized. The health-card caption also
+needed the spelling without an extra vowel. The content script removed pending
+patient details before registration confirmed receipt. Popup creation was inside
+asynchronous callbacks, which can trigger popup blocking.
+
+Fixed: prefer dedicated captions, match complete aliases, preserve long inline
+values, recognize both Khmer punctuation forms, and add health-card spelling.
+Open the tab within the click gesture, validate the configured loopback target,
+use the canonical registration view, and bind pending details to that exact
+origin. Registration acknowledges populated fields with a transfer identifier;
+only a matching successful acknowledgement clears pending details. A stale
+acknowledgement cannot clear a newer pending transfer. Timeout retains pending
+details and shows a Khmer retry instruction. Retry eligibility is ten minutes.
+Staff must sign in manually and review/save; PMRS2 authentication is unchanged.
+No auto-save, no PMRS2 write, and no reverse clinical export was added.
+
+Validation: disposable restored-code copy with synthetic fixtures only;
+npm test: 1100/1100 pass; npm run check:khmer: pass;
+node --test tests/pmrs2-import-browser.mjs: pass, including real DOM inline
+aliases, long names, Khmer punctuation, form controls, plain-text summaries,
+registration prefill and duplicate lookup. Helper VM tests cover matching/failed
+acknowledgement, timeout, wrong origin and a newer pending transfer.
+No real PMRS2 account, patient DOM, browser profile or hospital database was used.
+The installed real browser extension and live PMRS2 site were not tested.
+
+Delivery: Borkeo-EMR-v51.2.0-pmrs2-import-repair-update.txt.
+Installation: reload the unpacked pmrs2-helper extension, refresh PMRS2 and EMR,
+sign in to the target EMR, verify its exact loopback origin in extension Options,
+then retry the PMRS2 button. Existing running EMR processes were not restarted;
+restart the identified launcher to activate the new version/cache-busted module.
+Preserve .vscode/, .gitignore, .env, databases, uploads and instance data.

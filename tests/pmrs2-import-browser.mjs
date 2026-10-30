@@ -156,6 +156,26 @@ test('PMRS2 import fills registration, resolves the address and flags a duplicat
     assert.equal(scrapedText.caseNumber, 'T_caseNumber');
     assert.equal(scrapedText.healthId, 'T_healthId');
 
+    // Real DOM regression: short aliases, Khmer punctuation and long inline values.
+    const inline = await browser.evaluate(`(() => {
+      const frame = document.createElement('iframe'); document.body.appendChild(frame);
+      const d = frame.contentDocument;
+      for (const src of [${JSON.stringify(fieldsSrc)}, ${JSON.stringify(scrapeSrc)}]) {
+        const script = d.createElement('script'); script.textContent = src; d.body.appendChild(script);
+      }
+      const fields = frame.contentWindow.PMRS2_FIELDS;
+      for (const [key, value] of [['fullName', 'Synthetic '.repeat(12).trim()], ['phone', '012555777'], ['healthId', 'SYNTH-123']]) {
+        const field = fields.find(f => f.key === key);
+        const row = d.createElement('p');
+        row.textContent = field.labels[field.labels.length - 1] + String.fromCharCode(0x17d6) + ' ' + value;
+        d.body.appendChild(row);
+      }
+      const out = frame.contentWindow.scrapePmrs2(d); frame.remove(); return out;
+    })()`);
+    assert.equal(inline.fullName, 'Synthetic '.repeat(12).trim());
+    assert.equal(inline.phone, '012555777');
+    assert.equal(inline.healthId, 'SYNTH-123');
+
     assert.deepEqual(browser.state.errors, []);
   } finally {
     await browser?.close();

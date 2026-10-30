@@ -10,12 +10,12 @@ function pmrs2Norm(value) {
 
 // Drop a trailing colon or Khmer colon (U+17C8) and asterisk from a caption.
 function stripColon(text) {
-  return pmrs2Norm(text).replace(/[\s*:\uff1a\u17c8]+$/g, '');
+  return pmrs2Norm(text).replace(/[\s*:\uff1a\u17c8\u17d6]+$/g, '');
 }
 
 // Drop a leading colon/Khmer colon that sits between a caption and its value.
 function stripLead(text) {
-  return pmrs2Norm(text).replace(/^[\s:\uff1a\u17c8]+/g, '');
+  return pmrs2Norm(text).replace(/^[\s:\uff1a\u17c8\u17d6]+/g, '');
 }
 
 function controlValue(node) {
@@ -67,10 +67,10 @@ function cutAtNextCaption(text, captions) {
   let cut = text.length;
   for (const cap of captions) {
     if (!cap) continue;
-    const idx = text.indexOf(cap, 1);
-    if (idx > 0 && idx < cut) cut = idx;
+    const idx = text.indexOf(cap);
+    if (idx >= 0 && idx < cut) cut = idx;
   }
-  return pmrs2Norm(text.slice(0, cut)).replace(/[,:\uff1a\u17c8\s]+$/g, '');
+  return pmrs2Norm(text.slice(0, cut)).replace(/[,:\uff1a\u17c8\u17d6\s]+$/g, '');
 }
 
 // Read the text value shown next to a caption, for read-only summary pages.
@@ -118,26 +118,35 @@ function textValueNear(doc, labelEl, caption, captions) {
 
 // Find a caption element whose text matches one of the given captions.
 function findLabel(doc, captions) {
-  const wanted = captions.map(stripColon);
-  const nodes = doc.querySelectorAll('label, .form-label, .field-label, th, td, dt, b, strong, span, p, div');
-  for (const el of nodes) {
-    const text = stripColon(el.textContent);
-    if (!text || text.length > 48) continue;
-    if (wanted.some((w) => text === w || text.startsWith(w))) return el;
+  const wanted = captions.map(stripColon).sort((a, b) => b.length - a.length);
+  const nodes = [...doc.querySelectorAll('label, .form-label, .field-label, th, td, dt, b, strong, span, p, div, small')];
+  // Prefer a dedicated caption over a containing row. Match complete captions,
+  // never a prefix such as the patient's phone caption inside caregiver phone.
+  for (const exact of [true, false]) {
+    for (const el of nodes) {
+      if (el.closest('[hidden], [aria-hidden="true"], script, style')) continue;
+      const text = pmrs2Norm(el.textContent);
+      const caption = wanted.find(w => exact ? stripColon(text) === w :
+        text.startsWith(w) && /^[\s:\uff1a\u17c8\u17d6]/u.test(text.slice(w.length)));
+      if (!caption) continue;
+      if (!exact && [...el.children].some(child => pmrs2Norm(child.textContent).startsWith(caption))) continue;
+      return { element: el, caption };
+    }
   }
   return null;
 }
 
 function scrapeField(doc, field, captions) {
-  const labelEl = findLabel(doc, field.labels);
-  if (!labelEl) return '';
+  const match = findLabel(doc, field.labels);
+  if (!match) return '';
+  const { element: labelEl, caption } = match;
   const control = controlForLabel(doc, labelEl);
   if (control) {
     if (control.radioGroup) return checkedRadioText(control.radioGroup);
     const v = controlValue(control);
     if (v) return v;
   }
-  return textValueNear(doc, labelEl, stripColon(field.labels[0]), captions);
+  return textValueNear(doc, labelEl, caption, captions);
 }
 
 // Build the Borkeo payload from the live PMRS2 page.

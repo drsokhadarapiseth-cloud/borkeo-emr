@@ -8,7 +8,7 @@ var PMRS2_FIELDS = [
   { key: 'dob', labels: ['ថ្ងៃខែឆ្នាំកំណើត', 'ថ្ងៃកំណើត'] },
   { key: 'age', labels: ['អាយុ'] },
   { key: 'phone', labels: ['លេខទូរស័ព្ទ'] },
-  { key: 'healthId', labels: ['លេខបណ្ណសុខាភាព', 'លេខប័ណ្ណសុខភាព'] },
+  { key: 'healthId', labels: ['\u179b\u17c1\u1781\u1794\u178e\u17d2\u178e\u179f\u17bb\u1781\u1797\u17b6\u1796', 'លេខបណ្ណសុខាភាព', 'លេខប័ណ្ណសុខភាព'] },
   { key: 'caseNumber', labels: ['លេខករណី'] },
   { key: 'equityCard', labels: ['លេខបណ្ណសមធម៌', 'ប័ណ្ណមូលនិធិសមធម៌'] },
   { key: 'province', labels: ['ខេត្ត', 'រាជធានី/ខេត្ត'] },

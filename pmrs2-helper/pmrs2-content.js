@@ -26,11 +26,24 @@
     const payload = scrapePmrs2(document);
     const filled = Object.keys(payload).length;
     if (!filled) { notify(MSG_NONE); return; }
-    chrome.storage.local.set({ pmrs2Payload: payload, pmrs2PayloadAt: Date.now() }, () => {
-      defaultBorkeoUrl((base) => {
-        const url = base.replace(/\/+$/, '') + '/emr?view=register&pmrs2Import=1';
-        window.open(url, 'borkeoRegistration');
-        notify(MSG_SENT + ' (' + filled + ')');
+    // Open during the click gesture; asynchronous storage callbacks can be
+    // blocked by the browser's popup policy.
+    const target = window.open('about:blank', 'borkeoRegistration');
+    if (!target) { notify('សូមអនុញ្ញាតផ្ទាំងលេចឡើង រួចសាកល្បងម្ដងទៀត។'); return; }
+    defaultBorkeoUrl((base) => {
+      let url;
+      try {
+        url = new URL(base);
+        if (url.protocol !== 'http:' || !['127.0.0.1', 'localhost'].includes(url.hostname) || url.username || url.password) throw Error('unsupported target');
+      } catch {
+        target.close();
+        notify('សូមកំណត់អាសយដ្ឋានប្រព័ន្ធក្នុងកម្មវិធីជំនួយឱ្យបានត្រឹមត្រូវ។');
+        return;
+      }
+      chrome.storage.local.set({ pmrs2Payload: payload, pmrs2PayloadAt: Date.now(), pmrs2TransferId: crypto.randomUUID(), pmrs2TargetOrigin: url.origin }, () => {
+        if (chrome.runtime.lastError) { target.close(); notify('មិនអាចរក្សាទុកព័ត៌មានបណ្ដោះអាសន្នបានទេ។ សូមសាកល្បងម្ដងទៀត។'); return; }
+        target.location.href = url.origin + '/emr?view=registration&pmrs2Import=1';
+        notify('បានបើកទម្រង់ចុះឈ្មោះ។ សូមពិនិត្យព័ត៌មានមុនរក្សាទុក។');
       });
     });
   }

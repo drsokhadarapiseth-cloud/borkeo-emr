@@ -46,3 +46,18 @@ themselves, as usual.
 - `pmrs2-content.js` — the button on PMRS2 pages.
 - `borkeo-content.js` + `page-fill.js` — hand the data to Borkeo registration.
 - `options.html` / `options.js` — set the Borkeo address.
+
+## v51.2 import repair
+
+Reload this unpacked extension, then refresh both PMRS2 and Borkeo tabs. Sign in
+manually to Borkeo before sending. In extension Options choose the receiving
+loopback origin (including port), e.g. http://127.0.0.1:3001 or
+http://localhost:3002. Each instance must be selected explicitly.
+
+Inline caption aliases and long names are supported. Pending details are scoped
+to the selected origin and eligible for retry for ten minutes; they are
+cleared only when registration acknowledges populated fields. On timeout, sign
+in, refresh the registration tab and retry from PMRS2. A newer pending transfer
+is not cleared by an older acknowledgement. Opening registration does not mean
+the patient has been saved: staff still review and save. This remains Stage 1;
+exporting clinical records into PMRS2 is not implemented.

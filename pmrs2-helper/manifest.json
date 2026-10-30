@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Borkeo PMRS2 Helper",
-  "version": "51.1.0",
+  "version": "51.2.0",
   "description": "Copy patient identity from a PMRS2 patient page into Borkeo EMR registration. Staff log in to PMRS2 themselves; this helper never signs in or saves, and stores no PMRS2 password.",
   "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": [

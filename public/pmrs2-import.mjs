@@ -207,10 +207,14 @@ if (typeof window !== 'undefined') {
     const raw = document.documentElement.dataset.borkeoPmrs2Import || '';
     document.documentElement.removeAttribute('data-borkeo-pmrs2-import');
     if (!raw) return;
+    const transferId = document.documentElement.getAttribute('data-borkeo-pmrs2-id');
     let payload;
     try { payload = JSON.parse(raw); } catch { return; }
     applyPmrs2Registration(payload).then((report) => {
+      document.documentElement.setAttribute('data-borkeo-pmrs2-result', JSON.stringify({ id: transferId, ok: report.filled.length > 0 }));
       document.dispatchEvent(new CustomEvent('borkeo:pmrs2-import-done', { detail: report }));
+    }).catch(() => {
+      document.documentElement.setAttribute('data-borkeo-pmrs2-result', JSON.stringify({ id: transferId, ok: false }));
     });
   });
 }
