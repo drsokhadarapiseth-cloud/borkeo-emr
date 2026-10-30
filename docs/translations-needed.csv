@@ -747,3 +747,27 @@ reviewed.connections498.localcase,Case type at this hospital,Owner clarified loc
 "reviewed.ipd507.O","Objective","Owner approved colored concise SOAP sections","public/ipd-soap.mjs","លទ្ធផលពិនិត្យ"
 "reviewed.ipd507.A","Assessment","Owner approved colored concise SOAP sections","public/ipd-soap.mjs","ការវាយតម្លៃ"
 "reviewed.ipd507.P","Plan","Owner approved colored concise SOAP sections","public/ipd-soap.mjs","ផែនការព្យាបាល"
+pmrs2.paste.01,Import PMRS2 patient details by copying and pasting,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,នាំចូលព័ត៌មានអ្នកជំងឺពី PMRS2 ដោយចម្លង និងបិទភ្ជាប់
+pmrs2.paste.02,Import from PMRS2,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,នាំចូលពី PMRS2
+pmrs2.paste.03,Copy one patient summary from PMRS2 and review before filling registration,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,បើកទំព័រព័ត៌មានអ្នកជំងឺក្នុង PMRS2 ហើយចម្លងតែព័ត៌មានរបស់អ្នកជំងឺម្នាក់។ បិទភ្ជាប់នៅទីនេះ រួចពិនិត្យមុនបញ្ចូលទៅទម្រង់ចុះឈ្មោះ។
+pmrs2.paste.04,Open PMRS2,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,បើក PMRS2
+pmrs2.paste.05,Copied patient details,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,ព័ត៌មានដែលបានចម្លង
+pmrs2.paste.06,Review details,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,ពិនិត្យព័ត៌មាន
+pmrs2.paste.07,Existing values may be replaced; hospital identity is preserved and saving remains manual,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,ព័ត៌មានដែលមានស្រាប់អាចត្រូវបានជំនួសដោយព័ត៌មានដែលអ្នកបានពិនិត្យ។ លេខសម្គាល់អ្នកជំងឺរបស់មន្ទីរពេទ្យមិនត្រូវបានជំនួសទេ។ ត្រូវចុចរក្សាទុកក្នុងទម្រង់ចុះឈ្មោះដោយខ្លួនឯង។
+pmrs2.paste.08,Fill registration form,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,បញ្ចូលទៅទម្រង់ចុះឈ្មោះ
+pmrs2.paste.09,Conflicting details: copy only one patient summary,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,មានព័ត៌មានមិនស្របគ្នា។ សូមចម្លងតែព័ត៌មានរបស់អ្នកជំងឺម្នាក់ រួចសាកល្បងម្ដងទៀត។
+pmrs2.paste.10,No patient fields found: include the captions and values,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,មិនរកឃើញព័ត៌មានអ្នកជំងឺទេ។ សូមចម្លងស្លាកឈ្មោះ និងតម្លៃពីទំព័រព័ត៌មានអ្នកជំងឺ។
+pmrs2.paste.11,Some fields could not be read: review and complete missing fields manually,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,ព័ត៌មានខ្លះមិនអាចអានបានច្បាស់។ សូមពិនិត្យ និងកែតម្រូវ ហើយបំពេញព័ត៌មានដែលខ្វះក្នុងទម្រង់ចុះឈ្មោះ។
+pmrs2.paste.12,Review and correct details before filling registration,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,សូមពិនិត្យ និងកែតម្រូវព័ត៌មានខាងក្រោមមុនបញ្ចូលទៅទម្រង់។
+pmrs2.paste.13,Open a new registration before importing patient details,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,សូមបើកទម្រង់ចុះឈ្មោះថ្មី មុននាំចូលព័ត៌មានអ្នកជំងឺ។
+pmrs2.paste.14,Registration filled: review before saving,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,បានបញ្ចូលព័ត៌មានទៅទម្រង់។ សូមពិនិត្យមុនចុចរក្សាទុក។
+pmrs2.paste.15,Unable to fill details: check registration,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,មិនអាចបញ្ចូលព័ត៌មានបានទេ។ សូមពិនិត្យទម្រង់ចុះឈ្មោះ។
+pmrs2.paste.16,Possible existing patients: check before creating a new patient,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,\nអាចមានអ្នកជំងឺដែលបានចុះឈ្មោះរួចហើយ។ សូមពិនិត្យមុនបង្កើតថ្មី៖\n
+pmrs2.paste.17,Details may be partially filled: review the form and retry,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,មិនអាចបញ្ចូលព័ត៌មានបានពេញលេញទេ។ សូមពិនិត្យទម្រង់ ហើយសាកល្បងម្ដងទៀត។
+pmrs2.paste.18,PMRS2 health card caption variant,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,លេខបណ្ណសុខាភាព
+pmrs2.paste.19,PMRS2 entry type caption,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,ប្រភេទការចូល
+pmrs2.paste.20,PMRS2 measurement history caption,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,ប្រវត្តិវាស់វែងអ្នកជំងឺ
+pmrs2.paste.21,PMRS2 measurement history caption variant,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,ប្រវត្តិវាស់វែងនៃអ្នកជំងឺ
+pmrs2.paste.22,PMRS2 caregiver phone caption,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,លេខទូរស័ព្ទអ្នកកំដរ
+pmrs2.paste.23,Khmer digit normalization expression,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,"value.replace(/[០-៩]/g, c ="
+pmrs2.paste.24,PMRS2 age in years expression,Approved PMRS2 paste import panel v51.3,public/pmrs2-panel.mjs; public/pmrs2-paste.mjs,)(?:\s*(?:ឆ្នាំ|years?|yrs?))?$/iu);

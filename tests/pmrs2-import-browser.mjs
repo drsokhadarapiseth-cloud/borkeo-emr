@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { createEmrServer } from '../server/server.mjs';
+import { PMRS2_PASTE_FIELDS } from '../public/pmrs2-paste.mjs';
 import { openBrowser } from './helpers/context-browser.mjs';
 
 // Stage 1 PMRS2 -> Borkeo registration import. No real PMRS2 site is contacted;
@@ -175,6 +176,41 @@ test('PMRS2 import fills registration, resolves the address and flags a duplicat
     assert.equal(inline.fullName, 'Synthetic '.repeat(12).trim());
     assert.equal(inline.phone, '012555777');
     assert.equal(inline.healthId, 'SYNTH-123');
+
+    // Extension-free UI: preview must not mutate registration; apply must not save.
+    await browser.waitFor('!!document.getElementById("pmrs2-paste-open")', 'paste import panel ready');
+    const originalName = await browser.evaluate('document.getElementById("web_last_name").value');
+    const recordsBeforePaste = app.database.sqlite.prepare('SELECT COUNT(*) AS n FROM patient_records').get().n;
+    const rawText = [['fullName','Synthetic Paste'],['sex','Female'],['age','49 years'],['healthId','HCDUP777'],['caseNumber','PASTE-CASE-1'],['phone','012555777']].map(([key,value]) => PMRS2_PASTE_FIELDS.find(f=>f[0]===key)[2][0]+': '+value).join('\n');
+    await browser.evaluate(`document.getElementById('pmrs2-paste-open').click(); document.getElementById('pmrs2-paste-text').value=${JSON.stringify(rawText)}; document.getElementById('pmrs2-paste-preview').click(); true`);
+    assert.equal(await browser.evaluate('document.getElementById("web_last_name").value'),originalName);
+    assert.equal(await browser.evaluate('document.querySelector("[data-pmrs2-key=fullName]").value'),'Synthetic Paste');
+    if (process.env.EMR_TEST_ARTIFACT_DIR) {
+      fs.mkdirSync(process.env.EMR_TEST_ARTIFACT_DIR, {recursive:true});
+      const shot = await browser.send('Page.captureScreenshot',{format:'png'});
+      fs.writeFileSync(process.env.EMR_TEST_ARTIFACT_DIR+'/pmrs2-panel-desktop.png',Buffer.from(shot.data,'base64'));
+    }
+    await browser.evaluate(`document.getElementById('pmrs2-paste-apply').click(); true`);
+    await browser.waitFor(`document.getElementById('pmrs2-paste-fields').hidden && !document.getElementById('pmrs2-paste-preview').disabled`, 'paste applied and reviewed');
+    assert.equal(await browser.evaluate('document.getElementById("web_last_name").value'),'Synthetic');
+    assert.equal(await browser.evaluate('document.getElementById("web_first_name").value'),'Paste');
+    assert.equal(await browser.evaluate('document.getElementById("web_other_card_number").value'),'HCDUP777');
+    assert.equal(await browser.evaluate('document.getElementById("web_pmrs2_case_number").value'),'PASTE-CASE-1');
+    assert.equal(await browser.evaluate('document.getElementById("pmrs2-paste-text").value'),'');
+    assert.ok(await browser.evaluate('document.getElementById("pmrs2-paste-status").textContent.includes("PMRS2-DUP")'));
+    await browser.send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
+    assert.ok(await browser.evaluate(`document.getElementById('pmrs2-paste-dialog').getBoundingClientRect().width <= innerWidth`),'dialog fits mobile width');
+    if (process.env.EMR_TEST_ARTIFACT_DIR) {
+      const shot = await browser.send('Page.captureScreenshot',{format:'png'});
+      fs.writeFileSync(process.env.EMR_TEST_ARTIFACT_DIR+'/pmrs2-panel-mobile.png',Buffer.from(shot.data,'base64'));
+    }
+    assert.equal(app.database.sqlite.prepare('SELECT COUNT(*) AS n FROM patient_records').get().n, recordsBeforePaste, 'paste import never auto-saves a patient');
+    await browser.evaluate(`document.querySelector('#pmrs2-paste-dialog [data-close]').click(); document.getElementById('pmrs2-paste-open').click(); true`);
+    assert.equal(await browser.evaluate('document.getElementById("pmrs2-paste-text").value'),'');
+    assert.equal(await browser.evaluate('document.getElementById("pmrs2-paste-apply").disabled'),true);
+    // Existing encounters are protected even when a preview was reviewed.
+    await browser.evaluate(`history.replaceState(null,'',location.pathname+'?view=registration&patientKey=synthetic-existing'); document.getElementById('pmrs2-paste-text').value=${JSON.stringify(rawText.replace('Synthetic Paste','Different Person'))}; document.getElementById('pmrs2-paste-preview').click(); document.getElementById('pmrs2-paste-apply').click(); true`);
+    assert.equal(await browser.evaluate('document.getElementById("web_last_name").value'),'Synthetic');
 
     assert.deepEqual(browser.state.errors, []);
   } finally {

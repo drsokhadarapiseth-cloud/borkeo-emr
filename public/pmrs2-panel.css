@@ -1,0 +1,16 @@
+.pmrs2-panel-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;margin:12px 0 22px;border:1px solid #bfdae7;border-radius:12px;background:#f0f9ff;color:#16445b}
+.pmrs2-panel-bar p{margin:0}
+.pmrs2-dialog{box-sizing:border-box;width:min(840px,calc(100vw - 24px));max-height:90vh;padding:0;border:1px solid #b8d2de;border-radius:16px;color:#163b50;background:#fff;font-family:inherit;overflow:hidden}
+.pmrs2-dialog::backdrop{background:rgba(12,35,52,.55)}
+.pmrs2-dialog header,.pmrs2-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:18px 22px;background:#f2f8fb}
+.pmrs2-dialog header{border-bottom:1px solid #d6e5ed}.pmrs2-dialog footer{border-top:1px solid #d6e5ed}
+.pmrs2-dialog h2{margin:0;font-size:1.25rem}.pmrs2-dialog .pmrs2-body{padding:20px 22px}.pmrs2-dialog p{line-height:1.8}
+.pmrs2-dialog button,.pmrs2-panel-bar button,.pmrs2-dialog a{font-family:inherit;font-size:inherit;line-height:1.6;padding:10px 16px;border:1px solid #b7d0dd;border-radius:8px;background:#fff;color:#17435a;text-decoration:none;cursor:pointer}
+.pmrs2-dialog .pmrs2-primary,.pmrs2-panel-bar button{background:#087b9a;color:white;border-color:#087b9a}.pmrs2-dialog button:disabled{opacity:.5;cursor:default}
+.pmrs2-dialog label{display:block;line-height:1.8;font-weight:600}.pmrs2-dialog textarea,.pmrs2-dialog input{box-sizing:border-box;width:100%;padding:10px 12px;border:1px solid #accbdc;border-radius:7px;background:white;color:#163b50;font-family:inherit;font-size:1rem;line-height:1.8}
+.pmrs2-dialog textarea{min-height:180px;resize:vertical}.pmrs2-preview{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}.pmrs2-preview .pmrs2-wide{grid-column:1/-1}
+.pmrs2-dialog [hidden]{display:none!important}.pmrs2-status{padding:12px;background:#eef7fc;border-left:4px solid #087b9a;white-space:pre-wrap;overflow-wrap:anywhere}
+@media(max-width:560px){.pmrs2-preview{grid-template-columns:1fr}.pmrs2-dialog header,.pmrs2-dialog footer,.pmrs2-dialog .pmrs2-body{padding:14px}.pmrs2-dialog footer button{flex:1}}
+@media print{.pmrs2-panel-bar,.pmrs2-dialog{display:none!important}}
+
+.pmrs2-dialog[open]{display:flex;flex-direction:column}.pmrs2-dialog .pmrs2-body{overflow:auto;min-height:0}.pmrs2-dialog header,.pmrs2-dialog footer{flex-shrink:0}

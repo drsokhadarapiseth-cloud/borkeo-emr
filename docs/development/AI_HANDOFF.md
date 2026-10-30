@@ -1453,3 +1453,54 @@ sign in to the target EMR, verify its exact loopback origin in extension Options
 then retry the PMRS2 button. Existing running EMR processes were not restarted;
 restart the identified launcher to activate the new version/cache-busted module.
 Preserve .vscode/, .gitignore, .env, databases, uploads and instance data.
+
+
+## Extension-free PMRS2 paste-import panel - v51.3.0
+
+Approved 2026-10-30: user chose a registration panel using official PMRS2 login
+in a separate tab, browser password-manager convenience, and reviewed pasted
+patient details. Scope is PMRS2 -> new EMR registration only. Reverse export,
+embedded PMRS2 login and automatic credential storage are not included.
+
+Baseline: master 9208f3d4992e39ccaf7ecc3c59fac81428948d55 (v51.2.0).
+Required clean-baseline code backup:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v51.2.0-9208f3d4-fa7ef6c4.
+Restore with npm run restore:code -- <backup-directory>; restore creates a NEW
+folder. Never overwrite live databases, uploads, secrets or patient records.
+
+Registration now shows an import button above the form. The modal opens the
+official PMRS2 site with noopener/noreferrer, accepts manually pasted plain text,
+extracts a single patient summary, and presents editable preview fields. Only
+an explicit Apply fills registration. Existing loaded records are blocked.
+The existing registration importer handles address text and local duplicate
+lookup; PMRS2 health ID stays in Other Card, PMRS2 case number remains separate,
+and the hospital's own patient ID is preserved. Staff still review and save.
+Names, sex, age, DOB, phone, PMRS2 identifiers, equity-card and combined address
+are supported when captions and values are copied. Birthdate is not guessed
+from age. Unsupported ages/dates are skipped with a review warning. Conflicting
+identities and HTML-like values are rejected; input is limited to 30,000 chars.
+Raw copied text is not put in local/session storage or submitted to a server;
+it is cleared when the panel closes or after a successful fill. Duplicate
+queries use existing local same-origin search. No PMRS2 password, OTP secret,
+authenticator code or account session is captured. No extension is required.
+
+Validation in disposable restored copy borkeo-restored-code-03qexH with synthetic
+fixtures: npm test 1103/1103; npm run check:khmer passed; targeted paste/parser
+and translation tests passed. Browser test passed: preview does not change the
+registration, Apply fills it, duplicate is displayed, raw text clears, reopening
+resets the panel, existing records are protected and patient-record count stays
+unchanged (no automatic save). Desktop/mobile dialog screenshots inspected;
+mobile follows the existing EMR fixed-width viewport/zoom behavior. No real PMRS2
+login or patient data was used. Browser evidence is in the disposable copy's
+synthetic-pmrs2-evidence directory, excluded from release.
+The first suite run caught translation-registration rules; corrected by keeping
+new Khmer entries matched to rows in translations-needed.csv. Visual review
+also removed a semantic main element that attracted global clinical chart tabs.
+
+Delivery: Borkeo-EMR-v51.3.0-pmrs2-paste-panel-update.txt.
+Activation: restart the identified EMR launcher and refresh registration. Click
+the PMRS2 import button, open PMRS2, copy one patient's summary with captions,
+paste, review, Apply, close the panel, then review/save registration manually.
+Running EMR processes were not restarted. Existing helper remains available but
+is not required by this panel. Live credentials, databases, uploads, .vscode and
+.gitignore were preserved.

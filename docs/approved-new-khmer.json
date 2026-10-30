@@ -3230,6 +3230,102 @@
     {
       "en": "Plan",
       "kh": "ផែនការព្យាបាល"
+    },
+    {
+      "en": "Import PMRS2 patient details by copying and pasting",
+      "kh": "នាំចូលព័ត៌មានអ្នកជំងឺពី PMRS2 ដោយចម្លង និងបិទភ្ជាប់"
+    },
+    {
+      "en": "Import from PMRS2",
+      "kh": "នាំចូលពី PMRS2"
+    },
+    {
+      "en": "Copy one patient summary from PMRS2 and review before filling registration",
+      "kh": "បើកទំព័រព័ត៌មានអ្នកជំងឺក្នុង PMRS2 ហើយចម្លងតែព័ត៌មានរបស់អ្នកជំងឺម្នាក់។ បិទភ្ជាប់នៅទីនេះ រួចពិនិត្យមុនបញ្ចូលទៅទម្រង់ចុះឈ្មោះ។"
+    },
+    {
+      "en": "Open PMRS2",
+      "kh": "បើក PMRS2"
+    },
+    {
+      "en": "Copied patient details",
+      "kh": "ព័ត៌មានដែលបានចម្លង"
+    },
+    {
+      "en": "Review details",
+      "kh": "ពិនិត្យព័ត៌មាន"
+    },
+    {
+      "en": "Existing values may be replaced; hospital identity is preserved and saving remains manual",
+      "kh": "ព័ត៌មានដែលមានស្រាប់អាចត្រូវបានជំនួសដោយព័ត៌មានដែលអ្នកបានពិនិត្យ។ លេខសម្គាល់អ្នកជំងឺរបស់មន្ទីរពេទ្យមិនត្រូវបានជំនួសទេ។ ត្រូវចុចរក្សាទុកក្នុងទម្រង់ចុះឈ្មោះដោយខ្លួនឯង។"
+    },
+    {
+      "en": "Fill registration form",
+      "kh": "បញ្ចូលទៅទម្រង់ចុះឈ្មោះ"
+    },
+    {
+      "en": "Conflicting details: copy only one patient summary",
+      "kh": "មានព័ត៌មានមិនស្របគ្នា។ សូមចម្លងតែព័ត៌មានរបស់អ្នកជំងឺម្នាក់ រួចសាកល្បងម្ដងទៀត។"
+    },
+    {
+      "en": "No patient fields found: include the captions and values",
+      "kh": "មិនរកឃើញព័ត៌មានអ្នកជំងឺទេ។ សូមចម្លងស្លាកឈ្មោះ និងតម្លៃពីទំព័រព័ត៌មានអ្នកជំងឺ។"
+    },
+    {
+      "en": "Some fields could not be read: review and complete missing fields manually",
+      "kh": "ព័ត៌មានខ្លះមិនអាចអានបានច្បាស់។ សូមពិនិត្យ និងកែតម្រូវ ហើយបំពេញព័ត៌មានដែលខ្វះក្នុងទម្រង់ចុះឈ្មោះ។"
+    },
+    {
+      "en": "Review and correct details before filling registration",
+      "kh": "សូមពិនិត្យ និងកែតម្រូវព័ត៌មានខាងក្រោមមុនបញ្ចូលទៅទម្រង់។"
+    },
+    {
+      "en": "Open a new registration before importing patient details",
+      "kh": "សូមបើកទម្រង់ចុះឈ្មោះថ្មី មុននាំចូលព័ត៌មានអ្នកជំងឺ។"
+    },
+    {
+      "en": "Registration filled: review before saving",
+      "kh": "បានបញ្ចូលព័ត៌មានទៅទម្រង់។ សូមពិនិត្យមុនចុចរក្សាទុក។"
+    },
+    {
+      "en": "Unable to fill details: check registration",
+      "kh": "មិនអាចបញ្ចូលព័ត៌មានបានទេ។ សូមពិនិត្យទម្រង់ចុះឈ្មោះ។"
+    },
+    {
+      "en": "Possible existing patients: check before creating a new patient",
+      "kh": "\\nអាចមានអ្នកជំងឺដែលបានចុះឈ្មោះរួចហើយ។ សូមពិនិត្យមុនបង្កើតថ្មី៖\\n"
+    },
+    {
+      "en": "Details may be partially filled: review the form and retry",
+      "kh": "មិនអាចបញ្ចូលព័ត៌មានបានពេញលេញទេ។ សូមពិនិត្យទម្រង់ ហើយសាកល្បងម្ដងទៀត។"
+    },
+    {
+      "en": "PMRS2 health card caption variant",
+      "kh": "លេខបណ្ណសុខាភាព"
+    },
+    {
+      "en": "PMRS2 entry type caption",
+      "kh": "ប្រភេទការចូល"
+    },
+    {
+      "en": "PMRS2 measurement history caption",
+      "kh": "ប្រវត្តិវាស់វែងអ្នកជំងឺ"
+    },
+    {
+      "en": "PMRS2 measurement history caption variant",
+      "kh": "ប្រវត្តិវាស់វែងនៃអ្នកជំងឺ"
+    },
+    {
+      "en": "PMRS2 caregiver phone caption",
+      "kh": "លេខទូរស័ព្ទអ្នកកំដរ"
+    },
+    {
+      "en": "Khmer digit normalization expression",
+      "kh": "value.replace(/[០-៩]/g, c ="
+    },
+    {
+      "en": "PMRS2 age in years expression",
+      "kh": ")(?:\\s*(?:ឆ្នាំ|years?|yrs?))?$/iu);"
     }
   ]
 }
