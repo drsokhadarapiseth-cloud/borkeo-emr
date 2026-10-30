@@ -208,13 +208,18 @@ if (typeof window !== 'undefined') {
     document.documentElement.removeAttribute('data-borkeo-pmrs2-import');
     if (!raw) return;
     const transferId = document.documentElement.getAttribute('data-borkeo-pmrs2-id');
+    if (window.getLoadedEmrPatient?.()?.patientKey) {
+      document.documentElement.setAttribute('data-borkeo-pmrs2-result', JSON.stringify({ id: transferId, ok: false, reason: 'record' }));
+      return;
+    }
     let payload;
     try { payload = JSON.parse(raw); } catch { return; }
     applyPmrs2Registration(payload).then((report) => {
-      document.documentElement.setAttribute('data-borkeo-pmrs2-result', JSON.stringify({ id: transferId, ok: report.filled.length > 0 }));
+      document.documentElement.setAttribute('data-borkeo-pmrs2-result', JSON.stringify({ id: transferId, ok: report.filled.length > 0, fields: report.filled.length, duplicates: report.duplicates.length, matches: report.duplicates.map(({patient}) => [patient.fullName || [patient.lastName, patient.firstName].filter(Boolean).join(' '), patient.caseNumber || patient.healthId].filter(Boolean).join(' - ')) }));
       document.dispatchEvent(new CustomEvent('borkeo:pmrs2-import-done', { detail: report }));
     }).catch(() => {
       document.documentElement.setAttribute('data-borkeo-pmrs2-result', JSON.stringify({ id: transferId, ok: false }));
     });
   });
+  document.documentElement.setAttribute('data-borkeo-pmrs2-ready', '1');
 }

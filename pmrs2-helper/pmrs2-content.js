@@ -1,57 +1,49 @@
-// Runs on PMRS2 pages. Adds one floating button. On click it reads the patient
-// fields from the page and opens Borkeo registration pre-filled. It never submits
-// anything to PMRS2 and never touches the PMRS2 login.
+﻿// Patient data crosses only the extension's message channel, never window.opener.
 (function () {
   'use strict';
   if (window.__borkeoPmrs2ButtonAdded) return;
   window.__borkeoPmrs2ButtonAdded = true;
-
-  const BUTTON_TEXT = 'បញ្ចូនទៅ Borkeo';
-  const MSG_NONE = 'រកមិនឃើញព័ត៌មានអ្នកជំងឺនៅលើទំព័រនេះ';
-  const MSG_SENT = 'បានផ្ញើទៅ Borkeo';
-
-  function defaultBorkeoUrl(cb) {
-    chrome.storage.local.get({ borkeoBaseUrl: 'http://127.0.0.1:3001' }, (cfg) => cb(cfg.borkeoBaseUrl));
-  }
-
-  function notify(message) {
-    const bar = document.createElement('div');
-    bar.textContent = message;
-    bar.style.cssText = 'position:fixed;z-index:2147483647;left:50%;top:16px;transform:translateX(-50%);background:#0b7895;color:#fff;padding:10px 16px;border-radius:8px;font:14px sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)';
-    document.body.appendChild(bar);
-    setTimeout(() => bar.remove(), 3500);
-  }
-
-  function sendToBorkeo() {
-    const payload = scrapePmrs2(document);
-    const filled = Object.keys(payload).length;
-    if (!filled) { notify(MSG_NONE); return; }
-    // Open during the click gesture; asynchronous storage callbacks can be
-    // blocked by the browser's popup policy.
-    const target = window.open('about:blank', 'borkeoRegistration');
-    if (!target) { notify('សូមអនុញ្ញាតផ្ទាំងលេចឡើង រួចសាកល្បងម្ដងទៀត។'); return; }
-    defaultBorkeoUrl((base) => {
-      let url;
-      try {
-        url = new URL(base);
-        if (url.protocol !== 'http:' || !['127.0.0.1', 'localhost'].includes(url.hostname) || url.username || url.password) throw Error('unsupported target');
-      } catch {
-        target.close();
-        notify('សូមកំណត់អាសយដ្ឋានប្រព័ន្ធក្នុងកម្មវិធីជំនួយឱ្យបានត្រឹមត្រូវ។');
-        return;
-      }
-      chrome.storage.local.set({ pmrs2Payload: payload, pmrs2PayloadAt: Date.now(), pmrs2TransferId: crypto.randomUUID(), pmrs2TargetOrigin: url.origin }, () => {
-        if (chrome.runtime.lastError) { target.close(); notify('មិនអាចរក្សាទុកព័ត៌មានបណ្ដោះអាសន្នបានទេ។ សូមសាកល្បងម្ដងទៀត។'); return; }
-        target.location.href = url.origin + '/emr?view=registration&pmrs2Import=1';
-        notify('បានបើកទម្រង់ចុះឈ្មោះ។ សូមពិនិត្យព័ត៌មានមុនរក្សាទុក។');
-      });
-    });
-  }
-
   const button = document.createElement('button');
-  button.type = 'button';
-  button.textContent = BUTTON_TEXT;
-  button.style.cssText = 'position:fixed;z-index:2147483647;right:18px;bottom:18px;background:#0b7895;color:#fff;border:0;border-radius:24px;padding:12px 20px;font:600 14px sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3)';
-  button.addEventListener('click', sendToBorkeo);
-  document.body.appendChild(button);
+  button.id = 'borkeo-pmrs2-send'; button.type = 'button';
+  button.textContent = 'បញ្ជូនទៅ Borkeo';
+  button.style.cssText = 'position:fixed;z-index:2147483647;right:18px;bottom:18px;background:#0b7895;color:#fff;border:0;border-radius:24px;padding:12px 20px;font:600 14px sans-serif;cursor:pointer';
+  const status = document.createElement('p');
+  status.id = 'borkeo-pmrs2-status'; status.setAttribute('role', 'status');
+  status.style.cssText = 'position:fixed;z-index:2147483647;right:18px;bottom:66px;max-width:min(420px,90vw);padding:12px;border-radius:8px;background:#eef8fb;color:#123c51;white-space:pre-wrap;font:14px/1.8 sans-serif';
+  status.textContent = 'កម្មវិធីជំនួយ ' + chrome.runtime.getManifest().version;
+  document.body.append(status, button);
+  const labels = { opened:'បានបើកទម្រង់ចុះឈ្មោះ។ កំពុងរង់ចាំប្រព័ន្ធ។', login:'សូមចូលគណនីក្នុងផ្ទាំង Borkeo ដែលបានបើក។', ready:'កំពុងរង់ចាំទម្រង់ចុះឈ្មោះ។', applying:'កំពុងបញ្ចូលព័ត៌មានទៅទម្រង់។', filled:'បានបញ្ចូលព័ត៌មានទៅទម្រង់។ សូមពិនិត្យមុនរក្សាទុក។', failed:'មិនអាចបញ្ចូលព័ត៌មានបានទេ។ សូមពិនិត្យសារក្នុងផ្ទាំង Borkeo។' };
+  const message = data => new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(data, response => chrome.runtime.lastError ? reject(Error('extension')) : resolve(response));
+  });
+  let polling;
+  button.addEventListener('click', async () => {
+    if (button.disabled) return;
+    const payload = scrapePmrs2(document);
+    if (!payload.fullName && !payload.healthId && !payload.caseNumber) {
+      status.textContent = 'រកមិនឃើញឈ្មោះ ឬលេខសម្គាល់អ្នកជំងឺទេ។ សូមបើកទំព័រព័ត៌មានអ្នកជំងឺ ហើយសាកល្បងម្ដងទៀត។'; return;
+    }
+    button.disabled = true;
+    try {
+      const sent = await message({ type:'pmrs2-send', payload });
+      if (!sent?.ok) throw Error(sent?.error || 'transfer');
+      let checks = 0;
+      const poll = async () => {
+        try {
+          const result = await message({ type:'pmrs2-status', id:sent.id });
+          if (!result?.ok) throw Error('expired');
+          status.textContent = (labels[result.stage] || labels.ready) + '\n' + chrome.runtime.getManifest().version;
+          status.dataset.stage = result.stage;
+          if (result.stage === 'filled') status.textContent += '\n' + result.fields + ' ព័ត៌មាន • ' + result.duplicates + ' អ្នកជំងឺអាចស្ទួន';
+          if (['filled','failed'].includes(result.stage) || checks++ >= 600) { button.disabled = false; return; }
+          polling = setTimeout(poll, 1000);
+        } catch { button.disabled = false; status.textContent = 'ការបញ្ជូនបានផុតកំណត់ ឬកម្មវិធីជំនួយបានប្ដូរ។ សូមផ្ទុកទំព័រឡើងវិញ។'; }
+      };
+      poll();
+    } catch (error) {
+      button.disabled = false;
+      status.textContent = error.message === 'busy' ? 'មានការបញ្ជូនអ្នកជំងឺម្នាក់ទៀតកំពុងដំណើរការ។ សូមបញ្ចប់ការបញ្ជូននោះមុន។' : error.message === 'target' ? 'សូមកំណត់អាសយដ្ឋាន Borkeo ក្នុងកម្មវិធីជំនួយឱ្យបានត្រឹមត្រូវ។' : 'មិនអាចបញ្ជូនបានទេ។ សូមផ្ទុកកម្មវិធីជំនួយ និងទំព័រឡើងវិញ។';
+    }
+  });
+  window.addEventListener('pagehide', () => clearTimeout(polling), { once:true });
 })();

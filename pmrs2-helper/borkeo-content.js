@@ -1,47 +1,61 @@
-// Pending details are cleared only after the registration module acknowledges them.
+// Direct DOM-event handshake: no injected script tag, no cross-origin window access.
 (function () {
   'use strict';
-  if (!/[?&]pmrs2Import=1\b/.test(location.search)) return;
-  chrome.storage.local.get({ pmrs2Payload: null, pmrs2PayloadAt: 0, pmrs2TransferId: '', pmrs2TargetOrigin: '' }, cfg => {
-    if (!cfg.pmrs2Payload || Date.now() - cfg.pmrs2PayloadAt > 600000 || cfg.pmrs2TargetOrigin !== location.origin) return;
+  const send = data => new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(data, reply => chrome.runtime.lastError ? reject(Error('extension')) : resolve(reply));
+  });
+  (async () => {
+    const pending = await send({type:'pmrs2-pending'});
+    if (!pending?.ok) return;
     const root = document.documentElement;
-    let tries = 0;
-    let injected = false;
-    const fail = () => {
-      root.removeAttribute('data-borkeo-pmrs2-import');
-      root.removeAttribute('data-borkeo-pmrs2-id');
-      const bar = document.createElement('p');
-      bar.textContent = 'មិនអាចបញ្ចូលព័ត៌មានបានទេ។ សូមចូលគណនី បើកទម្រង់ចុះឈ្មោះ រួចសាកល្បងបញ្ជូនពីទំព័រដើមម្ដងទៀត។';
-      bar.setAttribute('role', 'alert');
-      bar.style.cssText = 'position:fixed;top:12px;left:12px;right:12px;z-index:2147483647;background:#fff3cd;color:#513b00;padding:16px;border:1px solid #bd9100;border-radius:8px';
-      document.body.appendChild(bar);
-    };
-    const deliver = () => {
+    const status = document.createElement('p');
+    status.id = 'borkeo-pmrs2-receive-status'; status.setAttribute('role','status');
+    status.style.cssText = 'position:fixed;top:8px;left:16px;right:16px;z-index:2147483647;padding:12px 18px;background:#e8f6fb;color:#123c51;border:1px solid #9cc8db;border-radius:8px;font:14px/1.8 sans-serif;white-space:pre-wrap';
+    document.body.append(status);
+    const stage = (name, extra={}) => send({type:'pmrs2-stage', id:pending.id, stage:name,...extra});
+    if (location.pathname === '/login') {
+      status.textContent = 'មានព័ត៌មានអ្នកជំងឺកំពុងរង់ចាំ។ សូមចូលគណនី ដើម្បីបន្តការនាំចូល។'; await stage('login'); return;
+    }
+    const query = new URL(location.href).searchParams;
+    if (query.has('patientKey') || query.has('patient')) {
+      status.textContent = 'មិនអាចនាំចូលលើកំណត់ត្រាអ្នកជំងឺដែលបានបើកទេ។ សូមប្រើទម្រង់ចុះឈ្មោះថ្មី។'; await stage('failed',{reason:'record'}); return;
+    }
+    if (location.pathname !== '/emr' || query.get('view') !== 'register') {
+      const route = await send({type:'pmrs2-navigate',id:pending.id});
+      if (route?.ok) location.replace('/emr?view=register&pmrs2Import=1');
+      else status.textContent = 'មិនអាចបើកទម្រង់ចុះឈ្មោះបានទេ។ សូមពិនិត្យសិទ្ធិគណនី និងអាសយដ្ឋានប្រព័ន្ធ។';
+      return;
+    }
+    status.textContent = 'កំពុងរង់ចាំទម្រង់ចុះឈ្មោះ។'; await stage('ready');
+    let tries = 0, delivered = false;
+    const cleanup = () => { root.removeAttribute('data-borkeo-pmrs2-import'); root.removeAttribute('data-borkeo-pmrs2-id'); root.removeAttribute('data-borkeo-pmrs2-result'); };
+    const check = async () => {
       let result;
-      try { result = JSON.parse(root.getAttribute('data-borkeo-pmrs2-result') || 'null'); } catch { /* no acknowledgement */ }
-      if (result && result.id === cfg.pmrs2TransferId) {
-        root.removeAttribute('data-borkeo-pmrs2-result');
-        root.removeAttribute('data-borkeo-pmrs2-id');
-        if (!result.ok) { fail(); return; }
-        chrome.storage.local.get({ pmrs2TransferId: '' }, current => {
-          if (current.pmrs2TransferId === cfg.pmrs2TransferId) chrome.storage.local.remove(['pmrs2Payload', 'pmrs2PayloadAt', 'pmrs2TransferId', 'pmrs2TargetOrigin']);
-        });
+      try { result = JSON.parse(root.getAttribute('data-borkeo-pmrs2-result') || 'null'); } catch { /* wait */ }
+      if (result?.id === pending.id) {
+        cleanup();
+        if (result.ok) {
+          await stage('filled',{fields:result.fields,duplicates:result.duplicates});
+          status.textContent = 'បានបញ្ចូលព័ត៌មានពី PMRS2។ សូមពិនិត្យទម្រង់ និងអ្នកជំងឺដែលអាចស្ទួន មុនរក្សាទុក។';
+          if (Array.isArray(result.matches) && result.matches.length) status.textContent += '\n' + result.matches.join('\n');
+          status.dataset.stage = 'filled';
+        } else { await stage('failed',{reason:result.reason || 'apply'}); status.textContent = 'មិនអាចបញ្ចូលព័ត៌មានបានទេ។ សូមបើកទម្រង់ចុះឈ្មោះថ្មី ហើយសាកល្បងម្ដងទៀត។'; }
         return;
       }
-      if (tries++ >= 150) { fail(); return; }
-      if (!injected && document.getElementById('web_last_name')) {
-        injected = true;
-        root.removeAttribute('data-borkeo-pmrs2-result');
-        root.setAttribute('data-borkeo-pmrs2-id', cfg.pmrs2TransferId);
-        root.setAttribute('data-borkeo-pmrs2-import', JSON.stringify(cfg.pmrs2Payload));
-        const script = document.createElement('script');
-        script.src = chrome.runtime.getURL('page-fill.js');
-        script.onload = () => script.remove();
-        script.onerror = () => { script.remove(); };
-        (document.head || root).appendChild(script);
+      if (tries++ >= 150) {
+        cleanup(); await stage('failed',{reason:delivered?'apply':'module'});
+        status.textContent = 'ទម្រង់មិនបានឆ្លើយតប។ សូមចាប់ផ្ដើម Borkeo ឡើងវិញ ផ្ទុកទំព័រឡើងវិញ ហើយសាកល្បងម្ដងទៀត។'; status.dataset.stage='failed'; return;
       }
-      setTimeout(deliver, 400);
+      if (!delivered && root.getAttribute('data-borkeo-pmrs2-ready') === '1' && document.getElementById('web_last_name')) {
+        delivered = true;
+        root.removeAttribute('data-borkeo-pmrs2-result');
+        root.setAttribute('data-borkeo-pmrs2-id', pending.id);
+        root.setAttribute('data-borkeo-pmrs2-import', JSON.stringify(pending.payload));
+        await stage('applying');
+        document.dispatchEvent(new Event('borkeo:pmrs2-import'));
+      }
+      setTimeout(() => check().catch(() => { status.textContent = 'សូមផ្ទុកកម្មវិធីជំនួយ និងទំព័រឡើងវិញ។'; }),400);
     };
-    deliver();
-  });
+    await check();
+  })().catch(() => { /* No transfer is applied when the extension is unavailable. */ });
 })();

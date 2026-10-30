@@ -1,5 +1,5 @@
 import { parsePmrs2Text, PMRS2_PASTE_FIELDS } from './pmrs2-paste.mjs?v=5130';
-import { applyPmrs2Registration } from './pmrs2-import.mjs?v=5130';
+import { applyPmrs2Registration } from './pmrs2-import.mjs?v=5140';
 
 function mount() {
   const host = document.getElementById('web-admission');

@@ -6,13 +6,13 @@ import { spawn } from 'node:child_process';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-export async function openBrowser() {
+export async function openBrowser({ extensionPath } = {}) {
   const executable = [process.env.EMR_TEST_BROWSER, 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Google/Chrome/Application/chrome.exe']
     .find(file => file && fs.existsSync(file));
   assert.ok(executable, 'Set EMR_TEST_BROWSER to run this explicit Chromium test.');
   const debugPort = 9400 + Math.floor(Math.random() * 400);
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'borkeo-context-browser-'));
-  const child = spawn(executable, ['--headless=new', '--disable-gpu', '--no-first-run', `--remote-debugging-port=${debugPort}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore', windowsHide: true });
+  const child = spawn(executable, [...(extensionPath ? ['--disable-extensions-except='+extensionPath,'--load-extension='+extensionPath] : []), '--headless=new', '--disable-gpu', '--no-first-run', `--remote-debugging-port=${debugPort}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore', windowsHide: true });
   let launchError;
   child.on('error', error => { launchError = error; });
   let url;
@@ -26,10 +26,12 @@ export async function openBrowser() {
   await new Promise(resolve => ws.addEventListener('open', resolve, { once: true }));
   let seq = 0;
   const pending = new Map();
+  const listeners = new Map();
   const state = { loads: 0, errors: [] };
   ws.addEventListener('message', event => {
     const message = JSON.parse(event.data);
     if (message.id && pending.has(message.id)) { pending.get(message.id)(message); pending.delete(message.id); return; }
+    for (const listener of listeners.get(message.method) || []) listener(message.params);
     if (message.method === 'Page.loadEventFired') state.loads++;
     if (message.method === 'Runtime.exceptionThrown') state.errors.push(message.params.exceptionDetails?.exception?.description || message.params.exceptionDetails?.text);
     if (message.method === 'Page.javascriptDialogOpening') send('Page.handleJavaScriptDialog', { accept: true }).catch(() => {});
@@ -58,6 +60,6 @@ export async function openBrowser() {
   };
   const type = text => send('Input.insertText', { text });
   const close = () => { ws.close(); child.kill(); };
-  return { send, evaluate, waitFor, key, type, close, state };
+  return { send, evaluate, waitFor, key, type, close, state, debugPort, on(method, handler) { const list=listeners.get(method)||[]; list.push(handler); listeners.set(method,list); } };
 }
 

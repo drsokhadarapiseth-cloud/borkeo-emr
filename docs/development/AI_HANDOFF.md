@@ -1504,3 +1504,72 @@ paste, review, Apply, close the panel, then review/save registration manually.
 Running EMR processes were not restarted. Existing helper remains available but
 is not required by this panel. Live credentials, databases, uploads, .vscode and
 .gitignore were preserved.
+
+
+## One-click PMRS2 extension repair - v51.4.0
+
+User chose option 1 and explicitly approved coding on 2026-10-30. Scope remains
+PMRS2 identity/address -> EMR new registration, staff review and manual save.
+No reverse clinical export, PMRS2 credential storage or login automation.
+
+Baseline master: 2dd033b9a5669daf75e8c42e0b1065bf251e37fb (v51.3.0).
+Required clean baseline code-only backup:
+C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v51.3.0-2dd033b9-9c6a4c6a.
+Restore with npm run restore:code -- <backup-directory>; it creates a NEW folder
+and never overwrites live patient data or secrets.
+
+The supplied nested strong/span markup was reproduced with synthetic values.
+The reader recognized it; real-site reading failures remain unconfirmed.
+The old handoff injected page-fill.js into EMR, depended on a ten-second page
+script wait, used a named cross-origin popup, and only resumed with a query flag
+which a login redirect could discard. Replace these fragile mechanisms rather
+than changing patient-label guesses without live evidence.
+
+The Manifest V3 service worker now opens a canonical /emr?view=register tab and
+binds transfer data to that tab and exact configured loopback origin. Worker
+requests are serialized to avoid creation/delivery races. Pending data lives in
+chrome.storage.session, not persistent local storage; success drops the payload,
+expired records are pruned when accessed, and browser-session end clears it.
+Upgrade removes old persistent payload keys. Only the receiving address remains
+in local storage. Unknown payload properties are discarded; identities and
+bounded strings are required; ages in years are normalized without guessing DOB.
+A repeated identical pending request reuses the transfer. A different patient
+cannot silently replace a pending identity. Other tabs/origins/subframes cannot
+consume it. Login is manual and resumes in the same bound tab. Registration
+navigation is permitted at most once, so redirects cannot loop indefinitely.
+
+The EMR module announces readiness via a DOM attribute. The receiver passes a
+nonce-bound DOM event and waits for populated-field acknowledgement, including
+field count and duplicate count. No extension script tag is injected into EMR;
+page-fill.js remains an unused legacy file. Existing records are blocked. Both
+pages show Khmer transfer status and the source shows extension version 51.4.0.
+Timeouts are bounded and visible; no automatic save occurs. The optional paste
+panel is preserved. Options are Khmer and validate the exact loopback origin.
+
+Validation: restored disposable copy borkeo-restored-code-M7rk5S, synthetic data.
+npm test 1108/1108; npm run check:khmer passed. Worker/receiver regression tests
+cover one receiving tab, identity changes, origin/tab/frame binding, failed and
+stale acknowledgement, expiry, redirect loops, module/apply timeouts and no
+script injection. Existing registration/paste browser test passed.
+NEW real unpacked-extension browser test passed in a fresh Edge profile: actual
+content scripts + worker + options + extension session storage; HTTPS PMRS2 page
+intercepted BEFORE network access and replaced with supplied DOM structure using
+synthetic identities; initial EMR login then non-registration landing; automatic
+resume into visible registration; full prefill and source acknowledgement; one
+receiving tab; no injected extension script; patient-record count unchanged.
+The first browser run used an incorrect zero-record assumption for demo fixtures;
+assertion corrected to compare counts before/after import, preserving fixtures.
+Screenshot inspected: synthetic-extension-evidence/extension-registration.png
+inside disposable copy only, not in Git. No live PMRS2 account, patient, cookie,
+password, authenticator secret or real browser profile was used. Actual PMRS2
+site retry is still REQUIRED; synthetic extension success is not live acceptance.
+
+Delivery: Borkeo-EMR-v51.4.0-pmrs2-one-click-repair-update.txt.
+Activation: restart only the identified EMR launcher, reload the unpacked helper,
+refresh both tabs, verify source status says 51.4.0, save correct target address,
+then click transfer once. If login appears, sign in IN THAT SAME TAB; wait for
+both confirmations, review duplicates/details and save manually. If it fails,
+report the source stage and EMR banner; do not share full patient pages/secrets.
+Running EMR processes were not restarted. A second checkout/instance is not
+updated by modifying this checkout; select the updated EMR origin in Options.
+Unrelated .vscode/, .gitignore, all databases/uploads/secrets were preserved.
