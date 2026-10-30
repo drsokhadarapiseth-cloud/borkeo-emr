@@ -1373,3 +1373,23 @@ registration screenshot reviewed. The extension was NOT run against the live
 PMRS2 site; its captions live in pmrs2-helper/pmrs2-fields.js for tuning.
 Delivery: Borkeo-EMR-v50.9.0-pmrs2-import-update.txt. Running servers were not
 restarted by this update.
+
+## PMRS2 ID into other-card, case number separate - v51.0.0
+
+Owner refinement of Stage 1 (approved "yes"): the PMRS2 patient ID is stored in
+the registration other-card field (web_other_card_number, type "4. Other Card",
+issuer "PMRS2", radio ticked) instead of the hospital health-card field, so it
+cannot collide with hospital numbering. The PMRS2 case number is saved in a new
+read-only registration field web_pmrs2_case_number (label លេខករណី PMRS2) in
+protected/EMR.html, carrying data-emr-no-auto-index so saved record positions are
+unchanged. public/pmrs2-import.mjs no longer touches web_health_id and matches
+duplicates by mode "other" (other-card column) plus phone and name;
+pmrs2-helper/pmrs2-fields.js scrapes the case number (លេខករណី).
+
+Baseline master 10ad6bb9ffc261fcc191017c0f91779a40811e0f, package 50.9.0. Clean
+code backup C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v50.9.0-10ad6bb9-5076aa65\code.zip.
+Shared cache 5100. Validation: 1,098/1,098 tests and Khmer check pass; browser
+test and screenshot confirm the other-card fill, the separate read-only PMRS2
+case field, the untouched hospital health-card, address resolution and duplicate
+match. Not run against the live PMRS2 site. Delivery:
+Borkeo-EMR-v51.0.0-pmrs2-id-card-update.txt. Running servers not restarted.

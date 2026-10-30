@@ -6055,6 +6055,9 @@
                                 <!-- Top Identification & Cards Group (Right of Photo) -->
                                 <div class="input-group" style="grid-column: span 6;"><label data-key="adm_no">លេខករណី</label><input type="text"
                                         class="modern-input" id="web_adm_no" oninput="syncFields()"></div>
+                                <!-- PMRS2 case number: filled only by the PMRS2 import, read-only, saved on its own. -->
+                                <div class="input-group" style="grid-column: span 6;"><label>លេខករណី <span style="font-weight:600;color:#0b7895;">PMRS2</span></label><input type="text"
+                                        class="modern-input" id="web_pmrs2_case_number" data-emr-no-auto-index readonly placeholder="" style="background:#f8fafc;"></div>
                                 <div class="input-group" style="grid-column: span 6;"><label>លេខប័ណ្ណសុខភាព <span
                                             style="color:red">*</span></label><div style="display:flex; gap:6px; align-items:center;"><input type="text" class="modern-input"
                                         id="web_health_id" oninput="syncFields()" style="flex:1;"><button type="button" class="btn-primary" id="btn_print_patient_card" onclick="openPatientCardPrintModal()" title="បោះពុម្ពប័ណ្ណអ្នកជំងឺ" style="white-space:nowrap; padding:8px 12px; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:4px; background:#0284c7; color:#fff; border:none; border-radius:6px; cursor:pointer;" data-emr-transient data-emr-no-auto-index><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg> <span>បោះពុម្ពប័ណ្ណ</span></button></div></div>

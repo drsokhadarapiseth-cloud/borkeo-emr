@@ -18,7 +18,7 @@ test('PMRS2 import fills registration, resolves the address and flags a duplicat
       id: crypto.randomUUID(), patientKey: dupKey, savedAt: Date.now(),
       userId: app.database.sqlite.prepare("SELECT id FROM users WHERE username='registration'").get().id,
       summary: { caseNumber: 'PMRS2-DUP', healthId: 'HCDUP777', firstName: 'Existing', lastName: 'Patient', fullName: 'Patient Existing', sex: 'Male', age: '40', dateOfBirth: '1986-01-01', phone: '012999888', equityCard: '', paymentType: '', departmentCode: 'opd', departmentNameKh: '', departmentNameEn: '', serviceMode: 'opd', entryDate: '2026-10-30', dischargeDate: '' },
-      data: { 'scope:registration:id:web_health_id': 'HCDUP777' },
+      data: { 'scope:registration:id:web_health_id': 'HOSP-OWN-1', 'scope:registration:id:web_other_card_number': 'HCDUP777' },
     });
     await new Promise(r => app.server.listen(0, '127.0.0.1', r));
     app.config.appOrigin = 'http://127.0.0.1:' + app.server.address().port;
@@ -48,7 +48,7 @@ test('PMRS2 import fills registration, resolves the address and flags a duplicat
 
     const payload = {
       fullName: 'Sok Dara', sex: built.sexValue, dob: '2016-05-05', phone: '098765432',
-      healthId: 'HCNEW123', entryType: built.entryValue,
+      healthId: 'HCNEW123', caseNumber: 'B2756S4-0M007C3', entryType: built.entryValue,
       province: built.province, district: built.district, commune: built.commune, village: built.village,
       street: 'House 12 Street 3',
     };
@@ -62,6 +62,12 @@ test('PMRS2 import fills registration, resolves the address and flags a duplicat
       health: document.getElementById('web_health_id').value,
       dob: document.getElementById('web_dob').value,
       entry: document.getElementById('web_entry_type').value,
+      otherNum: document.getElementById('web_other_card_number').value,
+      otherType: document.getElementById('web_other_card_type').value,
+      otherIssuer: document.getElementById('web_other_card_issuer').value,
+      otherYes: document.getElementById('other_id_yes').checked,
+      pmrs2Case: document.getElementById('web_pmrs2_case_number').value,
+      pmrs2CaseReadonly: document.getElementById('web_pmrs2_case_number').readOnly,
       pCode: document.getElementById('web_province_code').value,
       dCode: document.getElementById('web_district_code').value,
       cCode: document.getElementById('web_commune_code').value,
@@ -73,26 +79,31 @@ test('PMRS2 import fills registration, resolves the address and flags a duplicat
     assert.equal(fields.first, 'Dara');
     assert.equal(fields.sex, true, 'sex radio set');
     assert.equal(fields.phone, '098765432');
-    assert.equal(fields.health, 'HCNEW123');
+    assert.notEqual(fields.health, 'HCNEW123', 'PMRS2 ID did not overwrite the hospital health-card field');
+    assert.equal(fields.otherNum, 'HCNEW123', 'PMRS2 ID goes to the other-card number');
+    assert.equal(fields.otherType, '4. Other Card');
+    assert.equal(fields.otherIssuer, 'PMRS2');
+    assert.equal(fields.otherYes, true, 'other-card radio ticked');
+    assert.equal(fields.pmrs2Case, 'B2756S4-0M007C3', 'PMRS2 case number in its own field');
+    assert.equal(fields.pmrs2CaseReadonly, true, 'PMRS2 case number field is read-only');
     assert.equal(fields.dob, '2016-05-05');
     assert.equal(fields.entry, built.entryValue, 'entry type select set');
     assert.equal(fields.street, 'House 12 Street 3');
     assert.equal(fields.pCode, built.expectProvinceCode, 'province resolved to gazetteer code');
     assert.ok(fields.dCode && fields.cCode && fields.vCode, 'district/commune/village resolved through the hierarchy');
     assert.equal(report.addressResolved, true);
-    assert.ok(report.filled.includes('health_id') && report.filled.includes('address'));
+    assert.ok(report.filled.includes('pmrs2_id_card') && report.filled.includes('pmrs2_case_number') && report.filled.includes('address'));
 
-    // Duplicate detection by health-card number.
+    // Duplicate detection by the PMRS2 ID stored in the other-card field.
     const dupReport = await browser.evaluate(`window.applyPmrs2Registration(${JSON.stringify({ ...payload, healthId: 'HCDUP777' })})`);
     assert.ok(dupReport.duplicates.length >= 1, 'duplicate found');
-    assert.equal(dupReport.duplicates[0].matchedBy, 'id');
-    assert.equal(dupReport.duplicates[0].patient.healthId, 'HCDUP777');
+    assert.equal(dupReport.duplicates[0].matchedBy, 'other');
 
     // Extension hand-off path: content script sets the data attribute and dispatches the event.
-    await browser.evaluate(`document.getElementById('web_health_id').value='';
+    await browser.evaluate(`document.getElementById('web_other_card_number').value='';
       document.documentElement.setAttribute('data-borkeo-pmrs2-import', ${JSON.stringify(JSON.stringify({ ...payload, healthId: 'HCEVENT9' }))});
       document.dispatchEvent(new CustomEvent('borkeo:pmrs2-import')); true`);
-    await browser.waitFor(`document.getElementById('web_health_id').value==='HCEVENT9'`, 'event hand-off fills form', 15000);
+    await browser.waitFor(`document.getElementById('web_other_card_number').value==='HCEVENT9'`, 'event hand-off fills form', 15000);
     assert.equal(await browser.evaluate(`document.documentElement.hasAttribute('data-borkeo-pmrs2-import')`), false, 'data attribute cleared after read');
 
     // Scraper: build a PMRS2-like form from the extension's own captions and read it back.

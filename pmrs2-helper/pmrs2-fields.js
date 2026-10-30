@@ -9,6 +9,7 @@ var PMRS2_FIELDS = [
   { key: 'age', labels: ['អាយុ'] },
   { key: 'phone', labels: ['លេខទូរស័ព្ទ'] },
   { key: 'healthId', labels: ['លេខបណ្ណសុខាភាព', 'លេខប័ណ្ណសុខភាព'] },
+  { key: 'caseNumber', labels: ['លេខករណី'] },
   { key: 'equityCard', labels: ['លេខបណ្ណសមធម៌', 'ប័ណ្ណមូលនិធិសមធម៌'] },
   { key: 'province', labels: ['ខេត្ត', 'រាជធានី/ខេត្ត'] },
   { key: 'district', labels: ['ស្រុក', 'ក្រុង/ស្រុក/ខណ្ឌ'] },

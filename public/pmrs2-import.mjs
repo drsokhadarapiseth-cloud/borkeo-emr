@@ -80,6 +80,36 @@ function setRadioByValue(doc, name, value) {
   return false;
 }
 
+// A read-only field (e.g. the PMRS2 case number) is set directly; it has no need
+// to fire input/change handlers and staff cannot edit it.
+function setReadOnly(doc, id, value) {
+  const node = doc.getElementById(id);
+  if (!node || value == null || value === '') return false;
+  node.value = String(value);
+  return true;
+}
+
+// Store the PMRS2 patient ID in the registration "other card" section: number,
+// type "Other Card", issuer "PMRS2", and tick the "has other card" radio without
+// opening its modal (we set .checked directly rather than firing its onchange).
+function setOtherCard(doc, idNumber) {
+  const number = normalizeKh(idNumber);
+  if (!number) return false;
+  const numberField = doc.getElementById('web_other_card_number');
+  if (!numberField) return false;
+  numberField.value = number;
+  const typeField = doc.getElementById('web_other_card_type');
+  if (typeField) typeField.value = '4. Other Card';
+  const issuerField = doc.getElementById('web_other_card_issuer');
+  if (issuerField) issuerField.value = 'PMRS2';
+  const yes = doc.getElementById('other_id_yes');
+  if (yes) yes.checked = true;
+  const no = doc.getElementById('other_id_no');
+  if (no) no.checked = false;
+  if (typeof window !== 'undefined') { window.updateOtherIdPreview?.(); window.syncFields?.(); }
+  return true;
+}
+
 function setSelectByValue(doc, id, value) {
   const node = doc.getElementById(id);
   const target = normalizeKh(value);
@@ -102,8 +132,9 @@ async function fetchProvinces() {
 }
 
 async function findDuplicates(payload) {
+  // The PMRS2 ID lives in the other-card field, so match it with mode 'other'.
   const tries = [
-    ['id', payload.healthId],
+    ['other', payload.healthId],
     ['phone', payload.phone],
     ['name', payload.fullName || [payload.lastName, payload.firstName].filter(Boolean).join(' ')],
   ];
@@ -141,8 +172,12 @@ export async function applyPmrs2Registration(payload, { doc = typeof document !=
   mark(setInput(doc, 'web_dob', payload.dob), 'dob');
   if (!payload.dob) mark(setInput(doc, 'web_age', payload.age), 'age');
   mark(setInput(doc, 'web_phone', payload.phone), 'phone');
-  mark(setInput(doc, 'web_health_id', payload.healthId), 'health_id');
   mark(setInput(doc, 'web_equity', payload.equityCard), 'equity');
+  // The PMRS2 patient ID goes into the "other card" slot (not the hospital's own
+  // health-card field), so it can never collide with hospital numbering. The PMRS2
+  // case number is kept separately in its own read-only field.
+  mark(setOtherCard(doc, payload.healthId), 'pmrs2_id_card');
+  mark(setReadOnly(doc, 'web_pmrs2_case_number', payload.caseNumber), 'pmrs2_case_number');
   mark(setSelectByValue(doc, 'web_entry_type', payload.entryType), 'entry_type');
   mark(setInput(doc, 'web_caregiver_name', payload.caregiverName), 'caregiver_name');
   mark(setInput(doc, 'web_caregiver_phone', payload.caregiverPhone), 'caregiver_phone');
