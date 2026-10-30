@@ -127,9 +127,34 @@ test('PMRS2 import fills registration, resolves the address and flags a duplicat
       frame.remove();
       return out;
     })()`);
-    assert.equal(scraped.phone, 'V_phone', 'scraper reads a field by its caption');
+    assert.equal(scraped.phone, 'V_phone', 'scraper reads a form field by its caption');
     assert.equal(scraped.province, 'V_province');
     assert.equal(scraped.healthId, 'V_healthId');
+
+    // Summary page: values shown as plain text beside the caption (PMRS2 patient detail).
+    const scrapedText = await browser.evaluate(`(async () => {
+      const frame = document.createElement('iframe');
+      document.body.appendChild(frame);
+      const d = frame.contentDocument;
+      d.open(); d.write('<!doctype html><html><body></body></html>'); d.close();
+      const s1 = d.createElement('script'); s1.textContent = ${JSON.stringify(fieldsSrc)}; d.body.appendChild(s1);
+      const s2 = d.createElement('script'); s2.textContent = ${JSON.stringify(scrapeSrc)}; d.body.appendChild(s2);
+      const fields = frame.contentWindow.PMRS2_FIELDS;
+      const COLON = '\\u17c8';
+      for (const f of fields) {
+        const p = d.createElement('p');
+        const b = d.createElement('b'); b.textContent = f.labels[0] + COLON;
+        p.appendChild(b); p.appendChild(d.createTextNode(' T_' + f.key));
+        d.body.appendChild(p);
+      }
+      const out = frame.contentWindow.scrapePmrs2(d);
+      frame.remove();
+      return out;
+    })()`);
+    assert.equal(scrapedText.phone, 'T_phone', 'scraper reads a plain-text value beside its caption');
+    assert.equal(scrapedText.sex, 'T_sex');
+    assert.equal(scrapedText.caseNumber, 'T_caseNumber');
+    assert.equal(scrapedText.healthId, 'T_healthId');
 
     assert.deepEqual(browser.state.errors, []);
   } finally {

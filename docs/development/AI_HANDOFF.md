@@ -1393,3 +1393,20 @@ test and screenshot confirm the other-card fill, the separate read-only PMRS2
 case field, the untouched hospital health-card, address resolution and duplicate
 match. Not run against the live PMRS2 site. Delivery:
 Borkeo-EMR-v51.0.0-pmrs2-id-card-update.txt. Running servers not restarted.
+
+## PMRS2 helper reads plain-text summary pages - v51.1.0
+
+Fix: on the live site the PMRS2 patient summary page (ចូលពិនិត្យ) shows values as
+plain text beside each caption, not as form inputs, so the first scraper found
+nothing and did not open Borkeo. pmrs2-helper/scrape.js now reads text values
+(caption element's following text nodes, the same element's trailing text, the
+next sibling/value cell, and a table caption->value cell) in addition to form
+controls; pmrs2-fields.js adds the address caption (អាសយដ្ឋាន). The combined
+address on the summary page lands in web_street_address; separate
+province/district/commune/village are only auto-filled from the editable entry
+page where those fields exist. Not run against the live site; captions live in
+pmrs2-helper/pmrs2-fields.js for tuning. 1,098 tests + Khmer check pass; browser
+test covers both form-control and plain-text scraping. Baseline 685eaeab, clean
+backup C:\Users\Local-admin\Borkeo_EMR_Code_Backups\v51.0.0-685eaeab-c97cf480\code.zip.
+Delivery: Borkeo-EMR-v51.1.0-pmrs2-text-scrape-update.txt. Staff must RELOAD the
+extension. Running servers not restarted.

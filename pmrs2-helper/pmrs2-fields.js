@@ -15,7 +15,7 @@ var PMRS2_FIELDS = [
   { key: 'district', labels: ['ស្រុក', 'ក្រុង/ស្រុក/ខណ្ឌ'] },
   { key: 'commune', labels: ['ឃុំ', 'ឃុំ/សង្កាត់'] },
   { key: 'village', labels: ['ភូមិ'] },
-  { key: 'street', labels: ['ទីតាំង'] },
+  { key: 'street', labels: ['អាសយដ្ឋាន', 'ទីតាំង'] },
   { key: 'entryType', labels: ['ប្រភេទនៃការចូល'] },
   { key: 'caregiverName', labels: ['ឈ្មោះអ្នកកំដរ'] },
   { key: 'caregiverPhone', labels: ['លេខទូរស័ព្ទអ្នកកំដរ'] },
