@@ -537,7 +537,7 @@ export function roleCanPage(role, pathname) {
   if (pathname === '/pharmacy/display') return role === 'PHARMACY';
   if (pathname === '/departments') return ['DOCTOR', 'NURSE', 'MIDWIFE', 'WARD_HEAD', 'CHIEF_WARD'].includes(role);
   if (pathname === '/patient-list') return ROLE_SET.has(role);
-  if (pathname === '/pmrs-import') return role === 'DOCTOR';
+  if (pathname === '/pmrs') return ['DOCTOR','REGISTRATION'].includes(role);
   if (pathname === '/ward-medicines') return ['DOCTOR','NURSE','MIDWIFE','CHIEF_WARD','WARD_HEAD','PHARMACY','DIRECTOR'].includes(role);
   if (pathname === '/emr') return ['REGISTRATION', 'TRIAGE', 'DOCTOR', 'NURSE', 'MIDWIFE','CHIEF_WARD'].includes(role);
   return false;

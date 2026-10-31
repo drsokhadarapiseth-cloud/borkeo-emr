@@ -1,6 +1,6 @@
 import { WARDS } from './access.mjs';
 import { buildMedicineMatrix } from './ward-medicine-matrix.mjs';
-import { pmrs2Icd10 } from './pmrs2-mapping.mjs';
+import { pmrs2Icd10 } from './pmrs/mapping.mjs';
 
 const inpatientWards = WARDS.filter(item => item.code !== 'opd');
 

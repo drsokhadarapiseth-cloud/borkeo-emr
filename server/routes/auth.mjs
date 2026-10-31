@@ -123,6 +123,7 @@ export function mountAuthRoutes(router) {
     if (!validRes.valid) return sendJson(response, 400, { error: validRes.error, details: validRes.errors }, { secure: config.cookieSecure });
     try {
       const chosen = setSessionContext(database, session.tokenHash, session.user_id, body?.role, body?.wardCode || '');
+      await ctx.pmrs?.closeToken(session.tokenHash);
       const refreshed = { ...session, active_role: chosen.role, active_ward_code: chosen.wardCode, active_ward_name: chosen.wardName };
       const identity = buildIdentity(database, refreshed);
       audit(database, request, 'WORK_CONTEXT_CHANGED', {
@@ -225,6 +226,7 @@ export function mountAuthRoutes(router) {
       response.setHeader('Set-Cookie', clearSessionCookie(config.cookieSecure));
       return sendJson(response, 200, { ok: true }, { secure: config.cookieSecure });
     }
+    await ctx.pmrs?.closeToken(session.tokenHash);
     database.deleteSession(session.tokenHash);
     audit(database, request, 'LOGOUT', { userId: session.user_id, subjectUsername: session.username });
     response.setHeader('Set-Cookie', clearSessionCookie(config.cookieSecure));

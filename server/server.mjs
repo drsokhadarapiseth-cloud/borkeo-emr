@@ -11,7 +11,7 @@ import { FACILITY_ROLES,ensureFacilitySchema,getFacility,saveFacility,uploadFaci
 import { createDiagnosisSearch } from './icd10.mjs';
 import {ensureReferralFormSchema} from './referral-forms.mjs';
 import {mountReferralFormRoutes} from './routes/referral-forms.mjs';
-// Borkeo EMR v51.4 - Electronic Medical Record System
+// Borkeo EMR v51.8 - Electronic Medical Record System
 import { generateTotpSecret, generateTotpUri, verifyTotpCode } from './totp.mjs';
 import {validateAddressHierarchy} from './gazetteer.mjs';
 import {validateCambodianPhone} from './cambodia-phone.mjs';
@@ -53,6 +53,8 @@ import { NpcaIntegration } from './npca/integration.mjs';
 import { NpcaClient } from './npca/client.mjs';
 import { assertNpcaPracticeAllowed, createPracticeFetch, practiceHefLookup, practiceNssfLookup } from './npca/practice.mjs';
 import { ensureNpcaSchema } from './npca/storage.mjs';
+import { mountPmrsRoutes } from './routes/pmrs.mjs';
+import { PmrsBridge } from './pmrs/bridge.mjs';
 import { mountNpcaRoutes } from './routes/npca.mjs';
 import { ensureMaternalSchema } from './maternal.mjs';
 import { mountPeriopFormRoutes } from './routes/periop-forms.mjs';
@@ -107,9 +109,6 @@ import {
 import { ensureDefaultWardUsers } from './default-ward-users.mjs';
 import { disabledDemoPasswordHash, ensureDemoAccounts } from './demo-accounts.mjs';
 import { createDailyBackup, preparePersistentDatabase, recoverLegacyPatientData } from './persistent-data.mjs';
-import { pmrs2Preview } from './pmrs2-mapping.mjs';
-import { buildPmrs2TransferPackage, pmrs2ReviewIssues } from './pmrs2-transfer.mjs';
-import { normalizePmrsId, preparePmrsMedicineImport, applyPmrsMedicineImport } from './pmrs2-medicine-import.mjs';
 import { ensureEditorHistorySchema, saveEditorHistory, listEditorHistory, patientRecordChangeNotes } from './editor-history.mjs';
 import { ensureOpdQueueSchema, referToOpd, listOpdQueue, getOpdQueueEntry,
   updateOpdQueueStatus, opdLocalDate } from './opd-queue.mjs';
@@ -201,10 +200,6 @@ const publicFiles = new Map([
   ['/public/ipd-record-fields.mjs', ['ipd-record-fields.mjs', 'text/javascript; charset=utf-8']],
   ['/public/ipd-record-labels.mjs', ['ipd-record-labels.mjs', 'text/javascript; charset=utf-8']],
   ['/public/ipd-record.css', ['ipd-record.css', 'text/css; charset=utf-8']],
-  ['/public/pmrs2-panel.mjs', ['pmrs2-panel.mjs', 'text/javascript; charset=utf-8']],
-  ['/public/pmrs2-paste.mjs', ['pmrs2-paste.mjs', 'text/javascript; charset=utf-8']],
-  ['/public/pmrs2-panel.css', ['pmrs2-panel.css', 'text/css; charset=utf-8']],
-  ['/public/pmrs2-import.mjs', ['pmrs2-import.mjs', 'text/javascript; charset=utf-8']],
   ['/public/network-labels.mjs', ['network-labels.mjs', 'text/javascript; charset=utf-8']],
   ['/public/connected-emrs.mjs', ['connected-emrs.mjs', 'text/javascript; charset=utf-8']],
   ['/public/emr-network.css', ['emr-network.css', 'text/css; charset=utf-8']],
@@ -275,6 +270,9 @@ const publicFiles = new Map([
   ['/public/patient-photo.css', ['patient-photo.css', 'text/css; charset=utf-8']],
   ['/public/clinical-fees.css', ['clinical-fees.css', 'text/css; charset=utf-8']],
   ['/public/editor-history.css', ['editor-history.css', 'text/css; charset=utf-8']],
+  ['/public/pmrs.css', ['pmrs.css', 'text/css; charset=utf-8']],
+  ['/public/pmrs.js', ['pmrs.js', 'text/javascript; charset=utf-8']],
+  ['/public/pmrs-registration.mjs', ['pmrs-registration.mjs', 'text/javascript; charset=utf-8']],
   ['/public/pmrs2-exam-normal.js', ['pmrs2-exam-normal.js', 'text/javascript; charset=utf-8']],
   ['/public/emr-inpatient-workflow.js', ['emr-inpatient-workflow.js', 'text/javascript; charset=utf-8']],
   ['/public/emr-inpatient-workflow.css', ['emr-inpatient-workflow.css', 'text/css; charset=utf-8']],
@@ -316,7 +314,6 @@ const publicFiles = new Map([
   ['/public/staff-invoices.css', ['staff-invoices.css', 'text/css; charset=utf-8']],
   ['/public/cashier-notifications.js', ['cashier-notifications.js', 'text/javascript; charset=utf-8']],
   ['/public/cashier-notifications.css', ['cashier-notifications.css', 'text/css; charset=utf-8']],
-  ['/public/pmrs-import.js', ['pmrs-import.js', 'text/javascript; charset=utf-8']],
   ['/public/requests.js', ['requests.js', 'text/javascript; charset=utf-8']],
   ['/public/request-badges.js', ['request-badges.js', 'text/javascript; charset=utf-8']],
   ['/public/requests.css', ['requests.css', 'text/css; charset=utf-8']],
@@ -358,6 +355,7 @@ const APP_VERSION = (() => {
 })();
 const protectedPages = new Map([
   ['/admin/npca', ['npca.html',false]],
+  ['/pmrs', ['pmrs.html', false]],
   ['/npca', ['npca.html',false]],
   ['/admin/health-facility',['health-facility.html',false]],
   ['/admin/drug-safety',['drug-safety.html',false]],
@@ -371,7 +369,6 @@ const protectedPages = new Map([
   ['/home', ['home.html', false]],
   ['/emr', ['EMR.html', true]],
   ['/print-preview', ['print-preview.html', true]],
-  ['/pmrs-import', ['pmrs-import.html', false]],
   ['/ward-medicines', ['ward-medicines.html', false]],
   ['/requests', ['requests.html', false]],
   ['/opd-queue', ['opd-queue.html', false]],
@@ -580,7 +577,7 @@ function getProcessedHtml(filePath, contentType, security, APP_VERSION) {
   html = html.replace('</head>', '<script src="/public/medication-routes.js?v=4250"></script></head>');
   // v42.3: medicine name search in the prescription forms (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/medicine-autocomplete.css?v=4250"><script src="/public/medicine-autocomplete.js?v=4250" defer></script><script src="/public/medicine-dose-check.js?v=4250" defer></script><link rel="stylesheet" href="/public/maternal.css?v=4260"><script src="/public/maternal-emr.js?v=4260" defer></script></head>');
-  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/ipd-record.css?v=5100"><script type="module" src="/public/ipd-record.mjs?v=5100"></script><script type="module" src="/public/pmrs2-import.mjs?v=5140"></script><link rel="stylesheet" href="/public/pmrs2-panel.css?v=5130"><script type="module" src="/public/pmrs2-panel.mjs?v=5140"></script></head>');
+  if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/ipd-record.css?v=5100"><script type="module" src="/public/ipd-record.mjs?v=5100"></script><script type="module" src="/public/pmrs-registration.mjs?v=5170"></script></head>');
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/emr-encounter-editor.css?v=3800"><script src="/public/emr-encounter-editor.js?v=4930" defer></script></head>');
   // v41.0: structured allergy record, problem list and nursing demographics (medical record page only).
   if(path.basename(filePath)==='EMR.html')html=html.replace('</head>','<link rel="stylesheet" href="/public/clinical-summary.css?v=4100"><script src="/public/clinical-summary.js?v=4100" defer></script><link rel="stylesheet" href="/public/display-rules.css?v=4110"><script src="/public/display-rules.js?v=4110" defer></script><link rel="stylesheet" href="/public/medication-safety.css?v=4120"><script src="/public/medication-safety.js?v=4120" defer></script><link rel="stylesheet" href="/public/periop-forms.css?v=4160"><script src="/public/periop-forms.js?v=4160" defer></script><script src="/public/fluid-balance.js?v=4160" defer></script><script src="/public/early-warning.js?v=4160" defer></script><link rel="stylesheet" href="/public/patient-documents.css?v=4170"><script src="/public/patient-documents.js?v=4170" defer></script></head>');
@@ -2028,6 +2025,7 @@ export function createEmrServer(configOverrides = {}) {
   if (config.npcaPractice) assertNpcaPracticeAllowed(database);
   const npca = new NpcaIntegration(config.npca, database, config.npcaPractice
     ? { client: new NpcaClient(config.npca, database, { fetchImpl: createPracticeFetch(database) }) } : {});
+  const pmrs = new PmrsBridge({database, ...configOverrides.pmrsOptions});
   const router = new Router('emr');
   mountAuthRoutes(router);
   mountAdminRoutes(router);
@@ -2038,6 +2036,7 @@ export function createEmrServer(configOverrides = {}) {
   mountFinanceRoutes(router);
   mountPatientsRoutes(router);
   mountClinicalRoutes(router);
+  mountPmrsRoutes(router);
   mountReferralFormRoutes(router);
   mountReferralLinkRoutes(router);
   mountEmrNetworkRoutes(router);
@@ -2113,7 +2112,7 @@ export function createEmrServer(configOverrides = {}) {
       }
       const ctx = {
         request, response, url, pathname, session, database, config,
-        requestId, logger: reqLogger, npca,
+        requestId, logger: reqLogger, npca, pmrs,
         sendJson, sendBuffer, readJson, readBinary, audit, sameOrigin, safeTokenEqual,
         sessionRole, sessionWard, requireContext, redirect, sendFile,
         listUsers, buildIdentity, requestIp, genericLoginFailure, landingPathForRole,
@@ -2142,9 +2141,7 @@ export function createEmrServer(configOverrides = {}) {
       };
       if (await router.handle(ctx)) return;
 
-      if (config.demoMode && pathname === '/pmrs-import') {
-        return sendJson(response, 403, { error: 'PMRS2 transfer is unavailable in the username-only demo.' }, { secure: config.cookieSecure });
-      }
+
 
       if (request.method === 'GET' && pathname === '/') {
         if (!session) return redirect(response, '/login', { secure: config.cookieSecure });
@@ -2270,7 +2267,7 @@ export function createEmrServer(configOverrides = {}) {
   server.headersTimeout = 15_000;
   server.keepAliveTimeout = 5_000;
   server.once('listening', () => npca.start());
-  server.on('close', () => npca.stop());
+  server.on('close', () => { npca.stop(); void pmrs.closeAll(); });
   server.on('close', () => diagnosisSearch.close());
   return {
     server,

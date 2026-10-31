@@ -1,5 +1,5 @@
 // A reviewed, local transfer package. No code in this module contacts PMRS2.
-import { pmrs2Preview } from './pmrs2-mapping.mjs';
+import { pmrs2Preview } from './mapping.mjs';
 
 export function pmrs2ReviewIssues(preview, triage) {
   const issues = [];
@@ -22,34 +22,4 @@ export function pmrs2ReviewIssues(preview, triage) {
     include(`prescription.medications[${index}]`, med.warnings));
   include('discharge', preview.discharge?.warnings);
   return issues;
-}
-
-export function buildPmrs2TransferPackage(patient, reviewedAt) {
-  const preview = pmrs2Preview(patient);
-  const triage = preview.triage;
-  const reviewIssues = pmrs2ReviewIssues(preview, triage);
-  return {
-    format: 'borkeo.pmrs2.reviewed-transfer.v1',
-    target: 'PMRS2',
-    reviewedAt,
-    source: { system: 'Borkeo EMR', patientVersion: patient.version, updatedAt: patient.updatedAt },
-    identity: {
-      patientKey: preview.patientKey,
-      healthId: preview.healthId,
-      caseNumber: preview.caseNumber,
-      fullName: preview.patientName,
-      sex: patient.sex || '', age: patient.age || '', dateOfBirth: patient.dateOfBirth || '',
-    },
-    triage,
-    treatment: {
-      caseType: preview.caseType, chiefComplaint: preview.chiefComplaint,
-      diagnosisText: preview.diagnosisText, diagnosisIcd10: preview.diagnosisIcd10,
-      ancillaryService: preview.ancillaryService,
-    },
-    followUps: preview.followUps,
-    prescription: preview.prescription,
-    discharge: preview.discharge,
-    reviewIssues,
-    readyWithoutWarnings: reviewIssues.length === 0,
-  };
 }

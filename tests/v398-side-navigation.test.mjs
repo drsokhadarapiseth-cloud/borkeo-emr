@@ -38,6 +38,8 @@ const EXPECTED = [
   { role: 'VICE_DIRECTOR', ward: '', user: 'vice_director', items: MGMT_ITEMS },
 ];
 
+for (const row of EXPECTED) if(['ADMIN','VICE_DIRECTOR','DOCTOR','REGISTRATION'].includes(row.role)) row.items=['pmrs',...row.items];
+
 const asUser = ({ role, ward }) => ({ activeRole: role, activeWard: ward ? { code: ward } : null });
 
 test('v39.8 every role sees exactly the navigation items in docs/nav-roles.md', () => {

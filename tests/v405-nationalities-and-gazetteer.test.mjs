@@ -30,6 +30,6 @@ test('v40.5: nationality picker files are served to signed-in pages', async () =
 
 test('v40.5: address data loads when the server is started from another folder', () => {
   const moduleUrl = new URL('../server/gazetteer.mjs', import.meta.url).href;
-  const output = execFileSync(process.execPath, ['--input-type=module', '-e', `const g = await import(${JSON.stringify(moduleUrl)}); console.log(g.loadGazetteer().length);`], { cwd: os.tmpdir(), encoding: 'utf8' });
+  const output = execFileSync(process.execPath, ['--input-type=module', '-e', `const g = await import(${JSON.stringify(moduleUrl)}); process.stdout.write(String(g.loadGazetteer().length));`], { cwd: os.tmpdir(), encoding: 'utf8' });
   assert.ok(Number(output.trim()) > 20, 'all Cambodian provinces load');
 });

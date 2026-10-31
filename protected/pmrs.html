@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="km"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ផ្ទេរទិន្នន័យ PMRS</title>
+<link rel="stylesheet" href="/public/responsive-layout.css?v=5160">
+<link rel="stylesheet" href="/public/pmrs.css?v=5160"><script src="/public/pmrs.js?v=5160" defer></script></head>
+<body class="pmrs-page"><main class="pmrs-workspace"><h1 data-t="title">ផ្ទេរទិន្នន័យ PMRS</h1>
+<p class="pmrs-note" data-t="intro">ការផ្ទេរត្រូវការកម្មវិធីរុករកនៅកុំព្យូទ័រមន្ទីរពេទ្យ។ សូមចូលគណនី និងបញ្ចូលលេខផ្ទៀងផ្ទាត់ក្នុងកម្មវិធីរុករកដោយខ្លួនឯង។</p>
+<p id="pmrs-capabilities" role="status" aria-live="polite"></p>
+<p id="pmrs-status" role="status" aria-live="polite"></p>
+<div class="pmrs-controls"><button id="pmrs-open" data-t="open" disabled>បើកការតភ្ជាប់</button><button id="pmrs-close" data-t="close">បិទការតភ្ជាប់</button><button id="pmrs-capture" data-t="capture" disabled>អានអ្នកជំងឺដែលបានបើកក្នុង PMRS</button></div>
+<label><span data-t="local">លេខសម្គាល់កំណត់ត្រាក្នុង EMR</span><input id="pmrs-patient" type="text" autocomplete="off"></label>
+<p id="pmrs-local-identity"></p>
+<div class="pmrs-controls"><button id="pmrs-new" data-t="new" disabled>បញ្ចូលទៅទម្រង់ចុះឈ្មោះថ្មី</button><button id="pmrs-import-preview" data-t="importPreview" disabled>ពិនិត្យការនាំចូល</button><button id="pmrs-export-preview" data-t="exportPreview" disabled>ពិនិត្យការនាំចេញ</button></div>
+<div id="pmrs-preview" class="pmrs-preview" hidden></div>
+<label><input id="pmrs-reviewed" type="checkbox"><span data-t="reviewed">ខ្ញុំបានផ្ទៀងផ្ទាត់អ្នកជំងឺ ករណី និងទិន្នន័យដែលត្រូវផ្ទេរ។</span></label>
+<div class="pmrs-controls"><button id="pmrs-import" data-t="import" disabled>រក្សាទុកការនាំចូលទៅ EMR</button><button id="pmrs-fill" data-t="fill" disabled>បំពេញទម្រង់ក្នុង PMRS</button><button id="pmrs-submit" data-t="submit" disabled>បញ្ជាក់ និងផ្ញើទៅ PMRS</button></div>
+<details class="pmrs-link"><summary data-t="linkTitle">ភ្ជាប់កំណត់ត្រាដែលមានស្រាប់</summary><p data-t="linkNote">ផ្ទៀងផ្ទាត់ឈ្មោះ ភេទ ថ្ងៃកំណើត និងករណីទាំងពីរជាមុន។ វាយលេខទាំងបីឡើងវិញដើម្បីបញ្ជាក់ការភ្ជាប់។</p>
+<label><span data-t="sourcePatient">លេខអ្នកជំងឺ PMRS</span><input id="pmrs-confirm-patient" type="text" autocomplete="off"></label>
+<label><span data-t="sourceEncounter">លេខករណី PMRS</span><input id="pmrs-confirm-encounter" type="text" autocomplete="off"></label>
+<label><span data-t="localCase">លេខករណី EMR</span><input id="pmrs-confirm-local" type="text" autocomplete="off"></label>
+<button id="pmrs-link" data-t="link" disabled>បញ្ជាក់ការភ្ជាប់</button></details>
+</main></body></html>

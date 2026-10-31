@@ -419,3 +419,56 @@
 /* v36.6 - Hide camera icon overlay badge; direct click on photo opens modal */
 .photo-retake-camera-badge { display: none !important; }
 .opd-patient-photo-frame, .ipd-patient-photo-frame, .triage-patient-photo-frame, .inpatient-context-avatar-card, .registration-avatar { cursor: pointer !important; }
+
+/* Registration identity column: keep fingerprint enrollment under the photo. */
+.registration-identity-column {
+  display: flex;
+  flex: 0 0 170px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  min-width: 0;
+}
+.registration-identity-column .registration-avatar {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+}
+.registration-identity-column [data-fingerprint-enrollment] {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid #c8dce8;
+  border-radius: 12px;
+  background: #f5fafc;
+  overflow-wrap: anywhere;
+}
+.registration-identity-column [data-fingerprint-enrollment] h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+.registration-identity-column [data-fingerprint-enrollment] p {
+  margin: 8px 0;
+  font-size: .85rem;
+  line-height: 1.8;
+}
+.registration-identity-column [data-fingerprint-enrollment] button {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+  line-height: 1.8;
+}
+@media (max-width: 760px) {
+  .registration-identity-column {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 320px;
+    align-self: center;
+  }
+  .registration-identity-column .registration-avatar {
+    width: 96px;
+    height: 112px;
+    margin: 0 auto;
+  }
+}

@@ -85,7 +85,6 @@ test('unit selects show mg, mL, mcg, g and IU, never the old Khmer labels; one n
   }
   assert.match(html, /"mg": \{ khmer: "mg", english: "mg" \}/, 'the unit is not translated in either language');
   assert.match(html, /"IU": \{ khmer: "IU", english: "IU" \}/);
-  assert.match(read('public/pmrs-import.js'), /'ដុំ','mL','mg','mcg','g','លីត្រ','IU'/);
 });
 
 test('an old line saved with the Khmer mg label opens as mg, and stock still matches it', () => {

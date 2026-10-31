@@ -760,7 +760,7 @@ test('PMRS2 preview is limited to authorized clinical users and their ward', asy
     } }),
   });
   assert.equal(updateResponse.status, 200, JSON.stringify(await updateResponse.json()));
-  const url = `${baseUrl}/api/pmrs2/preview?patientKey=${encodeURIComponent(key)}`;
+  const url = `${baseUrl}/api/pmrs/clinical-preview?patientKey=${encodeURIComponent(key)}`;
   assert.equal((await fetch(url)).status, 401);
   const lab = await login('lab');
   assert.equal((await fetch(url, { headers: { Cookie: lab.cookie } })).status, 403);
@@ -796,7 +796,7 @@ test('saved OPD treatment and a doctor-edited IPD discharge appear in PMRS2 revi
     } }),
   });
   assert.equal(opdResponse.status, 200, JSON.stringify(await opdResponse.json()));
-  const opdPreviewResponse = await fetch(`${baseUrl}/api/pmrs2/preview?patientKey=${encodeURIComponent(opdKey)}`,
+  const opdPreviewResponse = await fetch(`${baseUrl}/api/pmrs/clinical-preview?patientKey=${encodeURIComponent(opdKey)}`,
     { headers: { Cookie: doctor.cookie } });
   const opd = (await opdPreviewResponse.json()).preview;
   assert.equal(opdPreviewResponse.status, 200);
@@ -837,7 +837,7 @@ test('saved OPD treatment and a doctor-edited IPD discharge appear in PMRS2 revi
   const dischargeResult = await dischargeResponse.json();
   assert.equal(dischargeResponse.status, 200, JSON.stringify(dischargeResult));
   assert.equal(dischargeResult.patient.discharge.medications[0].name, 'Edited take-home tablet');
-  const ipdPreviewResponse = await fetch(`${baseUrl}/api/pmrs2/preview?patientKey=${encodeURIComponent(ipdKey)}`,
+  const ipdPreviewResponse = await fetch(`${baseUrl}/api/pmrs/clinical-preview?patientKey=${encodeURIComponent(ipdKey)}`,
     { headers: { Cookie: doctor.cookie } });
   assert.equal(ipdPreviewResponse.status, 200);
   const ipd = (await ipdPreviewResponse.json()).preview;
@@ -847,32 +847,7 @@ test('saved OPD treatment and a doctor-edited IPD discharge appear in PMRS2 revi
   assert.equal(ipd.discharge.dischargeWard, 'ផ្នែកសម្រាកពេទ្យ');
   assert.equal(ipd.discharge.dischargeAt, '2026-09-19T10:30');
 
-  const exportUrl = `${baseUrl}/api/pmrs2/prepare-export`;
-  const confirmed = { patientKey: ipdKey, reviewedVersion: dischargeResult.patient.version,
-    confirmedIdentifier: 'HC-PMRS2-IPD-DC-001', reviewed: true };
-  assert.equal((await fetch(exportUrl, { method: 'POST', headers: mutationHeaders(await login('lab')),
-    body: JSON.stringify(confirmed) })).status, 403);
-  assert.equal((await fetch(exportUrl, { method: 'POST', headers: mutationHeaders(await login('nurse')),
-    body: JSON.stringify(confirmed) })).status, 403);
-  assert.equal((await fetch(exportUrl, { method: 'POST', headers: mutationHeaders(doctor),
-    body: JSON.stringify({ ...confirmed, reviewedVersion: confirmed.reviewedVersion - 1 }) })).status, 409);
-  assert.equal((await fetch(exportUrl, { method: 'POST', headers: mutationHeaders(doctor),
-    body: JSON.stringify({ ...confirmed, confirmedIdentifier: 'WRONG-PATIENT' }) })).status, 400);
-  assert.equal((await fetch(exportUrl, { method: 'POST', headers: mutationHeaders(doctor),
-    body: JSON.stringify({ ...confirmed, reviewed: false }) })).status, 400);
-  const exportResponse = await fetch(exportUrl, {
-    method: 'POST', headers: mutationHeaders(doctor), body: JSON.stringify(confirmed),
-  });
-  assert.equal(exportResponse.status, 200);
-  assert.equal(exportResponse.headers.get('cache-control'), 'no-store');
-  const exported = await exportResponse.json();
-  assert.match(exported.checksum, /^[0-9a-f]{64}$/);
-  assert.equal(exported.transferPackage.source.patientVersion, dischargeResult.patient.version);
-  assert.equal(exported.transferPackage.identity.healthId, 'HC-PMRS2-IPD-DC-001');
-  assert.equal(exported.transferPackage.followUps.find(record => record.source === 'daily').medications[0].name,
-    'Last inpatient medicine');
-  assert.equal(exported.transferPackage.prescription.medications[0].name, 'Edited take-home tablet');
-  assert.equal(exported.transferPackage.discharge.dischargeIcd10, 'A90');
+
 });
 
  test('authenticated print preview is blank and script-free, with all local print assets available',async()=>{

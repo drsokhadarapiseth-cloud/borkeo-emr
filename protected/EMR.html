@@ -5806,7 +5806,7 @@
     <link rel="stylesheet" href="/public/emr-diagnoses.css?v=32130">
     <link rel="stylesheet" href="/public/emr-icd10.css?v=3090">
   <link rel="stylesheet" href="/public/responsive-layout.css?v=1504">
-  <link rel="stylesheet" href="/public/patient-photo.css?v=3450">
+  <link rel="stylesheet" href="/public/patient-photo.css?v=5180">
   <link rel="stylesheet" href="/public/chief-complaint-tags.css?v=32100">
   <style id="borkeo_cc_tags_style">
 .chief-complaint-row {
@@ -6043,11 +6043,18 @@
                     <div class="modern-section">
                         <h3 data-key="sec_patient" style="color:#0088CC;">ព័ត៌មានអ្នកជំងឺ</h3>
                         <div class="patient-registration-layout">
-                            <div class="registration-avatar" id="reg_patient_photo_avatar" data-action="capture-patient-photo" tabindex="0" role="button" aria-label="ថត ឬ បញ្ចូលរូបថតអ្នកជំងឺ (Capture or Upload Photo)" title="ចុចដើម្បីថតរូបតាម Webcam ឬ បញ្ចូលរូបថតពីកុំព្យូទ័រ/ទូរស័ព្ទ (Capture or Upload Photo)">
-                                <i class="fa-solid fa-user" style="font-size: 90px; color: #cbd5e1;"></i>
+                            <div class="registration-identity-column">
+                                <div class="registration-avatar" id="reg_patient_photo_avatar" data-action="capture-patient-photo" tabindex="0" role="button" aria-label="ថត ឬ បញ្ចូលរូបថតអ្នកជំងឺ (Capture or Upload Photo)" title="ចុចដើម្បីថតរូបតាម Webcam ឬ បញ្ចូលរូបថតពីកុំព្យូទ័រ/ទូរស័ព្ទ (Capture or Upload Photo)">
+                                    <i class="fa-solid fa-user" style="font-size: 90px; color: #cbd5e1;"></i>
 
 
 
+                                </div>
+                                <section class="input-group no-print" data-emr-transient data-emr-no-auto-index data-fingerprint-enrollment>
+                                    <h3>ស្នាមម្រាមដៃ</h3>
+                                    <p>មិនទាន់មានឧបករណ៍ស្នាមម្រាមដៃដែលបានកំណត់រចនាសម្ព័ន្ធ</p>
+                                    <button type="button" disabled data-emr-transient data-emr-no-auto-index>បញ្ចូលស្នាមម្រាមដៃ</button>
+                                </section>
                             </div>
                             <input type="hidden" id="web_patient_photo" name="scope:registration:id:patient_photo" data-emr-no-auto-index value="">
 
@@ -6084,11 +6091,7 @@
                                     <input type="hidden" id="web_other_card_issuer" name="scope:registration:id:web_other_card_issuer" value="">
                                 </div>
 
-                                <section class="input-group no-print" style="grid-column:span 6" data-emr-transient data-emr-no-auto-index data-fingerprint-enrollment>
-                                    <h3>ស្នាមម្រាមដៃ</h3>
-                                    <p>មិនទាន់មានឧបករណ៍ស្នាមម្រាមដៃដែលបានកំណត់រចនាសម្ព័ន្ធ</p>
-                                    <button type="button" disabled data-emr-transient data-emr-no-auto-index>បញ្ចូលស្នាមម្រាមដៃ</button>
-                                </section>
+
                                 <!-- Personal Identification (Names, DOB, Age, Gender) -->
                                 <div class="input-group" style="grid-column: span 6;"><label>នាមត្រកូល <span
                                             style="color:red">*</span></label><input type="text" class="modern-input"

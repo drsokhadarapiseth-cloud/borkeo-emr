@@ -210,3 +210,205 @@ Owner approved replacing the extra-test dropdown with a grouped multi-select pan
 |------|------|--------|-------|
 | public/paraclinic.js | 1262 | + ជ្រើសរើសតេស្តបន្ថែម... | [removed] |
 | public/paraclinic.js | 1330 | បន្ទាន់ (Urgent) | [removed] |
+
+## v51.5 PMRS Playwright replacement (owner's order)
+
+Owner explicitly approved removing the PMRS2 copy/paste, extension and JSON transfer tools and replacing them with Playwright, in both directions. These rows authorize only their retired interface text, not clinical form changes.
+
+| file | line | before | after |
+| --- | --- | --- | --- |
+| public/emr-patient-record.js | 1668 | សូមរក្សាទុក និងបើកកំណត់ត្រាអ្នកជំងឺជាមុនសិន។ | [removed] |
+| public/emr-patient-record.js | 1672 | ពិនិត្យទិន្នន័យសម្រាប់ PMRS2 | [removed] |
+| public/emr-patient-record.js | 1674 | ទិន្នន័យនេះមកពីកំណត់ត្រាដែលបានរក្សាទុក។ សូមពិនិត្យមុនបញ្ចូលក្នុង PMRS2។ | [removed] |
+| public/emr-patient-record.js | 1677 | បិទ | [removed] |
+| public/emr-patient-record.js | 1686 | មិនអាចទាញទិន្នន័យបានទេ។ | [removed] |
+| public/emr-patient-record.js | 1688 | អ្នកជំងឺ: | [removed] |
+| public/emr-patient-record.js | 1688 | · លេខករណី: | [removed] |
+| public/emr-patient-record.js | 1688 | · លេខប័ណ្ណសុខភាព: | [removed] |
+| public/emr-patient-record.js | 1691 | ត្រូវបញ្ជាក់ថ្ងៃ និងម៉ោង | [removed] |
+| public/emr-patient-record.js | 1692 | សញ្ញាជីវិតមិនទាន់គ្រប់ | [removed] |
+| public/emr-patient-record.js | 1693 | ខ្វះការវិវត្តន៍ | [removed] |
+| public/emr-patient-record.js | 1694 | ខ្វះសេចក្តីសន្និដ្ឋាន | [removed] |
+| public/emr-patient-record.js | 1695 | ត្រូវពិនិត្យកម្រិត និងម៉ោងប្រើថ្នាំ | [removed] |
+| public/emr-patient-record.js | 1696 | ម៉ោងតាមដានស្ទួននឹងម៉ោងចូលសម្រាក | [removed] |
+| public/emr-patient-record.js | 1697 | ឯកតាថ្នាំត្រូវត្រួតពិនិត្យ | [removed] |
+| public/emr-patient-record.js | 1698 | ពេលប្រើថ្នាំត្រូវបំពេញដោយដៃ | [removed] |
+| public/emr-patient-record.js | 1699 | កម្រិតថ្នាំមិនដូចគ្នា | [removed] |
+| public/emr-patient-record.js | 1700 | កម្រិតថ្នាំត្រូវត្រួតពិនិត្យ | [removed] |
+| public/emr-patient-record.js | 1701 | កាលវិភាគថ្នាំត្រូវត្រួតពិនិត្យ | [removed] |
+| public/emr-patient-record.js | 1702 | ត្រូវជ្រើសផ្លូវប្រើថ្នាំក្នុង PMRS2 | [removed] |
+| public/emr-patient-record.js | 1703 | ខ្វះឈ្មោះថ្នាំ | [removed] |
+| public/emr-patient-record.js | 1704 | ខ្វះផ្នែក | [removed] |
+| public/emr-patient-record.js | 1704 | ខ្វះប្រភេទអ្នកទទួលសេវា | [removed] |
+| public/emr-patient-record.js | 1705 | សូមជ្រើសករណីថ្មី ឬករណីចាស់ | [removed] |
+| public/emr-patient-record.js | 1706 | ខ្វះរោគសញ្ញា | [removed] |
+| public/emr-patient-record.js | 1707 | ខ្វះរោគវិនិច្ឆ័យគ្រូពេទ្យ | [removed] |
+| public/emr-patient-record.js | 1708 | ខ្វះកូដ ICD10 | [removed] |
+| public/emr-patient-record.js | 1709 | វេជ្ជបញ្ជាគ្មានថ្នាំ | [removed] |
+| public/emr-patient-record.js | 1710 | ត្រូវពិនិត្យព័ត៌មានថ្នាំក្នុងវេជ្ជបញ្ជា | [removed] |
+| public/emr-patient-record.js | 1711 | ខ្វះការតាមដានមានថ្ងៃម៉ោង | [removed] |
+| public/emr-patient-record.js | 1712 | ទម្រង់បញ្ចេញមិនទាន់បានរក្សាទុក | [removed] |
+| public/emr-patient-record.js | 1713 | ខ្វះថ្ងៃ និងម៉ោងចូល | [removed] |
+| public/emr-patient-record.js | 1714 | ខ្វះ ICD10 ពេលចូល | [removed] |
+| public/emr-patient-record.js | 1715 | ខ្វះថ្ងៃ និងម៉ោងចេញ | [removed] |
+| public/emr-patient-record.js | 1716 | ថ្ងៃម៉ោងចេញនៅមុនថ្ងៃម៉ោងចូល | [removed] |
+| public/emr-patient-record.js | 1717 | ខ្វះរោគវិនិច្ឆ័យពេលចេញ | [removed] |
+| public/emr-patient-record.js | 1718 | ខ្វះ ICD10 ពេលចេញ | [removed] |
+| public/emr-patient-record.js | 1719 | ត្រូវពិនិត្យលទ្ធផលព្យាបាល | [removed] |
+| public/emr-patient-record.js | 1720 | ត្រូវពិនិត្យស្ថានភាពបញ្ចេញ | [removed] |
+| public/emr-patient-record.js | 1721 | លទ្ធផលស្លាប់ និងប្រអប់ស្លាប់មិនត្រូវគ្នា | [removed] |
+| public/emr-patient-record.js | 1722 | ខ្វះទម្ងន់នៅ Triage | [removed] |
+| public/emr-patient-record.js | 1723 | ខ្វះកម្ពស់នៅ Triage | [removed] |
+| public/emr-patient-record.js | 1724 | ខ្វះថ្ងៃម៉ោងចូលនៅ Triage | [removed] |
+| public/emr-patient-record.js | 1725 | សញ្ញាជីវិត Triage មិនគ្រប់ | [removed] |
+| public/emr-patient-record.js | 1737 | ថ្នាំ | [removed] |
+| public/emr-patient-record.js | 1738 | ផ្លូវប្រើមិនទាន់ច្បាស់ | [removed] |
+| public/emr-patient-record.js | 1739 | ព្រឹក-ថ្ងៃ-ល្ងាច-យប់: | [removed] |
+| public/emr-patient-record.js | 1740 | ថ្ងៃ · សរុប | [removed] |
+| public/emr-patient-record.js | 1743 | ផ្នែកចូល / អ្នកទទួលសេវា | [removed] |
+| public/emr-patient-record.js | 1745 | ថ្ងៃម៉ោងចូល / ទម្ងន់ / កម្ពស់ | [removed] |
+| public/emr-patient-record.js | 1747 | សញ្ញាជីវិតនៅ Triage | [removed] |
+| public/emr-patient-record.js | 1751 | ត្រូវពិនិត្យ Triage | [removed] |
+| public/emr-patient-record.js | 1753 | ទម្រង់ព្យាបាល | [removed] |
+| public/emr-patient-record.js | 1754 | រោគសញ្ញា (បញ្ចូល ហើយចុច +) | [removed] |
+| public/emr-patient-record.js | 1755 | រោគវិនិច្ឆ័យ / ICD10 | [removed] |
+| public/emr-patient-record.js | 1756 | សេវាអមវេជ្ជសាស្ត្រ | [removed] |
+| public/emr-patient-record.js | 1757 | ត្រូវពិនិត្យ | [removed] |
+| public/emr-patient-record.js | 1769 | ត្រូវពិនិត្យ | [removed] |
+| public/emr-patient-record.js | 1782 | ត្រូវពិនិត្យ | [removed] |
+| public/emr-patient-record.js | 1800 | ត្រូវពិនិត្យ | [removed] |
+| public/emr-patient-record.js | 1762 | ថ្ងៃចូលសម្រាក | [removed] |
+| public/emr-patient-record.js | 1762 | ពិនិត្យតាមដាន | [removed] |
+| public/emr-patient-record.js | 1762 | ត្រូវបំពេញថ្ងៃ/ម៉ោង | [removed] |
+| public/emr-patient-record.js | 1765 | សញ្ញាជីវិត | [removed] |
+| public/emr-patient-record.js | 1766 | ការវិវត្តន៍ | [removed] |
+| public/emr-patient-record.js | 1767 | សេចក្តីសន្និដ្ឋាន | [removed] |
+| public/emr-patient-record.js | 1776 | វេជ្ជបញ្ជា OPD | [removed] |
+| public/emr-patient-record.js | 1776 | វេជ្ជបញ្ជាពេលចេញ IPD | [removed] |
+| public/emr-patient-record.js | 1778 | ការតាមដានចុងក្រោយ | [removed] |
+| public/emr-patient-record.js | 1780 | ថ្ងៃណាត់បន្ទាប់ | [removed] |
+| public/emr-patient-record.js | 1797 | ថ្ងៃណាត់បន្ទាប់ | [removed] |
+| public/emr-patient-record.js | 1781 | ការណែនាំ | [removed] |
+| public/emr-patient-record.js | 1789 | បញ្ចប់ការព្យាបាល IPD | [removed] |
+| public/emr-patient-record.js | 1792 | ផ្នែកចូល / ផ្នែកចេញ | [removed] |
+| public/emr-patient-record.js | 1793 | ថ្ងៃម៉ោងចូល / ថ្ងៃម៉ោងចេញ | [removed] |
+| public/emr-patient-record.js | 1794 | រោគវិនិច្ឆ័យពេលចូល / ICD10 | [removed] |
+| public/emr-patient-record.js | 1795 | រោគវិនិច្ឆ័យពេលចេញ / ICD10 | [removed] |
+| public/emr-patient-record.js | 1796 | លទ្ធផល / ស្ថានភាពចេញ | [removed] |
+| public/emr-patient-record.js | 1798 | កន្លែងបញ្ជូនបន្ត | [removed] |
+| public/emr-patient-record.js | 1808 | រៀបចំទិន្នន័យទាំងអស់ក្រោយពិនិត្យ | [removed] |
+| public/emr-patient-record.js | 1810 | ទាញយកទិន្នន័យ Triage, ការព្យាបាល, ការតាមដានទាំងអស់, វេជ្ជបញ្ជា និងទម្រង់បញ្ចេញជាឯកសារ JSON។ វាមិនទាន់បញ្ចូលទិន្នន័យទៅគេហទំព័រ PMRS2 ដោយស្វ័យប្រវត្តិទេ។ | [removed] |
+| public/emr-patient-record.js | 1812 | សូមវាយលេខបណ្ណសុខភាព ឬលេខករណីដែលបានផ្ទៀងផ្ទាត់៖ | [removed] |
+| public/emr-patient-record.js | 1823 | ខ្ញុំបានផ្ទៀងផ្ទាត់អ្នកជំងឺ និងពិនិត្យទិន្នន័យ/សញ្ញាព្រមានទាំងអស់ខាងលើ។ | [removed] |
+| public/emr-patient-record.js | 1827 | ទាញយកកញ្ចប់ទិន្នន័យ PMRS2 | [removed] |
+| public/emr-patient-record.js | 1836 | កំពុងរៀបចំទិន្នន័យ… | [removed] |
+| public/emr-patient-record.js | 1845 | មិនអាចរៀបចំទិន្នន័យបាន។ | [removed] |
+| public/emr-patient-record.js | 1855 | បានទាញយកកញ្ចប់ទិន្នន័យ។ សូមរក្សាទុកដោយសុវត្ថិភាព។ PMRS2 មិនទាន់បានទទួលទិន្នន័យនេះទេ។ | [removed] |
+| public/emr-patient-record.js | 1857 | មានបញ្ហា: | [removed] |
+| public/emr-patient-record.js | 1865 | មានបញ្ហា: | [removed] |
+| public/emr-patient-record.js | 2039 | ពិនិត្យទិន្នន័យ PMRS2 | [removed] |
+| public/emr-patient-record.js | 2064 | ពិនិត្យទិន្នន័យ PMRS2 | [removed] |
+| public/pmrs-import.js | 5 | បញ្ជាក់ផ្លូវប្រើ... | [removed] |
+| public/pmrs-import.js | 5 | លេប (PO) | [removed] |
+| public/pmrs-import.js | 5 | ចាក់តាមសរសៃ (IV) | [removed] |
+| public/pmrs-import.js | 6 | អង់ទីប៊ីយ៉ូទិក IV | [removed] |
+| public/pmrs-import.js | 6 | សារធាតុរាវ IV | [removed] |
+| public/pmrs-import.js | 7 | ចាក់សាច់ដុំ (IM) | [removed] |
+| public/pmrs-import.js | 7 | អង់ទីប៊ីយ៉ូទិក IM | [removed] |
+| public/pmrs-import.js | 8 | ចាក់ក្រោមស្បែក (SC) | [removed] |
+| public/pmrs-import.js | 8 | លាប | [removed] |
+| public/pmrs-import.js | 8 | បន្តក់ | [removed] |
+| public/pmrs-import.js | 9 | ស្រូប | [removed] |
+| public/pmrs-import.js | 9 | តាមទ្វារមាស | [removed] |
+| public/pmrs-import.js | 9 | តាមទ្វារធំ | [removed] |
+| public/pmrs-import.js | 9 | ក្រោមអណ្តាត | [removed] |
+| public/pmrs-import.js | 11 | គ្រាប់ | [removed] |
+| public/pmrs-import.js | 11 | កាប់ស៊ុល | [removed] |
+| public/pmrs-import.js | 11 | អំពូល | [removed] |
+| public/pmrs-import.js | 11 | ផ្លាកុង | [removed] |
+| public/pmrs-import.js | 11 | ដប | [removed] |
+| public/pmrs-import.js | 11 | ទីប | [removed] |
+| public/pmrs-import.js | 11 | កញ្ចប់ | [removed] |
+| public/pmrs-import.js | 11 | ដំណក់ | [removed] |
+| public/pmrs-import.js | 11 | គ្រាប់សុល | [removed] |
+| public/pmrs-import.js | 11 | បន្ទះ | [removed] |
+| public/pmrs-import.js | 11 | បាញ់ | [removed] |
+| public/pmrs-import.js | 11 | ស្លាបព្រា | [removed] |
+| public/pmrs-import.js | 11 | ដុំ | [removed] |
+| public/pmrs-import.js | 11 | លីត្រ | [removed] |
+| public/pmrs-import.js | 11 | ឯកតា | [removed] |
+| public/pmrs-import.js | 22 | if (/លេប\|\bpo\b\|oral/.test(value)) return | [removed] |
+| public/pmrs-import.js | 23 | if (/សរសៃ\|\biv\b/.test(value)) return | [removed] |
+| public/pmrs-import.js | 24 | if (/សាច់ដុំ\|\bim\b/.test(value)) return | [removed] |
+| public/pmrs-import.js | 25 | if (/ក្រោមស្បែក\|\bsc\b/.test(value)) return | [removed] |
+| public/pmrs-import.js | 26 | if (/លាប/.test(value)) return | [removed] |
+| public/pmrs-import.js | 27 | if (/បន្តក់/.test(value)) return | [removed] |
+| public/pmrs-import.js | 28 | if (/ស្រូប/.test(value)) return | [removed] |
+| public/pmrs-import.js | 47 | ជ្រើសថ្នាំ | [removed] |
+| public/pmrs-import.js | 48 | ឈ្មោះថ្នាំ | [removed] |
+| public/pmrs-import.js | 49 | ផ្លូវប្រើ EMR | [removed] |
+| public/pmrs-import.js | 51 | ចំនួន | [removed] |
+| public/pmrs-import.js | 52 | ចំនួនថ្ងៃ | [removed] |
+| public/pmrs-import.js | 53 | ឯកតា EMR | [removed] |
+| public/pmrs-import.js | 54 | ជ្រើសឯកតា... | [removed] |
+| public/pmrs-import.js | 62 | មិនអាចទាក់ទង EMR បាន។ | [removed] |
+| public/pmrs-import.js | 67 | ជ្រើសអ្នកជំងឺ EMR... | [removed] |
+| public/pmrs-import.js | 73 | រកមិនឃើញលេខបណ្ណសុខភាពដូចគ្នាក្នុងផ្នែកដែលអ្នកមានសិទ្ធិ។ សូមពិនិត្យលេខទាំងពីរ។ | [removed] |
+| public/pmrs-import.js | 74 | អ្នកជំងឺនេះមិនទាន់បានកំណត់ថា HEF ក្នុងប្រភេទការបង់ប្រាក់ EMR។ | [removed] |
+| public/pmrs-import.js | 75 | រកឃើញ | [removed] |
+| public/pmrs-import.js | 75 | កំណត់ត្រា។ សូមផ្ទៀងផ្ទាត់ឈ្មោះ និងករណីចូលពេទ្យ។ | [removed] |
+| public/pmrs-import.js | 82 | លេខអ្នកជំងឺ PMRS2៖ | [removed] |
+| public/pmrs-import.js | 82 | · លេខការពិនិត្យ៖ | [removed] |
+| public/pmrs-import.js | 82 | · ថ្នាំ | [removed] |
+| public/pmrs-import.js | 82 | មុខ | [removed] |
+| public/pmrs-import.js | 100 | ជ្រើសអ្នកជំងឺ EMR ជាមុន។ | [removed] |
+| public/pmrs-import.js | 101 | លេខបណ្ណសុខភាពមិនដូចគ្នា។ | [removed] |
+| public/pmrs-import.js | 102 | អ្នកជំងឺនេះមិនមែនប្រភេទ HEF ក្នុង EMR ទេ។ | [removed] |
+| public/pmrs-import.js | 103 | សូមពិនិត្យទិន្នន័យ និងធីកប្រអប់ផ្ទៀងផ្ទាត់។ | [removed] |
+| public/pmrs-import.js | 105 | ជ្រើសថ្នាំយ៉ាងតិចមួយមុខ។ | [removed] |
+| public/pmrs-import.js | 107 | សូមបញ្ចូលថ្ងៃ និងម៉ោងពី PMRS2។ | [removed] |
+| public/pmrs-import.js | 109 | ទម្រង់ថ្នាំមិនត្រូវនឹងប្រភេទ OPD/IPD អ្នកជំងឺ។ | [removed] |
+| public/pmrs-import.js | 116 | បានរក្សាទុកថ្នាំ | [removed] |
+| public/pmrs-import.js | 116 | មុខក្នុង EMR។ ថ្នាំដែលធ្លាប់ផ្ទេរ៖ | [removed] |
+| public/pmrs-import.js | 116 | មុខ។ បើកកំណត់ត្រាអ្នកជំងឺដើម្បីមើល/កែ។ | [removed] |
+| public/pmrs-import.js | 129 | ចូលគណនី EMR ជាមុន។ | [removed] |
+| public/pmrs-import.js | 132 | សូមជ្រើសសិទ្ធិវេជ្ជបណ្ឌិត ឬអ្នកគ្រប់គ្រងក្នុងគណនី EMR។ | [removed] |
+| public/pmrs-import.js | 135 | មិនអាចបើកទំព័រផ្ទេរថ្នាំបាន។ | [removed] |
+| protected/pmrs-import.html | 5 | បញ្ចូលថ្នាំពី PMRS2 · មន្ទីរពេទ្យបង្អែកបរកែវ | [removed] |
+| protected/pmrs-import.html | 21 | មន្ទីរពេទ្យបង្អែកបរកែវ | [removed] |
+| protected/pmrs-import.html | 21 | ផ្ទេរថ្នាំ PMRS2 → បញ្ជីថ្នាំ EMR | [removed] |
+| protected/pmrs-import.html | 21 | ពិនិត្យអ្នកជំងឺ និងថ្នាំ មុនចុចរក្សាទុក | [removed] |
+| protected/pmrs-import.html | 23 | បើកកំណត់ត្រាថ្នាំរបស់អ្នកជំងឺនៅ PMRS2 ហើយចុចរូបសញ្ញាកម្មវិធីបន្ថែម Borkeo។ ទំព័រនេះទទួលថ្នាំពីកម្មវិធីបន្ថែមក្នុង Firefox ដោយមិនសុំលេខសម្ងាត់ PMRS2។ | [removed] |
+| protected/pmrs-import.html | 24 | ១. ព័ត៌មានពី PMRS2 | [removed] |
+| protected/pmrs-import.html | 24 | កំពុងរង់ចាំថ្នាំពីទំព័រ PMRS2... | [removed] |
+| protected/pmrs-import.html | 25 | ២. ជ្រើសអ្នកជំងឺ HEF ក្នុង EMR | [removed] |
+| protected/pmrs-import.html | 25 | លេខបណ្ណសុខភាពក្នុង PMRS2 ត្រូវតែត្រូវនឹង EMR។ ត្រូវមានសិទ្ធិវេជ្ជបណ្ឌិត ឬអ្នកគ្រប់គ្រង។ | [removed] |
+| protected/pmrs-import.html | 26 | កំណត់ត្រាអ្នកជំងឺ | [removed] |
+| protected/pmrs-import.html | 26 | រង់ចាំទិន្នន័យពី PMRS2... | [removed] |
+| protected/pmrs-import.html | 29 | ៣. ពិនិត្យកាលបរិច្ឆេទ និងថ្នាំ | [removed] |
+| protected/pmrs-import.html | 30 | ថ្ងៃ និងម៉ោងក្នុង PMRS2 | [removed] |
+| protected/pmrs-import.html | 31 | ផ្ទេរទៅក្នុង EMR | [removed] |
+| protected/pmrs-import.html | 31 | ការតាមដានប្រចាំថ្ងៃ IPD | [removed] |
+| protected/pmrs-import.html | 31 | ថ្នាំថ្ងៃចូលសម្រាក IPD | [removed] |
+| protected/pmrs-import.html | 31 | វេជ្ជបញ្ជា OPD | [removed] |
+| protected/pmrs-import.html | 32 | បើថ្នាំនេះជាការតាមដានថ្មី EMR នឹងបង្កើតជួរតាមថ្ងៃ/ម៉ោងខាងលើ។ សូមបំពេញ Vital signs និងសេចក្ដីសន្និដ្ឋានក្នុង Follow-up EMR ក្រោយពេលផ្ទេរ។ ចំនួនតាមពេលត្រូវពិនិត្យមុនរក្សាទុក។ | [removed] |
+| protected/pmrs-import.html | 33 | យក | [removed] |
+| protected/pmrs-import.html | 33 | ឈ្មោះថ្នាំ | [removed] |
+| protected/pmrs-import.html | 33 | ផ្លូវប្រើ EMR | [removed] |
+| protected/pmrs-import.html | 33 | ព្រឹក | [removed] |
+| protected/pmrs-import.html | 33 | ថ្ងៃ | [removed] |
+| protected/pmrs-import.html | 33 | ល្ងាច | [removed] |
+| protected/pmrs-import.html | 33 | យប់ | [removed] |
+| protected/pmrs-import.html | 33 | ចំនួនថ្ងៃ | [removed] |
+| protected/pmrs-import.html | 33 | ឯកតា | [removed] |
+| protected/pmrs-import.html | 33 | ដើមក្នុង PMRS2 | [removed] |
+| protected/pmrs-import.html | 33 | កំពុងរង់ចាំថ្នាំ... | [removed] |
+| protected/pmrs-import.html | 34 | ខ្ញុំបានពិនិត្យលេខអ្នកជំងឺ ថ្ងៃម៉ោង ផ្លូវប្រើ និងចំនួនថ្នាំ | [removed] |
+| protected/pmrs-import.html | 34 | រក្សាទុកថ្នាំក្នុង EMR | [removed] |
+| public/app-shell.js | 75 | នាំចូលទិន្នន័យ PMRS2 | [removed] |
+| tests/pmrs2-import-http.test.mjs | 26 | 28 ឆ្នាំ | [removed] |
+| tests/v423-medicine-list.test.mjs | 69 | ដុំ | [removed] |
+| tests/v423-medicine-list.test.mjs | 70 | ដុំ | [removed] |
+| tests/v423-medicine-list.test.mjs | 81 | ដុំ | [removed] |
+| tests/v423-medicine-list.test.mjs | 88 | ដុំ | [removed] |
+| tests/v423-medicine-list.test.mjs | 88 | លីត្រ | [removed] |

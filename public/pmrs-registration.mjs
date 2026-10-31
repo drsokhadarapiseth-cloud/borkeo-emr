@@ -1,8 +1,6 @@
-// Stage 1 PMRS2 -> Borkeo import. Receives identity/address fields scraped from
-// the PMRS2 patient page (by the Borkeo PMRS2 helper browser extension) and
-// pre-fills the Borkeo registration form. It NEVER signs in to PMRS2, never
-// saves the patient, and never stores PMRS2 credentials. Staff review the filled
-// form, resolve any duplicate, and press Save themselves.
+// Prepare registration from a reviewed Playwright snapshot held by the EMR server.
+// This module never signs in, persists credentials, or saves the patient.
+// Staff resolve duplicate warnings and use the existing registration Save action.
 
 const PROVINCES_URLS = ['/data/gazetteer/provinces.json', '/public/data/gazetteer/provinces.json'];
 
@@ -145,21 +143,23 @@ async function findDuplicates(payload) {
     if (q.replace(/\s/g, '').length < 3) continue;
     try {
       const res = await fetch(`/api/emr-network/local-search?q=${encodeURIComponent(q)}&mode=${mode}`, { credentials: 'same-origin', cache: 'no-store' });
-      if (!res.ok) continue;
+      if (!res.ok) throw new Error('Duplicate lookup unavailable.');
       const data = await res.json();
       for (const patient of data.patients || []) {
         const key = patient.patientKey || patient.caseNumber || patient.healthId;
         if (key && !seen.has(key)) { seen.add(key); matches.push({ matchedBy: mode, patient }); }
       }
-    } catch { /* ignore a failed lookup; staff still review */ }
+    } catch { throw new Error('Duplicate lookup unavailable.'); }
   }
   return matches;
 }
 
 // Fill the registration form from a scraped PMRS2 payload. Returns a report of
 // what was filled and any possible duplicates. Does not save.
-export async function applyPmrs2Registration(payload, { doc = typeof document !== 'undefined' ? document : null } = {}) {
+export async function applyPmrsRegistration(payload, { doc = typeof document !== 'undefined' ? document : null, beforeFill } = {}) {
   if (!payload || !doc) return { filled: [], duplicates: [], addressResolved: false };
+  const duplicates = await findDuplicates(payload);
+  if (beforeFill) beforeFill();
   const filled = [];
   const mark = (ok, field) => { if (ok) filled.push(field); };
 
@@ -195,31 +195,86 @@ export async function applyPmrs2Registration(payload, { doc = typeof document !=
     mark(true, 'address');
   }
 
-  const duplicates = await findDuplicates(payload);
   return { filled, duplicates, addressResolved };
 }
 
 if (typeof window !== 'undefined') {
-  window.applyPmrs2Registration = applyPmrs2Registration;
-  // The helper extension hands the scraped payload across page worlds by setting
-  // this data attribute, then dispatches this event. We clear it after reading.
-  document.addEventListener('borkeo:pmrs2-import', () => {
-    const raw = document.documentElement.dataset.borkeoPmrs2Import || '';
-    document.documentElement.removeAttribute('data-borkeo-pmrs2-import');
-    if (!raw) return;
-    const transferId = document.documentElement.getAttribute('data-borkeo-pmrs2-id');
-    if (window.getLoadedEmrPatient?.()?.patientKey) {
-      document.documentElement.setAttribute('data-borkeo-pmrs2-result', JSON.stringify({ id: transferId, ok: false, reason: 'record' }));
-      return;
-    }
-    let payload;
-    try { payload = JSON.parse(raw); } catch { return; }
-    applyPmrs2Registration(payload).then((report) => {
-      document.documentElement.setAttribute('data-borkeo-pmrs2-result', JSON.stringify({ id: transferId, ok: report.filled.length > 0, fields: report.filled.length, duplicates: report.duplicates.length, matches: report.duplicates.map(({patient}) => [patient.fullName || [patient.lastName, patient.firstName].filter(Boolean).join(' '), patient.caseNumber || patient.healthId].filter(Boolean).join(' - ')) }));
-      document.dispatchEvent(new CustomEvent('borkeo:pmrs2-import-done', { detail: report }));
-    }).catch(() => {
-      document.documentElement.setAttribute('data-borkeo-pmrs2-result', JSON.stringify({ id: transferId, ok: false }));
+  // Extension delivery stays in the authenticated, first-party EMR tab. The
+  // extension never receives session cookies or CSRF tokens. Only a NEW form
+  // may be filled; existing records and staff edits are never overwritten.
+  let extensionDirty = false;
+  const extensionJobs = new Map();
+  document.addEventListener('input', event => {
+    if (event.isTrusted && event.target.closest?.('#web-admission')) extensionDirty = true;
+  }, true);
+  document.addEventListener('change', event => {
+    if (event.isTrusted && event.target.closest?.('#web-admission')) extensionDirty = true;
+  }, true);
+  window.receivePmrsExtensionRegistration = async (nonce, payload) => {
+    const query = new URL(location.href).searchParams;
+    if (location.pathname !== '/emr' || query.get('pmrsExtension') !== nonce || !/^[a-f0-9-]{36}$/.test(nonce) || query.has('patient') || query.has('patientKey')) return {code:'WRONG_TARGET'};
+    if (extensionJobs.has(nonce)) return {code:extensionJobs.get(nonce)};
+    if (!payload || Object.getPrototypeOf(payload) !== Object.prototype) return {code:'INVALID_PAYLOAD'};
+    const allowed = new Set(['healthId','caseNumber','fullName','sex','age','phone','equityCard','province','district','commune','village']);
+    if (Object.keys(payload).some(key => !allowed.has(key) || typeof payload[key] !== 'string' || payload[key].length > 200)
+      || !/^[A-Za-z0-9-]{3,80}$/.test(payload.healthId || '') || !/^[A-Za-z0-9-]{3,80}$/.test(payload.caseNumber || '')
+      || !payload.fullName?.trim() || payload.fullName.length > 160 || !['ស្រី','ប្រុស'].includes(payload.sex)
+      || payload.age !== undefined && (!/^\d{1,3}$/.test(payload.age) || Number(payload.age) > 130)) return {code:'INVALID_PAYLOAD'};
+    extensionJobs.set(nonce, 'DELIVERY_UNCONFIRMED');
+    const finish = code => { extensionJobs.set(nonce, code); return {code}; };
+    // emr-session.js loads identity asynchronously after the document completes.
+    if (!window.emrSession?.user) await new Promise(resolve => {
+      const done = () => { clearTimeout(timer); window.removeEventListener('emr-session-ready', done); resolve(); };
+      const timer = setTimeout(done, 10000);
+      window.addEventListener('emr-session-ready', done, {once:true});
     });
-  });
-  document.documentElement.setAttribute('data-borkeo-pmrs2-ready', '1');
+    const response = await fetch('/api/auth/me', {credentials:'same-origin',cache:'no-store'});
+    if (!response.ok) return finish('LOGIN_REQUIRED');
+    const session = await response.json(), user = session.user;
+    if (session.demoMode) return finish('DEMO_DISABLED');
+    if (user?.mustChangePassword) return finish('LOGIN_REQUIRED');
+    if (!['ADMIN','VICE_DIRECTOR','REGISTRATION'].includes(user?.activeRole) && !(user?.activeRole === 'DOCTOR' && user.activeWard?.code === 'opd')) return finish('REGISTRATION_ROLE_REQUIRED');
+    if (!document.getElementById('web_last_name') || !document.getElementById('web_pmrs2_case_number')) return finish('RECEIVER_UPDATE_REQUIRED');
+    const occupied = () => extensionDirty || window.getLoadedEmrPatient?.()?.patientKey || ['web_first_name','web_last_name','web_phone','web_pmrs2_case_number','web_other_card_number'].some(id => document.getElementById(id)?.value?.trim());
+    if (occupied()) return finish('FORM_OCCUPIED');
+    // A matching PMRS patient is not silently registered a second time, even
+    // when the source encounter differs. Staff must review the existing record.
+    const duplicates = await findDuplicates({healthId:payload.healthId});
+    if (duplicates.length) return finish('DUPLICATE_PATIENT');
+    if (occupied()) return finish('FORM_OCCUPIED');
+    let report;
+    try {
+      report = await applyPmrsRegistration(payload, {beforeFill:() => { if (occupied()) throw Error('FORM_OCCUPIED'); }});
+    } catch(error) {
+      return finish(error.message === 'FORM_OCCUPIED' ? 'FORM_OCCUPIED' : 'DELIVERY_UNCONFIRMED');
+    }
+    const notice = document.createElement('p');
+    notice.setAttribute('role','status');
+    notice.textContent = report.duplicates.length ? 'អាចមានអ្នកជំងឺដែលបានចុះឈ្មោះរួចហើយ។ សូមពិនិត្យមុនបង្កើតថ្មី។' : 'សូមពិនិត្យព័ត៌មានអ្នកជំងឺមុនរក្សាទុក។';
+    document.getElementById('web-admission')?.prepend(notice);
+    // Filled is deliberately not called saved/imported: existing Save keeps
+    // its normal validation, role, counter and audit requirements.
+    return finish(report.duplicates.length ? 'DRAFT_DUPLICATES' : 'DRAFT_FILLED');
+  };
+  const query = new URL(location.href).searchParams;
+  const job = query.get('pmrsImport');
+  if (job && !query.has('patient') && !query.has('patientKey')) {
+    let started=false;
+    const run = async () => {
+      if (started || window.getLoadedEmrPatient?.()?.patientKey) return;
+      started=true;
+      const response = await fetch('/api/pmrs/registration?job=' + encodeURIComponent(job), {credentials:'same-origin',cache:'no-store'});
+      if (!response.ok) return;
+      const {registration} = await response.json();
+      const report = await applyPmrsRegistration(registration);
+      const notice = document.createElement('p');
+      notice.setAttribute('role','status');
+      notice.textContent = report.duplicates.length ? 'អាចមានអ្នកជំងឺដែលបានចុះឈ្មោះរួចហើយ។ សូមពិនិត្យមុនបង្កើតថ្មី។' : 'សូមពិនិត្យព័ត៌មានអ្នកជំងឺមុនរក្សាទុក។';
+      document.getElementById('web-admission')?.prepend(notice);
+      history.replaceState(null,'',location.pathname+'?view=register');
+    };
+    const failed=()=>{const notice=document.createElement('p');notice.setAttribute('role','alert');notice.textContent=document.documentElement.lang==='en'?'Import unavailable. Return to PMRS transfer and preview again.':'មិនអាចផ្ទេរបានទេ។ សូមពិនិត្យអត្តសញ្ញាណ សិទ្ធិ ទម្រង់ និងការភ្ជាប់ រួចពិនិត្យឡើងវិញ។';document.getElementById('web-admission')?.prepend(notice);};
+    window.addEventListener('emr-session-ready', () => void run().catch(failed), {once:true});
+    if(window.emrSession?.user) void run().catch(failed);
+  }
 }

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 
-const html = fs.readFileSync(new URL('../protected/EMR.html', import.meta.url), 'utf8');
+const html = fs.readFileSync(new URL('../protected/EMR.html', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 // Track actual div nesting, excluding scripts and comments containing markup.
 function divParents(source) {
   const clean = source.replace(/<!--[\s\S]*?-->|<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
@@ -30,7 +30,7 @@ test('structure regression detects the original missing OPD footer closing tag',
   assert.equal(divParents(broken).get('sub_nursing'), 'sub_opd');
 });
 
-const switchSource = html.slice(html.indexOf('        function switchOpdTab(tabName) {'), html.indexOf('        // ==========================================\r\n        // PARTOGRAPH TAB'));
+const switchSource = html.slice(html.indexOf('        function switchOpdTab(tabName) {'), html.indexOf('        // ==========================================\n        // PARTOGRAPH TAB'));
 for (const [role, tab, form] of [['DOCTOR', 'ipd', 'general'], ['NURSE', 'nursing', 'general'], ['MIDWIFE', 'nursing', 'maternity']]) {
   test(`${role} activates the correct IPD panel`, () => {
     const nodes = new Map();

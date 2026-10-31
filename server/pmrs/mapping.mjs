@@ -1,6 +1,6 @@
 // PMRS2 field preparation. This module never signs in or writes to PMRS2.
 // The target UI must verify the patient and the exact ICD-10 choice before saving.
-import { summarizeClinicalExamination } from '../public/pmrs2-exam-normal.js';
+import { summarizeClinicalExamination } from '../../public/pmrs2-exam-normal.js';
 const gynecologyCodes = new Set([
   'gyneco-obstetric', 'gynecology', 'obstetric', 'anc', 'pnc',
   'family-planning', 'spacing', 'cervix-screening', 'cervix',

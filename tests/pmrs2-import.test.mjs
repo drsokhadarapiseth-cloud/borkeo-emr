@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeKh, splitKhmerName, padProvinceCode, resolveProvince, buildAddressRecord } from '../public/pmrs2-import.mjs';
+import { normalizeKh, splitKhmerName, padProvinceCode, resolveProvince, buildAddressRecord } from '../public/pmrs-registration.mjs';
 
 test('normalizeKh collapses whitespace and drops zero-width marks', () => {
   assert.equal(normalizeKh('  a​b   c '), 'ab c');

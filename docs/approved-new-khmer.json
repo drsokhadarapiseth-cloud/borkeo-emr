@@ -3326,6 +3326,366 @@
     {
       "en": "PMRS2 age in years expression",
       "kh": ")(?:\\s*(?:ឆ្នាំ|years?|yrs?))?$/iu);"
+    },
+    {
+      "en": "PMRS transfer",
+      "kh": "ផ្ទេរទិន្នន័យ PMRS"
+    },
+    {
+      "en": "A browser on the hospital computer is required. Complete login and authenticator verification in that browser.",
+      "kh": "ការផ្ទេរត្រូវការកម្មវិធីរុករកនៅកុំព្យូទ័រមន្ទីរពេទ្យ។ សូមចូលគណនី និងបញ្ចូលលេខផ្ទៀងផ្ទាត់ក្នុងកម្មវិធីរុករកដោយខ្លួនឯង។"
+    },
+    {
+      "en": "Close connection",
+      "kh": "បិទការតភ្ជាប់"
+    },
+    {
+      "en": "Read the patient open in PMRS",
+      "kh": "អានអ្នកជំងឺដែលបានបើកក្នុង PMRS"
+    },
+    {
+      "en": "EMR record key",
+      "kh": "លេខសម្គាល់កំណត់ត្រាក្នុង EMR"
+    },
+    {
+      "en": "Fill a new registration",
+      "kh": "បញ្ចូលទៅទម្រង់ចុះឈ្មោះថ្មី"
+    },
+    {
+      "en": "Preview import",
+      "kh": "ពិនិត្យការនាំចូល"
+    },
+    {
+      "en": "Preview export",
+      "kh": "ពិនិត្យការនាំចេញ"
+    },
+    {
+      "en": "I verified the patient, encounter and transfer data.",
+      "kh": "ខ្ញុំបានផ្ទៀងផ្ទាត់អ្នកជំងឺ ករណី និងទិន្នន័យដែលត្រូវផ្ទេរ។"
+    },
+    {
+      "en": "Save import to EMR",
+      "kh": "រក្សាទុកការនាំចូលទៅ EMR"
+    },
+    {
+      "en": "Fill PMRS form",
+      "kh": "បំពេញទម្រង់ក្នុង PMRS"
+    },
+    {
+      "en": "Confirm and submit to PMRS",
+      "kh": "បញ្ជាក់ និងផ្ញើទៅ PMRS"
+    },
+    {
+      "en": "Link an existing record",
+      "kh": "ភ្ជាប់កំណត់ត្រាដែលមានស្រាប់"
+    },
+    {
+      "en": "Verify name, sex, date of birth and encounter in both systems. Retype all three IDs to confirm linking.",
+      "kh": "ផ្ទៀងផ្ទាត់ឈ្មោះ ភេទ ថ្ងៃកំណើត និងករណីទាំងពីរជាមុន។ វាយលេខទាំងបីឡើងវិញដើម្បីបញ្ជាក់ការភ្ជាប់។"
+    },
+    {
+      "en": "PMRS patient ID",
+      "kh": "លេខអ្នកជំងឺ PMRS"
+    },
+    {
+      "en": "PMRS encounter ID",
+      "kh": "លេខករណី PMRS"
+    },
+    {
+      "en": "EMR case number",
+      "kh": "លេខករណី EMR"
+    },
+    {
+      "en": "Confirm link",
+      "kh": "បញ្ជាក់ការភ្ជាប់"
+    },
+    {
+      "en": "A possible duplicate patient exists. Review before creating a new record.",
+      "kh": "អាចមានអ្នកជំងឺដែលបានចុះឈ្មោះរួចហើយ។ សូមពិនិត្យមុនបង្កើតថ្មី។"
+    },
+    {
+      "en": "Review the patient information before saving.",
+      "kh": "សូមពិនិត្យព័ត៌មានអ្នកជំងឺមុនរក្សាទុក។"
+    },
+    {
+      "en": "Transfers are disabled until PMRS automation authorization and page mappings are verified.",
+      "kh": "មិនទាន់អាចផ្ទេរបានទេ។ ត្រូវផ្ទៀងផ្ទាត់ការអនុញ្ញាត និងទម្រង់ PMRS ជាមុនសិន។"
+    },
+    {
+      "en": "Open the connection, then sign in to PMRS.",
+      "kh": "សូមបើកការតភ្ជាប់ រួចចូលគណនី PMRS។"
+    },
+    {
+      "en": "Sign in, complete authentication, and open the intended patient encounter.",
+      "kh": "សូមចូលគណនី បញ្ចូលលេខផ្ទៀងផ្ទាត់ និងបើកករណីអ្នកជំងឺដែលត្រូវការ។"
+    },
+    {
+      "en": "Completed.",
+      "kh": "បានបញ្ចប់។"
+    },
+    {
+      "en": "Form filled. Review it again in PMRS before confirming submission.",
+      "kh": "បានបំពេញទម្រង់។ សូមពិនិត្យក្នុង PMRS ម្ដងទៀត មុនបញ្ជាក់ការផ្ញើ។"
+    },
+    {
+      "en": "Some information needs review. Correct the record before transferring.",
+      "kh": "ព័ត៌មានខ្លះត្រូវការការពិនិត្យបន្ថែម។ សូមកែតម្រូវកំណត់ត្រាមុនផ្ទេរ។"
+    },
+    {
+      "en": "Transfer blocked. Check identity, access, mappings and connection, then preview again.",
+      "kh": "មិនអាចផ្ទេរបានទេ។ សូមពិនិត្យអត្តសញ្ញាណ សិទ្ធិ ទម្រង់ និងការភ្ជាប់ រួចពិនិត្យឡើងវិញ។"
+    },
+    {
+      "en": "PMRS save could not be confirmed. Check PMRS manually. Do not resubmit.",
+      "kh": "មិនអាចបញ្ជាក់ថា PMRS បានរក្សាទុករួចឬនៅទេ។ សូមពិនិត្យក្នុង PMRS ដោយខ្លួនឯង។ កុំផ្ញើម្ដងទៀត។"
+    },
+    {
+      "en": "Connection expired. Open a new connection and preview again.",
+      "kh": "ការតភ្ជាប់បានផុតកំណត់។ សូមបើកការតភ្ជាប់ថ្មី ហើយពិនិត្យឡើងវិញ។"
+    },
+    {
+      "en": "The hospital computer could not open the browser. Check its installation.",
+      "kh": "មិនអាចបើកកម្មវិធីរុករកបានទេ។ សូមពិនិត្យការដំឡើងនៅកុំព្យូទ័រមន្ទីរពេទ្យ។"
+    },
+    {
+      "en": "Before",
+      "kh": "មុនផ្ទេរ"
+    },
+    {
+      "en": "After",
+      "kh": "ក្រោយផ្ទេរ"
+    },
+    {
+      "en": "PMRS source information",
+      "kh": "ព័ត៌មានពី PMRS"
+    },
+    {
+      "en": "Changes to review",
+      "kh": "ព័ត៌មានដែលត្រូវផ្លាស់ប្ដូរ"
+    },
+    {
+      "en": "Identity",
+      "kh": "អត្តសញ្ញាណ"
+    },
+    {
+      "en": "Clinical",
+      "kh": "ព័ត៌មានគ្លីនិក"
+    },
+    {
+      "en": "Full name",
+      "kh": "ឈ្មោះពេញ"
+    },
+    {
+      "en": "Entry type",
+      "kh": "ប្រភេទអ្នកជំងឺ"
+    },
+    {
+      "en": "Caregiver name",
+      "kh": "ឈ្មោះអ្នកថែទាំ"
+    },
+    {
+      "en": "Caregiver phone",
+      "kh": "ទូរស័ព្ទអ្នកថែទាំ"
+    },
+    {
+      "en": "Caregiver sex",
+      "kh": "ភេទអ្នកថែទាំ"
+    },
+    {
+      "en": "Caregiver relation",
+      "kh": "ទំនាក់ទំនងអ្នកថែទាំ"
+    },
+    {
+      "en": "Diagnosis icd10",
+      "kh": "កូដរោគវិនិច្ឆ័យ"
+    },
+    {
+      "en": "Date time",
+      "kh": "ថ្ងៃម៉ោង"
+    },
+    {
+      "en": "Systolic",
+      "kh": "សម្ពាធឈាមខាងលើ"
+    },
+    {
+      "en": "Diastolic",
+      "kh": "សម្ពាធឈាមខាងក្រោម"
+    },
+    {
+      "en": "Respiratory rate",
+      "kh": "អត្រាដង្ហើម"
+    },
+    {
+      "en": "Receiving ward",
+      "kh": "ផ្នែកទទួល"
+    },
+    {
+      "en": "Source date time",
+      "kh": "ថ្ងៃម៉ោងប្រភព"
+    },
+    {
+      "en": "Medicines added",
+      "kh": "ឱសថដែលត្រូវបន្ថែម"
+    },
+    {
+      "en": "Skipped",
+      "kh": "ទិន្នន័យស្ទួនដែលរំលង"
+    },
+    {
+      "en": "PMRS import is ready. Export has not been verified.",
+      "kh": "អាចនាំចូលពី PMRS បាន។ ការនាំចេញមិនទាន់បានផ្ទៀងផ្ទាត់។"
+    },
+    {
+      "en": "The PMRS connection has not been configured.",
+      "kh": "មិនទាន់បានកំណត់ការតភ្ជាប់ PMRS ទេ។"
+    },
+    {
+      "en": "The PMRS connection settings could not be read.",
+      "kh": "មិនអាចអានការកំណត់ PMRS បានទេ។"
+    },
+    {
+      "en": "PMRS automation authorization must be confirmed.",
+      "kh": "ត្រូវបញ្ជាក់ការអនុញ្ញាតប្រើប្រាស់ PMRS ជាមុន។"
+    },
+    {
+      "en": "PMRS reading mappings must be verified first.",
+      "kh": "ត្រូវផ្ទៀងផ្ទាត់ការអានព័ត៌មានពី PMRS ជាមុន។"
+    },
+    {
+      "en": "Patient and encounter identity mappings are required.",
+      "kh": "ត្រូវកំណត់ការផ្ទៀងផ្ទាត់អ្នកជំងឺ និងករណី។"
+    },
+    {
+      "en": "The import fields must be mapped.",
+      "kh": "ត្រូវកំណត់ព័ត៌មានដែលត្រូវនាំចូល។"
+    },
+    {
+      "en": "PMRS export has not been independently verified.",
+      "kh": "ការនាំចេញទៅ PMRS មិនទាន់បានផ្ទៀងផ្ទាត់។"
+    },
+    {
+      "en": "EMR record not found. Open this page from the saved patient record.",
+      "kh": "រកមិនឃើញកំណត់ត្រា EMR ទេ។ សូមបើកទំព័រនេះពីកំណត់ត្រាអ្នកជំងឺ។"
+    },
+    {
+      "en": "Synthetic patient name in tests only",
+      "kh": "សាកល្បង អ្នកជំងឺ"
+    },
+    {
+      "en": "35 years (synthetic fixture)",
+      "kh": "35 ឆ្នាំ"
+    },
+    {
+      "en": "Phone number (PMRS source label)",
+      "kh": "លេខទូរសព្ទ៖"
+    },
+    {
+      "en": "BMI (PMRS source label)",
+      "kh": "BMI៖"
+    },
+    {
+      "en": "Transfer PMRS registration details into EMR for review before saving.",
+      "kh": "ផ្ទេរព័ត៌មានចុះឈ្មោះពី PMRS ទៅ EMR ដើម្បីពិនិត្យមុនរក្សាទុក។"
+    },
+    {
+      "en": "Open the patient record in PMRS.",
+      "kh": "សូមបើកកំណត់ត្រាអ្នកជំងឺនៅ PMRS។"
+    },
+    {
+      "en": "EMR address configured.",
+      "kh": "បានកំណត់អាសយដ្ឋាន EMR។"
+    },
+    {
+      "en": "Opening EMR.",
+      "kh": "កំពុងបើក EMR។"
+    },
+    {
+      "en": "Sign into EMR in the new tab. Delivery resumes after login.",
+      "kh": "សូមចូល EMR នៅផ្ទាំងដែលបានបើក។ ការផ្ទេរនឹងបន្តក្រោយចូល។"
+    },
+    {
+      "en": "Choose your registration context in EMR.",
+      "kh": "សូមជ្រើសរើសតួនាទីចុះឈ្មោះនៅ EMR។"
+    },
+    {
+      "en": "Registration form filled. Review and click Save in EMR.",
+      "kh": "បានបំពេញទម្រង់។ សូមពិនិត្យ និងចុចរក្សាទុកនៅ EMR។"
+    },
+    {
+      "en": "Form filled; possible duplicates require review before Save.",
+      "kh": "បានបំពេញទម្រង់ ប៉ុន្តែអាចមានកំណត់ត្រាស្ទួន។ សូមពិនិត្យមុនរក្សាទុក។"
+    },
+    {
+      "en": "Patient already exists. New form was not filled.",
+      "kh": "មានកំណត់ត្រាអ្នកជំងឺរួចហើយ។ មិនបានបំពេញទម្រង់ថ្មីទេ។"
+    },
+    {
+      "en": "Form already contains information. Nothing was overwritten.",
+      "kh": "ទម្រង់មានព័ត៌មានរួចហើយ។ មិនបានសរសេរជាន់លើទេ។"
+    },
+    {
+      "en": "Open PMRS patient details before sending.",
+      "kh": "សូមបើកព័ត៌មានអ្នកជំងឺនៅ PMRS មុនចុចផ្ទេរ។"
+    },
+    {
+      "en": "Capture failed. Make sure exactly one patient details page is visible.",
+      "kh": "មិនអាចអានព័ត៌មានបានទេ។ សូមពិនិត្យថាបានបើកព័ត៌មានអ្នកជំងឺតែម្នាក់។"
+    },
+    {
+      "en": "Cannot reach EMR. Check its address and server.",
+      "kh": "មិនអាចភ្ជាប់ EMR បានទេ។ សូមពិនិត្យអាសយដ្ឋាន និងម៉ាស៊ីនមេ។"
+    },
+    {
+      "en": "Install the matching EMR update first.",
+      "kh": "ត្រូវដំឡើងបច្ចុប្បន្នភាព EMR ជាមុន។"
+    },
+    {
+      "en": "Transfer expired. Start again from the patient page.",
+      "kh": "ការផ្ទេរផុតកំណត់។ សូមចាប់ផ្តើមពីព័ត៌មានអ្នកជំងឺឡើងវិញ។"
+    },
+    {
+      "en": "Transfer cancelled.",
+      "kh": "បានបោះបង់ការផ្ទេរ។"
+    },
+    {
+      "en": "An import is pending. Resume or cancel it first.",
+      "kh": "មានការផ្ទេរកំពុងរង់ចាំ។ សូមបន្ត ឬបោះបង់ជាមុន។"
+    },
+    {
+      "en": "Use a role permitted to register patients.",
+      "kh": "សូមប្រើតួនាទីដែលអាចចុះឈ្មោះអ្នកជំងឺបាន។"
+    },
+    {
+      "en": "Delivery unconfirmed. Inspect the EMR tab before sending again.",
+      "kh": "មិនទាន់បញ្ជាក់ការបំពេញទម្រង់។ សូមពិនិត្យផ្ទាំង EMR មុនផ្ទេរម្តងទៀត។"
+    },
+    {
+      "en": "Filling registration form.",
+      "kh": "កំពុងបំពេញទម្រង់។"
+    },
+    {
+      "en": "Return the new tab to the configured EMR address.",
+      "kh": "សូមត្រឡប់ទៅអាសយដ្ឋាន EMR នៅផ្ទាំងដែលបានបើក។"
+    },
+    {
+      "en": "Transfer blocked. Check configuration and permissions.",
+      "kh": "ការផ្ទេរមិនបានសម្រេច។ សូមពិនិត្យការកំណត់ និងសិទ្ធិ។"
+    },
+    {
+      "en": "Configure address",
+      "kh": "កំណត់អាសយដ្ឋាន"
+    },
+    {
+      "en": "Send to EMR",
+      "kh": "ផ្ទេរទៅ EMR"
+    },
+    {
+      "en": "Resume transfer",
+      "kh": "បន្តការផ្ទេរ"
+    },
+    {
+      "en": "Registration details only. Does not automatically save the patient. Pending transfer expires after 10 minutes.",
+      "kh": "ព័ត៌មានចុះឈ្មោះប៉ុណ្ណោះ។ មិនរក្សាទុកអ្នកជំងឺដោយស្វ័យប្រវត្តិ។ ការផ្ទេរផុតកំណត់ក្រោយ ១០ នាទី។"
     }
   ]
 }

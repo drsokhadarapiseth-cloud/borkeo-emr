@@ -68,8 +68,9 @@ function functions() {
   let code=source.slice(source.indexOf('  const esc ='),source.indexOf('  const SHORT_LABEL_CODES'));
   code+=source.slice(source.indexOf('  const SHORT_LABEL_CODES'),source.indexOf('  function isWardNursingRole'));
   for (const name of ['modalityLabel','categoryLabel','groupLabItems','labRequestName']) {
-    const i=source.indexOf('  function '+name+'('),j=source.indexOf('\n  ',source.indexOf('\n  }',i)+5);
-    code+=source.slice(i,j);
+    const match = new RegExp('^  function '+name+'\\([\\s\\S]*?^  \}', 'm').exec(source);
+    assert.ok(match, name + ' helper is present');
+    code += match[0] + '\n';
   }
   vm.runInNewContext(code+source.slice(start,end)+'\nthis.pendingOrder=pendingOrder;this.appointmentLabel=appointmentLabel;this.pendingBanner=pendingBanner;',ctx);
   return ctx;

@@ -117,7 +117,7 @@ test('the local demo uses username-only accounts and cannot access the patient d
     assert.equal((await login('demodoctor')).status, 200);
     assert.equal((await request('/api/auth/change-password', { method: 'POST', headers,
       body: '{}' })).status, 404);
-    assert.equal((await request('/api/pmrs2/import-medicines', { method: 'POST', headers,
+    assert.equal((await request('/api/pmrs/open', { method: 'POST', headers,
       body: '{}' })).status, 403);
     app.database.sqlite.prepare('UPDATE users SET is_active=0 WHERE username=?').run('demodoctor');
     assert.equal((await login('demodoctor')).status, 401);

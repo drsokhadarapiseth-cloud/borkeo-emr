@@ -1742,208 +1742,9 @@
     container.insertAdjacentElement(position, bar);
   }
 
-  async function showPmrs2FollowUpPreview() {
-    const patientKey = loadedPatient?.patientKey;
-    if (!patientKey) { alert('សូមរក្សាទុក និងបើកកំណត់ត្រាអ្នកជំងឺជាមុនសិន។'); return; }
-    const dialog = document.createElement('dialog');
-    dialog.style.cssText = 'width:min(850px,94vw);max-height:88vh;overflow:auto;border:1px solid #cbd5e1;border-radius:12px;padding:20px;font:14px/1.5 sans-serif';
-    const heading = document.createElement('h2');
-    heading.textContent = 'ពិនិត្យទិន្នន័យសម្រាប់ PMRS2';
-    const intro = document.createElement('p');
-    intro.textContent = 'ទិន្នន័យនេះមកពីកំណត់ត្រាដែលបានរក្សាទុក។ សូមពិនិត្យមុនបញ្ចូលក្នុង PMRS2។';
-    const close = document.createElement('button');
-    close.type = 'button';
-    close.textContent = 'បិទ';
-    close.onclick = () => dialog.close();
-    dialog.append(heading, intro, close);
-    dialog.addEventListener('close', () => dialog.remove());
-    document.body.append(dialog);
-    dialog.showModal();
-    try {
-      const response = await fetch(`/api/pmrs2/preview?patientKey=${encodeURIComponent(patientKey)}`, { credentials: 'same-origin', cache: 'no-store' });
-      const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error || 'មិនអាចទាញទិន្នន័យបានទេ។');
-      const identity = document.createElement('p');
-      identity.textContent = `អ្នកជំងឺ: ${payload.preview?.patientName || '—'} · លេខករណី: ${payload.preview?.caseNumber || '—'} · លេខប័ណ្ណសុខភាព: ${payload.preview?.healthId || '—'}`;
-      dialog.append(identity);
-      const explain = {
-        FOLLOW_UP_DATE_TIME_REQUIRED: 'ត្រូវបញ្ជាក់ថ្ងៃ និងម៉ោង',
-        FOLLOW_UP_VITALS_INCOMPLETE: 'សញ្ញាជីវិតមិនទាន់គ្រប់',
-        FOLLOW_UP_EVOLUTION_REQUIRED: 'ខ្វះការវិវត្តន៍',
-        FOLLOW_UP_CONCLUSION_REQUIRED: 'ខ្វះសេចក្តីសន្និដ្ឋាន',
-        FOLLOW_UP_MEDICATION_REVIEW: 'ត្រូវពិនិត្យកម្រិត និងម៉ោងប្រើថ្នាំ',
-        SAME_TIME_AS_ADMISSION_REVIEW: 'ម៉ោងតាមដានស្ទួននឹងម៉ោងចូលសម្រាក',
-        MEDICATION_UNIT_REVIEW: 'ឯកតាថ្នាំត្រូវត្រួតពិនិត្យ',
-        MEDICATION_TIMING_REVIEW: 'ពេលប្រើថ្នាំត្រូវបំពេញដោយដៃ',
-        MEDICATION_DOSE_CONFLICT: 'កម្រិតថ្នាំមិនដូចគ្នា',
-        MEDICATION_DOSE_REVIEW: 'កម្រិតថ្នាំត្រូវត្រួតពិនិត្យ',
-        MEDICATION_SCHEDULE_REVIEW: 'កាលវិភាគថ្នាំត្រូវត្រួតពិនិត្យ',
-        MEDICATION_ROUTE_REVIEW: 'ត្រូវជ្រើសផ្លូវប្រើថ្នាំក្នុង PMRS2',
-        MEDICATION_NAME_REQUIRED: 'ខ្វះឈ្មោះថ្នាំ',
-        WARD_REQUIRED: 'ខ្វះផ្នែក', SERVICE_MODE_REQUIRED: 'ខ្វះប្រភេទអ្នកទទួលសេវា',
-        CASE_TYPE_REQUIRED: 'សូមជ្រើសករណីថ្មី ឬករណីចាស់',
-        CHIEF_COMPLAINT_REQUIRED: 'ខ្វះរោគសញ្ញា',
-        DOCTOR_DIAGNOSIS_REQUIRED: 'ខ្វះរោគវិនិច្ឆ័យគ្រូពេទ្យ',
-        ICD10_REQUIRED: 'ខ្វះកូដ ICD10',
-        PRESCRIPTION_EMPTY_REVIEW: 'វេជ្ជបញ្ជាគ្មានថ្នាំ',
-        PRESCRIPTION_MEDICATION_REVIEW: 'ត្រូវពិនិត្យព័ត៌មានថ្នាំក្នុងវេជ្ជបញ្ជា',
-        LAST_FOLLOW_UP_REQUIRED: 'ខ្វះការតាមដានមានថ្ងៃម៉ោង',
-        DISCHARGE_NOT_SAVED: 'ទម្រង់បញ្ចេញមិនទាន់បានរក្សាទុក',
-        DISCHARGE_ADMISSION_TIME_REQUIRED: 'ខ្វះថ្ងៃ និងម៉ោងចូល',
-        DISCHARGE_ADMISSION_ICD10_REQUIRED: 'ខ្វះ ICD10 ពេលចូល',
-        DISCHARGE_DATE_TIME_REQUIRED: 'ខ្វះថ្ងៃ និងម៉ោងចេញ',
-        DISCHARGE_BEFORE_ADMISSION_REVIEW: 'ថ្ងៃម៉ោងចេញនៅមុនថ្ងៃម៉ោងចូល',
-        DISCHARGE_DIAGNOSIS_REQUIRED: 'ខ្វះរោគវិនិច្ឆ័យពេលចេញ',
-        DISCHARGE_ICD10_REQUIRED: 'ខ្វះ ICD10 ពេលចេញ',
-        DISCHARGE_OUTCOME_REVIEW: 'ត្រូវពិនិត្យលទ្ធផលព្យាបាល',
-        DISCHARGE_STATUS_REVIEW: 'ត្រូវពិនិត្យស្ថានភាពបញ្ចេញ',
-        DISCHARGE_DECEASED_CONFLICT: 'លទ្ធផលស្លាប់ និងប្រអប់ស្លាប់មិនត្រូវគ្នា',
-        TRIAGE_WEIGHT_REQUIRED: 'ខ្វះទម្ងន់នៅ Triage',
-        TRIAGE_HEIGHT_REQUIRED: 'ខ្វះកម្ពស់នៅ Triage',
-        TRIAGE_DATE_TIME_REQUIRED: 'ខ្វះថ្ងៃម៉ោងចូលនៅ Triage',
-        TRIAGE_VITALS_INCOMPLETE: 'សញ្ញាជីវិត Triage មិនគ្រប់',
-      };
-      const section = (parent, title, value) => {
-        const block = document.createElement('p');
-        const label = document.createElement('strong');
-        label.textContent = `${title}: `;
-        const content = document.createElement('span');
-        content.style.whiteSpace = 'pre-wrap';
-        content.textContent = value || '—';
-        block.append(label, content);
-        parent.append(block);
-      };
-      const medicine = (parent, med) => section(parent, med.name || 'ថ្នាំ',
-        `${med.doseAmount || '—'} ${med.unit || ''} · ${med.pmrsRoute || med.route || 'ផ្លូវប្រើមិនទាន់ច្បាស់'} · ${med.scheduleType || '—'} · ` +
-        `ព្រឹក-ថ្ងៃ-ល្ងាច-យប់: ${med.morning || '—'}-${med.afternoon || '—'}-${med.evening || '—'}-${med.night || '—'}` +
-        ` · ${med.days || '—'} ថ្ងៃ · សរុប ${med.quantity || '—'}` +
-        (med.warnings?.length ? ` · ${med.warnings.map(code => explain[code] || code).join(', ')}` : ''));
-      const review = payload.preview || {};
-      section(dialog, 'ផ្នែកចូល / អ្នកទទួលសេវា', `${review.receivingWard || '—'} · ${review.serviceType || '—'}`);
-      const triage = review.triage || {};
-      section(dialog, 'ថ្ងៃម៉ោងចូល / ទម្ងន់ / កម្ពស់',
-        `${triage.dateTime || '—'} · ${triage.weight || '—'} kg · ${triage.height || '—'} cm`);
-      section(dialog, 'សញ្ញាជីវិតនៅ Triage',
-        `T ${triage.temperature || '—'} °C · BP ${triage.systolic || '—'}/${triage.diastolic || '—'} · ` +
-        `P ${triage.pulse || '—'} · RR ${triage.respiratoryRate || '—'} · SpO₂ ${triage.oxygenSaturation || '—'}%`);
-      const triageIssues = (payload.reviewIssues || []).filter(issue => issue.path.startsWith('triage.'));
-      if (triageIssues.length) section(dialog, 'ត្រូវពិនិត្យ Triage',
-        triageIssues.map(issue => explain[issue.code] || issue.code).join(' · '));
-      section(dialog, 'ទម្រង់ព្យាបាល', review.caseType);
-      section(dialog, 'រោគសញ្ញា (បញ្ចូល ហើយចុច +)', review.chiefComplaint);
-      section(dialog, 'រោគវិនិច្ឆ័យ / ICD10', `${review.diagnosisText || '—'} · ${review.diagnosisIcd10 || '—'}`);
-      section(dialog, 'សេវាអមវេជ្ជសាស្ត្រ', review.ancillaryService);
-      if (review.warnings?.length) section(dialog, 'ត្រូវពិនិត្យ', review.warnings.map(code => explain[code] || code).join(' · '));
-      (payload.preview?.followUps || []).forEach((entry, index) => {
-        const article = document.createElement('article');
-        article.style.cssText = 'border-top:1px solid #cbd5e1;padding:14px 0';
-        const title = document.createElement('h3');
-        title.textContent = `${index + 1}. ${entry.source === 'admission' ? 'ថ្ងៃចូលសម្រាក' : 'ពិនិត្យតាមដាន'} · ${entry.dateTime || entry.originalDateTime || 'ត្រូវបំពេញថ្ងៃ/ម៉ោង'}`;
-        article.append(title);
-        const vital = entry.vitals || {};
-        section(article, 'សញ្ញាជីវិត', `T ${vital.temperature || '—'} °C · BP ${vital.systolic || '—'}/${vital.diastolic || '—'} · P ${vital.pulse || '—'} · RR ${vital.respiratoryRate || '—'} · SpO₂ ${vital.oxygenSaturation || '—'}%`);
-        section(article, 'ការវិវត្តន៍', entry.evolution);
-        section(article, 'សេចក្តីសន្និដ្ឋាន', entry.conclusion);
-        (entry.medications || []).forEach(med => medicine(article, med));
-        if (entry.warnings?.length) section(article, 'ត្រូវពិនិត្យ', entry.warnings.map(code => explain[code] || code).join(' · '));
-        dialog.append(article);
-      });
-      if (review.prescription) {
-        const rx = document.createElement('article');
-        rx.style.cssText = 'border-top:1px solid #cbd5e1;padding:14px 0';
-        const title = document.createElement('h3');
-        title.textContent = review.prescription.source === 'opd' ? 'វេជ្ជបញ្ជា OPD' : 'វេជ្ជបញ្ជាពេលចេញ IPD';
-        rx.append(title);
-        if (review.prescription.sourceDateTime) section(rx, 'ការតាមដានចុងក្រោយ', review.prescription.sourceDateTime);
-        (review.prescription.medications || []).forEach(med => medicine(rx, med));
-        if (review.prescription.followUpDate) section(rx, 'ថ្ងៃណាត់បន្ទាប់', review.prescription.followUpDate);
-        if (review.prescription.counselling) section(rx, 'ការណែនាំ', review.prescription.counselling);
-        if (review.prescription.warnings?.length) section(rx, 'ត្រូវពិនិត្យ', review.prescription.warnings.map(code => explain[code] || code).join(' · '));
-        dialog.append(rx);
-      }
-      if (review.discharge) {
-        const discharged = document.createElement('article');
-        discharged.style.cssText = 'border-top:1px solid #cbd5e1;padding:14px 0';
-        const title = document.createElement('h3');
-        title.textContent = 'បញ្ចប់ការព្យាបាល IPD';
-        discharged.append(title);
-        for (const [label, value] of [
-          ['ផ្នែកចូល / ផ្នែកចេញ', `${review.discharge.admissionWard || '—'} / ${review.discharge.dischargeWard || '—'}`],
-          ['ថ្ងៃម៉ោងចូល / ថ្ងៃម៉ោងចេញ', `${review.discharge.admissionAt || '—'} / ${review.discharge.dischargeAt || '—'}`],
-          ['រោគវិនិច្ឆ័យពេលចូល / ICD10', `${review.discharge.admissionDiagnosis || '—'} / ${review.discharge.admissionIcd10 || '—'}`],
-          ['រោគវិនិច្ឆ័យពេលចេញ / ICD10', `${review.discharge.dischargeDiagnosis || '—'} / ${review.discharge.dischargeIcd10 || '—'}`],
-          ['លទ្ធផល / ស្ថានភាពចេញ', `${review.discharge.outcome || '—'} / ${review.discharge.status || '—'}`],
-          ['ថ្ងៃណាត់បន្ទាប់', review.discharge.followUpDate],
-          ['កន្លែងបញ្ជូនបន្ត', review.discharge.referralDestination],
-        ]) if (value) section(discharged, label, value);
-        if (review.discharge.warnings?.length) section(discharged, 'ត្រូវពិនិត្យ', review.discharge.warnings.map(code => explain[code] || code).join(' · '));
-        dialog.append(discharged);
-      }
-      const role = String(window.emrSession?.user?.activeRole || '').toUpperCase();
-      if (['ADMIN','VICE_DIRECTOR', 'DOCTOR'].includes(role)) {
-        const exportArea = document.createElement('section');
-        exportArea.style.cssText = 'border-top:2px solid #0b7895;padding:16px 0;margin-top:8px';
-        const exportTitle = document.createElement('h3');
-        exportTitle.textContent = 'រៀបចំទិន្នន័យទាំងអស់ក្រោយពិនិត្យ';
-        const exportNote = document.createElement('p');
-        exportNote.textContent = 'ទាញយកទិន្នន័យ Triage, ការព្យាបាល, ការតាមដានទាំងអស់, វេជ្ជបញ្ជា និងទម្រង់បញ្ចេញជាឯកសារ JSON។ វាមិនទាន់បញ្ចូលទិន្នន័យទៅគេហទំព័រ PMRS2 ដោយស្វ័យប្រវត្តិទេ។';
-        const identifierLabel = document.createElement('label');
-        identifierLabel.textContent = 'សូមវាយលេខបណ្ណសុខភាព ឬលេខករណីដែលបានផ្ទៀងផ្ទាត់៖ ';
-        const identifier = document.createElement('input');
-        identifier.type = 'text';
-        identifier.autocomplete = 'off';
-        identifier.style.cssText = 'min-width:220px;padding:7px;margin:6px';
-        identifierLabel.append(identifier);
-        const reviewLabel = document.createElement('label');
-        reviewLabel.style.cssText = 'display:block;margin:10px 0';
-        const reviewed = document.createElement('input');
-        reviewed.type = 'checkbox';
-        reviewed.style.marginRight = '7px';
-        reviewLabel.append(reviewed, document.createTextNode('ខ្ញុំបានផ្ទៀងផ្ទាត់អ្នកជំងឺ និងពិនិត្យទិន្នន័យ/សញ្ញាព្រមានទាំងអស់ខាងលើ។'));
-        const download = document.createElement('button');
-        download.type = 'button';
-        download.className = 'btn-blue';
-        download.textContent = 'ទាញយកកញ្ចប់ទិន្នន័យ PMRS2';
-        download.disabled = true;
-        const exportStatus = document.createElement('p');
-        exportStatus.setAttribute('role', 'status');
-        const enable = () => { download.disabled = !reviewed.checked || !identifier.value.trim(); };
-        identifier.addEventListener('input', enable);
-        reviewed.addEventListener('change', enable);
-        download.addEventListener('click', async () => {
-          download.disabled = true;
-          exportStatus.textContent = 'កំពុងរៀបចំទិន្នន័យ…';
-          try {
-            const response = await fetch('/api/pmrs2/prepare-export', {
-              method: 'POST', credentials: 'same-origin', cache: 'no-store',
-              headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': await getCsrfToken() },
-              body: JSON.stringify({ patientKey: review.patientKey, reviewedVersion: review.patientVersion,
-                confirmedIdentifier: identifier.value.trim(), reviewed: reviewed.checked }),
-            });
-            const result = await response.json().catch(() => ({}));
-            if (!response.ok) throw new Error(result.error || 'មិនអាចរៀបចំទិន្នន័យបាន។');
-            const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
-            const objectUrl = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = objectUrl;
-            link.download = 'Borkeo-PMRS2-reviewed-record.json';
-            document.body.append(link);
-            link.click();
-            link.remove();
-            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
-            exportStatus.textContent = 'បានទាញយកកញ្ចប់ទិន្នន័យ។ សូមរក្សាទុកដោយសុវត្ថិភាព។ PMRS2 មិនទាន់បានទទួលទិន្នន័យនេះទេ។';
-          } catch (error) {
-            exportStatus.textContent = `មានបញ្ហា: ${error.message}`;
-          } finally { enable(); }
-        });
-        exportArea.append(exportTitle, exportNote, identifierLabel, reviewLabel, download, exportStatus);
-        dialog.append(exportArea);
-      }
-    } catch (error) {
-      const message = document.createElement('p');
-      message.textContent = `មានបញ្ហា: ${error.message}`;
-      dialog.append(message);
-    }
+  function showPmrsPlaywright() {
+    if (!loadedPatient?.patientKey) return;
+    location.href = '/pmrs?patientKey=' + encodeURIComponent(loadedPatient.patientKey);
   }
 
   function switchNursingSection(sectionName) {
@@ -2107,16 +1908,16 @@
     document.querySelectorAll('#sub_ipd > .emr-save-bar').forEach(el => el.remove());
     const ipdActionBar = document.querySelector('#sub_ipd > .action-bar');
     if (ipdActionBar) {
-      ipdActionBar.querySelectorAll('.emr-save-button, .btn-pmrs2-preview').forEach(el => el.remove());
+      ipdActionBar.querySelectorAll('.emr-save-button, .btn-pmrs-playwright').forEach(el => el.remove());
       const saveBtn = createSaveButton();
       const saveBtnText = saveBtn.querySelector('span');
       if (saveBtnText) saveBtnText.textContent = 'រក្សាទុក និងបញ្ចប់កំណត់ត្រាវេជ្ជសាស្ត្រ';
       ipdActionBar.append(saveBtn);
       const preview = document.createElement('button');
       preview.type = 'button';
-      preview.className = 'btn-blue btn-pmrs2-preview no-print';
-      preview.textContent = 'ពិនិត្យទិន្នន័យ PMRS2';
-      preview.addEventListener('click', () => void showPmrs2FollowUpPreview());
+      preview.className = 'btn-blue btn-pmrs-playwright no-print';
+      preview.textContent = 'ផ្ទេរទិន្នន័យ PMRS';
+      preview.addEventListener('click', () => void showPmrsPlaywright());
       ipdActionBar.append(preview);
     }
     updateIpdObGynVisibility();
@@ -2140,8 +1941,8 @@
       const preview = document.createElement('button');
       preview.type = 'button';
       preview.className = 'btn-blue';
-      preview.textContent = 'ពិនិត្យទិន្នន័យ PMRS2';
-      preview.addEventListener('click', () => void showPmrs2FollowUpPreview());
+      preview.textContent = 'ផ្ទេរទិន្នន័យ PMRS';
+      preview.addEventListener('click', () => void showPmrsPlaywright());
       saveBar.append(preview);
     });
 

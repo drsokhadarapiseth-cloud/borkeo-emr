@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { preparePmrsMedicineImport, applyPmrsMedicineImport } from '../server/pmrs2-medicine-import.mjs';
+import { preparePmrsMedicineImport, applyPmrsMedicineImport } from '../server/pmrs/medicine-import.mjs';
 
 const patient = { healthId:'003-111-222-3',serviceMode:'ipd' };
 const source = () => ({

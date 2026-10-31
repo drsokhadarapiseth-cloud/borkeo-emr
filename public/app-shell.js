@@ -72,7 +72,7 @@
     '/requests': 'ការស្នើសុំ និងសវនកម្ម',
     '/triage': 'ផ្នែកទ្រីយ៉ា',
     '/ipd-transfer': 'ផ្ទេរ និងចេញអ្នកជំងឺ',
-    '/pmrs-import': 'នាំចូលទិន្នន័យ PMRS2'
+    '/pmrs': 'ផ្ទេរទិន្នន័យ PMRS'
   };
 
   const NAV = window.EmrNavConfig || null;

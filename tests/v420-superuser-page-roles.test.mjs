@@ -94,7 +94,7 @@ test('v42.1 Superuser switch user type: same menus, pages, refusals and bell as 
       assert.deepEqual(mine.items, theirs.items, `${label(mine.user)} menu equals ${type.user}`);
       assert.equal(mine.user.isSuperuser, true);
       assert.equal(theirs.user.isSuperuser, false, 'the switch button is only for the Superuser');
-      if (type.role === 'REGISTRATION') assert.deepEqual(mine.items, ['register', 'patient-list', 'appointments']);
+      if (type.role === 'REGISTRATION') assert.deepEqual(mine.items, ['pmrs', 'register', 'patient-list', 'appointments']);
       for (const id of mine.items) {
         const item = nav.ITEMS.find(entry => entry.id === id);
         assert.equal((await get(su, item.href)).status, 200, `${label(mine.user)} opens ${item.href}`);

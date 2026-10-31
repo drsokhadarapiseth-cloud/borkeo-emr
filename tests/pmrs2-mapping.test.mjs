@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { pmrs2Discharge, pmrs2FollowUps, pmrs2Icd10, pmrs2Prescription, pmrs2Preview, pmrs2Route, pmrs2Ward } from '../server/pmrs2-mapping.mjs';
-import { buildPmrs2TransferPackage } from '../server/pmrs2-transfer.mjs';
+import { pmrs2Discharge, pmrs2FollowUps, pmrs2Icd10, pmrs2Prescription, pmrs2Preview, pmrs2Route, pmrs2Ward } from '../server/pmrs/mapping.mjs';
+import { pmrs2ReviewIssues } from '../server/pmrs/review.mjs';
 import { NORMAL_EXAM, normalExamText, summarizeClinicalExamination } from '../public/pmrs2-exam-normal.js';
 
 test('all three normal examination languages retain normal summaries and edited findings', () => {
@@ -279,21 +279,14 @@ test('reviewed transfer package contains mapped triage, every dated day, dischar
         outcome: 'improved', status: 'ordered', medications: [{ name: 'B', route: 'po',
           unit: 'គ្រាប់', scheduleType: 'qid', doseAmount: '1' }] },
     } };
-  const bundle = buildPmrs2TransferPackage(patient, '2026-09-20T10:00:00.000Z');
-  assert.equal(bundle.identity.healthId, 'HC-TEST-001');
-  assert.equal(bundle.source.patientVersion, 7);
-  assert.equal(bundle.triage.weight, '40');
-  assert.equal(bundle.triage.dateTime, '2026-09-17T09:15');
-  assert.deepEqual(bundle.followUps.map(day => day.dateTime),
+  const preview = pmrs2Preview(patient);
+  assert.equal(preview.triage.weight, '40');
+  assert.deepEqual(preview.followUps.map(day => day.dateTime),
     ['2026-09-17T09:15', '2026-09-18T08:00', '2026-09-19T08:00']);
-  assert.equal(bundle.prescription.medications[0].name, 'B');
-  assert.equal(bundle.discharge.dischargeAt, '2026-09-19T17:00');
-  assert.equal(bundle.readyWithoutWarnings, true);
-  assert.deepEqual(bundle.reviewIssues, []);
-  assert.equal('data' in bundle, false);
+  assert.equal(preview.prescription.medications[0].name, 'B');
+  assert.equal(preview.discharge.dischargeAt, '2026-09-19T17:00');
+  assert.deepEqual(pmrs2ReviewIssues(preview,preview.triage), []);
   patient.data['system:discharge'].medications[0].route = 'injection_unspecified';
-  const warningBundle = buildPmrs2TransferPackage(patient, '2026-09-20T10:00:00.000Z');
-  assert.ok(warningBundle.reviewIssues.some(issue => issue.path === 'prescription.medications[0]' &&
-    issue.code === 'MEDICATION_ROUTE_REVIEW'));
-  assert.equal(warningBundle.readyWithoutWarnings, false);
+  const warning = pmrs2Preview(patient);
+  assert.ok(pmrs2ReviewIssues(warning,warning.triage).some(issue => issue.path === 'prescription.medications[0]' && issue.code === 'MEDICATION_ROUTE_REVIEW'));
 });

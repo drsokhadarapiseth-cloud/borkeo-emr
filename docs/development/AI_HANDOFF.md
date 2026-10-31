@@ -1,5 +1,61 @@
 # Task context for Codex, Gemini or OpenCode
 
+## Chrome PMRS registration import — v51.7.0
+
+Owner requested a replacement Chrome extension after losing the old extension
+folder. Build authorization is the request to build it again. Scope communicated:
+one-click capture and draft fill, with final existing EMR Save after staff review;
+registration details only, no clinical or reverse transfer.
+
+Base: 9c5cfd5ba6f3240ca6745d21bfea911a9693766a (v51.6.0).
+Pre-edit code-only backup:
+/root/Borkeo_EMR_Code_Backups/v51.6.0-9c5cfd5b-938a9781.
+
+New source: tools/pmrs-chrome-import. Matching first-party receiver:
+public/pmrs-registration.mjs, injected with cache version 5170 by server/server.mjs.
+No new cross-origin endpoint or authentication bypass. Session and role checks,
+exact origin including port, a dedicated NEW tab, duplicate checks, untouched
+forms, ten-minute memory-only pending capture, no automatic retry after uncertain
+delivery. The original guarded Playwright workflow and false verification flags
+are unchanged. Existing registration mapping and Save enforce the hospital flow.
+
+The extension uses normal Chrome, NOT the restricted Playwright window. It
+follows the destination tab through login/context navigation and resumes there.
+It never handles passwords, MFA codes, cookies, CSRF tokens or PHI URLs. Only
+EMR origin persists; pending patient details are in trusted storage.session.
+Cannot claim saved until the existing Save action actually succeeds. No automatic
+patient creation or updates to existing patient encounters. Registration,
+Administrator, Vice Director or OPD Doctor context required. The real PMRS reader
+matches operator-supplied HTML; a live read-only verification is still necessary.
+
+Install the matching update TXT first, then the separate extension ZIP; see
+README. Stop/restart only updated port 3001, leave older port 3002 untouched.
+Preserve all local changes, patient data, secrets and external profiles. Merge
+unexpected local hashes instead of overwriting. No dependencies added.
+
+Validation uses disposable synthetic copies. Browser acceptance covers capture,
+receiver protections and the actual EMR form using an in-memory database. Full
+installed-MV3 acceptance is opt-in: BORKEO_TEST_INSTALLED_EXTENSION=1. This cloud
+environment denies Chrome profile Unix sockets, so full Chrome launch was blocked
+before the extension loaded. The opt-in test must run on an appropriate local
+machine; do not claim it passed here. No live PMRS/production patient Save tested.
+Final disposable validation: /tmp/borkeo517-validation-t5fpzzyi.
+- npm test: 1113/1113 pass, zero skipped (log /tmp/borkeo517-final-full.log).
+- npm run check:khmer: pass; 30 new strings and English meanings recorded.
+- Extension + Playwright browser acceptance: 8 pass, zero fail, 1 explicit
+  installed-Chrome test skipped (log /tmp/borkeo517-final-browser.log).
+- Full Chrome opt-in was attempted separately: runtime rejected profile socket
+  creation before extension loading. Do not describe that check as passed.
+- Actual EMR registration-form test uses a real synthetic EMR session and an
+  in-memory database; filled fields verified and patient count unchanged.
+- 19 update actions have result byte/hash verification. ZIP contains extension
+  source and instructions only, no fixtures, patient data or credentials.
+Publication is still blocked by missing GitHub write credentials in this
+workspace; the combined update and ZIP are the installable deliverables.
+Toolbar behavior: first click opens setup if unconfigured. After configuration,
+a single toolbar click captures the current PMRS record. Right-click Options
+opens status/resume/cancel. A check mark means draft filled, never saved.
+
 ## Reopen running EMRs - v49.2.0
 
 Owner approved fixing both batch files and keeping distinct ports. Both services
@@ -1573,3 +1629,54 @@ report the source stage and EMR banner; do not share full patient pages/secrets.
 Running EMR processes were not restarted. A second checkout/instance is not
 updated by modifying this checkout; select the updated EMR origin in Options.
 Unrelated .vscode/, .gitignore, all databases/uploads/secrets were preserved.
+
+## PMRS Playwright replacement — v51.5.0
+
+Owner approved both directions and explicitly said "yes code it". Active PMRS2 copy/paste, extension, medicine-import page and JSON export routes are retired. `/pmrs` provides staff-controlled browser capture, preview, fill and separately confirmed submission. Shared clinical mappers moved to server/pmrs/ and remain used by ward medicines/NPCA. No clinical/financial workflows were replaced. Existing patient data and .gitignore stay unchanged.
+
+Live PMRS is deliberately disabled until an external verified/authorized profile is supplied. This release is synthetic-tested infrastructure, not a live-site integration certification. See `docs/development/PMRS_PLAYWRIGHT_V515.md` for desktop setup, profile contract, supported import scope, blocked cases, credentials/session handling and acceptance requirements. No patient data or credentials were accessed.
+
+Clean baseline a830a8b52b44355e669f29de2a8358ccd0867943 (v51.4.0). Code-only backup `/root/Borkeo_EMR_Code_Backups/v51.4.0-a830a8b5-066e220e`. Restore into a new folder only. Historical PMRS2 release bundles are not installation instructions for this version.
+
+v51.5 final validation: combined update applied with SHA-256/byte verification
+in a disposable baseline checkout; npm test 1,103/1,103, Khmer check pass,
+actual Playwright synthetic browser/UI tests 2/2 at desktop/phone widths.
+Linux used bsdtar for the existing ZIP restore requirement. Live PMRS remains
+unverified and disabled by default. No hospital data, secrets, .gitignore or
+clinical form content changed. Two pre-existing test-harness extraction defects
+were corrected to make required checks executable in this environment.
+
+Publication status: NOT pushed. HTTPS git push could not obtain credentials;
+the connected GitHub app then returned HTTP 403 "Resource not accessible by
+integration" for repository blob creation. No remote file or ref was changed.
+The implementation and release text are locally committed. Resume by granting
+the app repository-content write access or pushing these commits from the
+owner's authenticated development computer. Do not claim the GitHub master
+branch already contains v51.5.0.
+
+## v51.6.0 — separate PMRS import and export readiness
+
+The user's diagnostics did not establish identity mismatch: rejected requests and
+reasons were never recorded. Save was unconfirmed and must not be retried as a
+verification shortcut. The local diagnostic review reported no code/settings
+changes; its profile draft remains unverified, missing identity/read mappings
+and a configured environment path.
+
+This correction removes export prerequisites from read-only import validation,
+adds independent export evidence and enforces export gating at API, bridge and
+adapter layers. It adds safe readiness/blocker reporting in Khmer. No live
+settings/flags were enabled, no actual patient values were used in tests, no
+PMRS save/request replay was attempted, and clinical/financial logic is intact.
+See docs/development/PMRS_IMPORT_READINESS_V516.md for exact requirements.
+
+Baseline v51.5.0 commit 8c7382471488af8c13d2949aaf380d05c5254d8f.
+Backup before editing: /root/Borkeo_EMR_Code_Backups/v51.5.0-8c738247-8453ac76.
+The original yes-code authorization is continuing toward the agreed PMRS import
+workflow; the supplied read-only report states no newer source changes were
+made. Preserve any separate user diagnostic/mapping files when applying.
+
+v51.6 validation: 19 code actions applied with baseline/target SHA-256 checks in
+a disposable v51.5 checkout; npm test 1,107/1,107, Khmer check pass, explicit
+synthetic Playwright/browser UI tests 4/4. No external profile was created or
+modified, and no production flag was certified. Do not describe this code fix
+as a completed live PMRS connection.

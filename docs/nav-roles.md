@@ -39,3 +39,8 @@ Groups (Khmer UI): ការថែទាំអ្នកជំងឺ (Patient car
 | Cashier → Expenses (403) | removed (Accountant keeps it) |
 | Chief ward / Ward head → whole admin menu | their ward menu |
 | OPD nurse had no link to their landing page | Paraclinic handoffs |
+
+v51.5: `/pmrs` (PMRS browser transfer) is a patient-care menu item for ADMIN,
+VICE_DIRECTOR, DOCTOR and REGISTRATION. Registration can capture and prepare a
+new registration; clinical linking/import/export requires DOCTOR or the listed
+administrators. Demo browser APIs are disabled. `/pmrs-import` is retired.

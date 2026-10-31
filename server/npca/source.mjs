@@ -1,4 +1,4 @@
-import { pmrs2Preview } from '../pmrs2-mapping.mjs';
+import { pmrs2Preview } from '../pmrs/mapping.mjs';
 import { findPregnancy, listVisits } from '../maternal.mjs';
 import { medicineCatalogue } from '../medicine-catalogue.mjs';
 import { summarizeClinicalExamination } from '../../public/pmrs2-exam-normal.js';
